@@ -12,8 +12,8 @@ class Locations extends Array {
 	/**
 	 * Constructor
 	 * @param {Sections} [sections]
-	 * @param {method} [request]
-	 * @param {number} [pause=100]
+	 * @param {Function} [request]
+	 * @param {Number} [pause=100]
 	 */
 	constructor(sections, request, pause) {
 
@@ -23,10 +23,10 @@ class Locations extends Array {
 		this.break = 150;
 		this.request = request;
 		/**
-		 * @member {object} current Current Location
-		 * @property {string} current.cfi
-		 * @property {number} current.index
-		 * @property {number} current.percentage
+		 * @member {Object} current Current Location
+		 * @property {String} current.cfi
+		 * @property {Number} current.index
+		 * @property {Number} current.percentage
 		 * @memberof Locations
 		 * @readonly
 		 */
@@ -48,8 +48,8 @@ class Locations extends Array {
 
 	/**
 	 * Load all of sections in the book to generate locations
-	 * @param {number} [chars] how many chars to split on (default:150)
-	 * @return {Promise} locations
+	 * @param {Number} [chars] how many chars to split on (default:150)
+	 * @return {Promise<Locations>} Locations
 	 */
 	async generate(chars) {
 
@@ -82,7 +82,7 @@ class Locations extends Array {
 
 	/**
 	 * createRange
-	 * @returns {object}
+	 * @returns {Object}
 	 */
 	createRange() {
 
@@ -97,7 +97,7 @@ class Locations extends Array {
 	/**
 	 * process
 	 * @param {Section} section 
-	 * @returns {Promise}
+	 * @returns {Promise<Element>}
 	 */
 	async process(section) {
 
@@ -108,7 +108,9 @@ class Locations extends Array {
 
 			section.unload();
 
-			this.processingTimeout = setTimeout(() => completed.resolve(locations), this.pause);
+			this.processingTimeout = setTimeout(() => {
+				completed.resolve(locations)
+			}, this.pause);
 			return completed.promise;
 		});
 	}
@@ -116,8 +118,8 @@ class Locations extends Array {
 	/**
 	 * parse
 	 * @param {Element} contents 
-	 * @param {string} cfiBase 
-	 * @param {number} [chars] 
+	 * @param {String} cfiBase 
+	 * @param {Number} [chars] 
 	 * @returns {Locations}
 	 */
 	parse(contents, cfiBase, chars) {
@@ -201,8 +203,8 @@ class Locations extends Array {
 
 	/**
 	 * Get a location from an EpubCFI
-	 * @param {string} value EpubCFI string format
-	 * @return {number} Location index
+	 * @param {String} value EpubCFI string format
+	 * @return {Number} Location index
 	 */
 	locationFromCfi(value) {
 
@@ -216,8 +218,8 @@ class Locations extends Array {
 
 	/**
 	 * Get a percentage position in locations from an EpubCFI
-	 * @param {string} cfi EpubCFI string format
-	 * @return {number} Percentage
+	 * @param {String} cfi EpubCFI string format
+	 * @return {Number} Percentage
 	 */
 	percentageFromCfi(cfi) {
 
@@ -232,8 +234,8 @@ class Locations extends Array {
 
 	/**
 	 * Get a percentage position from a location index
-	 * @param {number} loc Location index
-	 * @return {number} Percentage
+	 * @param {Number} loc Location index
+	 * @return {Number} Percentage
 	 */
 	percentageFromLocation(loc) {
 
@@ -246,8 +248,8 @@ class Locations extends Array {
 
 	/**
 	 * Get an EpubCFI from location index
-	 * @param {number} loc Location index
-	 * @return {string|null} EpubCFI string format
+	 * @param {Number} loc Location index
+	 * @return {String|null} EpubCFI string format
 	 */
 	cfiFromLocation(loc) {
 
@@ -261,8 +263,8 @@ class Locations extends Array {
 
 	/**
 	 * Get an EpubCFI from location percentage
-	 * @param {number} percentage
-	 * @return {string|null} EpubCFI string format
+	 * @param {Number} percentage
+	 * @return {String|null} EpubCFI string format
 	 */
 	cfiFromPercentage(percentage) {
 
@@ -283,7 +285,7 @@ class Locations extends Array {
 
 	/**
 	 * Load locations from JSON
-	 * @param {string} locations
+	 * @param {String} locations
 	 */
 	load(locations) {
 
@@ -305,7 +307,7 @@ class Locations extends Array {
 
 	/**
 	 * Save locations to JSON
-	 * @return {json}
+	 * @return {String} A JSON string
 	 */
 	save() {
 
@@ -319,10 +321,10 @@ class Locations extends Array {
 
 	/**
 	 * Set current location
-	 * @param {object} options
-	 * @param {string} [options.cfi] EpubCFI string format
-	 * @param {number} [options.index] Location index
-	 * @param {number} [options.percentage] Percentage
+	 * @param {Object} [options]
+	 * @param {String} [options.cfi] EpubCFI string format
+	 * @param {Number} [options.index] Location index
+	 * @param {Number} [options.percentage] Percentage
 	 */
 	set(options) {
 
@@ -371,8 +373,8 @@ class Locations extends Array {
 			/**
 			 * Current location changed
 			 * @event changed
-			 * @param {object} current Current location
-			 * @param {object} changed Changed properties
+			 * @param {Object} current Current location
+			 * @param {Object} changed Changed properties
 			 * @memberof Locations
 			 */
 			this.emit(EVENTS.LOCATIONS.CHANGED, this.current, options);
