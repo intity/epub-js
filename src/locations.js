@@ -81,6 +81,7 @@ class Locations extends Map {
 	/**
 	 * createRange
 	 * @returns {Object}
+	 * @private
 	 */
 	createRange() {
 
@@ -95,7 +96,7 @@ class Locations extends Map {
 	/**
 	 * process
 	 * @param {Section} section 
-	 * @returns {Promise<Element>}
+	 * @returns {Promise<Locations>}
 	 */
 	async process(section) {
 
@@ -202,7 +203,7 @@ class Locations extends Map {
 
 	/**
 	 * Get a location from an EpubCFI
-	 * @param {String} value EpubCFI string format
+	 * @param {String|EpubCFI} value EpubCFI
 	 * @return {Number} Location index or -1 otherwise
 	 */
 	locationFromCfi(value) {
@@ -218,7 +219,7 @@ class Locations extends Map {
 
 	/**
 	 * Get a percentage position in locations from an EpubCFI
-	 * @param {String} cfi EpubCFI string format
+	 * @param {String|EpubCFI} cfi EpubCFI
 	 * @return {Number} Percentage
 	 */
 	percentageFromCfi(cfi) {
@@ -284,6 +285,7 @@ class Locations extends Map {
 	/**
 	 * Load locations from JSON
 	 * @param {String} locations
+	 * @returns {Locations}
 	 */
 	load(locations) {
 
