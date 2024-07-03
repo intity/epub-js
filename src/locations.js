@@ -321,6 +321,7 @@ class Locations extends Map {
 	 * @param {String} [options.cfi] EpubCFI string format
 	 * @param {Number} [options.index] Location index
 	 * @param {Number} [options.percentage] Percentage
+	 * @returns {Locations}
 	 */
 	set(options) {
 
@@ -379,6 +380,8 @@ class Locations extends Map {
 			 */
 			this.emit(EVENTS.LOCATIONS.CHANGED, current, options);
 		}
+
+		return this;
 	}
 
 	/**
