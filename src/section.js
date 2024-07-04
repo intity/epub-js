@@ -1,7 +1,6 @@
 import EpubCFI from "./epubcfi";
 import Defer from "./utils/defer";
 import { sprint } from "./utils/core";
-import { replaceBase } from "./utils/replacements";
 
 /**
  * Represents a Section of the Book
