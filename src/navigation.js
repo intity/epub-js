@@ -1,4 +1,9 @@
-import { qs, qsa, querySelectorByType, filterChildren } from "./utils/core";
+import {
+	qs,
+	qsa,
+	querySelectorByType,
+	filterChildren
+} from "./utils/core";
 
 /**
  * Navigation Parser
@@ -9,12 +14,23 @@ class Navigation {
 	 * @param {Document} xml navigation html / xhtml / ncx
 	 */
 	constructor(xml) {
-
+		/**
+		 * Navigation items
+		 * @member {Array<Object>} toc
+		 * @memberof Navigation
+		 * @readonly
+		 */
 		this.toc = [];
 		this.tocByHref = {};
 		this.tocById = {};
 		this.landmarks = [];
 		this.landmarksByType = {};
+		/**
+		 * Number of navigation items
+		 * @member {Number} length
+		 * @memberof Navigation
+		 * @readonly
+		 */
 		this.length = 0;
 		if (xml) {
 			this.parse(xml);
@@ -52,7 +68,7 @@ class Navigation {
 
 	/**
 	 * Unpack navigation items
-	 * @param {Array} toc
+	 * @param {Array<Object>} toc
 	 * @private
 	 */
 	unpack(toc) {
@@ -78,8 +94,8 @@ class Navigation {
 
 	/**
 	 * Get an item from the navigation
-	 * @param {string} target
-	 * @return {object} navItem
+	 * @param {String} target
+	 * @return {Object} navItem
 	 */
 	get(target) {
 
@@ -99,10 +115,10 @@ class Navigation {
 
 	/**
 	 * Get an item from navigation subitems recursively by index
-	 * @param {string} target
-	 * @param {number} index
-	 * @param {Array} navItems
-	 * @return {object} navItem
+	 * @param {String} target
+	 * @param {Number} index
+	 * @param {Array<Object>} navItems
+	 * @return {Object} navItem
 	 */
 	getByIndex(target, index, navItems) {
 
@@ -116,7 +132,11 @@ class Navigation {
 		} else {
 			let result;
 			for (let i = 0; i < navItems.length; ++i) {
-				result = this.getByIndex(target, index, navItems[i].subitems);
+				result = this.getByIndex(
+					target,
+					index,
+					navItems[i].subitems
+				); // recursive call
 				if (result) {
 					break;
 				}
@@ -128,8 +148,8 @@ class Navigation {
 	/**
 	 * Get a landmark by type
 	 * @link https://idpf.github.io/epub-vocabs/structure/
-	 * @param {string} type
-	 * @return {object} landmarkItem
+	 * @param {String} type
+	 * @return {Object} landmarkItem
 	 */
 	landmark(type) {
 
@@ -144,7 +164,7 @@ class Navigation {
 	/**
 	 * Parse toc from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array} navigation list
+	 * @return {Array<Object>} navigation list
 	 * @private
 	 */
 	parseNav(navHtml) {
@@ -163,8 +183,8 @@ class Navigation {
 	/**
 	 * Parses lists in the toc
 	 * @param {Document} navListHtml
-	 * @param {string} parent id
-	 * @return {Array} navigation list
+	 * @param {String} parent id
+	 * @return {Array<Object>} navigation list
 	 */
 	parseNavList(navListHtml, parent) {
 
@@ -190,13 +210,13 @@ class Navigation {
 	/**
 	 * Create a navItem
 	 * @param {Element} item
-	 * @return {object} navItem
+	 * @return {Object} navItem
 	 * @private
 	 */
 	navItem(item, parent) {
 
 		const content = filterChildren(item, "a", true) ||
-						filterChildren(item, "span", true);
+			filterChildren(item, "span", true);
 
 		if (!content) {
 			return;
@@ -224,7 +244,7 @@ class Navigation {
 	/**
 	 * Parse landmarks from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array} landmarks list
+	 * @return {Array<Object>} landmarks list
 	 * @private
 	 */
 	parseLandmarks(navHtml) {
@@ -250,7 +270,7 @@ class Navigation {
 	/**
 	 * Create a landmarkItem
 	 * @param {Element} item
-	 * @return {object|null} landmarkItem
+	 * @return {Object|null} landmarkItem
 	 * @private
 	 */
 	landmarkItem(item) {
@@ -264,16 +284,16 @@ class Navigation {
 		const text = content.textContent || "";
 
 		return {
+			type: type,
 			href: href,
-			label: text,
-			type: type
+			label: text
 		};
 	}
 
 	/**
 	 * Parse from a Epub > 3.0 NC
 	 * @param {Document} navHtml
-	 * @return {Array} navigation list
+	 * @return {Array<Object>} navigation list
 	 * @private
 	 */
 	parseNcx(tocXml) {
@@ -301,8 +321,8 @@ class Navigation {
 
 	/**
 	 * Create a ncxItem
-	 * @param  {Element} item
-	 * @return {object} ncxItem
+	 * @param {Element} item
+	 * @return {Object} ncxItem
 	 * @private
 	 */
 	ncxItem(item) {
@@ -322,15 +342,15 @@ class Navigation {
 			id: item.getAttribute("id") || false,
 			href: content.getAttribute("src"),
 			label: text,
-			subitems: [],
-			parent: parent
+			parent: parent,
+			subitems: []
 		};
 	}
 
 	/**
 	 * Load Spine Items
-	 * @param  {object} json the items to be loaded
-	 * @return {Array} navItems
+	 * @param {Object} json the items to be loaded
+	 * @return {Array<Object>} navItems
 	 */
 	load(json) {
 
@@ -344,12 +364,11 @@ class Navigation {
 
 	/**
 	 * forEach pass through
-	 * @param {Function} fn function to run on each item
-	 * @return {method} forEach loop
+	 * @param {IArguments} args
 	 */
-	forEach(fn) {
+	forEach(...args) {
 
-		return this.toc.forEach(fn);
+		this.toc.forEach(...args);
 	}
 }
 
