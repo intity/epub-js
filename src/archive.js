@@ -34,8 +34,8 @@ class Archive {
 	/**
 	 * Open an archive
 	 * @param {binary} input
-	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-	 * @return {Promise} zipfile
+	 * @param {Boolean} [isBase64] tells JSZip if the input data is base64 encoded
+	 * @return {Promise<any>} zipfile
 	 */
 	open(input, isBase64) {
 
@@ -46,9 +46,9 @@ class Archive {
 
 	/**
 	 * Load and Open an archive
-	 * @param {string} zipUrl
-	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-	 * @return {Promise} zipfile
+	 * @param {String} zipUrl
+	 * @param {Boolean} [isBase64] tells JSZip if the input data is base64 encoded
+	 * @return {Promise<any>} zipfile
 	 */
 	async openUrl(zipUrl, isBase64) {
 
@@ -61,9 +61,9 @@ class Archive {
 
 	/**
 	 * Request a url from the archive
-	 * @param {string} url  a url to request from the archive
-	 * @param {string} [type] specify the type of the returned result
-	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
+	 * @param {String} url  a url to request from the archive
+	 * @param {String} [type] specify the type of the returned result
+	 * @return {Promise<Blob|String|JSON|Document|XMLDocument>}
 	 */
 	request(url, type) {
 
@@ -99,7 +99,7 @@ class Archive {
 	/**
 	 * Handle the response from request
 	 * @param {any} response
-	 * @param {string} [type]
+	 * @param {String} [type]
 	 * @return {any} the parsed result
 	 * @private
 	 */
@@ -122,8 +122,8 @@ class Archive {
 
 	/**
 	 * Get a Blob from Archive by Url
-	 * @param {string} url
-	 * @param {string} [mimeType]
+	 * @param {String} url
+	 * @param {String} [mimeType]
 	 * @return {Blob}
 	 */
 	getBlob(url, mimeType) {
@@ -142,8 +142,8 @@ class Archive {
 
 	/**
 	 * Get Text from Archive by Url
-	 * @param {string} url
-	 * @return {string}
+	 * @param {String} url
+	 * @return {String}
 	 */
 	getText(url) {
 
@@ -160,9 +160,9 @@ class Archive {
 
 	/**
 	 * Get a base64 encoded result from Archive by Url
-	 * @param {string} url
-	 * @param {string} [mimeType]
-	 * @return {string} base64 encoded
+	 * @param {String} url
+	 * @param {String} [mimeType]
+	 * @return {String} base64 encoded
 	 */
 	getBase64(url, mimeType) {
 
@@ -180,10 +180,10 @@ class Archive {
 
 	/**
 	 * Create a Url from an unarchived item
-	 * @param {string} url
-	 * @param {object} [options] 
-	 * @param {object} [options.base64] use base64 encoding or blob url
-	 * @return {Promise} url promise with Url string
+	 * @param {String} url
+	 * @param {Object} [options] 
+	 * @param {Object} [options.base64] use base64 encoding or blob url
+	 * @return {Promise<String>} url promise with Url string
 	 */
 	createUrl(url, options) {
 
@@ -226,7 +226,7 @@ class Archive {
 
 	/**
 	 * Revoke Temp Url for a archive item
-	 * @param {string} url url of the item in the archive
+	 * @param {String} url url of the item in the archive
 	 */
 	revokeUrl(url) {
 
