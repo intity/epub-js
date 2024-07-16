@@ -40,7 +40,7 @@ class PageList {
 	/**
 	 * Parse PageList Xml
 	 * @param {Document} xml
-	 * @returns {Array}
+	 * @returns {Array<{ href: String, page: Number }>}
 	 */
 	parse(xml) {
 
@@ -58,13 +58,13 @@ class PageList {
 
 	/**
 	 * Parse a Nav PageList
-	 * @param {Node} navHtml
-	 * @return {PageList.item[]} list
+	 * @param {Node} node
+	 * @return {Array<{ href: String, page: Number }>}
 	 * @private
 	 */
-	parseNav(navHtml) {
+	parseNav(node) {
 
-		const navElement = querySelectorByType(navHtml, "nav", "page-list");
+		const navElement = querySelectorByType(node, "nav", "page-list");
 		const navItems = navElement ? qsa(navElement, "li") : [];
 		const length = navItems.length;
 		const list = [];
@@ -81,14 +81,14 @@ class PageList {
 
 	/**
 	 * parseNcx
-	 * @param {Node} navXml 
-	 * @returns {Array}
+	 * @param {Node} node 
+	 * @returns {Array<{ href: String, page: Number }>}
 	 * @private
 	 */
-	parseNcx(navXml) {
+	parseNcx(node) {
 
 		const list = [];
-		const pageList = qs(navXml, "pageList");
+		const pageList = qs(node, "pageList");
 
 		if (!pageList) return list;
 
@@ -109,16 +109,16 @@ class PageList {
 
 	/**
 	 * ncxItem
-	 * @param {Node} item 
-	 * @returns {object}
+	 * @param {Node} node 
+	 * @returns {{ href: String, page: Number }}
 	 * @private
 	 */
-	ncxItem(item) {
+	ncxItem(node) {
 
-		const navLabel = qs(item, "navLabel");
+		const navLabel = qs(node, "navLabel");
 		const navLabelText = qs(navLabel, "text");
 		const pageText = navLabelText.textContent;
-		const content = qs(item, "content");
+		const content = qs(node, "content");
 
 		return {
 			href: content.getAttribute("src"),
@@ -127,14 +127,14 @@ class PageList {
 	}
 
 	/**
-	 * Page List Item
-	 * @param {Node} item
-	 * @return {object} pageListItem
+	 * Get page list item
+	 * @param {Node} node
+	 * @return {{ href: String, page: Number }} PageList item
 	 * @private
 	 */
-	item(item) {
+	item(node) {
 
-		const content = qs(item, "a");
+		const content = qs(node, "a");
 		const href = content.getAttribute("href") || "";
 		const text = content.textContent || "";
 		const page = parseInt(text);
@@ -142,7 +142,7 @@ class PageList {
 		if (href.indexOf("epubcfi") !== -1) {
 			const split = href.split("#");
 			return {
-				cfi: split.length > 1 ? split[1] : false,
+				cfi: split.length > 1 ? split[1] : null,
 				href: href,
 				packageUrl: split[0],
 				page: page
@@ -157,7 +157,7 @@ class PageList {
 
 	/**
 	 * Process pageList items
-	 * @param {array} pageList
+	 * @param {Array<Object>} pageList
 	 * @private
 	 */
 	process(pageList) {
@@ -174,9 +174,9 @@ class PageList {
 	}
 
 	/**
-	 * Get a PageList result from a EpubCFI
-	 * @param {string} cfi EpubCFI String
-	 * @return {number} page
+	 * Get a page index from a EpubCFI
+	 * @param {String} cfi EpubCFI
+	 * @return {Number} Page index
 	 */
 	pageFromCfi(cfi) {
 		// Check if the pageList has not been set yet
@@ -186,7 +186,6 @@ class PageList {
 		// TODO: check if CFI is valid?
 
 		// check if the cfi is in the location list
-		// var index = this.locations.indexOf(cfi);
 		let pg, index = indexOfSorted(cfi,
 			this.locations,
 			this.epubcfi.compare
@@ -196,10 +195,9 @@ class PageList {
 		} else {
 			// Otherwise add it to the list of locations
 			// Insert it in the correct position in the locations page
-			//index = EPUBJS.core.insert(cfi, this.locations, this.epubcfi.compare);
 			index = locationOf(cfi, this.locations, this.epubcfi.compare);
 			// Get the page at the location just before the new one, or return the first
-			pg = index - 1 >= 0 ? this.pages[index - 1] : this.pages[0];
+			pg = (index - 1 >= 0) ? this.pages[index - 1] : this.pages[0];
 			if (pg !== undefined) {
 				// Add the new page in so that the locations and page array match up
 				//this.pages.splice(index, 0, pg);
@@ -211,9 +209,9 @@ class PageList {
 	}
 
 	/**
-	 * Get an EpubCFI from a Page List Item
-	 * @param {string|number} pg
-	 * @return {string} cfi
+	 * Get a EpubCFI by Page index
+	 * @param {String|Number} pg Page index
+	 * @return {String|null} cfi
 	 */
 	cfiFromPage(pg) {
 		// check that pg is an int
@@ -224,7 +222,7 @@ class PageList {
 		// check if the cfi is in the page list
 		// Pages could be unsorted.
 		const index = this.pages.indexOf(pg);
-		let cfi = -1;
+		let cfi = null;
 		if (index !== -1) {
 			cfi = this.locations[index];
 		}
@@ -233,19 +231,19 @@ class PageList {
 	}
 
 	/**
-	 * Get a Page from Book percentage
-	 * @param {number} percent
-	 * @return {number} page
+	 * Get a Page index from Book percentage
+	 * @param {Number} value Percentage
+	 * @return {Number} Page index
 	 */
-	pageFromPercentage(percent) {
+	pageFromPercentage(value) {
 
-		return Math.round(this.totalPages * percent);
+		return Math.round(this.totalPages * value);
 	}
 
 	/**
 	 * Returns a value between 0 - 1 corresponding to the location of a page
-	 * @param {number} pg the page
-	 * @return {number} percentage
+	 * @param {Number} pg the page
+	 * @return {Number} Percentage
 	 */
 	percentageFromPage(pg) {
 
@@ -255,8 +253,8 @@ class PageList {
 
 	/**
 	 * Returns a value between 0 - 1 corresponding to the location of a cfi
-	 * @param {string} cfi EpubCFI String
-	 * @return {number} percentage
+	 * @param {String} cfi EpubCFI
+	 * @return {Number} Percentage
 	 */
 	percentageFromCfi(cfi) {
 
