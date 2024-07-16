@@ -15,8 +15,8 @@ const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userA
 class Contents {
 	/**
 	 * Constructor
-	 * @param {document} doc Document
-	 * @param {element} content Parent Element (typically Body)
+	 * @param {Document} doc Document
+	 * @param {Element} content Parent Element (typically Body)
 	 * @param {Section} section Section object reference
 	 */
 	constructor(doc, content, section) {
@@ -29,13 +29,13 @@ class Contents {
 		this.document = doc;
 		this.documentElement = this.document.documentElement;
 		/**
-		 * @member {object} content document.body by current location
+		 * @member {Object} content document.body by current location
 		 * @memberof Contents
 		 * @readonly
 		 */
 		this.content = content || this.document.body;
 		/**
-		 * @member {object} contentRect
+		 * @member {Object} contentRect
 		 * @memberof Contents
 		 * @readonly
 		 */
@@ -74,8 +74,8 @@ class Contents {
 
 	/**
 	 * Get or Set width
-	 * @param {number} [w]
-	 * @returns {number} width
+	 * @param {Number} [w]
+	 * @returns {Number} width
 	 */
 	width(w) {
 
@@ -94,8 +94,8 @@ class Contents {
 
 	/**
 	 * Get or Set height
-	 * @param {number} [h]
-	 * @returns {number} height
+	 * @param {Number} [h]
+	 * @returns {Number} height
 	 */
 	height(h) {
 
@@ -114,8 +114,8 @@ class Contents {
 
 	/**
 	 * Get or Set width of the contents
-	 * @param {number} [w]
-	 * @returns {number} width
+	 * @param {Number} [w]
+	 * @returns {Number} width
 	 */
 	contentWidth(w) {
 
@@ -134,8 +134,8 @@ class Contents {
 
 	/**
 	 * Get or Set height of the contents
-	 * @param {number} [h]
-	 * @returns {number} height
+	 * @param {Number} [h]
+	 * @returns {Number} height
 	 */
 	contentHeight(h) {
 
@@ -154,7 +154,7 @@ class Contents {
 
 	/**
 	 * Get size of the text using Range
-	 * @returns {{ width: number, height: number }}
+	 * @returns {{ width: Number, height: Number }}
 	 */
 	textSize() {
 
@@ -184,7 +184,7 @@ class Contents {
 
 	/**
 	 * Get documentElement scrollWidth
-	 * @returns {number} width
+	 * @returns {Number} width
 	 */
 	scrollWidth() {
 
@@ -193,7 +193,7 @@ class Contents {
 
 	/**
 	 * Get documentElement scrollHeight
-	 * @returns {number} height
+	 * @returns {Number} height
 	 */
 	scrollHeight() {
 
@@ -202,7 +202,7 @@ class Contents {
 
 	/**
 	 * Set overflow css style of the contents
-	 * @param {string} [overflow]
+	 * @param {String} [overflow]
 	 */
 	overflow(overflow) {
 
@@ -215,7 +215,7 @@ class Contents {
 
 	/**
 	 * Set overflowX css style of the documentElement
-	 * @param {string} [overflow]
+	 * @param {String} [overflow]
 	 */
 	overflowX(overflow) {
 
@@ -228,7 +228,7 @@ class Contents {
 
 	/**
 	 * Set overflowY css style of the documentElement
-	 * @param {string} [overflow]
+	 * @param {String} [overflow]
 	 */
 	overflowY(overflow) {
 
@@ -241,9 +241,9 @@ class Contents {
 
 	/**
 	 * Set Css styles on the contents element (typically Body)
-	 * @param {string} property
-	 * @param {string} value
-	 * @param {boolean} [priority] set as "important"
+	 * @param {String} property
+	 * @param {String} value
+	 * @param {Boolean} [priority] set as "important"
 	 */
 	css(property, value, priority) {
 
@@ -260,13 +260,13 @@ class Contents {
 
 	/**
 	 * Get or Set the viewport element
-	 * @param {object} [options]
-	 * @param {string} [options.width]
-	 * @param {string} [options.height]
-	 * @param {string} [options.scale]
-	 * @param {string} [options.minimum]
-	 * @param {string} [options.maximum]
-	 * @param {string} [options.scalable]
+	 * @param {Object} [options]
+	 * @param {String} [options.width]
+	 * @param {String} [options.height]
+	 * @param {String} [options.scale]
+	 * @param {String} [options.minimum]
+	 * @param {String} [options.maximum]
+	 * @param {String} [options.scalable]
 	 */
 	viewport(options) {
 
@@ -373,7 +373,7 @@ class Contents {
 
 	/**
 	 * content resize event handler
-	 * @param {object[]} entries
+	 * @param {Array<Object>} entries
 	 * @private
 	 */
 	resize(entries) {
@@ -391,7 +391,7 @@ class Contents {
 
 	/**
 	 * Get the documentElement
-	 * @returns {element} documentElement
+	 * @returns {Element} documentElement
 	 */
 	root() {
 
@@ -401,13 +401,13 @@ class Contents {
 
 	/**
 	 * Get the location offset of a EpubCFI or an #id
-	 * @param {string | EpubCFI} target
-	 * @param {string} [ignoreClass] for the cfi
-	 * @returns {object} target position left and top
+	 * @param {String | EpubCFI} target
+	 * @param {String} [ignoreClass] for the cfi
+	 * @returns {{ left: Number, top: Number }} target position left and top
 	 */
 	locationOf(target, ignoreClass) {
 
-		const targetPos = { "left": 0, "top": 0 };
+		const targetPos = { left: 0, top: 0 };
 
 		if (!this.document) return targetPos;
 		let position;
@@ -495,7 +495,7 @@ class Contents {
 
 	/**
 	 * Get injected stylesheet node
-	 * @param {string} key 
+	 * @param {String} key 
 	 * @returns {Node}
 	 * @private
 	 */
@@ -515,11 +515,11 @@ class Contents {
 
 	/**
 	 * Append a stylesheet link to the document head
-	 * @param {string} src url
-	 * @param {string} key 
+	 * @param {String} src url
+	 * @param {String} key 
 	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
 	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
-	 * @returns {Promise}
+	 * @returns {Promise<Node>}
 	 */
 	appendStylesheet(src, key) {
 
@@ -551,8 +551,8 @@ class Contents {
 
 	/**
 	 * Remove a stylesheet link from the document head
-	 * @param {string} key 
-	 * @returns {boolean}
+	 * @param {String} key 
+	 * @returns {Boolean}
 	 */
 	removeStylesheet(key) {
 
@@ -581,8 +581,8 @@ class Contents {
 
 	/**
 	 * Append serialized stylesheet
-	 * @param {string} css
-	 * @param {string} key
+	 * @param {String} css
+	 * @param {String} key
 	 * @example appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
 	 * @description If the key is the same, the CSS will be replaced instead of inserted
 	 */
@@ -598,8 +598,8 @@ class Contents {
 	/**
 	 * Append stylesheet rules to a generate stylesheet
 	 * @link https://github.com/desirable-objects/json-to-css
-	 * @param {object} rules
-	 * @param {string} key
+	 * @param {Object} rules
+	 * @param {String} key
 	 * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
 	 * @description If the key is the same, the CSS will be replaced instead of inserted
 	 */
@@ -623,11 +623,11 @@ class Contents {
 
 	/**
 	 * Append a script node to the document head
-	 * @param {string} src url
-	 * @param {string} key 
+	 * @param {String} src url
+	 * @param {String} key 
 	 * @example appendScript("/path/to/script.js", "common")
 	 * @example appendScript("https://examples.com/to/script.js", "common")
-	 * @returns {Promise} loaded
+	 * @returns {Promise<Node>} loaded
 	 */
 	appendScript(src, key) {
 
@@ -658,8 +658,8 @@ class Contents {
 
 	/**
 	 * Remove a script node from the document head
-	 * @param {string} key 
-	 * @returns {boolean}
+	 * @param {String} key 
+	 * @returns {Boolean}
 	 */
 	removeScript(key) {
 
@@ -688,7 +688,7 @@ class Contents {
 
 	/**
 	 * Append a class to the contents container
-	 * @param {string} className
+	 * @param {String} className
 	 */
 	appendClass(className) {
 
@@ -703,7 +703,7 @@ class Contents {
 
 	/**
 	 * Remove a class from the contents container
-	 * @param {string} className
+	 * @param {String} className
 	 */
 	removeClass(className) {
 
@@ -719,7 +719,7 @@ class Contents {
 	/**
 	 * Get a Dom Range from EpubCFI
 	 * @param {EpubCFI} cfi
-	 * @param {string} [ignoreClass]
+	 * @param {String} [ignoreClass]
 	 * @returns {Range} range
 	 */
 	range(cfi, ignoreClass) {
@@ -731,7 +731,7 @@ class Contents {
 	/**
 	 * Get an EpubCFI from a Dom Range
 	 * @param {Range} range
-	 * @param {string} [ignoreClass]
+	 * @param {String} [ignoreClass]
 	 * @returns {EpubCFI} cfi
 	 */
 	cfiFromRange(range, ignoreClass) {
@@ -742,7 +742,7 @@ class Contents {
 	/**
 	 * Get an EpubCFI from a Dom node
 	 * @param {Node} node
-	 * @param {string} [ignoreClass]
+	 * @param {String} [ignoreClass]
 	 * @returns {EpubCFI} cfi
 	 */
 	cfiFromNode(node, ignoreClass) {
@@ -764,9 +764,9 @@ class Contents {
 
 	/**
 	 * Size the contents to a given width and height
-	 * @param {number} [width]
-	 * @param {number} [height]
-	 * @param {string} [dir]
+	 * @param {Number} [width]
+	 * @param {Number} [height]
+	 * @param {String} [dir]
 	 */
 	size(width, height, dir) {
 
@@ -793,11 +793,11 @@ class Contents {
 
 	/**
 	 * Apply columns to the contents for pagination
-	 * @param {number} width
-	 * @param {number} height
-	 * @param {number} columnWidth
-	 * @param {number} gap
-	 * @param {string} dir
+	 * @param {Number} width
+	 * @param {Number} height
+	 * @param {Number} columnWidth
+	 * @param {Number} gap
+	 * @param {String} dir
 	 */
 	columns(width, height, columnWidth, gap, dir) {
 
@@ -858,9 +858,9 @@ class Contents {
 
 	/**
 	 * Scale contents from center
-	 * @param {number} scale
-	 * @param {number} offsetX
-	 * @param {number} offsetY
+	 * @param {Number} scale
+	 * @param {Number} offsetX
+	 * @param {Number} offsetY
 	 */
 	scaler(scale, offsetX, offsetY) {
 
@@ -878,8 +878,8 @@ class Contents {
 
 	/**
 	 * Fit contents into a fixed width and height
-	 * @param {number} width
-	 * @param {number} height
+	 * @param {Number} width
+	 * @param {Number} height
 	 */
 	fit(width, height, section) {
 
@@ -921,7 +921,7 @@ class Contents {
 
 	/**
 	 * Set the direction of the text
-	 * @param {string} [dir='ltr'] values: `"ltr"` OR `"rtl"`
+	 * @param {String} [dir='ltr'] values: `"ltr"` OR `"rtl"`
 	 */
 	direction(dir = "ltr") {
 
@@ -932,11 +932,11 @@ class Contents {
 
 	/**
 	 * mapPage
-	 * @param {string} cfiBase 
+	 * @param {String} cfiBase 
 	 * @param {Layout} layout 
-	 * @param {number} start 
-	 * @param {number} end 
-	 * @param {boolean} dev 
+	 * @param {Number} start 
+	 * @param {Number} end 
+	 * @param {Boolean} dev 
 	 * @returns {any}
 	 */
 	mapPage(cfiBase, layout, start, end, dev) {
@@ -947,7 +947,7 @@ class Contents {
 
 	/**
 	 * Set the writingMode of the text
-	 * @param {string} [mode='horizontal-tb'] `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
+	 * @param {String} [mode='horizontal-tb'] `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
 	 */
 	writingMode(mode = "horizontal-tb") {
 
@@ -961,8 +961,8 @@ class Contents {
 	}
 
 	/**
-	 * Set the layoutStyle of the content
-	 * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
+	 * Set the layout style of the content
+	 * @param {String} [value='paginated'] values: `"paginated"` OR `"scrolling"`
 	 * @private
 	 */
 	setLayoutStyle(value = "paginated") {
@@ -974,8 +974,8 @@ class Contents {
 
 	/**
 	 * Add the epubReadingSystem object to the navigator
-	 * @param {string} name
-	 * @param {string} version
+	 * @param {String} name
+	 * @param {String} version
 	 * @private
 	 */
 	epubReadingSystem(name, version) {
