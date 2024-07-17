@@ -9,23 +9,23 @@ IframeView class
     * [new IframeView(layout, section, [options])](#new_IframeView_new)
     * _instance_
         * [.create()](#IframeView+create) ⇒ <code>Element</code>
-        * [.render(request)](#IframeView+render) ⇒ <code>object</code>
+        * [.render(request)](#IframeView+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.reset()](#IframeView+reset)
         * [.size([width], [height])](#IframeView+size)
         * [.lock(what, width, height)](#IframeView+lock)
         * [.expand()](#IframeView+expand)
         * [.reframe(width, height)](#IframeView+reframe)
-        * [.load(contents)](#IframeView+load) ⇒ <code>Promise</code>
-        * [.onLoad(event, promise)](#IframeView+onLoad)
+        * [.load(contents)](#IframeView+load) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.onLoad(event, defer)](#IframeView+onLoad)
         * [.setAxis(value)](#IframeView+setAxis)
         * [.setWritingMode(mode)](#IframeView+setWritingMode)
-        * [.display(request)](#IframeView+display) ⇒ <code>Promise</code>
+        * [.display(request)](#IframeView+display) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.show()](#IframeView+show)
         * [.hide()](#IframeView+hide)
-        * [.offset()](#IframeView+offset) ⇒ <code>object</code>
+        * [.offset()](#IframeView+offset) ⇒ <code>Object</code>
         * [.position()](#IframeView+position) ⇒ <code>DOMRect</code>
-        * [.locationOf(target)](#IframeView+locationOf) ⇒ <code>object</code>
-        * [.bounds([force])](#IframeView+bounds) ⇒ <code>Element</code>
+        * [.locationOf(target)](#IframeView+locationOf) ⇒ <code>Object</code>
+        * [.bounds([force])](#IframeView+bounds) ⇒ <code>Object</code>
         * [.highlight(cfiRange, [data], [cb], [className], [styles])](#IframeView+highlight) ⇒ <code>object</code>
         * [.underline(cfiRange, [data], [cb], [className], [styles])](#IframeView+underline) ⇒ <code>object</code>
         * [.unhighlight(cfiRange)](#IframeView+unhighlight) ⇒ <code>boolean</code>
@@ -76,11 +76,11 @@ Create iframe element
 **Returns**: <code>Element</code> - iframe  
 <a name="IframeView+render"></a>
 
-## iframeView.render(request) ⇒ <code>object</code>
+## iframeView.render(request) ⇒ <code>Promise.&lt;string&gt;</code>
 render
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-**Returns**: <code>object</code> - section render object  
+**Returns**: <code>Promise.&lt;string&gt;</code> - section render  
 
 | Param | Type |
 | --- | --- |
@@ -140,11 +140,11 @@ reframe
 
 <a name="IframeView+load"></a>
 
-## iframeView.load(contents) ⇒ <code>Promise</code>
+## iframeView.load(contents) ⇒ <code>Promise.&lt;any&gt;</code>
 load
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-**Returns**: <code>Promise</code> - loading promise  
+**Returns**: <code>Promise.&lt;any&gt;</code> - loading promise  
 
 | Param | Type |
 | --- | --- |
@@ -152,7 +152,7 @@ load
 
 <a name="IframeView+onLoad"></a>
 
-## iframeView.onLoad(event, promise)
+## iframeView.onLoad(event, defer)
 onLoad
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
@@ -160,7 +160,7 @@ onLoad
 | Param | Type |
 | --- | --- |
 | event | <code>Event</code> | 
-| promise | <code>Defer</code> | 
+| defer | <code>Defer</code> | 
 
 <a name="IframeView+setAxis"></a>
 
@@ -186,15 +186,15 @@ Set writing mode
 
 <a name="IframeView+display"></a>
 
-## iframeView.display(request) ⇒ <code>Promise</code>
+## iframeView.display(request) ⇒ <code>Promise.&lt;any&gt;</code>
 display
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-**Returns**: <code>Promise</code> - displayed promise  
+**Returns**: <code>Promise.&lt;any&gt;</code> - displayed promise  
 
 | Param | Type |
 | --- | --- |
-| request | <code>method</code> | 
+| request | <code>function</code> | 
 
 <a name="IframeView+show"></a>
 
@@ -210,7 +210,7 @@ hide
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
 <a name="IframeView+offset"></a>
 
-## iframeView.offset() ⇒ <code>object</code>
+## iframeView.offset() ⇒ <code>Object</code>
 offset
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
@@ -222,7 +222,7 @@ position
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
 <a name="IframeView+locationOf"></a>
 
-## iframeView.locationOf(target) ⇒ <code>object</code>
+## iframeView.locationOf(target) ⇒ <code>Object</code>
 locationOf
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
@@ -233,7 +233,7 @@ locationOf
 
 <a name="IframeView+bounds"></a>
 
-## iframeView.bounds([force]) ⇒ <code>Element</code>
+## iframeView.bounds([force]) ⇒ <code>Object</code>
 bounds
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
@@ -253,7 +253,7 @@ highlight
 | --- | --- | --- | --- |
 | cfiRange | <code>string</code> |  |  |
 | [data] | <code>object</code> | <code>{}</code> |  |
-| [cb] | <code>method</code> | <code></code> | callback function |
+| [cb] | <code>function</code> | <code></code> | callback function |
 | [className] | <code>string</code> | <code>&quot;&#x27;epubjs-hl&#x27;&quot;</code> |  |
 | [styles] | <code>object</code> | <code>{}</code> |  |
 
@@ -268,7 +268,7 @@ underline
 | --- | --- | --- |
 | cfiRange | <code>string</code> |  | 
 | [data] | <code>object</code> | <code>{}</code> | 
-| [cb] | <code>method</code> | <code></code> | 
+| [cb] | <code>function</code> | <code></code> | 
 | [className] | <code>string</code> | <code>&quot;&#x27;epubjs-ul&#x27;&quot;</code> | 
 | [styles] | <code>object</code> | <code>{}</code> | 
 

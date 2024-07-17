@@ -6,29 +6,29 @@ Handle Package Resources
 **Kind**: global class  
 
 * [Resources](#Resources)
-    * [new Resources(manifest, [options])](#new_Resources_new)
+    * [new Resources(manifest, options)](#new_Resources_new)
     * [.process(manifest)](#Resources+process)
     * [.createUrl(uri)](#Resources+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
-    * [.replacements()](#Resources+replacements) ⇒ <code>Promise</code>
-    * [.replaceCss([archive], [resolve])](#Resources+replaceCss) ⇒ <code>Promise</code>
-    * [.relativeTo(absoluteUri, [resolve])](#Resources+relativeTo) ⇒ <code>Array.&lt;string&gt;</code>
-    * [.get(path)](#Resources+get) ⇒ <code>string</code> \| <code>null</code>
+    * [.replacements()](#Resources+replacements) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+    * [.replaceCss()](#Resources+replaceCss) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
+    * [.relativeTo(absoluteUri)](#Resources+relativeTo) ⇒ <code>Array.&lt;string&gt;</code>
+    * [.get(path)](#Resources+get) ⇒ <code>Promise.&lt;string&gt;</code>
     * [.substitute(content, [url])](#Resources+substitute) ⇒ <code>string</code>
     * [.destroy()](#Resources+destroy)
 
 <a name="new_Resources_new"></a>
 
-## new Resources(manifest, [options])
+## new Resources(manifest, options)
 Constructor
 
 
 | Param | Type |
 | --- | --- |
 | manifest | <code>Manifest</code> | 
-| [options] | <code>object</code> | 
+| options | <code>object</code> | 
 | [options.archive] | <code>Archive</code> | 
-| [options.request] | <code>method</code> | 
-| [options.resolve] | <code>method</code> | 
+| options.request | <code>function</code> | 
+| options.resolve | <code>function</code> | 
 | [options.replacements] | <code>string</code> | 
 
 <a name="Resources+process"></a>
@@ -56,26 +56,20 @@ Create a url to a resource
 
 <a name="Resources+replacements"></a>
 
-## resources.replacements() ⇒ <code>Promise</code>
+## resources.replacements() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
 Create blob urls for all the assets
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-**Returns**: <code>Promise</code> - returns replacement urls  
+**Returns**: <code>Promise.&lt;Array.&lt;string&gt;&gt;</code> - returns replacement urls  
 <a name="Resources+replaceCss"></a>
 
-## resources.replaceCss([archive], [resolve]) ⇒ <code>Promise</code>
+## resources.replaceCss() ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
 Replace URLs in CSS resources
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-
-| Param | Type |
-| --- | --- |
-| [archive] | <code>Archive</code> | 
-| [resolve] | <code>method</code> | 
-
 <a name="Resources+relativeTo"></a>
 
-## resources.relativeTo(absoluteUri, [resolve]) ⇒ <code>Array.&lt;string&gt;</code>
+## resources.relativeTo(absoluteUri) ⇒ <code>Array.&lt;string&gt;</code>
 Resolve all resources URLs relative to an absolute URL
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
@@ -84,15 +78,13 @@ Resolve all resources URLs relative to an absolute URL
 | Param | Type | Description |
 | --- | --- | --- |
 | absoluteUri | <code>string</code> | to be resolved to |
-| [resolve] | <code>method</code> |  |
 
 <a name="Resources+get"></a>
 
-## resources.get(path) ⇒ <code>string</code> \| <code>null</code>
+## resources.get(path) ⇒ <code>Promise.&lt;string&gt;</code>
 Get a URL for a resource
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-**Returns**: <code>string</code> \| <code>null</code> - url  
 
 | Param | Type |
 | --- | --- |

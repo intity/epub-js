@@ -7,10 +7,10 @@ Page List Parser
 
 * [PageList](#PageList)
     * [new PageList([xml])](#new_PageList_new)
-    * [.parse(xml)](#PageList+parse) ⇒ <code>Array</code>
+    * [.parse(xml)](#PageList+parse) ⇒ <code>Array.&lt;{href: string, page: number}&gt;</code>
     * [.pageFromCfi(cfi)](#PageList+pageFromCfi) ⇒ <code>number</code>
-    * [.cfiFromPage(pg)](#PageList+cfiFromPage) ⇒ <code>string</code>
-    * [.pageFromPercentage(percent)](#PageList+pageFromPercentage) ⇒ <code>number</code>
+    * [.cfiFromPage(pg)](#PageList+cfiFromPage) ⇒ <code>string</code> \| <code>null</code>
+    * [.pageFromPercentage(value)](#PageList+pageFromPercentage) ⇒ <code>number</code>
     * [.percentageFromPage(pg)](#PageList+percentageFromPage) ⇒ <code>number</code>
     * [.percentageFromCfi(cfi)](#PageList+percentageFromCfi) ⇒ <code>number</code>
     * [.destroy()](#PageList+destroy)
@@ -27,7 +27,7 @@ Constructor
 
 <a name="PageList+parse"></a>
 
-## pageList.parse(xml) ⇒ <code>Array</code>
+## pageList.parse(xml) ⇒ <code>Array.&lt;{href: string, page: number}&gt;</code>
 Parse PageList Xml
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
@@ -39,38 +39,38 @@ Parse PageList Xml
 <a name="PageList+pageFromCfi"></a>
 
 ## pageList.pageFromCfi(cfi) ⇒ <code>number</code>
-Get a PageList result from a EpubCFI
+Get a page index from a EpubCFI
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - page  
+**Returns**: <code>number</code> - Page index  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> | EpubCFI String |
+| cfi | <code>string</code> | EpubCFI |
 
 <a name="PageList+cfiFromPage"></a>
 
-## pageList.cfiFromPage(pg) ⇒ <code>string</code>
-Get an EpubCFI from a Page List Item
+## pageList.cfiFromPage(pg) ⇒ <code>string</code> \| <code>null</code>
+Get a EpubCFI by Page index
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>string</code> - cfi  
+**Returns**: <code>string</code> \| <code>null</code> - cfi  
 
-| Param | Type |
-| --- | --- |
-| pg | <code>string</code> \| <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| pg | <code>string</code> \| <code>number</code> | Page index |
 
 <a name="PageList+pageFromPercentage"></a>
 
-## pageList.pageFromPercentage(percent) ⇒ <code>number</code>
-Get a Page from Book percentage
+## pageList.pageFromPercentage(value) ⇒ <code>number</code>
+Get a Page index from Book percentage
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - page  
+**Returns**: <code>number</code> - Page index  
 
-| Param | Type |
-| --- | --- |
-| percent | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>number</code> | Percentage |
 
 <a name="PageList+percentageFromPage"></a>
 
@@ -78,7 +78,7 @@ Get a Page from Book percentage
 Returns a value between 0 - 1 corresponding to the location of a page
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - percentage  
+**Returns**: <code>number</code> - Percentage  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -90,11 +90,11 @@ Returns a value between 0 - 1 corresponding to the location of a page
 Returns a value between 0 - 1 corresponding to the location of a cfi
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - percentage  
+**Returns**: <code>number</code> - Percentage  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> | EpubCFI String |
+| cfi | <code>string</code> | EpubCFI |
 
 <a name="PageList+destroy"></a>
 

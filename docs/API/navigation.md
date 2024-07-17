@@ -7,13 +7,17 @@ Navigation Parser
 
 * [Navigation](#Navigation)
     * [new Navigation(xml)](#new_Navigation_new)
-    * [.parse(xml)](#Navigation+parse)
-    * [.get(target)](#Navigation+get) ⇒ <code>object</code>
-    * [.getByIndex(target, index, navItems)](#Navigation+getByIndex) ⇒ <code>object</code>
-    * [.landmark(type)](#Navigation+landmark) ⇒ <code>object</code>
-    * [.parseNavList(navListHtml, parent)](#Navigation+parseNavList) ⇒ <code>Array</code>
-    * [.load(json)](#Navigation+load) ⇒ <code>Array</code>
-    * [.forEach(fn)](#Navigation+forEach) ⇒ <code>method</code>
+    * _instance_
+        * [.parse(xml)](#Navigation+parse)
+        * [.get(target)](#Navigation+get) ⇒ <code>object</code>
+        * [.getByIndex(target, index, navItems)](#Navigation+getByIndex) ⇒ <code>object</code>
+        * [.landmark(type)](#Navigation+landmark) ⇒ <code>object</code>
+        * [.parseNavList(navListHtml, parent)](#Navigation+parseNavList) ⇒ <code>Array.&lt;object&gt;</code>
+        * [.load(json)](#Navigation+load) ⇒ <code>Array.&lt;object&gt;</code>
+        * [.forEach(...args)](#Navigation+forEach)
+    * _static_
+        * [.toc](#Navigation.toc) : <code>Array.&lt;object&gt;</code>
+        * [.length](#Navigation.length) : <code>number</code>
 
 <a name="new_Navigation_new"></a>
 
@@ -60,7 +64,7 @@ Get an item from navigation subitems recursively by index
 | --- | --- |
 | target | <code>string</code> | 
 | index | <code>number</code> | 
-| navItems | <code>Array</code> | 
+| navItems | <code>Array.&lt;object&gt;</code> | 
 
 <a name="Navigation+landmark"></a>
 
@@ -77,11 +81,11 @@ Get a landmark by type
 
 <a name="Navigation+parseNavList"></a>
 
-## navigation.parseNavList(navListHtml, parent) ⇒ <code>Array</code>
+## navigation.parseNavList(navListHtml, parent) ⇒ <code>Array.&lt;object&gt;</code>
 Parses lists in the toc
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
-**Returns**: <code>Array</code> - navigation list  
+**Returns**: <code>Array.&lt;object&gt;</code> - navigation list  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -90,11 +94,11 @@ Parses lists in the toc
 
 <a name="Navigation+load"></a>
 
-## navigation.load(json) ⇒ <code>Array</code>
+## navigation.load(json) ⇒ <code>Array.&lt;object&gt;</code>
 Load Spine Items
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
-**Returns**: <code>Array</code> - navItems  
+**Returns**: <code>Array.&lt;object&gt;</code> - navItems  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -102,13 +106,26 @@ Load Spine Items
 
 <a name="Navigation+forEach"></a>
 
-## navigation.forEach(fn) ⇒ <code>method</code>
+## navigation.forEach(...args)
 forEach pass through
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
-**Returns**: <code>method</code> - forEach loop  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| fn | <code>function</code> | function to run on each item |
+| Param | Type |
+| --- | --- |
+| ...args | <code>IArguments</code> | 
 
+<a name="Navigation.toc"></a>
+
+## Navigation.toc : <code>Array.&lt;object&gt;</code>
+Navigation items
+
+**Kind**: static property of [<code>Navigation</code>](#Navigation)  
+**Read only**: true  
+<a name="Navigation.length"></a>
+
+## Navigation.length : <code>number</code>
+number of navigation items
+
+**Kind**: static property of [<code>Navigation</code>](#Navigation)  
+**Read only**: true  
