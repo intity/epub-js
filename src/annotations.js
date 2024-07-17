@@ -18,13 +18,13 @@ class Annotations extends Map {
 
 	/**
 	 * Append an annotation to store
-	 * @param {string} type Type of annotation to append: `"highlight"` OR `"underline"`
-	 * @param {string} cfiRange EpubCFI range to attach annotation to
-	 * @param {object} [options]
-	 * @param {object} [options.data] Data to assign to annotation
-	 * @param {method} [options.cb] Callback after annotation is added
-	 * @param {string} [options.className] CSS class to assign to annotation
-	 * @param {object} [options.styles] CSS styles to assign to annotation
+	 * @param {String} type Type of annotation to append: `"highlight"` OR `"underline"`
+	 * @param {String} cfiRange EpubCFI range to attach annotation to
+	 * @param {Object} [options]
+	 * @param {Object} [options.data] Data to assign to annotation
+	 * @param {Function} [options.cb] Callback after annotation is added
+	 * @param {String} [options.className] CSS class to assign to annotation
+	 * @param {Object} [options.styles] CSS styles to assign to annotation
 	 * @returns {Annotation} Annotation that was append
 	 */
 	append(type, cfiRange, options) {
@@ -45,8 +45,8 @@ class Annotations extends Map {
 
 	/**
 	 * Remove an annotation from store
-	 * @param {string} type Type of annotation to remove: `"highlight"` OR `"underline"`
-	 * @param {string} cfiRange EpubCFI range to attach annotation to
+	 * @param {String} type Type of annotation to remove: `"highlight"` OR `"underline"`
+	 * @param {String} cfiRange EpubCFI range to attach annotation to
 	 */
 	remove(type, cfiRange) {
 
