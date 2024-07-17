@@ -9,38 +9,65 @@ import {
 
 /**
  * Page List Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav-pagelist
  */
-class PageList {
+class PageList extends Array {
 	/**
 	 * Constructor
 	 * @param {Document} [xml] 
 	 */
 	constructor(xml) {
 
-		this.pages = [];
-		this.locations = [];
+		super();
 		this.epubcfi = new EpubCFI();
-
+		/**
+		 * Page indexes
+		 * @member {number[]} pages
+		 * @memberof PageList
+		 * @readonly
+		 */
+		this.pages = [];
+		/**
+		 * @member {string[]} locations
+		 * @memberof PageList
+		 * @readonly
+		 */
+		this.locations = [];
+		/**
+		 * @member {number} firstPage
+		 * @memberof PageList
+		 * @readonly
+		 */
 		this.firstPage = 0;
+		/**
+		 * @member {number} lastPage
+		 * @memberof PageList
+		 * @readonly
+		 */
 		this.lastPage = 0;
+		/**
+		 * @member {number} totalPages
+		 * @memberof PageList
+		 * @readonly
+		 */
 		this.totalPages = 0;
 
 		this.toc = undefined;
 		this.ncx = undefined;
 
 		if (xml) {
-			this.pageList = this.parse(xml);
+			this.parse(xml);
 		}
 
-		if (this.pageList && this.pageList.length) {
-			this.process(this.pageList);
+		if (this.length) {
+			this.process();
 		}
 	}
 
 	/**
 	 * Parse PageList Xml
 	 * @param {Document} xml
-	 * @returns {Array<{ href: string, page: number }>}
+	 * @returns {PageList<{ cfi?: string, packageUrl?: string, href: string, page: number }>}
 	 */
 	parse(xml) {
 
@@ -48,18 +75,18 @@ class PageList {
 		const ncx = qs(xml, "ncx");
 
 		if (html) {
-			return this.parseNav(xml);
+			this.parseNav(xml);
 		} else if (ncx) {
-			return this.parseNcx(xml);
+			this.parseNcx(xml);
 		}
 
-		return [];
+		return this;
 	}
 
 	/**
 	 * Parse a Nav PageList
 	 * @param {Node} node
-	 * @return {Array<{ href: string, page: number }>}
+	 * @return {PageList}
 	 * @private
 	 */
 	parseNav(node) {
@@ -67,48 +94,75 @@ class PageList {
 		const navElement = querySelectorByType(node, "nav", "page-list");
 		const navItems = navElement ? qsa(navElement, "li") : [];
 		const length = navItems.length;
-		const list = [];
 
-		if (!navItems || length === 0) return list;
+		if (!navItems || length === 0) return this;
 
 		for (let i = 0; i < length; ++i) {
-			const item = this.item(navItems[i]);
-			list.push(item);
+			const item = this.navItem(navItems[i]);
+			this.push(item);
 		}
 
-		return list;
+		return this;
+	}
+
+	/**
+	 * Create navItem
+	 * @param {Node} node
+	 * @return {{ cfi?: string, packageUrl?: string, href: string, page: number }} PageList item
+	 * @private
+	 */
+	navItem(node) {
+
+		const content = qs(node, "a");
+		const href = content.getAttribute("href") || "";
+		const text = content.textContent || "";
+		const page = parseInt(text);
+
+		if (href.indexOf("epubcfi") !== -1) {
+			const split = href.split("#");
+			return {
+				cfi: split.length > 1 ? split[1] : null,
+				packageUrl: split[0],
+				href,
+				page
+			};
+		} else {
+			return {
+				href,
+				page
+			};
+		}
 	}
 
 	/**
 	 * parseNcx
 	 * @param {Node} node 
-	 * @returns {Array<{ href: string, page: number }>}
+	 * @returns {PageList}
 	 * @private
 	 */
 	parseNcx(node) {
 
-		const list = [];
 		const pageList = qs(node, "pageList");
 
-		if (!pageList) return list;
+		if (!pageList) return this;
 
 		const pageTargets = qsa(pageList, "pageTarget");
 		const length = pageTargets.length;
 
 		if (!pageTargets || pageTargets.length === 0) {
-			return list;
+			return this;
 		}
 
 		for (let i = 0; i < length; ++i) {
 			const item = this.ncxItem(pageTargets[i]);
-			list.push(item);
+			this.push(item);
 		}
 
-		return list;
+		return this;
 	}
 
 	/**
-	 * ncxItem
+	 * Create ncxItem
 	 * @param {Node} node 
 	 * @returns {{ href: string, page: number }}
 	 * @private
@@ -127,42 +181,12 @@ class PageList {
 	}
 
 	/**
-	 * Get page list item
-	 * @param {Node} node
-	 * @return {{ href: string, page: number }} PageList item
-	 * @private
-	 */
-	item(node) {
-
-		const content = qs(node, "a");
-		const href = content.getAttribute("href") || "";
-		const text = content.textContent || "";
-		const page = parseInt(text);
-
-		if (href.indexOf("epubcfi") !== -1) {
-			const split = href.split("#");
-			return {
-				cfi: split.length > 1 ? split[1] : null,
-				href: href,
-				packageUrl: split[0],
-				page: page
-			};
-		} else {
-			return {
-				href: href,
-				page: page
-			};
-		}
-	}
-
-	/**
 	 * Process pageList items
-	 * @param {object[]} pageList
 	 * @private
 	 */
-	process(pageList) {
+	process() {
 
-		pageList.forEach((item) => {
+		this.forEach((item) => {
 			this.pages.push(item.page);
 			if (item.cfi) {
 				this.locations.push(item.cfi);
@@ -271,9 +295,9 @@ class PageList {
 		this.pages = undefined;
 		this.locations = undefined;
 		this.epubcfi = undefined;
-		this.pageList = undefined;
 		this.toc = undefined;
 		this.ncx = undefined;
+		this.splice(0);
 	}
 }
 
