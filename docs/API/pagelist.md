@@ -4,16 +4,24 @@
 Page List Parser
 
 **Kind**: global class  
+**Link**: https://www.w3.org/TR/epub/#sec-nav-pagelist  
 
 * [PageList](#PageList)
     * [new PageList([xml])](#new_PageList_new)
-    * [.parse(xml)](#PageList+parse) ⇒ <code>Array.&lt;{href: string, page: number}&gt;</code>
-    * [.pageFromCfi(cfi)](#PageList+pageFromCfi) ⇒ <code>number</code>
-    * [.cfiFromPage(pg)](#PageList+cfiFromPage) ⇒ <code>string</code> \| <code>null</code>
-    * [.pageFromPercentage(value)](#PageList+pageFromPercentage) ⇒ <code>number</code>
-    * [.percentageFromPage(pg)](#PageList+percentageFromPage) ⇒ <code>number</code>
-    * [.percentageFromCfi(cfi)](#PageList+percentageFromCfi) ⇒ <code>number</code>
-    * [.destroy()](#PageList+destroy)
+    * _instance_
+        * [.parse(xml)](#PageList+parse) ⇒ [<code>PageList</code>](#PageList)
+        * [.pageFromCfi(cfi)](#PageList+pageFromCfi) ⇒ <code>number</code>
+        * [.cfiFromPage(pg)](#PageList+cfiFromPage) ⇒ <code>string</code> \| <code>null</code>
+        * [.pageFromPercentage(value)](#PageList+pageFromPercentage) ⇒ <code>number</code>
+        * [.percentageFromPage(pg)](#PageList+percentageFromPage) ⇒ <code>number</code>
+        * [.percentageFromCfi(cfi)](#PageList+percentageFromCfi) ⇒ <code>number</code>
+        * [.destroy()](#PageList+destroy)
+    * _static_
+        * [.pages](#PageList.pages) : <code>Array.&lt;number&gt;</code>
+        * [.locations](#PageList.locations) : <code>Array.&lt;string&gt;</code>
+        * [.firstPage](#PageList.firstPage) : <code>number</code>
+        * [.lastPage](#PageList.lastPage) : <code>number</code>
+        * [.totalPages](#PageList.totalPages) : <code>number</code>
 
 <a name="new_PageList_new"></a>
 
@@ -27,7 +35,7 @@ Constructor
 
 <a name="PageList+parse"></a>
 
-## pageList.parse(xml) ⇒ <code>Array.&lt;{href: string, page: number}&gt;</code>
+## pageList.parse(xml) ⇒ [<code>PageList</code>](#PageList)
 Parse PageList Xml
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
@@ -102,3 +110,30 @@ Returns a value between 0 - 1 corresponding to the location of a cfi
 Destroy
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
+<a name="PageList.pages"></a>
+
+## PageList.pages : <code>Array.&lt;number&gt;</code>
+Page indexes
+
+**Kind**: static property of [<code>PageList</code>](#PageList)  
+**Read only**: true  
+<a name="PageList.locations"></a>
+
+## PageList.locations : <code>Array.&lt;string&gt;</code>
+**Kind**: static property of [<code>PageList</code>](#PageList)  
+**Read only**: true  
+<a name="PageList.firstPage"></a>
+
+## PageList.firstPage : <code>number</code>
+**Kind**: static property of [<code>PageList</code>](#PageList)  
+**Read only**: true  
+<a name="PageList.lastPage"></a>
+
+## PageList.lastPage : <code>number</code>
+**Kind**: static property of [<code>PageList</code>](#PageList)  
+**Read only**: true  
+<a name="PageList.totalPages"></a>
+
+## PageList.totalPages : <code>number</code>
+**Kind**: static property of [<code>PageList</code>](#PageList)  
+**Read only**: true  

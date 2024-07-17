@@ -67,7 +67,7 @@ class PageList extends Array {
 	/**
 	 * Parse PageList Xml
 	 * @param {Document} xml
-	 * @returns {PageList<{ cfi?: string, packageUrl?: string, href: string, page: number }>}
+	 * @returns {PageList}
 	 */
 	parse(xml) {
 
@@ -108,7 +108,7 @@ class PageList extends Array {
 	/**
 	 * Create navItem
 	 * @param {Node} node
-	 * @return {{ cfi?: string, packageUrl?: string, href: string, page: number }} PageList item
+	 * @return {Object} PageList item
 	 * @private
 	 */
 	navItem(node) {
@@ -164,7 +164,7 @@ class PageList extends Array {
 	/**
 	 * Create ncxItem
 	 * @param {Node} node 
-	 * @returns {{ href: string, page: number }}
+	 * @returns {Object}
 	 * @private
 	 */
 	ncxItem(node) {
