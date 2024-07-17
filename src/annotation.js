@@ -8,24 +8,24 @@ import { EVENTS } from "./utils/constants";
 class Annotation {
     /**
      * Constructor
-     * @param {string} type Type of annotation to add: `"highlight"` OR `"underline"`
-     * @param {string} cfiRange EpubCFI range to attach annotation to
-     * @param {object} [options]
-     * @param {object} [options.data] Data to assign to annotation
-     * @param {method} [options.cb] Callback after annotation is clicked
-     * @param {string} [options.className] CSS class to assign to annotation
-     * @param {object} [options.styles] CSS styles to assign to annotation
+     * @param {String} type Type of annotation to add: `"highlight"` OR `"underline"`
+     * @param {String} cfiRange EpubCFI range to attach annotation to
+     * @param {Object} [options]
+     * @param {Object} [options.data] Data to assign to annotation
+     * @param {Function} [options.cb] Callback after annotation is clicked
+     * @param {String} [options.className] CSS class to assign to annotation
+     * @param {Object} [options.styles] CSS styles to assign to annotation
      */
     constructor(type, cfiRange, { data, cb, className, styles }) {
         /**
-         * @member {string} type
+         * @member {String} type
          * @memberof Annotation
          * @readonly
          */
         this.type = type;
         this.cfiRange = cfiRange;
         /**
-         * @member {number} sectionIndex
+         * @member {Number} sectionIndex
          * @memberof Annotation
          * @readonly
          */
@@ -44,7 +44,7 @@ class Annotation {
 
     /**
      * Update stored data
-     * @param {object} data
+     * @param {Object} data
      */
     update(data) {
 
@@ -54,7 +54,7 @@ class Annotation {
     /**
      * Add to a view
      * @param {View} view
-     * @returns {object|null}
+     * @returns {Object|null}
      */
     attach(view) {
 
@@ -92,7 +92,7 @@ class Annotation {
     /**
      * Remove from a view
      * @param {View} view
-     * @returns {boolean}
+     * @returns {Boolean}
      */
     detach(view) {
 
@@ -108,7 +108,7 @@ class Annotation {
         this.mark = undefined;
         /**
          * @event detach
-         * @param {boolean} result
+         * @param {Boolean} result
          * @memberof Annotation
          */
         this.emit(EVENTS.ANNOTATION.DETACH, result);
