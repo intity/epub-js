@@ -6,5 +6,5 @@ export default class Location {
     index: number;
     percentage: number;
 
-    set(props: object): Location;
+    set(props?: { cfi?: string, index?: number, percentage?: number }): Location;
 }
