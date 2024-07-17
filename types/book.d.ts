@@ -16,7 +16,7 @@ import Packaging from "./packaging";
 import Storage from "./storage";
 
 export interface BookOptions {
-    request: {
+    request?: {
         method?: (url: string, type: string, withCredentials: object, headers: string[]) => Promise<object>,
         withCredentials?: boolean,
         headers?: string[]
