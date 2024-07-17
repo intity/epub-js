@@ -7,23 +7,23 @@ import EventEmitter from "event-emitter";
 class Layout {
 	/**
 	 * Constructor
-	 * @param {Object} [options] 
-	 * @param {String} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
-	 * @param {String} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
-	 * @param {String} [options.spread='auto'] values: `"auto"` OR `"none"`
-	 * @param {String} [options.direction='ltr'] values: `"ltr"` OR `"rtl"`
-	 * @param {String} [options.orientation='auto'] values: `"auto"` OR `"landscape"` OR `"portrait"`
-	 * @param {Number} [options.minSpreadWidth=800]
+	 * @param {object} [options] 
+	 * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
+	 * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
+	 * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
+	 * @param {string} [options.direction='ltr'] values: `"ltr"` OR `"rtl"`
+	 * @param {string} [options.orientation='auto'] values: `"auto"` OR `"landscape"` OR `"portrait"`
+	 * @param {number} [options.minSpreadWidth=800]
 	 */
 	constructor(options) {
 		/**
-		 * @member {String} name Layout name
+		 * @member {string} name Layout name
 		 * @memberof Layout
 		 * @protected
 		 */
 		this.name = "reflowable";
 		/**
-		 * @member {String} flow
+		 * @member {string} flow
 		 * @memberof Layout
 		 * @readonly
 		 */
@@ -35,67 +35,67 @@ class Layout {
 		 */
 		this.spread = "auto";
 		/**
-		 * @member {String} direction
+		 * @member {string} direction
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.direction = "ltr";
 		/**
-		 * @member {String} orientation no implementation
+		 * @member {string} orientation no implementation
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.orientation = "auto";
 		/**
-		 * @member {String} viewport no implementation
+		 * @member {string} viewport no implementation
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.viewport = "";
 		/**
-		 * @member {Number} minSpreadWidth
+		 * @member {number} minSpreadWidth
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.minSpreadWidth = 800;
 		/**
-		 * @member {Number} width Layout width
+		 * @member {number} width Layout width
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.width = 0;
 		/**
-		 * @member {Number} height Layout height
+		 * @member {number} height Layout height
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.height = 0;
 		/**
-		 * @member {Number} spreadWidth Spread width
+		 * @member {number} spreadWidth Spread width
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.spreadWidth = 0;
 		/**
-		 * @member {Number} delta
+		 * @member {number} delta
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.delta = 0;
 		/**
-		 * @member {Number} columnWidth Column width
+		 * @member {number} columnWidth Column width
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.columnWidth = 0;
 		/**
-		 * @member {Number} gap
+		 * @member {number} gap
 		 * @memberof Layout
 		 * @readonly
 		 */
 		this.gap = 0;
 		/**
-		 * @member {Number} divisor
+		 * @member {number} divisor
 		 * @memberof Layout
 		 * @readonly
 		 */
@@ -113,7 +113,7 @@ class Layout {
 
 	/**
 	 * Set options
-	 * @param {Object} options
+	 * @param {object} options
 	 */
 	set(options) {
 
@@ -177,9 +177,9 @@ class Layout {
 
 	/**
 	 * Calculate the dimensions of the pagination
-	 * @param {Number} [width] width of the rendering
-	 * @param {Number} [height] height of the rendering
-	 * @param {Number} [gap] width of the gap between columns
+	 * @param {number} [width] width of the rendering
+	 * @param {number} [height] height of the rendering
+	 * @param {number} [gap] width of the gap between columns
 	 */
 	calculate(width, height, gap) {
 
@@ -240,7 +240,7 @@ class Layout {
 	 * Apply Css to a Document
 	 * @param {Contents} contents
 	 * @param {Section} [section] 
-	 * @param {String} [axis] 
+	 * @param {string} [axis] 
 	 * @return {void|Promise<any>}
 	 */
 	format(contents, section, axis) {
@@ -267,9 +267,9 @@ class Layout {
 
 	/**
 	 * Count number of pages
-	 * @param {Number} totalLength
-	 * @param {Number} [pageLength]
-	 * @return {{spreads: Number, pages: Number}}
+	 * @param {number} totalLength
+	 * @param {number} [pageLength]
+	 * @return {{spreads: number, pages: number}}
 	 */
 	count(totalLength, pageLength) {
 

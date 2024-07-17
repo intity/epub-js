@@ -15,14 +15,14 @@ class Themes extends Map {
 		super();
 		this.rendition = rendition;
 		/**
-		 * @member {String} current
+		 * @member {string} current
 		 * @memberof Themes
 		 * @readonly
 		 */
 		this.current = null;
 		/**
 		 * Injected css rules
-		 * @member {Object} rules
+		 * @member {object} rules
 		 * @memberof Themes
 		 * @readonly
 		 */
@@ -57,7 +57,7 @@ class Themes extends Map {
 
 	/**
 	 * Register themes object
-	 * @param {Object} themes
+	 * @param {object} themes
 	 */
 	registerThemes(themes) {
 
@@ -74,8 +74,8 @@ class Themes extends Map {
 
 	/**
 	 * Register a url
-	 * @param {String} name Theme name
-	 * @param {String} input URL string
+	 * @param {string} name Theme name
+	 * @param {string} input URL string
 	 * @example registerUrl("light", "light.css")
 	 * @example registerUrl("light", "http://example.com/light.css")
 	 */
@@ -90,8 +90,8 @@ class Themes extends Map {
 
 	/**
 	 * Register rule
-	 * @param {String} name
-	 * @param {Object} rules
+	 * @param {string} name
+	 * @param {object} rules
 	 * @example registerRules("light", { body: { color: "purple"}})
 	 */
 	registerRules(name, rules) {
@@ -104,7 +104,7 @@ class Themes extends Map {
 
 	/**
 	 * Select a theme
-	 * @param {String} name Theme name
+	 * @param {string} name Theme name
 	 * @description Use null to reject the current selected theme
 	 */
 	select(name) {
@@ -139,8 +139,8 @@ class Themes extends Map {
 		/**
 		 * Emit which occurs when theme is selected
 		 * @event selected
-		 * @param {String} name Theme key
-		 * @param {Object} theme Theme value
+		 * @param {string} name Theme key
+		 * @param {object} theme Theme value
 		 * @memberof Themes
 		 */
 		this.emit(EVENTS.THEMES.SELECTED, name, theme);
@@ -148,8 +148,8 @@ class Themes extends Map {
 
 	/**
 	 * Append theme to contents
-	 * @param {String} key
-	 * @param {Object} theme 
+	 * @param {string} key
+	 * @param {object} theme 
 	 * @param {Contents} contents
 	 * @private
 	 */
@@ -167,8 +167,8 @@ class Themes extends Map {
 			/**
 			 * Emit of injected a stylesheet into contents
 			 * @event injected
-			 * @param {String} key Theme key
-			 * @param {Object} theme Theme value
+			 * @param {string} key Theme key
+			 * @param {object} theme Theme value
 			 * @param {Contents} contents
 			 * @memberof Themes
 			 */
@@ -178,8 +178,8 @@ class Themes extends Map {
 
 	/**
 	 * Remove theme from contents
-	 * @param {String} key 
-	 * @param {Object} theme 
+	 * @param {string} key 
+	 * @param {object} theme 
 	 * @param {Contents} contents 
 	 * @private
 	 */
@@ -190,8 +190,8 @@ class Themes extends Map {
 			/**
 			 * Emit of rejected a stylesheet into contents
 			 * @event rejected
-			 * @param {String} key Theme key
-			 * @param {Object} theme Theme value
+			 * @param {string} key Theme key
+			 * @param {object} theme Theme value
 			 * @param {Contents} contents
 			 * @memberof Themes
 			 */
@@ -246,9 +246,9 @@ class Themes extends Map {
 
 	/**
 	 * Append rule
-	 * @param {String} name
-	 * @param {String} value
-	 * @param {Boolean} [priority=false]
+	 * @param {string} name
+	 * @param {string} value
+	 * @param {boolean} [priority=false]
 	 */
 	appendRule(name, value, priority = false) {
 
@@ -270,7 +270,7 @@ class Themes extends Map {
 
 	/**
 	 * Remove rule
-	 * @param {String} name
+	 * @param {string} name
 	 */
 	removeRule(name) {
 
@@ -295,7 +295,7 @@ class Themes extends Map {
 
 	/**
 	 * Adjust the font size of a rendition
-	 * @param {String} size
+	 * @param {string} size
 	 */
 	fontSize(size) {
 
@@ -304,7 +304,7 @@ class Themes extends Map {
 
 	/**
 	 * Adjust the font-family of a rendition
-	 * @param {String} f
+	 * @param {string} f
 	 */
 	font(f) {
 

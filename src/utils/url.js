@@ -6,8 +6,8 @@ import Path from "./path";
 class Url {
 	/**
 	 * Constructor
-	 * @param {String} url a url string (relative or absolute)
-	 * @param {String} [base] optional base for the url, default to window.location.href
+	 * @param {string} url a url string (relative or absolute)
+	 * @param {string} [base] optional base for the url, default to window.location.href
 	 */
 	constructor(url, base) {
 
@@ -73,8 +73,8 @@ class Url {
 
 	/**
 	 * Resolves a relative path to a absolute url
-	 * @param {String} path
-	 * @returns {String} url
+	 * @param {string} path
+	 * @returns {string} url
 	 */
 	resolve(path) {
 
@@ -89,8 +89,8 @@ class Url {
 
 	/**
 	 * Resolve a path relative to the url
-	 * @param {String} path
-	 * @returns {String} path
+	 * @param {string} path
+	 * @returns {string} path
 	 */
 	relative(path) {
 
@@ -100,7 +100,7 @@ class Url {
 
 	/**
 	 * toString
-	 * @returns {String}
+	 * @returns {string}
 	 */
 	toString() {
 

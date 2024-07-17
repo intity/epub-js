@@ -246,7 +246,7 @@ export const indexOfSorted = (item, array, compareFunction, start, end) => {
  * Find the bounds of an element
  * taking padding and margin into account
  * @param {Element} el
- * @returns {{ height: Number, width: Number }}
+ * @returns {{ height: number, width: number }}
  */
 export const bounds = (el) => {
 
@@ -289,7 +289,7 @@ export const bounds = (el) => {
  * Find the bounds of an element
  * taking padding, margin and borders into account
  * @param {Element} el
- * @returns {{ height: Number, width: Number }}
+ * @returns {{ height: number, width: number }}
  */
 export const borders = (el) => {
 
@@ -348,7 +348,7 @@ export const nodeBounds = (node) => {
 
 /**
  * Find the equivalent of getBoundingClientRect of a browser window
- * @returns {{ width: Number, height: Number, top: Number, left: Number, right: Number, bottom: Number }}
+ * @returns {{ width: number, height: number, top: number, left: number, right: number, bottom: number }}
  */
 export const windowBounds = () => {
 

@@ -29,13 +29,13 @@ class Contents {
 		this.document = doc;
 		this.documentElement = this.document.documentElement;
 		/**
-		 * @member {Object} content document.body by current location
+		 * @member {object} content document.body by current location
 		 * @memberof Contents
 		 * @readonly
 		 */
 		this.content = content || this.document.body;
 		/**
-		 * @member {Object} contentRect
+		 * @member {object} contentRect
 		 * @memberof Contents
 		 * @readonly
 		 */
@@ -74,8 +74,8 @@ class Contents {
 
 	/**
 	 * Get or Set width
-	 * @param {Number} [w]
-	 * @returns {Number} width
+	 * @param {number} [w]
+	 * @returns {number} width
 	 */
 	width(w) {
 
@@ -94,8 +94,8 @@ class Contents {
 
 	/**
 	 * Get or Set height
-	 * @param {Number} [h]
-	 * @returns {Number} height
+	 * @param {number} [h]
+	 * @returns {number} height
 	 */
 	height(h) {
 
@@ -114,8 +114,8 @@ class Contents {
 
 	/**
 	 * Get or Set width of the contents
-	 * @param {Number} [w]
-	 * @returns {Number} width
+	 * @param {number} [w]
+	 * @returns {number} width
 	 */
 	contentWidth(w) {
 
@@ -134,8 +134,8 @@ class Contents {
 
 	/**
 	 * Get or Set height of the contents
-	 * @param {Number} [h]
-	 * @returns {Number} height
+	 * @param {number} [h]
+	 * @returns {number} height
 	 */
 	contentHeight(h) {
 
@@ -154,7 +154,7 @@ class Contents {
 
 	/**
 	 * Get size of the text using Range
-	 * @returns {{ width: Number, height: Number }}
+	 * @returns {{ width: number, height: number }}
 	 */
 	textSize() {
 
@@ -184,7 +184,7 @@ class Contents {
 
 	/**
 	 * Get documentElement scrollWidth
-	 * @returns {Number} width
+	 * @returns {number} width
 	 */
 	scrollWidth() {
 
@@ -193,7 +193,7 @@ class Contents {
 
 	/**
 	 * Get documentElement scrollHeight
-	 * @returns {Number} height
+	 * @returns {number} height
 	 */
 	scrollHeight() {
 
@@ -202,7 +202,7 @@ class Contents {
 
 	/**
 	 * Set overflow css style of the contents
-	 * @param {String} [overflow]
+	 * @param {string} [overflow]
 	 */
 	overflow(overflow) {
 
@@ -215,7 +215,7 @@ class Contents {
 
 	/**
 	 * Set overflowX css style of the documentElement
-	 * @param {String} [overflow]
+	 * @param {string} [overflow]
 	 */
 	overflowX(overflow) {
 
@@ -228,7 +228,7 @@ class Contents {
 
 	/**
 	 * Set overflowY css style of the documentElement
-	 * @param {String} [overflow]
+	 * @param {string} [overflow]
 	 */
 	overflowY(overflow) {
 
@@ -241,9 +241,9 @@ class Contents {
 
 	/**
 	 * Set Css styles on the contents element (typically Body)
-	 * @param {String} property
-	 * @param {String} value
-	 * @param {Boolean} [priority] set as "important"
+	 * @param {string} property
+	 * @param {string} value
+	 * @param {boolean} [priority] set as "important"
 	 */
 	css(property, value, priority) {
 
@@ -260,13 +260,13 @@ class Contents {
 
 	/**
 	 * Get or Set the viewport element
-	 * @param {Object} [options]
-	 * @param {String} [options.width]
-	 * @param {String} [options.height]
-	 * @param {String} [options.scale]
-	 * @param {String} [options.minimum]
-	 * @param {String} [options.maximum]
-	 * @param {String} [options.scalable]
+	 * @param {object} [options]
+	 * @param {string} [options.width]
+	 * @param {string} [options.height]
+	 * @param {string} [options.scale]
+	 * @param {string} [options.minimum]
+	 * @param {string} [options.maximum]
+	 * @param {string} [options.scalable]
 	 */
 	viewport(options) {
 
@@ -373,7 +373,7 @@ class Contents {
 
 	/**
 	 * content resize event handler
-	 * @param {Array<Object>} entries
+	 * @param {object[]} entries
 	 * @private
 	 */
 	resize(entries) {
@@ -401,9 +401,9 @@ class Contents {
 
 	/**
 	 * Get the location offset of a EpubCFI or an #id
-	 * @param {String | EpubCFI} target
-	 * @param {String} [ignoreClass] for the cfi
-	 * @returns {{ left: Number, top: Number }} target position left and top
+	 * @param {string | EpubCFI} target
+	 * @param {string} [ignoreClass] for the cfi
+	 * @returns {{ left: number, top: number }} target position left and top
 	 */
 	locationOf(target, ignoreClass) {
 
@@ -495,7 +495,7 @@ class Contents {
 
 	/**
 	 * Get injected stylesheet node
-	 * @param {String} key 
+	 * @param {string} key 
 	 * @returns {Node}
 	 * @private
 	 */
@@ -515,8 +515,8 @@ class Contents {
 
 	/**
 	 * Append a stylesheet link to the document head
-	 * @param {String} src url
-	 * @param {String} key 
+	 * @param {string} src url
+	 * @param {string} key 
 	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
 	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
 	 * @returns {Promise<Node>}
@@ -551,8 +551,8 @@ class Contents {
 
 	/**
 	 * Remove a stylesheet link from the document head
-	 * @param {String} key 
-	 * @returns {Boolean}
+	 * @param {string} key 
+	 * @returns {boolean}
 	 */
 	removeStylesheet(key) {
 
@@ -581,8 +581,8 @@ class Contents {
 
 	/**
 	 * Append serialized stylesheet
-	 * @param {String} css
-	 * @param {String} key
+	 * @param {string} css
+	 * @param {string} key
 	 * @example appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
 	 * @description If the key is the same, the CSS will be replaced instead of inserted
 	 */
@@ -598,8 +598,8 @@ class Contents {
 	/**
 	 * Append stylesheet rules to a generate stylesheet
 	 * @link https://github.com/desirable-objects/json-to-css
-	 * @param {Object} rules
-	 * @param {String} key
+	 * @param {object} rules
+	 * @param {string} key
 	 * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
 	 * @description If the key is the same, the CSS will be replaced instead of inserted
 	 */
@@ -623,8 +623,8 @@ class Contents {
 
 	/**
 	 * Append a script node to the document head
-	 * @param {String} src url
-	 * @param {String} key 
+	 * @param {string} src url
+	 * @param {string} key 
 	 * @example appendScript("/path/to/script.js", "common")
 	 * @example appendScript("https://examples.com/to/script.js", "common")
 	 * @returns {Promise<Node>} loaded
@@ -658,8 +658,8 @@ class Contents {
 
 	/**
 	 * Remove a script node from the document head
-	 * @param {String} key 
-	 * @returns {Boolean}
+	 * @param {string} key 
+	 * @returns {boolean}
 	 */
 	removeScript(key) {
 
@@ -688,7 +688,7 @@ class Contents {
 
 	/**
 	 * Append a class to the contents container
-	 * @param {String} className
+	 * @param {string} className
 	 */
 	appendClass(className) {
 
@@ -703,7 +703,7 @@ class Contents {
 
 	/**
 	 * Remove a class from the contents container
-	 * @param {String} className
+	 * @param {string} className
 	 */
 	removeClass(className) {
 
@@ -719,7 +719,7 @@ class Contents {
 	/**
 	 * Get a Dom Range from EpubCFI
 	 * @param {EpubCFI} cfi
-	 * @param {String} [ignoreClass]
+	 * @param {string} [ignoreClass]
 	 * @returns {Range} range
 	 */
 	range(cfi, ignoreClass) {
@@ -731,7 +731,7 @@ class Contents {
 	/**
 	 * Get an EpubCFI from a Dom Range
 	 * @param {Range} range
-	 * @param {String} [ignoreClass]
+	 * @param {string} [ignoreClass]
 	 * @returns {EpubCFI} cfi
 	 */
 	cfiFromRange(range, ignoreClass) {
@@ -742,7 +742,7 @@ class Contents {
 	/**
 	 * Get an EpubCFI from a Dom node
 	 * @param {Node} node
-	 * @param {String} [ignoreClass]
+	 * @param {string} [ignoreClass]
 	 * @returns {EpubCFI} cfi
 	 */
 	cfiFromNode(node, ignoreClass) {
@@ -764,9 +764,9 @@ class Contents {
 
 	/**
 	 * Size the contents to a given width and height
-	 * @param {Number} [width]
-	 * @param {Number} [height]
-	 * @param {String} [dir]
+	 * @param {number} [width]
+	 * @param {number} [height]
+	 * @param {string} [dir]
 	 */
 	size(width, height, dir) {
 
@@ -793,11 +793,11 @@ class Contents {
 
 	/**
 	 * Apply columns to the contents for pagination
-	 * @param {Number} width
-	 * @param {Number} height
-	 * @param {Number} columnWidth
-	 * @param {Number} gap
-	 * @param {String} dir
+	 * @param {number} width
+	 * @param {number} height
+	 * @param {number} columnWidth
+	 * @param {number} gap
+	 * @param {string} dir
 	 */
 	columns(width, height, columnWidth, gap, dir) {
 
@@ -858,9 +858,9 @@ class Contents {
 
 	/**
 	 * Scale contents from center
-	 * @param {Number} scale
-	 * @param {Number} offsetX
-	 * @param {Number} offsetY
+	 * @param {number} scale
+	 * @param {number} offsetX
+	 * @param {number} offsetY
 	 */
 	scaler(scale, offsetX, offsetY) {
 
@@ -878,8 +878,8 @@ class Contents {
 
 	/**
 	 * Fit contents into a fixed width and height
-	 * @param {Number} width
-	 * @param {Number} height
+	 * @param {number} width
+	 * @param {number} height
 	 */
 	fit(width, height, section) {
 
@@ -921,7 +921,7 @@ class Contents {
 
 	/**
 	 * Set the direction of the text
-	 * @param {String} [dir='ltr'] values: `"ltr"` OR `"rtl"`
+	 * @param {string} [dir='ltr'] values: `"ltr"` OR `"rtl"`
 	 */
 	direction(dir = "ltr") {
 
@@ -932,11 +932,11 @@ class Contents {
 
 	/**
 	 * mapPage
-	 * @param {String} cfiBase 
+	 * @param {string} cfiBase 
 	 * @param {Layout} layout 
-	 * @param {Number} start 
-	 * @param {Number} end 
-	 * @param {Boolean} dev 
+	 * @param {number} start 
+	 * @param {number} end 
+	 * @param {boolean} dev 
 	 * @returns {any}
 	 */
 	mapPage(cfiBase, layout, start, end, dev) {
@@ -947,7 +947,7 @@ class Contents {
 
 	/**
 	 * Set the writingMode of the text
-	 * @param {String} [mode='horizontal-tb'] `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
+	 * @param {string} [mode='horizontal-tb'] `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
 	 */
 	writingMode(mode = "horizontal-tb") {
 
@@ -962,7 +962,7 @@ class Contents {
 
 	/**
 	 * Set the layout style of the content
-	 * @param {String} [value='paginated'] values: `"paginated"` OR `"scrolling"`
+	 * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
 	 * @private
 	 */
 	setLayoutStyle(value = "paginated") {
@@ -974,8 +974,8 @@ class Contents {
 
 	/**
 	 * Add the epubReadingSystem object to the navigator
-	 * @param {String} name
-	 * @param {String} version
+	 * @param {string} name
+	 * @param {string} version
 	 * @private
 	 */
 	epubReadingSystem(name, version) {

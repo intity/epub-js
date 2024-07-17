@@ -18,7 +18,7 @@ class Sections extends Array {
         this.spineByHref = {};
         this.spineById = {};
         /**
-         * @member {Object} hooks
+         * @member {object} hooks
          * @property {Hook} content
          * @property {Hook} serialize
          * @memberof Spine
@@ -33,7 +33,7 @@ class Sections extends Array {
         this.hooks.content.register(replaceMeta);
         this.hooks.content.register(replaceCanonical);
         /**
-         * @member {Boolean} loaded
+         * @member {boolean} loaded
          * @memberof Spine
          * @readonly
          */
@@ -42,7 +42,7 @@ class Sections extends Array {
 
     /**
      * Get an item from the spine
-     * @param {String|Number} [target]
+     * @param {string|number} [target]
      * @return {Section|null} section
      * @example sections.get();
      * @example sections.get(3);
@@ -116,7 +116,7 @@ class Sections extends Array {
     /**
      * Append a Section to the Spine
      * @param {Section} section
-     * @returns {Number} index
+     * @returns {number} index
      * @private
      */
     append(section) {
@@ -138,7 +138,7 @@ class Sections extends Array {
     /**
      * Prepend a Section to the Spine (unused)
      * @param {Section} section
-     * @returns {Number}
+     * @returns {number}
      * @private
      */
     prepend(section) {

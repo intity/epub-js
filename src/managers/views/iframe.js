@@ -19,17 +19,17 @@ class IframeView {
 	 * Constructor
 	 * @param {Layout} layout
 	 * @param {Section} section
-	 * @param {Object} [options]
-	 * @param {String} [options.axis] values: `"horizontal"` OR `"vertical"`
-	 * @param {String} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
-	 * @param {String} [options.ignoreClass='']
-	 * @param {Boolean} [options.allowPopups=false]
-	 * @param {Boolean} [options.allowScriptedContent=false]
-	 * @param {Boolean} [options.forceRight=false]
+	 * @param {object} [options]
+	 * @param {string} [options.axis] values: `"horizontal"` OR `"vertical"`
+	 * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
+	 * @param {string} [options.ignoreClass='']
+	 * @param {boolean} [options.allowPopups=false]
+	 * @param {boolean} [options.allowScriptedContent=false]
+	 * @param {boolean} [options.forceRight=false]
 	 */
 	constructor(layout, section, options) {
 		/**
-		 * @member {Object} settings
+		 * @member {object} settings
 		 * @memberof IframeView
 		 * @readonly
 		 */
@@ -43,7 +43,7 @@ class IframeView {
 			allowScriptedContent: false,
 		}, options || {});
 		/**
-		 * @member {String} id
+		 * @member {string} id
 		 * @memberof IframeView
 		 * @readonly
 		 */
@@ -89,7 +89,7 @@ class IframeView {
 		this.marks = null;
 		/**
 		 * Load method
-		 * @member {String} method
+		 * @member {string} method
 		 * @memberof IframeView
 		 * @readonly
 		 */
@@ -155,7 +155,7 @@ class IframeView {
 	/**
 	 * render
 	 * @param {Function} request 
-	 * @returns {Promise<String>} section render
+	 * @returns {Promise<string>} section render
 	 */
 	render(request) {
 
@@ -245,8 +245,8 @@ class IframeView {
 	/**
 	 * size
 	 * Determine locks base on settings
-	 * @param {Number} [width] 
-	 * @param {Number} [height] 
+	 * @param {number} [width] 
+	 * @param {number} [height] 
 	 */
 	size(width, height) {
 
@@ -268,9 +268,9 @@ class IframeView {
 	/**
 	 * lock
 	 * Lock an axis to element dimensions, taking borders into account
-	 * @param {String} what 
-	 * @param {Number} width 
-	 * @param {Number} height 
+	 * @param {string} what 
+	 * @param {number} width 
+	 * @param {number} height 
 	 */
 	lock(what, width, height) {
 
@@ -366,8 +366,8 @@ class IframeView {
 
 	/**
 	 * reframe
-	 * @param {Number} width 
-	 * @param {Number} height 
+	 * @param {number} width 
+	 * @param {number} height 
 	 */
 	reframe(width, height) {
 
@@ -390,7 +390,7 @@ class IframeView {
 		this.marks && this.marks.render();
 		/**
 		 * @event resized
-		 * @param {Object} size
+		 * @param {object} size
 		 * @memberof IframeView
 		 */
 		this.emit(EVENTS.VIEWS.RESIZED, size);
@@ -400,7 +400,7 @@ class IframeView {
 
 	/**
 	 * load
-	 * @param {String} contents 
+	 * @param {string} contents 
 	 * @returns {Promise<any>} loading promise
 	 */
 	load(contents) {
@@ -497,7 +497,7 @@ class IframeView {
 
 	/**
 	 * Set axis
-	 * @param {String} value 
+	 * @param {string} value 
 	 */
 	setAxis(value) {
 
@@ -517,7 +517,7 @@ class IframeView {
 
 	/**
 	 * Set writing mode
-	 * @param {String} mode 
+	 * @param {string} mode 
 	 */
 	setWritingMode(mode) {
 
@@ -603,7 +603,7 @@ class IframeView {
 
 	/**
 	 * offset
-	 * @returns {{ top: Number, left: Number }}
+	 * @returns {{ top: number, left: number }}
 	 */
 	offset() {
 
@@ -624,8 +624,8 @@ class IframeView {
 
 	/**
 	 * locationOf
-	 * @param {String|EpubCFI} target 
-	 * @returns {{ top: Number, left: Number }}
+	 * @param {string|EpubCFI} target 
+	 * @returns {{ top: number, left: number }}
 	 */
 	locationOf(target) {
 
@@ -641,8 +641,8 @@ class IframeView {
 
 	/**
 	 * bounds
-	 * @param {Boolean} [force=false] 
-	 * @returns {{ height: Number, width: Number }}
+	 * @param {boolean} [force=false] 
+	 * @returns {{ height: number, width: number }}
 	 */
 	bounds(force = false) {
 
@@ -655,12 +655,12 @@ class IframeView {
 
 	/**
 	 * highlight
-	 * @param {String} cfiRange 
-	 * @param {Object} [data={}] 
+	 * @param {string} cfiRange 
+	 * @param {object} [data={}] 
 	 * @param {Function} [cb=null] callback function
-	 * @param {String} [className='epubjs-hl'] 
-	 * @param {Object} [styles={}] 
-	 * @returns {Object}
+	 * @param {string} [className='epubjs-hl'] 
+	 * @param {object} [styles={}] 
+	 * @returns {object}
 	 */
 	highlight(cfiRange, data = {}, cb = null, className = "epubjs-hl", styles = {}) {
 
@@ -682,8 +682,8 @@ class IframeView {
 		const emitter = (e) => {
 			/**
 			 * @event markClicked
-			 * @param {String} cfiRange
-			 * @param {Object} data
+			 * @param {string} cfiRange
+			 * @param {object} data
 			 * @memberof IframeView
 			 */
 			this.emit(EVENTS.VIEWS.MARK_CLICKED, cfiRange, data);
@@ -712,12 +712,12 @@ class IframeView {
 
 	/**
 	 * underline
-	 * @param {String} cfiRange 
-	 * @param {Object} [data={}] 
+	 * @param {string} cfiRange 
+	 * @param {object} [data={}] 
 	 * @param {Function} [cb=null]
-	 * @param {String} [className='epubjs-ul'] 
-	 * @param {Object} [styles={}] 
-	 * @returns {Object}
+	 * @param {string} [className='epubjs-ul'] 
+	 * @param {object} [styles={}] 
+	 * @returns {object}
 	 */
 	underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
 
@@ -739,8 +739,8 @@ class IframeView {
 		const emitter = (e) => {
 			/**
 			 * @event markClicked
-			 * @param {String} cfiRange
-			 * @param {Object} data
+			 * @param {string} cfiRange
+			 * @param {object} data
 			 * @memberof IframeView
 			 */
 			this.emit(EVENTS.VIEWS.MARK_CLICKED, cfiRange, data);
@@ -768,8 +768,8 @@ class IframeView {
 
 	/**
 	 * unhighlight
-	 * @param {String} cfiRange 
-	 * @returns {Boolean}
+	 * @param {string} cfiRange 
+	 * @returns {boolean}
 	 */
 	unhighlight(cfiRange) {
 
@@ -791,8 +791,8 @@ class IframeView {
 
 	/**
 	 * ununderline
-	 * @param {String} cfiRange 
-	 * @returns {Boolean}
+	 * @param {string} cfiRange 
+	 * @returns {boolean}
 	 */
 	ununderline(cfiRange) {
 

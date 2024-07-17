@@ -16,7 +16,7 @@ class Navigation {
 	constructor(xml) {
 		/**
 		 * Navigation items
-		 * @member {Array<Object>} toc
+		 * @member {object[]} toc
 		 * @memberof Navigation
 		 * @readonly
 		 */
@@ -26,8 +26,8 @@ class Navigation {
 		this.landmarks = [];
 		this.landmarksByType = {};
 		/**
-		 * Number of navigation items
-		 * @member {Number} length
+		 * number of navigation items
+		 * @member {number} length
 		 * @memberof Navigation
 		 * @readonly
 		 */
@@ -68,7 +68,7 @@ class Navigation {
 
 	/**
 	 * Unpack navigation items
-	 * @param {Array<Object>} toc
+	 * @param {object[]} toc
 	 * @private
 	 */
 	unpack(toc) {
@@ -94,8 +94,8 @@ class Navigation {
 
 	/**
 	 * Get an item from the navigation
-	 * @param {String} target
-	 * @return {Object} navItem
+	 * @param {string} target
+	 * @return {object} navItem
 	 */
 	get(target) {
 
@@ -115,10 +115,10 @@ class Navigation {
 
 	/**
 	 * Get an item from navigation subitems recursively by index
-	 * @param {String} target
-	 * @param {Number} index
-	 * @param {Array<Object>} navItems
-	 * @return {Object} navItem
+	 * @param {string} target
+	 * @param {number} index
+	 * @param {object[]} navItems
+	 * @return {object} navItem
 	 */
 	getByIndex(target, index, navItems) {
 
@@ -148,8 +148,8 @@ class Navigation {
 	/**
 	 * Get a landmark by type
 	 * @link https://idpf.github.io/epub-vocabs/structure/
-	 * @param {String} type
-	 * @return {Object} landmarkItem
+	 * @param {string} type
+	 * @return {object} landmarkItem
 	 */
 	landmark(type) {
 
@@ -164,7 +164,7 @@ class Navigation {
 	/**
 	 * Parse toc from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array<Object>} navigation list
+	 * @return {object[]} navigation list
 	 * @private
 	 */
 	parseNav(navHtml) {
@@ -183,8 +183,8 @@ class Navigation {
 	/**
 	 * Parses lists in the toc
 	 * @param {Document} navListHtml
-	 * @param {String} parent id
-	 * @return {Array<Object>} navigation list
+	 * @param {string} parent id
+	 * @return {object[]} navigation list
 	 */
 	parseNavList(navListHtml, parent) {
 
@@ -210,7 +210,7 @@ class Navigation {
 	/**
 	 * Create a navItem
 	 * @param {Element} item
-	 * @return {Object} navItem
+	 * @return {object} navItem
 	 * @private
 	 */
 	navItem(item, parent) {
@@ -244,7 +244,7 @@ class Navigation {
 	/**
 	 * Parse landmarks from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array<Object>} landmarks list
+	 * @return {object[]} landmarks list
 	 * @private
 	 */
 	parseLandmarks(navHtml) {
@@ -270,7 +270,7 @@ class Navigation {
 	/**
 	 * Create a landmarkItem
 	 * @param {Element} item
-	 * @return {Object|null} landmarkItem
+	 * @return {object|null} landmarkItem
 	 * @private
 	 */
 	landmarkItem(item) {
@@ -293,7 +293,7 @@ class Navigation {
 	/**
 	 * Parse from a Epub > 3.0 NC
 	 * @param {Document} navHtml
-	 * @return {Array<Object>} navigation list
+	 * @return {object[]} navigation list
 	 * @private
 	 */
 	parseNcx(tocXml) {
@@ -322,7 +322,7 @@ class Navigation {
 	/**
 	 * Create a ncxItem
 	 * @param {Element} item
-	 * @return {Object} ncxItem
+	 * @return {object} ncxItem
 	 * @private
 	 */
 	ncxItem(item) {
@@ -349,8 +349,8 @@ class Navigation {
 
 	/**
 	 * Load Spine Items
-	 * @param {Object} json the items to be loaded
-	 * @return {Array<Object>} navItems
+	 * @param {object} json the items to be loaded
+	 * @return {object[]} navItems
 	 */
 	load(json) {
 

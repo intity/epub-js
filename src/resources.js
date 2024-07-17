@@ -11,11 +11,11 @@ class Resources {
 	/**
 	 * Constructor
 	 * @param {Manifest} manifest
-	 * @param {Object} options
+	 * @param {object} options
 	 * @param {Archive} [options.archive]
 	 * @param {Function} options.request
 	 * @param {Function} options.resolve
-	 * @param {String} [options.replacements]
+	 * @param {string} [options.replacements]
 	 */
 	constructor(manifest, { archive, request, resolve, replacements }) {
 
@@ -57,8 +57,8 @@ class Resources {
 
 	/**
 	 * Create a url to a resource
-	 * @param {String} uri
-	 * @return {Promise<String>} Promise resolves with url string
+	 * @param {string} uri
+	 * @return {Promise<string>} Promise resolves with url string
 	 */
 	async createUrl(uri) {
 
@@ -85,7 +85,7 @@ class Resources {
 
 	/**
 	 * Create blob urls for all the assets
-	 * @return {Promise<Array<String>>} returns replacement urls
+	 * @return {Promise<string[]>} returns replacement urls
 	 */
 	async replacements() {
 
@@ -106,7 +106,7 @@ class Resources {
 	/**
 	 * Replace URLs
 	 * @param {string} absoluteUri 
-	 * @returns {Array<Promise<Array<String>>>} replacements
+	 * @returns {Array<Promise<string[]>>} replacements
 	 * @private
 	 */
 	replaceUrls() {
@@ -122,7 +122,7 @@ class Resources {
 
 	/**
 	 * Replace URLs in CSS resources
-	 * @return {Promise<Array<String>>}
+	 * @return {Promise<string[]>}
 	 */
 	replaceCss() {
 
@@ -145,8 +145,8 @@ class Resources {
 
 	/**
 	 * Create a new CSS file with the replaced URLs
-	 * @param {String} href the original css file
-	 * @return {Promise<String>} returns a BlobUrl to the new CSS file or a data url
+	 * @param {string} href the original css file
+	 * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
 	 * @private
 	 */
 	createCssFile(href) {
@@ -201,8 +201,8 @@ class Resources {
 
 	/**
 	 * Resolve all resources URLs relative to an absolute URL
-	 * @param {String} absoluteUri to be resolved to
-	 * @return {Array<String>} array with relative Urls
+	 * @param {string} absoluteUri to be resolved to
+	 * @return {string[]} array with relative Urls
 	 */
 	relativeTo(absoluteUri) {
 
@@ -216,8 +216,8 @@ class Resources {
 
 	/**
 	 * Get a URL for a resource
-	 * @param {String} path
-	 * @return {Promise<String>}
+	 * @param {string} path
+	 * @return {Promise<string>}
 	 */
 	get(path) {
 
@@ -239,9 +239,9 @@ class Resources {
 	/**
 	 * Substitute urls in content, with replacements,
 	 * relative to a url if provided
-	 * @param {String} content
-	 * @param {String} [url] url to resolve to
-	 * @return {String} content with urls substituted
+	 * @param {string} content
+	 * @param {string} [url] url to resolve to
+	 * @return {string} content with urls substituted
 	 */
 	substitute(content, url) {
 

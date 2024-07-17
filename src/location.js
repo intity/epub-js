@@ -9,18 +9,18 @@ class Location {
      */
     constructor() {
         /**
-         * @member {String} cfi EpubCFI string format
+         * @member {string} cfi EpubCFI string format
          * @memberof Location
          */
         this.cfi = null;
         /**
-         * @member {Number} index Location index
+         * @member {number} index Location index
          * @memberof Location
          */
         this.index = 0;
         /**
          * Percentage in the range from 0 to 1
-         * @member {Number} percentage
+         * @member {number} percentage
          * @memberof Location
          */
         this.percentage = 0;
@@ -28,10 +28,10 @@ class Location {
 
     /**
      * Set location properties
-     * @param {Object} [props]
-     * @param {String} [props.cfi]
-     * @param {Number} [props.index]
-     * @param {Number} [props.percentage]
+     * @param {object} [props]
+     * @param {string} [props.cfi]
+     * @param {number} [props.index]
+     * @param {number} [props.percentage]
      */
     set(props) {
 

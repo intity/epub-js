@@ -13,7 +13,7 @@ const _URL = window.URL || window.webkitURL || window.mozURL;
 class Storage {
 	/**
 	 * Constructor
-	 * @param {String} name This should be the name of the application for modals
+	 * @param {string} name This should be the name of the application for modals
 	 * @param {Function} request
 	 * @param {Function} resolve
 	 */
@@ -29,13 +29,13 @@ class Storage {
 		 */
 		this.instance = undefined;
 		/**
-		 * @member {Object} urlCache
+		 * @member {object} urlCache
 		 * @memberof Storage
 		 * @readonly
 		 */
 		this.urlCache = {};
 		/**
-		 * @member {Boolean} online Current status
+		 * @member {boolean} online Current status
 		 * @memberof Storage
 		 * @readonly
 		 */
@@ -99,8 +99,8 @@ class Storage {
 	/**
 	 * Add all of a book manifest to the storage
 	 * @param {Manifest} manifest  book manifest
-	 * @param {Boolean} [force=false] force resaving manifest
-	 * @return {Promise<Object>} store objects
+	 * @param {boolean} [force=false] force resaving manifest
+	 * @return {Promise<object>} store objects
 	 */
 	add(manifest, force = false) {
 
@@ -126,9 +126,9 @@ class Storage {
 
 	/**
 	 * Put binary data from a url to storage
-	 * @param {String} url  a url to request from storage
-	 * @param {Boolean} [withCredentials]
-	 * @param {Array<String>} [headers]
+	 * @param {string} url  a url to request from storage
+	 * @param {boolean} [withCredentials]
+	 * @param {string[]} [headers]
 	 * @return {Promise<Blob>}
 	 */
 	async put(url, withCredentials, headers) {
@@ -152,11 +152,11 @@ class Storage {
 
 	/**
 	 * Dispatch request by url
-	 * @param {String} url a url to request from storage
-	 * @param {String} [type] specify the type of the returned result
-	 * @param {Boolean} [withCredentials]
-	 * @param {Array<String>} [headers]
-	 * @return {Promise<Blob|String|JSON|Document|XMLDocument>}
+	 * @param {string} url a url to request from storage
+	 * @param {string} [type] specify the type of the returned result
+	 * @param {boolean} [withCredentials]
+	 * @param {string[]} [headers]
+	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
 	 */
 	async dispatch(url, type, withCredentials, headers) {
 
@@ -180,9 +180,9 @@ class Storage {
 
 	/**
 	 * Request a url from storage
-	 * @param {String} url a url to request from storage
-	 * @param {String} [type] specify the type of the returned result
-	 * @return {Promise<Blob|String|JSON|Document|XMLDocument>}
+	 * @param {string} url a url to request from storage
+	 * @param {string} [type] specify the type of the returned result
+	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
 	 */
 	async retrieve(url, type) {
 
@@ -218,7 +218,7 @@ class Storage {
 	/**
 	 * Handle the response from request
 	 * @param {any} response
-	 * @param {String} [type]
+	 * @param {string} [type]
 	 * @return {any} the parsed result
 	 * @private
 	 */
@@ -241,8 +241,8 @@ class Storage {
 
 	/**
 	 * Get a Blob from Storage by Url
-	 * @param {String} url
-	 * @param {String} [mimeType]
+	 * @param {string} url
+	 * @param {string} [mimeType]
 	 * @return {Blob}
 	 */
 	getBlob(url, mimeType) {
@@ -258,9 +258,9 @@ class Storage {
 
 	/**
 	 * Get Text from Storage by Url
-	 * @param {String} url
-	 * @param {String} [mimeType]
-	 * @return {String}
+	 * @param {string} url
+	 * @param {string} [mimeType]
+	 * @return {string}
 	 */
 	getText(url, mimeType) {
 
@@ -283,9 +283,9 @@ class Storage {
 
 	/**
 	 * Get a base64 encoded result from Storage by Url
-	 * @param {String} url
-	 * @param {String} [mimeType]
-	 * @return {String} base64 encoded
+	 * @param {string} url
+	 * @param {string} [mimeType]
+	 * @return {string} base64 encoded
 	 */
 	getBase64(url, mimeType) {
 
@@ -308,8 +308,8 @@ class Storage {
 
 	/**
 	 * Create a Url from a stored item
-	 * @param {String} url
-	 * @param {Object} [options.base64] use base64 encoding or blob url
+	 * @param {string} url
+	 * @param {object} [options.base64] use base64 encoding or blob url
 	 * @return {Promise} url promise with Url string
 	 */
 	createUrl(url, options) {
@@ -357,7 +357,7 @@ class Storage {
 
 	/**
 	 * Revoke Temp Url for a archive item
-	 * @param {String} url url of the item in the store
+	 * @param {string} url url of the item in the store
 	 */
 	revokeUrl(url) {
 

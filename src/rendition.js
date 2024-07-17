@@ -19,29 +19,29 @@ import ContinuousViewManager from "./managers/continuous/index";
  * Requires Manager and View class to handle specifics of rendering
  * the section content.
  * @param {Book} book
- * @param {Object} [options]
- * @param {Number} [options.width]
- * @param {Number} [options.height]
- * @param {String} [options.ignoreClass] class for the cfi parser to ignore
- * @param {String|Function|Object} [options.manager='default'] string values: default / continuous
- * @param {String|Function} [options.view='iframe']
- * @param {String} [options.method='write'] values: `"write"` OR `"srcdoc"`
- * @param {String} [options.layout] layout to force
- * @param {String} [options.spread] force spread value
- * @param {String} [options.direction] direction `"ltr"` OR `"rtl"`
- * @param {Number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
- * @param {String} [options.stylesheet] url of stylesheet to be injected
- * @param {String} [options.script] url of script to be injected
- * @param {Object} [options.snap] use snap scrolling
- * @param {Boolean} [options.fullsize=false]
- * @param {Boolean} [options.allowPopups=false] enable opening popup in content
- * @param {Boolean} [options.allowScriptedContent=false] enable running scripts in content
- * @param {Boolean} [options.resizeOnOrientationChange=true] false to disable orientation events
+ * @param {object} [options]
+ * @param {number} [options.width]
+ * @param {number} [options.height]
+ * @param {string} [options.ignoreClass] class for the cfi parser to ignore
+ * @param {string|Function|object} [options.manager='default'] string values: default / continuous
+ * @param {string|Function} [options.view='iframe']
+ * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
+ * @param {string} [options.layout] layout to force
+ * @param {string} [options.spread] force spread value
+ * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
+ * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
+ * @param {string} [options.stylesheet] url of stylesheet to be injected
+ * @param {string} [options.script] url of script to be injected
+ * @param {object} [options.snap] use snap scrolling
+ * @param {boolean} [options.fullsize=false]
+ * @param {boolean} [options.allowPopups=false] enable opening popup in content
+ * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
+ * @param {boolean} [options.resizeOnOrientationChange=true] false to disable orientation events
  */
 class Rendition {
 	constructor(book, options) {
 		/**
-		 * @member {Object} settings
+		 * @member {object} settings
 		 * @memberof Rendition
 		 * @readonly
 		 */
@@ -73,7 +73,7 @@ class Rendition {
 		this.book = book;
 		/**
 		 * Adds Hook methods to the Rendition prototype
-		 * @member {Object} hooks
+		 * @member {object} hooks
 		 * @property {Hook} hooks.content
 		 * @property {Hook} hooks.display
 		 * @property {Hook} hooks.layout
@@ -123,27 +123,27 @@ class Rendition {
 		/**
 		 * A Rendered Location Range
 		 * @typedef location
-		 * @type {Object}
-		 * @property {Object} start
-		 * @property {String} start.index
-		 * @property {String} start.href
-		 * @property {Object} start.displayed
-		 * @property {Number} start.displayed.page
-		 * @property {Number} start.displayed.total
-		 * @property {String} start.cfi EpubCFI string format
-		 * @property {Number} start.location
-		 * @property {Number} start.percentage
-		 * @property {Object} end
-		 * @property {String} end.index
-		 * @property {String} end.href
-		 * @property {Object} end.displayed
-		 * @property {Number} end.displayed.page
-		 * @property {Number} end.displayed.total
-		 * @property {String} end.cfi EpubCFI string format
-		 * @property {Number} end.location
-		 * @property {Number} end.percentage
-		 * @property {Boolean} atStart Location at start position
-		 * @property {Boolean} atEnd Location at end position
+		 * @type {object}
+		 * @property {object} start
+		 * @property {string} start.index
+		 * @property {string} start.href
+		 * @property {object} start.displayed
+		 * @property {number} start.displayed.page
+		 * @property {number} start.displayed.total
+		 * @property {string} start.cfi EpubCFI string format
+		 * @property {number} start.location
+		 * @property {number} start.percentage
+		 * @property {object} end
+		 * @property {string} end.index
+		 * @property {string} end.href
+		 * @property {object} end.displayed
+		 * @property {number} end.displayed.page
+		 * @property {number} end.displayed.total
+		 * @property {string} end.cfi EpubCFI string format
+		 * @property {number} end.location
+		 * @property {number} end.percentage
+		 * @property {boolean} atStart Location at start position
+		 * @property {boolean} atEnd Location at end position
 		 * @memberof Rendition
 		 */
 		this.location = undefined;
@@ -174,7 +174,7 @@ class Rendition {
 
 	/**
 	 * Require the manager from passed string, or as a class function
-	 * @param {String|Object} manager [description]
+	 * @param {string|object} manager [description]
 	 * @return {any}
 	 */
 	requireManager(manager) {
@@ -209,7 +209,7 @@ class Rendition {
 			 * Emit of updated the Layout state
 			 * @event layout
 			 * @param {Layout} props
-			 * @param {Object} changed
+			 * @param {object} changed
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.LAYOUT, props, changed);
@@ -282,7 +282,7 @@ class Rendition {
 	 * The request will be added to the rendering Queue,
 	 * so it will wait until book is opened, rendering started
 	 * and all other rendering tasks have finished to be called.
-	 * @param {String|Number} [target] `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI
+	 * @param {string|number} [target] `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI
 	 * @example rendition.display()
 	 * @example rendition.display(3)
 	 * @example rendition.display("#chapter_001")
@@ -300,7 +300,7 @@ class Rendition {
 
 	/**
 	 * Tells the manager what to display immediately
-	 * @param {String} [target]
+	 * @param {string} [target]
 	 * @return {Promise<Section>}
 	 * @private
 	 */
@@ -350,7 +350,7 @@ class Rendition {
 
 	/**
 	 * Report what section has been displayed
-	 * @param {Object} view
+	 * @param {object} view
 	 * @private
 	 */
 	afterDisplayed(view) {
@@ -378,7 +378,7 @@ class Rendition {
 
 	/**
 	 * Report what has been removed
-	 * @param {Object} view
+	 * @param {object} view
 	 * @private
 	 */
 	afterRemoved(view) {
@@ -396,20 +396,20 @@ class Rendition {
 
 	/**
 	 * Report resize events and display the last seen location
-	 * @param {Object} size 
-	 * @param {Number} size.width
-	 * @param {Number} size.height
-	 * @param {String} [epubcfi]
+	 * @param {object} size 
+	 * @param {number} size.width
+	 * @param {number} size.height
+	 * @param {string} [epubcfi]
 	 * @private
 	 */
 	onResized(size, epubcfi) {
 		/**
 		 * Emit that the rendition has been resized
 		 * @event resized
-		 * @param {Object} size
-		 * @param {Number} size.width
-		 * @param {Number} size.height
-		 * @param {String} [epubcfi]
+		 * @param {object} size
+		 * @param {number} size.width
+		 * @param {number} size.height
+		 * @param {string} [epubcfi]
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.RESIZED, size, epubcfi);
@@ -437,7 +437,7 @@ class Rendition {
 	/**
 	 * Move the Rendition to a specific offset
 	 * Usually you would be better off calling display()
-	 * @param {Object} offset
+	 * @param {object} offset
 	 */
 	moveTo(offset) {
 
@@ -446,9 +446,9 @@ class Rendition {
 
 	/**
 	 * Trigger a resize of the views
-	 * @param {Number} [width]
-	 * @param {Number} [height]
-	 * @param {String} [epubcfi]
+	 * @param {number} [width]
+	 * @param {number} [height]
+	 * @param {string} [epubcfi]
 	 */
 	resize(width, height, epubcfi) {
 
@@ -494,7 +494,7 @@ class Rendition {
 	/**
 	 * Determine the Layout properties from metadata and settings
 	 * @link http://www.idpf.org/epub/301/spec/epub-publications.html#meta-properties-rendering
-	 * @return {Object} Layout properties
+	 * @return {object} Layout properties
 	 * @private
 	 */
 	determineLayoutProperties() {
@@ -514,7 +514,7 @@ class Rendition {
 
 	/**
 	 * Layout configuration
-	 * @param {Object} options
+	 * @param {object} options
 	 */
 	updateLayout(options) {
 
@@ -577,7 +577,7 @@ class Rendition {
 	/**
 	 * Creates a Rendition#locationRange from location
 	 * passed by the Manager
-	 * @param {Object} location Location sections
+	 * @param {object} location Location sections
 	 * @returns {displayedLocation}
 	 * @private
 	 */
@@ -696,14 +696,14 @@ class Rendition {
 
 	/**
 	 * Emit a selection event's CFI Range passed from a a view
-	 * @param {String} cfirange
+	 * @param {string} cfirange
 	 * @private
 	 */
 	triggerSelectedEvent(cfirange, contents) {
 		/**
 		 * Emit that a text selection has occurred
 		 * @event selected
-		 * @param {String} cfirange
+		 * @param {string} cfirange
 		 * @param {Contents} contents
 		 * @memberof Rendition
 		 */
@@ -713,7 +713,7 @@ class Rendition {
 	/**
 	 * Emit a markClicked event with the cfiRange and data from a mark
 	 * @param {EpubCFI} cfirange
-	 * @param {Object} data 
+	 * @param {object} data 
 	 * @param {Contents} contents 
 	 * @private
 	 */
@@ -722,7 +722,7 @@ class Rendition {
 		 * Emit that a mark was clicked
 		 * @event markClicked
 		 * @param {EpubCFI} cfiRange
-		 * @param {Object} data
+		 * @param {object} data
 		 * @param {Contents} contents
 		 * @memberof Rendition
 		 */
@@ -731,8 +731,8 @@ class Rendition {
 
 	/**
 	 * Get a Range from a Visible CFI
-	 * @param {String} epubcfi EpubCfi string
-	 * @param {String} ignoreClass
+	 * @param {string} epubcfi EpubCfi string
+	 * @param {string} ignoreClass
 	 * @return {Range}
 	 */
 	getRange(epubcfi, ignoreClass) {

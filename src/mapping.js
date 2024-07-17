@@ -8,8 +8,8 @@ class Mapping {
 	/**
 	 * Constructor
 	 * @param {Layout} layout Layout to apply
-	 * @param {String} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
-	 * @param {Boolean} [dev=false] toggle developer highlighting
+	 * @param {string} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
+	 * @param {boolean} [dev=false] toggle developer highlighting
 	 */
 	constructor(layout, axis = "horizontal", dev = false) {
 
@@ -21,7 +21,7 @@ class Mapping {
 	/**
 	 * Find CFI pairs for entire section at once
 	 * @param {any} view 
-	 * @returns {Array<Object>}
+	 * @returns {object[]}
 	 */
 	section(view) {
 
@@ -32,10 +32,10 @@ class Mapping {
 	/**
 	 * Find CFI pairs for a page
 	 * @param {Contents} contents Contents from view
-	 * @param {String} cfiBase string of the base for a cfi
-	 * @param {Number} start position to start at
-	 * @param {Number} end position to end at
-	 * @returns {{ start: String, end: String }}
+	 * @param {string} cfiBase string of the base for a cfi
+	 * @param {number} start position to start at
+	 * @param {number} end position to end at
+	 * @returns {{ start: string, end: string }}
 	 */
 	page(contents, cfiBase, start, end) {
 
@@ -111,7 +111,7 @@ class Mapping {
 	/**
 	 * findRanges
 	 * @param {*} view 
-	 * @returns {Array<Object>} columns
+	 * @returns {object[]} columns
 	 */
 	findRanges(view) {
 
@@ -138,8 +138,8 @@ class Mapping {
 	/**
 	 * Find Start Range
 	 * @param {Node} root root node
-	 * @param {Number} start position to start at
-	 * @param {Number} end position to end at
+	 * @param {number} start position to start at
+	 * @param {number} end position to end at
 	 * @return {Range}
 	 * @private
 	 */
@@ -209,8 +209,8 @@ class Mapping {
 	/**
 	 * Find End Range
 	 * @param {Node} root root node
-	 * @param {Number} start position to start at
-	 * @param {Number} end position to end at
+	 * @param {number} start position to start at
+	 * @param {number} end position to end at
 	 * @return {Range}
 	 * @private
 	 */
@@ -280,8 +280,8 @@ class Mapping {
 	/**
 	 * Find Text Start Range
 	 * @param {Node} root root node
-	 * @param {Number} start position to start at
-	 * @param {Number} end position to end at
+	 * @param {number} start position to start at
+	 * @param {number} end position to end at
 	 * @return {Range}
 	 * @private
 	 */
@@ -315,8 +315,8 @@ class Mapping {
 	/**
 	 * Find Text End Range
 	 * @param {Node} root root node
-	 * @param {Number} start position to start at
-	 * @param {Number} end position to end at
+	 * @param {number} start position to start at
+	 * @param {number} end position to end at
 	 * @return {Range}
 	 * @private
 	 */
@@ -360,7 +360,7 @@ class Mapping {
 	/**
 	 * Split up a text node into ranges for each word
 	 * @param {Node} root root node
-	 * @param {String} [splitter=' '] what to split on
+	 * @param {string} [splitter=' '] what to split on
 	 * @return {Array<Range>}
 	 * @private
 	 */
@@ -409,9 +409,9 @@ class Mapping {
 
 	/**
 	 * Turn a pair of ranges into a pair of CFIs
-	 * @param {String} cfiBase base string for an EpubCFI
+	 * @param {string} cfiBase base string for an EpubCFI
 	 * @param {{ start: Range, end: Range }} rangePair Range pair
-	 * @return {{ start: String, end: String }} EpubCFI pair
+	 * @return {{ start: string, end: string }} EpubCFI pair
 	 * @private
 	 */
 	rangePairToCfiPair(cfiBase, rangePair) {
@@ -430,9 +430,9 @@ class Mapping {
 
 	/**
 	 * rangeListToCfiList
-	 * @param {String} cfiBase 
-	 * @param {Array<Object>} columns 
-	 * @returns {Array<Object>}
+	 * @param {string} cfiBase 
+	 * @param {object[]} columns 
+	 * @returns {object[]}
 	 */
 	rangeListToCfiList(cfiBase, columns) {
 
@@ -448,8 +448,8 @@ class Mapping {
 
 	/**
 	 * Set the axis for mapping
-	 * @param {String} value `"horizontal"` OR `"vertical"`
-	 * @return {Boolean} is it horizontal?
+	 * @param {string} value `"horizontal"` OR `"vertical"`
+	 * @return {boolean} is it horizontal?
 	 */
 	axis(value) {
 

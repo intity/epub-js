@@ -40,7 +40,7 @@ class PageList {
 	/**
 	 * Parse PageList Xml
 	 * @param {Document} xml
-	 * @returns {Array<{ href: String, page: Number }>}
+	 * @returns {Array<{ href: string, page: number }>}
 	 */
 	parse(xml) {
 
@@ -59,7 +59,7 @@ class PageList {
 	/**
 	 * Parse a Nav PageList
 	 * @param {Node} node
-	 * @return {Array<{ href: String, page: Number }>}
+	 * @return {Array<{ href: string, page: number }>}
 	 * @private
 	 */
 	parseNav(node) {
@@ -82,7 +82,7 @@ class PageList {
 	/**
 	 * parseNcx
 	 * @param {Node} node 
-	 * @returns {Array<{ href: String, page: Number }>}
+	 * @returns {Array<{ href: string, page: number }>}
 	 * @private
 	 */
 	parseNcx(node) {
@@ -110,7 +110,7 @@ class PageList {
 	/**
 	 * ncxItem
 	 * @param {Node} node 
-	 * @returns {{ href: String, page: Number }}
+	 * @returns {{ href: string, page: number }}
 	 * @private
 	 */
 	ncxItem(node) {
@@ -129,7 +129,7 @@ class PageList {
 	/**
 	 * Get page list item
 	 * @param {Node} node
-	 * @return {{ href: String, page: Number }} PageList item
+	 * @return {{ href: string, page: number }} PageList item
 	 * @private
 	 */
 	item(node) {
@@ -157,7 +157,7 @@ class PageList {
 
 	/**
 	 * Process pageList items
-	 * @param {Array<Object>} pageList
+	 * @param {object[]} pageList
 	 * @private
 	 */
 	process(pageList) {
@@ -175,8 +175,8 @@ class PageList {
 
 	/**
 	 * Get a page index from a EpubCFI
-	 * @param {String} cfi EpubCFI
-	 * @return {Number} Page index
+	 * @param {string} cfi EpubCFI
+	 * @return {number} Page index
 	 */
 	pageFromCfi(cfi) {
 		// Check if the pageList has not been set yet
@@ -210,8 +210,8 @@ class PageList {
 
 	/**
 	 * Get a EpubCFI by Page index
-	 * @param {String|Number} pg Page index
-	 * @return {String|null} cfi
+	 * @param {string|number} pg Page index
+	 * @return {string|null} cfi
 	 */
 	cfiFromPage(pg) {
 		// check that pg is an int
@@ -232,8 +232,8 @@ class PageList {
 
 	/**
 	 * Get a Page index from Book percentage
-	 * @param {Number} value Percentage
-	 * @return {Number} Page index
+	 * @param {number} value Percentage
+	 * @return {number} Page index
 	 */
 	pageFromPercentage(value) {
 
@@ -242,8 +242,8 @@ class PageList {
 
 	/**
 	 * Returns a value between 0 - 1 corresponding to the location of a page
-	 * @param {Number} pg the page
-	 * @return {Number} Percentage
+	 * @param {number} pg the page
+	 * @return {number} Percentage
 	 */
 	percentageFromPage(pg) {
 
@@ -253,8 +253,8 @@ class PageList {
 
 	/**
 	 * Returns a value between 0 - 1 corresponding to the location of a cfi
-	 * @param {String} cfi EpubCFI
-	 * @return {Number} Percentage
+	 * @param {string} cfi EpubCFI
+	 * @return {number} Percentage
 	 */
 	percentageFromCfi(cfi) {
 

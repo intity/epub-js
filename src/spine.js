@@ -11,7 +11,7 @@ class Spine extends Map {
 		super();
 		/**
 		 * Node index from the package.opf
-		 * @member {Number} nodeIndex
+		 * @member {number} nodeIndex
 		 * @memberof Spine
 		 * @readonly
 		 */

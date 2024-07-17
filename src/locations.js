@@ -14,7 +14,7 @@ class Locations extends Map {
 	 * Constructor
 	 * @param {Sections} [sections]
 	 * @param {Function} [request]
-	 * @param {Number} [pause=100]
+	 * @param {number} [pause=100]
 	 */
 	constructor(sections, request, pause) {
 
@@ -42,7 +42,7 @@ class Locations extends Map {
 
 	/**
 	 * Load all of sections in the book to generate locations
-	 * @param {Number} [chars] how many chars to split on (default:150)
+	 * @param {number} [chars] how many chars to split on (default:150)
 	 * @return {Promise<Locations>} Locations
 	 */
 	async generate(chars) {
@@ -80,7 +80,7 @@ class Locations extends Map {
 
 	/**
 	 * createRange
-	 * @returns {Object}
+	 * @returns {object}
 	 * @private
 	 */
 	createRange() {
@@ -116,8 +116,8 @@ class Locations extends Map {
 	/**
 	 * parse
 	 * @param {Element} contents 
-	 * @param {String} cfiBase 
-	 * @param {Number} [chars]
+	 * @param {string} cfiBase 
+	 * @param {number} [chars]
 	 * @returns {Locations}
 	 */
 	parse(contents, cfiBase, chars) {
@@ -203,8 +203,8 @@ class Locations extends Map {
 
 	/**
 	 * Get a location from an EpubCFI
-	 * @param {String|EpubCFI} value EpubCFI
-	 * @return {Number} Location index or -1 otherwise
+	 * @param {string|EpubCFI} value EpubCFI
+	 * @return {number} Location index or -1 otherwise
 	 */
 	locationFromCfi(value) {
 
@@ -219,8 +219,8 @@ class Locations extends Map {
 
 	/**
 	 * Get a percentage position in locations from an EpubCFI
-	 * @param {String|EpubCFI} cfi EpubCFI
-	 * @return {Number} Percentage
+	 * @param {string|EpubCFI} cfi EpubCFI
+	 * @return {number} Percentage
 	 */
 	percentageFromCfi(cfi) {
 
@@ -235,8 +235,8 @@ class Locations extends Map {
 
 	/**
 	 * Get a percentage position from a location index
-	 * @param {Number} index Location index
-	 * @return {Number} Percentage
+	 * @param {number} index Location index
+	 * @return {number} Percentage
 	 */
 	percentageFromLocation(index) {
 
@@ -250,8 +250,8 @@ class Locations extends Map {
 
 	/**
 	 * Get an EpubCFI from location index
-	 * @param {Number} index Location index
-	 * @return {String|null} EpubCFI string format
+	 * @param {number} index Location index
+	 * @return {string|null} EpubCFI string format
 	 */
 	cfiFromLocation(index) {
 
@@ -264,8 +264,8 @@ class Locations extends Map {
 
 	/**
 	 * Get an EpubCFI from location percentage
-	 * @param {Number} value Percentage in ranging from 0 to 1
-	 * @return {String|null} EpubCFI string format
+	 * @param {number} value Percentage in ranging from 0 to 1
+	 * @return {string|null} EpubCFI string format
 	 */
 	cfiFromPercentage(value) {
 
@@ -284,7 +284,7 @@ class Locations extends Map {
 
 	/**
 	 * Load locations from JSON
-	 * @param {String} locations
+	 * @param {string} locations
 	 * @returns {Locations}
 	 */
 	load(locations) {
@@ -305,7 +305,7 @@ class Locations extends Map {
 
 	/**
 	 * Save locations to JSON
-	 * @return {String} A JSON string
+	 * @return {string} A JSON string
 	 */
 	save() {
 
@@ -319,10 +319,10 @@ class Locations extends Map {
 
 	/**
 	 * Set current location
-	 * @param {Object} [options]
-	 * @param {String} [options.cfi] EpubCFI string format
-	 * @param {Number} [options.index] Location index
-	 * @param {Number} [options.percentage] Percentage
+	 * @param {object} [options]
+	 * @param {string} [options.cfi] EpubCFI string format
+	 * @param {number} [options.index] Location index
+	 * @param {number} [options.percentage] Percentage
 	 * @returns {Locations}
 	 */
 	set(options) {
@@ -376,8 +376,8 @@ class Locations extends Map {
 			/**
 			 * Current location changed
 			 * @event changed
-			 * @param {Object} current Current location
-			 * @param {Object} changed Changed properties
+			 * @param {object} current Current location
+			 * @param {object} changed Changed properties
 			 * @memberof Locations
 			 */
 			this.emit(EVENTS.LOCATIONS.CHANGED, current, options);

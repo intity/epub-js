@@ -9,48 +9,48 @@ import { sprint } from "./utils/core";
 class Section {
 	/**
 	 * Constructor
-	 * @param {Object} item Spine Item
-	 * @param {Object} hooks 
+	 * @param {object} item Spine Item
+	 * @param {object} hooks 
 	 */
 	constructor(item, hooks) {
 		/**
-		 * @member {String} idref
+		 * @member {string} idref
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.idref = item.idref;
 		/**
-		 * @member {Boolean} linear
+		 * @member {boolean} linear
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.linear = item.linear === "yes";
 		/**
-		 * @member {Number} index
+		 * @member {number} index
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.index = item.index;
 		/**
-		 * @member {String} href
+		 * @member {string} href
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.href = item.href;
 		/**
-		 * @member {String} url
+		 * @member {string} url
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.url = item.url;
 		/**
-		 * @member {String} canonical
+		 * @member {string} canonical
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.canonical = item.canonical;
 		/**
-		 * @member {String} cfiBase
+		 * @member {string} cfiBase
 		 * @memberof Section
 		 * @readonly
 		 */
@@ -68,7 +68,7 @@ class Section {
 		 */
 		this.prev = item.prev;
 		/**
-		 * @member {Array<String>} properties
+		 * @member {string[]} properties
 		 * @memberof Section
 		 * @readonly
 		 */
@@ -87,7 +87,7 @@ class Section {
 		 */
 		this.contents = undefined;
 		/**
-		 * @member {String} output
+		 * @member {string} output
 		 * @memberof Section
 		 * @readonly
 		 */
@@ -124,7 +124,7 @@ class Section {
 	/**
 	 * Render the contents of a section
 	 * @param {Function} request a request method to use for loading
-	 * @return {Promise<String>} output a serialized XML Document
+	 * @return {Promise<string>} output a serialized XML Document
 	 */
 	render(request) {
 
@@ -148,8 +148,8 @@ class Section {
 
 	/**
 	 * Find a string in a section
-	 * @param {String} query The query string to find
-	 * @return {Array<Object>} A list of matches, with form { cfi, excerpt }
+	 * @param {string} query The query string to find
+	 * @return {object[]} A list of matches, with form { cfi, excerpt }
 	 */
 	find(query) {
 
@@ -204,9 +204,9 @@ class Section {
 	 * Search a string in multiple sequential Element of the section.
 	 * If the document.createTreeWalker api is missed(eg: IE8), use 
 	 * `find` as a fallback.
-	 * @param {String} query The query string to search
-	 * @param {Number} [maxSeqEle=5] The maximum number of Element that are combined for search, default value is 5.
-	 * @return {Array<Object>} A list of matches, with form { cfi, excerpt }
+	 * @param {string} query The query string to search
+	 * @param {number} [maxSeqEle=5] The maximum number of Element that are combined for search, default value is 5.
+	 * @return {object[]} A list of matches, with form { cfi, excerpt }
 	 */
 	search(query, maxSeqEle = 5) {
 
@@ -278,8 +278,8 @@ class Section {
 	/**
 	* Reconciles the current chapters layout properties with
 	* the global layout properties.
-	* @param {Object} globalLayout The global layout settings object, chapter properties string
-	* @return {Object} layoutProperties Object with layout properties
+	* @param {object} globalLayout The global layout settings object, chapter properties string
+	* @return {object} layoutProperties object with layout properties
 	*/
 	reconcileLayoutSettings(globalLayout) {
 		//-- Get the global defaults
@@ -307,7 +307,7 @@ class Section {
 	/**
 	 * Get a CFI from a Range in the Section
 	 * @param {Range} range
-	 * @return {String} cfi an EpubCFI string
+	 * @return {string} cfi an EpubCFI string
 	 */
 	cfiFromRange(range) {
 
@@ -317,7 +317,7 @@ class Section {
 	/**
 	 * Get a CFI from an Element in the Section
 	 * @param {Element} el
-	 * @return {String} cfi an EpubCFI string
+	 * @return {string} cfi an EpubCFI string
 	 */
 	cfiFromElement(el) {
 
