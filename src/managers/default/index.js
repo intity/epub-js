@@ -20,15 +20,15 @@ class DefaultViewManager {
 	 * Constructor
 	 * @param {Book} book 
 	 * @param {Layout} layout 
-	 * @param {object} [options]
-	 * @param {string} [options.axis]
-	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
-	 * @param {string} [options.ignoreClass='']
-	 * @param {string|object} [options.view='iframe']
+	 * @param {Object} [options]
+	 * @param {String} [options.axis]
+	 * @param {String} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
+	 * @param {String} [options.ignoreClass='']
+	 * @param {String|Object} [options.view='iframe']
 	 */
 	constructor(book, layout, options) {
 		/**
-		 * @member {string} name Manager name
+		 * @member {String} name Manager name
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
@@ -66,19 +66,19 @@ class DefaultViewManager {
 			this.updateLayout();
 		});
 		/**
-		 * @member {boolean} paginated
+		 * @member {Boolean} paginated
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
 		this.paginated = this.layout.flow === "paginated";
 		/**
-		 * @member {object[]} location
+		 * @member {Array<Object>} location
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
 		this.location = [];
 		/**
-		 * @member {boolean} rendered
+		 * @member {Boolean} rendered
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
@@ -89,9 +89,9 @@ class DefaultViewManager {
 	/**
 	 * render
 	 * @param {Element} element 
-	 * @param {object} size 
-	 * @param {number} size.width
-	 * @param {number} size.height
+	 * @param {Object} size 
+	 * @param {Number} size.width
+	 * @param {Number} size.height
 	 */
 	render(element, size) {
 
@@ -109,11 +109,11 @@ class DefaultViewManager {
 		/**
 		 * @member {Stage} stage
 		 * @memberof DefaultViewManager
-		 * @property {string} axis
-		 * @property {string|number} width
-		 * @property {string|number} height
-		 * @property {boolean} hidden
-		 * @property {boolean} fullsize
+		 * @property {String} axis
+		 * @property {String|Number} width
+		 * @property {String|Number} height
+		 * @property {Boolean} hidden
+		 * @property {Boolean} fullsize
 		 * @readonly
 		 */
 		this.stage = new Stage(this.layout, {
@@ -138,7 +138,7 @@ class DefaultViewManager {
 		 */
 		this.views = new Views(this.container);
 		/**
-		 * @member {object} stageSize
+		 * @member {Object} stageSize
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
@@ -246,9 +246,9 @@ class DefaultViewManager {
 
 	/**
 	 * resize
-	 * @param {number} [width] 
-	 * @param {number} [height] 
-	 * @param {string} [epubcfi] 
+	 * @param {Number} [width] 
+	 * @param {Number} [height] 
+	 * @param {String} [epubcfi] 
 	 */
 	resize(width, height, epubcfi) {
 
@@ -283,7 +283,7 @@ class DefaultViewManager {
 
 	/**
 	 * Require the view from passed string, or as a class function
-	 * @param  {string|object} view
+	 * @param {String|Function|Object} view
 	 * @return {any}
 	 * @private
 	 */
@@ -305,8 +305,8 @@ class DefaultViewManager {
 	/**
 	 * createView
 	 * @param {Section} section 
-	 * @param {boolean} [forceRight]
-	 * @returns {object} View object (default: IframeView)
+	 * @param {Boolean} [forceRight]
+	 * @returns {Object} View (default: IframeView)
 	 * @private
 	 */
 	createView(section, forceRight) {
@@ -326,9 +326,9 @@ class DefaultViewManager {
 
 	/**
 	 * handleNextPrePaginated
-	 * @param {boolean} forceRight 
+	 * @param {Boolean} forceRight 
 	 * @param {Section} section 
-	 * @param {function} action callback function
+	 * @param {Function} action callback function
 	 * @returns {any}
 	 * @private
 	 */
@@ -349,8 +349,8 @@ class DefaultViewManager {
 	/**
 	 * display
 	 * @param {Section} section 
-	 * @param {string|number} [target] 
-	 * @returns {Promise} displaying promise
+	 * @param {String|Number} [target] 
+	 * @returns {Promise<any>} displaying promise
 	 */
 	display(section, target) {
 
@@ -435,10 +435,10 @@ class DefaultViewManager {
 
 	/**
 	 * moveTo
-	 * @param {object} offset
-	 * @param {number} offset.top
-	 * @param {number} offset.left
-	 * @param {number} width 
+	 * @param {Object} offset
+	 * @param {Number} offset.top
+	 * @param {Number} offset.left
+	 * @param {Number} width 
 	 * @private
 	 */
 	moveTo(offset, width) {
@@ -477,8 +477,8 @@ class DefaultViewManager {
 	/**
 	 * append
 	 * @param {Section} section Section object
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {Boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 */
 	add(section, forceRight) {
 
@@ -508,8 +508,8 @@ class DefaultViewManager {
 	/**
 	 * append
 	 * @param {Section} section Section object
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {Boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	append(section, forceRight) {
@@ -520,8 +520,8 @@ class DefaultViewManager {
 	/**
 	 * prepend
 	 * @param {Section} section 
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {Boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	prepend(section, forceRight) {
@@ -552,7 +552,7 @@ class DefaultViewManager {
 
 	/**
 	 * counter
-	 * @param {object} bounds 
+	 * @param {Object} bounds 
 	 * @private
 	 */
 	counter(bounds) {
@@ -566,7 +566,7 @@ class DefaultViewManager {
 
 	/**
 	 * next
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 */
 	next() {
 
@@ -659,7 +659,7 @@ class DefaultViewManager {
 
 	/**
 	 * prev
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 */
 	prev() {
 
@@ -788,7 +788,7 @@ class DefaultViewManager {
 
 	/**
 	 * currentLocation
-	 * @returns {object[]} Location sections
+	 * @returns {Array<Object>} Location sections
 	 */
 	currentLocation() {
 
@@ -803,7 +803,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get location from scrolled flow
-	 * @returns {object[]} Location sections
+	 * @returns {Array<Object>} Location sections
 	 * @private
 	 */
 	scrolledLocation() {
@@ -877,7 +877,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get location from paginated flow
-	 * @returns {object[]} sections
+	 * @returns {Array<Object>} sections
 	 * @private
 	 */
 	paginatedLocation() {
@@ -958,11 +958,11 @@ class DefaultViewManager {
 
 	/**
 	 * isVisible
-	 * @param {*} view 
-	 * @param {number} offsetPrev 
-	 * @param {number} offsetNext 
+	 * @param {any} view 
+	 * @param {Number} offsetPrev 
+	 * @param {Number} offsetNext 
 	 * @param {DOMRect} [rect] 
-	 * @returns {boolean}
+	 * @returns {Boolean}
 	 * @private
 	 */
 	isVisible(view, offsetPrev, offsetNext, rect) {
@@ -988,7 +988,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get array of visible views
-	 * @returns {object[]} array of visible views
+	 * @returns {Array<Object>} array of visible views
 	 */
 	visible() {
 
@@ -1008,9 +1008,9 @@ class DefaultViewManager {
 
 	/**
 	 * scrollBy
-	 * @param {number} x 
-	 * @param {number} y 
-	 * @param {boolean} silent 
+	 * @param {Number} x 
+	 * @param {Number} y 
+	 * @param {Boolean} silent 
 	 * @private
 	 */
 	scrollBy(x, y, silent) {
@@ -1031,9 +1031,9 @@ class DefaultViewManager {
 
 	/**
 	 * scrollTo
-	 * @param {number} x 
-	 * @param {number} y 
-	 * @param {boolean} silent 
+	 * @param {Number} x 
+	 * @param {Number} y 
+	 * @param {Boolean} silent 
 	 * @private
 	 */
 	scrollTo(x, y, silent) {
@@ -1139,7 +1139,7 @@ class DefaultViewManager {
 
 	/**
 	 * Update writing mode
-	 * @param {string} mode 
+	 * @param {String} mode 
 	 * @private
 	 */
 	updateWritingMode(mode) {
@@ -1149,8 +1149,8 @@ class DefaultViewManager {
 
 	/**
 	 * Update axis
-	 * @param {string} axis
-	 * @param {boolean} [forceUpdate=false] force update
+	 * @param {String} axis
+	 * @param {Boolean} [forceUpdate=false] force update
 	 * @private
 	 */
 	updateAxis(axis, forceUpdate = false) {
@@ -1170,7 +1170,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get contents array from views
-	 * @returns {object[]} [view.contents]
+	 * @returns {Array<Contents>} [view.contents]
 	 */
 	getContents() {
 
@@ -1187,7 +1187,7 @@ class DefaultViewManager {
 
 	/**
 	 * isRendered
-	 * @returns {boolean}
+	 * @returns {Boolean}
 	 */
 	isRendered() {
 
