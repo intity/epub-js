@@ -5,7 +5,7 @@
 class Path {
 	/**
 	 * Constructor
-	 * @param {string} uri a url string (relative or absolute)
+	 * @param {String} uri a url string (relative or absolute)
 	 */
 	constructor(uri) {
 
@@ -15,25 +15,25 @@ class Path {
 
 		const parsed = this.parse(uri);
 		/**
-		 * @member {string} directory
+		 * @member {String} directory
 		 * @memberof Path
 		 * @readonly
 		 */
 		this.directory = parsed.dir + "/";
 		/**
-		 * @member {string} filename
+		 * @member {String} filename
 		 * @memberof Path
 		 * @readonly
 		 */
 		this.filename = parsed.base;
 		/**
-		 * @member {string} extension
+		 * @member {String} extension
 		 * @memberof Path
 		 * @readonly
 		 */
 		this.extension = parsed.ext.slice(1);
 		/**
-		 * @member {string} path
+		 * @member {String} path
 		 * @memberof Path
 		 * @readonly
 		 */
@@ -43,8 +43,8 @@ class Path {
 	/**
 	 * Parse the path
 	 * @link https://nodejs.org/api/path.html#path_path_parse_path
-	 * @param {string} path
-	 * @returns {object}
+	 * @param {String} path
+	 * @returns {Object}
 	 */
 	parse(path) {
 
@@ -76,8 +76,8 @@ class Path {
 	/**
 	 * dirname
 	 * @link https://nodejs.org/api/path.html#pathdirnamepath
-	 * @param {string} path 
-	 * @returns {string}
+	 * @param {String} path 
+	 * @returns {String}
 	 */
 	dirname(path) {
 
@@ -95,8 +95,8 @@ class Path {
 	/**
 	 * isAbsolute
 	 * @link https://nodejs.org/api/path.html#pathisabsolutepath
-	 * @param {string} path
-	 * @returns {boolean}
+	 * @param {String} path
+	 * @returns {Boolean}
 	 */
 	isAbsolute(path) {
 
@@ -105,8 +105,8 @@ class Path {
 
 	/**
 	 * Check if path ends with a directory
-	 * @param {string} path
-	 * @returns {boolean}
+	 * @param {String} path
+	 * @returns {Boolean}
 	 */
 	isDirectory(path) {
 
@@ -116,7 +116,7 @@ class Path {
 	/**
 	 * Resolve path
 	 * @link https://nodejs.org/api/path.html#pathresolvepaths
-	 * @returns {string} resolved
+	 * @returns {String} resolved
 	 */
 	resolve() {
 
@@ -150,9 +150,9 @@ class Path {
 	/**
 	 * Relative path resolve
 	 * @link https://nodejs.org/api/path.html#pathrelativefrom-to
-	 * @param {string} from
-	 * @param {string} to 
-	 * @returns {string} relative path
+	 * @param {String} from
+	 * @param {String} to 
+	 * @returns {String} relative path
 	 */
 	relative(from, to) {
 
@@ -187,8 +187,8 @@ class Path {
 	/**
 	 * Normalize path
 	 * @link https://nodejs.org/api/path.html#pathnormalizepath
-	 * @param {string} path 
-	 * @returns {string}
+	 * @param {String} path 
+	 * @returns {String}
 	 */
 	normalize(path) {
 
@@ -209,7 +209,7 @@ class Path {
 
 	/**
 	 * Return the path string
-	 * @returns {string} path
+	 * @returns {String} path
 	 */
 	toString() {
 
