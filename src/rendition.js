@@ -620,8 +620,8 @@ class Rendition {
 			located.end.percentage = this.book.locations.percentageFromLocation(locationEnd);
 		}
 
-		const pageStart = this.book.pageList.pageFromCfi(start.mapping.start);
-		const pageEnd = this.book.pageList.pageFromCfi(end.mapping.end);
+		const pageStart = this.book.navigation.pageList.pageFromCfi(start.mapping.start);
+		const pageEnd = this.book.navigation.pageList.pageFromCfi(end.mapping.end);
 
 		if (pageStart != -1) {
 			located.start.page = pageStart;

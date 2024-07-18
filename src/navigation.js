@@ -1,3 +1,4 @@
+import PageList from "./pagelist";
 import {
 	qs,
 	qsa,
@@ -32,6 +33,12 @@ class Navigation {
 		 * @readonly
 		 */
 		this.length = 0;
+		/**
+		 * @member {PageList} pageList
+		 * @memberof Navigation
+		 * @readonly
+		 */
+		this.pageList = new PageList(xml);
 		if (xml) {
 			this.parse(xml);
 		}
@@ -369,6 +376,21 @@ class Navigation {
 	forEach(...args) {
 
 		this.toc.forEach(...args);
+	}
+
+	/**
+	 * destroy
+	 */
+	destroy() {
+
+		this.toc = undefined;
+		this.tocByHref = undefined;
+		this.tocById = undefined;
+		this.landmarks = undefined;
+		this.landmarksByType = undefined;
+		this.length = 0;
+		this.pageList.destroy();
+		this.pageList = undefined;
 	}
 }
 

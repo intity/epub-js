@@ -8,7 +8,6 @@ import Container from "./container";
 import Packaging from "./packaging";
 import Navigation from "./navigation";
 import Resources from "./resources";
-import PageList from "./pagelist";
 import Rendition from "./rendition";
 import Archive from "./archive";
 import request from "./utils/request";
@@ -91,7 +90,6 @@ class Book {
 			spine: new Defer(),
 			manifest: new Defer(),
 			metadata: new Defer(),
-			pageList: new Defer(),
 			resources: new Defer(),
 			navigation: new Defer()
 		};
@@ -101,7 +99,6 @@ class Book {
 			spine: this.loading.spine.promise,
 			manifest: this.loading.manifest.promise,
 			metadata: this.loading.metadata.promise,
-			pageList: this.loading.pageList.promise,
 			resources: this.loading.resources.promise,
 			navigation: this.loading.navigation.promise
 		};
@@ -111,12 +108,12 @@ class Book {
 		 * @readonly
 		 */
 		this.ready = Promise.all([
+			this.loaded.cover,
+			this.loaded.metadata,
 			this.loaded.manifest,
 			this.loaded.spine,
-			this.loaded.metadata,
-			this.loaded.cover,
-			this.loaded.navigation,
-			this.loaded.resources
+			this.loaded.resources,
+			this.loaded.navigation
 		]);
 		/**
 		 * Queue for methods used before opening
@@ -137,12 +134,6 @@ class Book {
 		 * @readonly
 		 */
 		this.navigation = undefined;
-		/**
-		 * @member {PageList} pagelist
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.pageList = undefined;
 		/**
 		 * @member {Url} url
 		 * @memberof Book
@@ -475,7 +466,7 @@ class Book {
 		this.loading.spine.resolve(this.packaging.spine);
 		this.loading.cover.resolve(this.cover);
 		this.loading.resources.resolve(this.resources);
-		this.loading.pageList.resolve(this.pageList);
+		this.loading.navigation.resolve(this.navigation);
 
 		this.isOpen = true;
 
@@ -502,13 +493,11 @@ class Book {
 		if (navPath) {
 			return this.load(navPath, "xml").then((xml) => {
 				this.navigation = new Navigation(xml);
-				this.pageList = new PageList(xml);
 				return this.navigation;
 			});
 		} else {
 			return new Promise((resolve, reject) => {
 				this.navigation = new Navigation();
-				this.pageList = new PageList();
 				resolve(this.navigation);
 			});
 		}
@@ -734,7 +723,6 @@ class Book {
 		this.isRendered = false;
 
 		this.locations && this.locations.destroy();
-		this.pageList && this.pageList.destroy();
 		this.archive && this.archive.destroy();
 		this.resources && this.resources.destroy();
 		this.container && this.container.destroy();
@@ -742,13 +730,13 @@ class Book {
 		this.rendition && this.rendition.destroy();
 
 		this.locations = undefined;
-		this.pageList = undefined;
 		this.archive = undefined;
 		this.resources = undefined;
 		this.container = undefined;
 		this.packaging = undefined;
 		this.rendition = undefined;
 
+		this.navigation.destroy();
 		this.navigation = undefined;
 		this.url = undefined;
 		this.path = undefined;
