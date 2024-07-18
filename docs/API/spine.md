@@ -9,6 +9,7 @@ A collection of Spine Items
 * [Spine](#Spine) ⇐ <code>Map</code>
     * _instance_
         * [.parse(node)](#Spine+parse)
+        * [.load(spine)](#Spine+load)
         * [.destroy()](#Spine+destroy)
     * _static_
         * [.nodeIndex](#Spine.nodeIndex) : <code>number</code>
@@ -23,6 +24,17 @@ Parse element spine
 | Param | Type |
 | --- | --- |
 | node | <code>Node</code> | 
+
+<a name="Spine+load"></a>
+
+## spine.load(spine)
+Load spine from JSON
+
+**Kind**: instance method of [<code>Spine</code>](#Spine)  
+
+| Param | Type |
+| --- | --- |
+| spine | <code>Array.&lt;object&gt;</code> | 
 
 <a name="Spine+destroy"></a>
 

@@ -8,8 +8,8 @@ Open Packaging Format Parser
 * [Packaging](#Packaging)
     * [new Packaging([packageXml])](#new_Packaging_new)
     * _instance_
-        * [.parse(packageXml)](#Packaging+parse) ⇒ <code>object</code>
-        * [.load(json)](#Packaging+load) ⇒ <code>object</code>
+        * [.parse(packageXml)](#Packaging+parse) ⇒ [<code>Packaging</code>](#Packaging)
+        * [.load(data)](#Packaging+load) ⇒ [<code>Packaging</code>](#Packaging)
         * [.destroy()](#Packaging+destroy)
     * _static_
         * [.metadata](#Packaging.metadata) : <code>Metadata</code>
@@ -31,11 +31,10 @@ Constructor
 
 <a name="Packaging+parse"></a>
 
-## packaging.parse(packageXml) ⇒ <code>object</code>
+## packaging.parse(packageXml) ⇒ [<code>Packaging</code>](#Packaging)
 Parse OPF XML
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
-**Returns**: <code>object</code> - parsed package parts  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -43,15 +42,14 @@ Parse OPF XML
 
 <a name="Packaging+load"></a>
 
-## packaging.load(json) ⇒ <code>object</code>
-Load JSON Manifest
+## packaging.load(data) ⇒ [<code>Packaging</code>](#Packaging)
+Load package from JSON
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
-**Returns**: <code>object</code> - parsed package parts  
 
-| Param | Type |
-| --- | --- |
-| json | <code>json</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>object</code> | Serialized JSON object data |
 
 <a name="Packaging+destroy"></a>
 

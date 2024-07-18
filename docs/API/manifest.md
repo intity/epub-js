@@ -9,6 +9,7 @@ Manifest class
 * [Manifest](#Manifest) ⇐ <code>Map</code>
     * _instance_
         * [.parse(node)](#Manifest+parse)
+        * [.load(manifest)](#Manifest+load)
         * [.destroy()](#Manifest+destroy)
     * _static_
         * [.navPath](#Manifest.navPath) : <code>string</code>
@@ -24,6 +25,17 @@ Parse the manifest node
 | Param | Type |
 | --- | --- |
 | node | <code>Node</code> | 
+
+<a name="Manifest+load"></a>
+
+## manifest.load(manifest)
+Load manifest from JSON
+
+**Kind**: instance method of [<code>Manifest</code>](#Manifest)  
+
+| Param | Type |
+| --- | --- |
+| manifest | <code>Array.&lt;object&gt;</code> | 
 
 <a name="Manifest+destroy"></a>
 

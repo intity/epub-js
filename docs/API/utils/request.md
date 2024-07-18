@@ -1,6 +1,6 @@
 <a name="request"></a>
 
-# request(url, [type], [withCredentials], [headers]) ⇒ <code>Promise</code>
+# request(url, [type], [withCredentials], [headers]) ⇒ <code>Promise.&lt;any&gt;</code>
 request
 
 **Kind**: global function  

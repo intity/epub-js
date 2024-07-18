@@ -1,12 +1,13 @@
 <a name="PageList"></a>
 
-# PageList
+# PageList ⇐ <code>Array</code>
 Page List Parser
 
 **Kind**: global class  
+**Extends**: <code>Array</code>  
 **Link**: https://www.w3.org/TR/epub/#sec-nav-pagelist  
 
-* [PageList](#PageList)
+* [PageList](#PageList) ⇐ <code>Array</code>
     * [new PageList([xml])](#new_PageList_new)
     * _instance_
         * [.parse(xml)](#PageList+parse) ⇒ [<code>PageList</code>](#PageList)
