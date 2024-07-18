@@ -10,6 +10,7 @@ import {
 /**
  * Page List Parser
  * @link https://www.w3.org/TR/epub/#sec-nav-pagelist
+ * @extends {Array}
  */
 class PageList extends Array {
 	/**
@@ -108,7 +109,7 @@ class PageList extends Array {
 	/**
 	 * Create navItem
 	 * @param {Node} node
-	 * @return {Object} PageList item
+	 * @return {object} PageList item
 	 * @private
 	 */
 	navItem(node) {
@@ -164,7 +165,7 @@ class PageList extends Array {
 	/**
 	 * Create ncxItem
 	 * @param {Node} node 
-	 * @returns {Object}
+	 * @returns {object}
 	 * @private
 	 */
 	ncxItem(node) {
