@@ -23,8 +23,8 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {number} [options.width]
  * @param {number} [options.height]
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|function|object} [options.manager='default'] string values: default / continuous
- * @param {string|function} [options.view='iframe']
+ * @param {string|Function|object} [options.manager='default'] string values: default / continuous
+ * @param {string|Function} [options.view='iframe']
  * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
@@ -123,7 +123,7 @@ class Rendition {
 		/**
 		 * A Rendered Location Range
 		 * @typedef location
-		 * @type {Object}
+		 * @type {object}
 		 * @property {object} start
 		 * @property {string} start.index
 		 * @property {string} start.href
@@ -154,7 +154,7 @@ class Rendition {
 		this.starting = new Defer();
 		/**
 		 * returns after the rendition has started
-		 * @member {Promise} started
+		 * @member {Promise<any>} started
 		 * @memberof Rendition
 		 */
 		this.started = this.starting.promise;
@@ -165,7 +165,7 @@ class Rendition {
 
 	/**
 	 * Set the manager function
-	 * @param {function} manager
+	 * @param {Function} manager
 	 */
 	setManager(manager) {
 
@@ -174,7 +174,7 @@ class Rendition {
 
 	/**
 	 * Require the manager from passed string, or as a class function
-	 * @param  {string|object} manager [description]
+	 * @param {string|object} manager [description]
 	 * @return {any}
 	 */
 	requireManager(manager) {
@@ -257,19 +257,17 @@ class Rendition {
 	/**
 	 * Call to attach the container to an element in the dom
 	 * Container must be attached before rendering can begin
-	 * @param  {Element} element to attach to
-	 * @return {Promise}
+	 * @param {Element} element to attach to
+	 * @return {Promise<any>}
 	 */
 	attachTo(element) {
 
 		return this.q.enqueue(() => {
-
 			// Start rendering
 			this.manager.render(element, {
 				width: this.settings.width,
 				height: this.settings.height
 			});
-
 			/**
 			 * Emit that rendering has attached to an element
 			 * @event attached
@@ -284,8 +282,13 @@ class Rendition {
 	 * The request will be added to the rendering Queue,
 	 * so it will wait until book is opened, rendering started
 	 * and all other rendering tasks have finished to be called.
-	 * @param  {string} target Url or EpubCFI
-	 * @return {Promise}
+	 * @param {string|number} [target] `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI
+	 * @example rendition.display()
+	 * @example rendition.display(3)
+	 * @example rendition.display("#chapter_001")
+	 * @example rendition.display("chapter_001.xhtml")
+	 * @example rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
+	 * @return {Promise<any>}
 	 */
 	display(target) {
 
@@ -297,8 +300,8 @@ class Rendition {
 
 	/**
 	 * Tells the manager what to display immediately
-	 * @param  {string} target Url or EpubCFI
-	 * @return {Promise}
+	 * @param {string} [target]
+	 * @return {Promise<Section>}
 	 * @private
 	 */
 	_display(target) {
@@ -336,7 +339,7 @@ class Rendition {
 			/**
 			 * Emit that has been an error displaying
 			 * @event displayError
-			 * @param {*} err
+			 * @param {Error} err
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
@@ -468,22 +471,24 @@ class Rendition {
 
 	/**
 	 * Go to the next "page" in the rendition
-	 * @return {Promise}
+	 * @return {Promise<any>}
 	 */
 	next() {
 
-		return this.q.enqueue(this.manager.next.bind(this.manager))
-			.then(this.reportLocation.bind(this));
+		return this.q.enqueue(
+			this.manager.next.bind(this.manager)
+		).then(this.reportLocation.bind(this));
 	}
 
 	/**
 	 * Go to the previous "page" in the rendition
-	 * @return {Promise}
+	 * @return {Promise<any>}
 	 */
 	prev() {
 
-		return this.q.enqueue(this.manager.prev.bind(this.manager))
-			.then(this.reportLocation.bind(this));
+		return this.q.enqueue(
+			this.manager.prev.bind(this.manager)
+		).then(this.reportLocation.bind(this));
 	}
 
 	/**
@@ -520,7 +525,8 @@ class Rendition {
 	/**
 	 * Report the current location
 	 * @fires relocated
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
+	 * @private
 	 */
 	reportLocation() {
 
@@ -571,7 +577,7 @@ class Rendition {
 	/**
 	 * Creates a Rendition#locationRange from location
 	 * passed by the Manager
-	 * @param {object[]} location Location sections
+	 * @param {object} location Location sections
 	 * @returns {displayedLocation}
 	 * @private
 	 */
@@ -614,8 +620,8 @@ class Rendition {
 			located.end.percentage = this.book.locations.percentageFromLocation(locationEnd);
 		}
 
-		const pageStart = this.book.pageList.pageFromCfi(start.mapping.start);
-		const pageEnd = this.book.pageList.pageFromCfi(end.mapping.end);
+		const pageStart = this.book.navigation.pageList.pageFromCfi(start.mapping.start);
+		const pageEnd = this.book.navigation.pageList.pageFromCfi(end.mapping.end);
 
 		if (pageStart != -1) {
 			located.start.page = pageStart;
@@ -666,7 +672,7 @@ class Rendition {
 
 	/**
 	 * Pass the events from a view's Contents
-	 * @param  {Contents} view contents
+	 * @param {Contents} view contents
 	 * @private
 	 */
 	passEvents(contents) {
@@ -680,7 +686,7 @@ class Rendition {
 
 	/**
 	 * Emit events passed by a view
-	 * @param  {event} e
+	 * @param {event} e
 	 * @private
 	 */
 	triggerViewEvent(e, contents) {
@@ -690,7 +696,7 @@ class Rendition {
 
 	/**
 	 * Emit a selection event's CFI Range passed from a a view
-	 * @param  {string} cfirange
+	 * @param {string} cfirange
 	 * @private
 	 */
 	triggerSelectedEvent(cfirange, contents) {
@@ -706,7 +712,7 @@ class Rendition {
 
 	/**
 	 * Emit a markClicked event with the cfiRange and data from a mark
-	 * @param  {EpubCFI} cfirange
+	 * @param {EpubCFI} cfirange
 	 * @param {object} data 
 	 * @param {Contents} contents 
 	 * @private
@@ -725,8 +731,8 @@ class Rendition {
 
 	/**
 	 * Get a Range from a Visible CFI
-	 * @param  {string} epubcfi EpubCfi string
-	 * @param  {string} ignoreClass
+	 * @param {string} epubcfi EpubCfi string
+	 * @param {string} ignoreClass
 	 * @return {Range}
 	 */
 	getRange(epubcfi, ignoreClass) {
@@ -744,7 +750,7 @@ class Rendition {
 
 	/**
 	 * Hook to adjust images to fit in columns
-	 * @param  {Contents} contents
+	 * @param {Contents} contents
 	 * @private
 	 */
 	adjustImages(contents) {
@@ -793,7 +799,7 @@ class Rendition {
 
 	/**
 	 * Get the Contents object of each rendered view
-	 * @returns {object[]}
+	 * @returns {Array<Contents>}
 	 */
 	getContents() {
 
@@ -802,7 +808,7 @@ class Rendition {
 
 	/**
 	 * Get the views member from the manager
-	 * @returns {object[]}
+	 * @returns {Views}
 	 */
 	views() {
 
@@ -861,10 +867,11 @@ class Rendition {
 	/**
 	 * Hook to handle the document identifier before
 	 * a Section is serialized
-	 * @param {document} doc
+	 * @param {Document} doc
+	 * @param {Section} section 
 	 * @private
 	 */
-	injectIdentifier(doc) {
+	injectIdentifier(doc, section) {
 
 		const ident = this.book.packaging.metadata.get("identifier");
 		const meta = doc.createElement("meta");

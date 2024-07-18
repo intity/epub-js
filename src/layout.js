@@ -7,7 +7,7 @@ import EventEmitter from "event-emitter";
 class Layout {
 	/**
 	 * Constructor
-	 * @param {object} options 
+	 * @param {object} [options] 
 	 * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
 	 * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
 	 * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
@@ -241,7 +241,7 @@ class Layout {
 	 * @param {Contents} contents
 	 * @param {Section} [section] 
 	 * @param {string} [axis] 
-	 * @return {Promise}
+	 * @return {void|Promise<any>}
 	 */
 	format(contents, section, axis) {
 

@@ -8,7 +8,7 @@ Map text locations to CFI ranges
 * [Mapping](#Mapping)
     * [new Mapping(layout, [axis], [dev])](#new_Mapping_new)
     * [.section(view)](#Mapping+section) ⇒ <code>Array.&lt;object&gt;</code>
-    * [.page(contents, cfiBase, start, end)](#Mapping+page) ⇒ <code>any</code>
+    * [.page(contents, cfiBase, start, end)](#Mapping+page) ⇒ <code>Object</code>
     * [.findRanges(view)](#Mapping+findRanges) ⇒ <code>Array.&lt;object&gt;</code>
     * [.rangeListToCfiList(cfiBase, columns)](#Mapping+rangeListToCfiList) ⇒ <code>Array.&lt;object&gt;</code>
     * [.axis(value)](#Mapping+axis) ⇒ <code>boolean</code>
@@ -34,11 +34,11 @@ Find CFI pairs for entire section at once
 
 | Param | Type |
 | --- | --- |
-| view | <code>\*</code> | 
+| view | <code>any</code> | 
 
 <a name="Mapping+page"></a>
 
-## mapping.page(contents, cfiBase, start, end) ⇒ <code>any</code>
+## mapping.page(contents, cfiBase, start, end) ⇒ <code>Object</code>
 Find CFI pairs for a page
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  
@@ -71,8 +71,8 @@ rangeListToCfiList
 
 | Param | Type |
 | --- | --- |
-| cfiBase | <code>\*</code> | 
-| columns | <code>\*</code> | 
+| cfiBase | <code>string</code> | 
+| columns | <code>Array.&lt;object&gt;</code> | 
 
 <a name="Mapping+axis"></a>
 

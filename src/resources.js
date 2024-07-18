@@ -11,10 +11,10 @@ class Resources {
 	/**
 	 * Constructor
 	 * @param {Manifest} manifest
-	 * @param {object} [options]
+	 * @param {object} options
 	 * @param {Archive} [options.archive]
-	 * @param {method} [options.request]
-	 * @param {method} [options.resolve]
+	 * @param {Function} options.request
+	 * @param {Function} options.resolve
 	 * @param {string} [options.replacements]
 	 */
 	constructor(manifest, { archive, request, resolve, replacements }) {
@@ -85,7 +85,7 @@ class Resources {
 
 	/**
 	 * Create blob urls for all the assets
-	 * @return {Promise} returns replacement urls
+	 * @return {Promise<string[]>} returns replacement urls
 	 */
 	async replacements() {
 
@@ -106,7 +106,7 @@ class Resources {
 	/**
 	 * Replace URLs
 	 * @param {string} absoluteUri 
-	 * @returns {Promise[]} replacements
+	 * @returns {Array<Promise<string[]>>} replacements
 	 * @private
 	 */
 	replaceUrls() {
@@ -122,20 +122,14 @@ class Resources {
 
 	/**
 	 * Replace URLs in CSS resources
-	 * @param {Archive} [archive]
-	 * @param {method} [resolve]
-	 * @return {Promise}
+	 * @return {Promise<string[]>}
 	 */
-	replaceCss(archive, resolve) {
+	replaceCss() {
 
 		const replaced = [];
-		archive = archive || this.archive;
-		resolve = resolve || this.resolve;
 		this.css.forEach((item) => {
 			const replacement = this.createCssFile(
-				item.href,
-				archive,
-				resolve
+				item.href
 			).then((url) => {
 				// switch the url in the replacementUrls
 				const index = this.urls.indexOf(item.href);
@@ -152,7 +146,7 @@ class Resources {
 	/**
 	 * Create a new CSS file with the replaced URLs
 	 * @param {string} href the original css file
-	 * @return {Promise} returns a BlobUrl to the new CSS file or a data url
+	 * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
 	 * @private
 	 */
 	createCssFile(href) {
@@ -208,16 +202,13 @@ class Resources {
 	/**
 	 * Resolve all resources URLs relative to an absolute URL
 	 * @param {string} absoluteUri to be resolved to
-	 * @param {method} [resolve]
 	 * @return {string[]} array with relative Urls
 	 */
-	relativeTo(absoluteUri, resolve) {
-
-		resolve = resolve || this.resolve;
+	relativeTo(absoluteUri) {
 
 		// Get Urls relative to current sections
 		return this.urls.map((href) => {
-			const resolved = resolve(href);
+			const resolved = this.resolve(href);
 			const path = new Path(absoluteUri);
 			return path.relative(path.directory, resolved);
 		});
@@ -226,14 +217,16 @@ class Resources {
 	/**
 	 * Get a URL for a resource
 	 * @param {string} path
-	 * @return {string|null} url
+	 * @return {Promise<string>}
 	 */
 	get(path) {
 
 		const index = this.urls.indexOf(path);
 
 		if (index === -1) {
-			return null;
+			return new Promise((resolve, reject) => {
+				resolve(null);
+			});
 		} else if (this.replacementUrls.length) {
 			return new Promise((resolve, reject) => {
 				resolve(this.replacementUrls[index]);

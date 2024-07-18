@@ -19,6 +19,7 @@
         - EVENTS
     - [Container](API/container.md)
     - [Locations](API/locations.md)
+        - [Location](API/location.md)
     - [Navigation](API/navigation.md)
     - [Packaging](API/packaging.md)
     - [Pagelist](API/pagelist.md)
@@ -55,15 +56,19 @@
         - extend
     - [constants](API/utils/constants.md) `from ./utils/constants`
         - EVENTS
+- [Location](API/location.md) `from ./location`
+    - [core](API/utils/core.md) `from ./utils/core`
+        - extend
 - [Locations](API/locations.md) `from ./locations`
     - [constants](API/utils/constants.md) `from ./utils/constants`
         - EVENTS
     - [core](API/utils/core.md) `from ./utils/core`
-        - defer
         - locationOf
         - sprint
         - qs
+    - [Defer](API/utils/defer.md) `from ./utils/defer`
     - [EpubCFI](API/epubcfi.md)
+    - [Location](API/location.md)
     - [Queue](API/utils/queue.md)
 - [Manifest](API/manifest.md) `from ./manifest`
     - [core](API/utils/core.md) `from ./utils/core`
@@ -101,29 +106,29 @@
         - DOM_EVENTS
     - [Contents](API/contents.md)
     - [core](API/utils/core.md) `from ./utils/core`
-        - defer
         - extend
         - isFloat
     - [ContinuousViewManager](API/managers/continuous/index.md) `from ./managers/continuous/index`
         - [constants](API/utils/constants.md) `from ../../utils/constants`
             - EVENTS
         - [core](API/utils/core.md) `from ../../utils/core`
-            - defer
             - extend
             - requestAnimationFrame
         - DefaultViewManager `from ../default/index`
+        - [Defer](API/utils/defer.md) `from ../../utils/defer`
         - [Snap](API/managers/helpers/snap.md) `from ../helpers/snap`
     - [DefaultViewManager](API/managers/default/index.md) `from ./managers/default/index`
         - [constants](API/utils/constants.md) `from ../../utils/constants`
             - EVENTS
         - [core](API/utils/core.md) `from ../../utils/core`
-            - defer
             - extend
             - isNumber
             - windowBounds
+        - [Defer](API/utils/defer.md) `from ../../utils/defer`
         - [Mapping](API/mapping.md) `from ../../mapping`
         - [scrollType](API/utils/scrolltype.md) `from ../../utils/scrolltype`
         - [Stage](API/managers/helpers/stage.md) `from ../helpers/stage`
+    - [Defer](API/utils/defer.md) `from ./utils/defer`
     - [EpubCFI](API/epubcfi.md)
     - [Hook](API/utils/hook.md)
     - [IframeView](API/managers/views/iframe.md) `from ./managers/views/iframe`
@@ -140,11 +145,11 @@
             - createBlobUrl
             - borders
             - bounds
-            - defer
             - extend
             - isNumber
             - revokeBlobUrl
             - uuid
+        - [Defer](API/utils/defer.md) `from ../../utils/defer`
         - [EpubCFI](API/epubcfi.md) `from ../../epubcfi`
     - [Layout](API/layout.md)
     - [Themes](API/themes.md)
@@ -161,8 +166,8 @@
     - [Url](API/utils/url.md)
 - [Section](API/section.md) `from ./section`
     - [core](API/utils/core.md) `from ./utils/core`
-        - defer
         - sprint
+    - [Defer](API/utils/defer.md) `from ./utils/defer`
     - [EpubCFI](API/epubcfi.md)
     - [Hook](API/utils/hook.md)
     - [replacements](API/utils/replacements.md) `from ./utils/replacements`
@@ -185,6 +190,7 @@
 
 ### utils classes
 
+- [Defer](API/utils/defer.md) `from ./utils/defer`
 - [Hook](API/utils/hook.md) `from ./utils/hook`
 - [Path](API/utils/path.md) `from ./utils/path`
 - [Queue](API/utils/queue.md) `from ./utils/queue`

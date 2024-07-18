@@ -76,6 +76,27 @@ class Manifest extends Map {
     }
 
     /**
+     * Load manifest from JSON
+     * @param {object[]} manifest 
+     */
+    load(manifest) {
+
+        manifest.forEach((item) => {
+            for (const prop of item.properties) {
+				switch (prop) {
+					case "nav":
+                        this.navPath = item.href;
+						break;
+                    case "cover-image":
+                        this.coverPath = item.href;
+                        break;
+				}
+			}
+            this.set(item.id, item);
+        });
+    }
+
+    /**
      * destroy
      */
     destroy() {

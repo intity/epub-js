@@ -1,9 +1,10 @@
-import ePub, { Book } from '../';
+import ePub from './epub';
+import Book from './book';
 
-function testEpub() {
-  const epub = ePub("https://s3.amazonaws.com/moby-dick/moby-dick.epub");
+const test = () => {
 
-  const book = new Book("https://s3.amazonaws.com/moby-dick/moby-dick.epub", {});
+    const epub = ePub("https://s3.amazonaws.com/moby-dick/moby-dick.epub");
+    const book = new Book("https://s3.amazonaws.com/moby-dick/moby-dick.epub", {});
 }
 
-testEpub();
+test();

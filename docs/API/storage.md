@@ -32,8 +32,8 @@ Constructor
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>string</code> | This should be the name of the application for modals |
-| request | <code>method</code> |  |
-| resolve | <code>method</code> |  |
+| request | <code>function</code> |  |
+| resolve | <code>function</code> |  |
 
 <a name="Storage+add"></a>
 
@@ -59,7 +59,7 @@ Put binary data from a url to storage
 | --- | --- | --- |
 | url | <code>string</code> | a url to request from storage |
 | [withCredentials] | <code>boolean</code> |  |
-| [headers] | <code>object</code> |  |
+| [headers] | <code>Array.&lt;string&gt;</code> |  |
 
 <a name="Storage+dispatch"></a>
 
@@ -73,7 +73,7 @@ Dispatch request by url
 | url | <code>string</code> | a url to request from storage |
 | [type] | <code>string</code> | specify the type of the returned result |
 | [withCredentials] | <code>boolean</code> |  |
-| [headers] | <code>Array</code> |  |
+| [headers] | <code>Array.&lt;string&gt;</code> |  |
 
 <a name="Storage+retrieve"></a>
 

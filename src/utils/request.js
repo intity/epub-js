@@ -42,7 +42,7 @@ const load = (e, type, def) => {
 			r = parse(xhr.response, "text/html");
 		}
 	} else if (xhr.responseType === "json") {
-		r = JSON.parse(xhr.response);
+		r = xhr.response;
 	} else if (xhr.responseType === "blob") {
 		if (SUPPORTS_URL) {
 			r = xhr.response;
@@ -64,7 +64,7 @@ const load = (e, type, def) => {
  * @param {string} [type] 
  * @param {boolean} [withCredentials=false] 
  * @param {object[]} [headers=[]] 
- * @returns {Promise}
+ * @returns {Promise<any>}
  */
 const request = (url, type, withCredentials = false, headers = []) => {
 
@@ -87,7 +87,6 @@ const request = (url, type, withCredentials = false, headers = []) => {
 		xhr.responseType = BLOB_RESPONSE;
 	} else if (type === "json") {
 		xhr.responseType = "json";
-		xhr.setRequestHeader("Accept", "application/json");
 	}
 
 	xhr.onreadystatechange = (e) => read(e, def);

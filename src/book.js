@@ -8,7 +8,6 @@ import Container from "./container";
 import Packaging from "./packaging";
 import Navigation from "./navigation";
 import Resources from "./resources";
-import PageList from "./pagelist";
 import Rendition from "./rendition";
 import Archive from "./archive";
 import request from "./utils/request";
@@ -28,33 +27,35 @@ const INPUT_TYPE = {
 };
 
 /**
- * An Epub representation with methods for the loading, parsing and manipulation
- * of its contents.
+ * An Epub representation with methods for the loading, 
+ * parsing and manipulation of its contents.
  * @class
- * @param {string} [url]
+ * @param {string} [uri]
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
- * @param {method} [options.request.method=null] a request function to use instead of the default
+ * @param {Function} [options.request.method=null] a request function to use instead of the default
  * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
- * @param {object} [options.request.headers=[]] send the xhr request headers
- * @param {string} [options.encoding='binary'] optional to pass 'binary' or 'base64' for archived Epubs
- * @param {string} [options.replacements=null] use base64, blobUrl, or none for replacing assets in archived Epubs
- * @param {method} [options.canonical] optional function to determine canonical urls for a path
+ * @param {string[]} [options.request.headers=[]] send the xhr request headers
+ * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
+ * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
+ * @param {Function} [options.canonical] optional function to determine canonical urls for a path
  * @param {string} [options.openAs] optional string to determine the input type
- * @param {string} [options.store] cache the contents in local storage, value should be the name of the reader
+ * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
- * @example new Book("/path/to/book.epub", {})
- * @example new Book({ replacements: "blobUrl" })
+ * @example new Book("/path/to/book/")
+ * @example new Book("/path/to/book/", { replacements: "blobUrl" })
+ * @example new Book("/path/to/book.epub")
+ * @example new Book("/path/to/book.epub", { replacements: "base64" })
  */
 class Book {
-	constructor(url, options) {
+	constructor(uri, options) {
 		// Allow passing just options to the Book
 		if (typeof (options) === "undefined" &&
-			typeof (url) !== "string" &&
-			url instanceof Blob === false &&
-			url instanceof ArrayBuffer === false) {
-			options = url;
-			url = undefined;
+			typeof (uri) !== "string" &&
+			uri instanceof Blob === false &&
+			uri instanceof ArrayBuffer === false) {
+			options = uri;
+			uri = undefined;
 		}
 
 		this.settings = extend({
@@ -72,7 +73,7 @@ class Book {
 
 		this.opening = new Defer(); // Promises
 		/**
-		 * @member {promise} opened returns after the book is loaded
+		 * @member {Promise<any>} opened returns after the book is loaded
 		 * @memberof Book
 		 * @readonly
 		 */
@@ -89,7 +90,6 @@ class Book {
 			spine: new Defer(),
 			manifest: new Defer(),
 			metadata: new Defer(),
-			pageList: new Defer(),
 			resources: new Defer(),
 			navigation: new Defer()
 		};
@@ -99,22 +99,21 @@ class Book {
 			spine: this.loading.spine.promise,
 			manifest: this.loading.manifest.promise,
 			metadata: this.loading.metadata.promise,
-			pageList: this.loading.pageList.promise,
 			resources: this.loading.resources.promise,
 			navigation: this.loading.navigation.promise
 		};
 		/**
-		 * @member {promise} ready returns after the book is loaded and parsed
+		 * @member {Promise<any>} ready returns after the book is loaded and parsed
 		 * @memberof Book
 		 * @readonly
 		 */
 		this.ready = Promise.all([
+			this.loaded.cover,
+			this.loaded.metadata,
 			this.loaded.manifest,
 			this.loaded.spine,
-			this.loaded.metadata,
-			this.loaded.cover,
-			this.loaded.navigation,
-			this.loaded.resources
+			this.loaded.resources,
+			this.loaded.navigation
 		]);
 		/**
 		 * Queue for methods used before opening
@@ -124,7 +123,7 @@ class Book {
 		 */
 		this.isRendered = false;
 		/**
-		 * @member {method} request
+		 * @member {Function} request
 		 * @memberof Book
 		 * @readonly
 		 */
@@ -135,12 +134,6 @@ class Book {
 		 * @readonly
 		 */
 		this.navigation = undefined;
-		/**
-		 * @member {PageList} pagelist
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.pageList = undefined;
 		/**
 		 * @member {Url} url
 		 * @memberof Book
@@ -216,8 +209,8 @@ class Book {
 			this.store(this.settings.store);
 		}
 
-		if (url) {
-			this.open(url, this.settings.openAs).catch((error) => {
+		if (uri) {
+			this.open(uri, this.settings.openAs).catch((error) => {
 				/**
 				 * @event openFailed
 				 * @param {object} error
@@ -232,7 +225,7 @@ class Book {
 	 * Open a epub or url
 	 * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
 	 * @param {string} [what='binary', 'base64', 'epub', 'opf', 'json', 'directory'] force opening as a certain type
-	 * @returns {Promise} of when the book has been loaded
+	 * @returns {Promise<any>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
 	 * @example book.open("/path/to/book/OPS/package.opf")
 	 * @example book.open("/path/to/book.epub")
@@ -279,13 +272,13 @@ class Book {
 	 * Open an archived epub
 	 * @param {binary} data
 	 * @param {string} [encoding]
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	async openEpub(data, encoding) {
 
 		encoding = encoding || this.settings.encoding;
-		
+
 		return this.unarchive(data, encoding).then(() => {
 			return this.openContainer(CONTAINER_PATH);
 		}).then((packagePath) => {
@@ -296,7 +289,7 @@ class Book {
 	/**
 	 * Open the epub container
 	 * @param {string} url
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	async openContainer(url) {
@@ -310,7 +303,7 @@ class Book {
 	/**
 	 * Open the Open Packaging Format Xml
 	 * @param {string} url
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	async openPackaging(url) {
@@ -325,7 +318,7 @@ class Book {
 	/**
 	 * Open the manifest JSON
 	 * @param {string} url
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	async openManifest(url) {
@@ -340,7 +333,7 @@ class Book {
 	/**
 	 * Load a resource from the Book
 	 * @param {string} path path to the resource to load
-	 * @returns {Promise} returns a promise with the requested resource
+	 * @returns {Promise<any>} returns a promise with the requested resource
 	 */
 	load(path) {
 
@@ -460,9 +453,8 @@ class Book {
 			replacements: this.get_replacements_cfg()
 		});
 
-		this.loadNavigation(this.packaging).then(() => {
-			// this.toc = this.navigation.toc;
-			this.loading.navigation.resolve(this.navigation);
+		this.loadNavigation().then((navigation) => {
+			this.loading.navigation.resolve(navigation);
 		});
 
 		if (this.packaging.manifest.coverPath) {
@@ -474,7 +466,7 @@ class Book {
 		this.loading.spine.resolve(this.packaging.spine);
 		this.loading.cover.resolve(this.cover);
 		this.loading.resources.resolve(this.resources);
-		this.loading.pageList.resolve(this.pageList);
+		this.loading.navigation.resolve(this.navigation);
 
 		this.isOpen = true;
 
@@ -491,42 +483,24 @@ class Book {
 
 	/**
 	 * Load Navigation and PageList from package
-	 * @param {Packaging} packaging
-	 * @returns {Promise}
+	 * @returns {Promise<Navigation>}
 	 * @private
 	 */
-	async loadNavigation(packaging) {
+	async loadNavigation() {
 
-		const navPath = packaging.manifest.navPath;
-		const toc = packaging.toc;
+		const navPath = this.packaging.manifest.navPath;
 
-		// From json manifest
-		if (toc) {
-			return new Promise((resolve, reject) => {
-				this.navigation = new Navigation(toc);
-
-				if (packaging.pageList) {
-					this.pageList = new PageList(packaging.pageList); // TODO: handle page lists from Manifest
-				}
-
-				resolve(this.navigation);
+		if (navPath) {
+			return this.load(navPath, "xml").then((xml) => {
+				this.navigation = new Navigation(xml);
+				return this.navigation;
 			});
-		}
-
-		if (!navPath) {
+		} else {
 			return new Promise((resolve, reject) => {
 				this.navigation = new Navigation();
-				this.pageList = new PageList();
-
 				resolve(this.navigation);
 			});
 		}
-
-		return this.load(navPath, "xml").then((xml) => {
-			this.navigation = new Navigation(xml);
-			this.pageList = new PageList(xml);
-			return this.navigation;
-		});
 	}
 
 	/**
@@ -535,9 +509,10 @@ class Book {
 	 * @param {string|number} [target]
 	 * @returns {Section|null}
 	 * @example book.section()
-	 * @example book.section(1)
-	 * @example book.section("chapter.html")
-	 * @example book.section("#id1234")
+	 * @example book.section(3)
+	 * @example book.section("#chapter_001")
+	 * @example book.section("chapter_001.xhtml")
+	 * @example book.section("epubcfi(/6/8!/4/2/16/1:0)")
 	 */
 	section(target) {
 
@@ -574,7 +549,7 @@ class Book {
 
 	/**
 	 * Set headers request should use
-	 * @param {object} headers
+	 * @param {string[]} headers
 	 */
 	setRequestHeaders(headers) {
 
@@ -585,7 +560,7 @@ class Book {
 	 * Unarchive a zipped epub
 	 * @param {binary} input epub data
 	 * @param {string} [encoding]
-	 * @returns {Archive}
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	unarchive(input, encoding) {
@@ -596,7 +571,7 @@ class Book {
 
 	/**
 	 * Storage the epubs contents
-	 * @param {binary} input epub data
+	 * @param {string} input Storage name for epub data
 	 * @returns {Storage}
 	 * @private
 	 */
@@ -611,7 +586,7 @@ class Book {
 		this.request = this.storage.dispatch.bind(this.storage);
 
 		this.opened.then(() => {
-			
+
 			if (this.archived) {
 				this.storage.request = this.archive.request.bind(this.archive);
 			}
@@ -650,7 +625,7 @@ class Book {
 
 	/**
 	 * Get the cover url
-	 * @returns {Promise<?string>} coverUrl
+	 * @returns {Promise<string>} coverUrl
 	 */
 	async coverUrl() {
 
@@ -670,7 +645,7 @@ class Book {
 
 	/**
 	 * Load replacement urls
-	 * @returns {Promise} completed loading urls
+	 * @returns {Promise<string[]>} completed loading urls
 	 * @private
 	 */
 	async replacements() {
@@ -703,7 +678,7 @@ class Book {
 	/**
 	 * Find a DOM Range for a given CFI Range
 	 * @param {EpubCFI} cfiRange a epub cfi range
-	 * @returns {Promise}
+	 * @returns {Promise<Range>}
 	 */
 	async getRange(cfiRange) {
 
@@ -748,7 +723,6 @@ class Book {
 		this.isRendered = false;
 
 		this.locations && this.locations.destroy();
-		this.pageList && this.pageList.destroy();
 		this.archive && this.archive.destroy();
 		this.resources && this.resources.destroy();
 		this.container && this.container.destroy();
@@ -756,13 +730,13 @@ class Book {
 		this.rendition && this.rendition.destroy();
 
 		this.locations = undefined;
-		this.pageList = undefined;
 		this.archive = undefined;
 		this.resources = undefined;
 		this.container = undefined;
 		this.packaging = undefined;
 		this.rendition = undefined;
 
+		this.navigation.destroy();
 		this.navigation = undefined;
 		this.url = undefined;
 		this.path = undefined;

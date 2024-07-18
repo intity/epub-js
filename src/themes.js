@@ -33,8 +33,9 @@ class Themes extends Map {
 
 	/**
 	 * Add themes to be used by a rendition
-	 * @param {object|Array<object>|string} args
-	 * @example register("light", "http://example.com/light.css")
+	 * @param {IArguments} args
+	 * @example register("light", "/path/to/light.css")
+	 * @example register("light", "https://example.com/to/light.css")
 	 * @example register("light", { body: { color: "purple"}})
 	 * @example register({ light: {...}, dark: {...}})
 	 */
@@ -294,7 +295,7 @@ class Themes extends Map {
 
 	/**
 	 * Adjust the font size of a rendition
-	 * @param {number} size
+	 * @param {string} size
 	 */
 	fontSize(size) {
 

@@ -15,8 +15,8 @@ const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userA
 class Contents {
 	/**
 	 * Constructor
-	 * @param {document} doc Document
-	 * @param {element} content Parent Element (typically Body)
+	 * @param {Document} doc Document
+	 * @param {Element} content Parent Element (typically Body)
 	 * @param {Section} section Section object reference
 	 */
 	constructor(doc, content, section) {
@@ -391,7 +391,7 @@ class Contents {
 
 	/**
 	 * Get the documentElement
-	 * @returns {element} documentElement
+	 * @returns {Element} documentElement
 	 */
 	root() {
 
@@ -403,11 +403,11 @@ class Contents {
 	 * Get the location offset of a EpubCFI or an #id
 	 * @param {string | EpubCFI} target
 	 * @param {string} [ignoreClass] for the cfi
-	 * @returns {object} target position left and top
+	 * @returns {{ left: number, top: number }} target position left and top
 	 */
 	locationOf(target, ignoreClass) {
 
-		const targetPos = { "left": 0, "top": 0 };
+		const targetPos = { left: 0, top: 0 };
 
 		if (!this.document) return targetPos;
 		let position;
@@ -519,7 +519,7 @@ class Contents {
 	 * @param {string} key 
 	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
 	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
-	 * @returns {Promise}
+	 * @returns {Promise<Node>}
 	 */
 	appendStylesheet(src, key) {
 
@@ -627,7 +627,7 @@ class Contents {
 	 * @param {string} key 
 	 * @example appendScript("/path/to/script.js", "common")
 	 * @example appendScript("https://examples.com/to/script.js", "common")
-	 * @returns {Promise} loaded
+	 * @returns {Promise<Node>} loaded
 	 */
 	appendScript(src, key) {
 
@@ -961,7 +961,7 @@ class Contents {
 	}
 
 	/**
-	 * Set the layoutStyle of the content
+	 * Set the layout style of the content
 	 * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
 	 * @private
 	 */

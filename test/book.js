@@ -129,4 +129,17 @@ describe("Book(unarchived)", () => {
 			assert.equal(coverUrl, "https://intity.github.io/epub-js/assets/alice/OPS/images/cover_th.jpg")
 		})
 	})
+	describe("open book from package.json of local server", () => {
+		const book = new Book("/assets/alice/OPS/package.json")
+		it("should open a epub", async () => {
+			await book.opened
+			assert.equal(book.isOpen, true)
+			assert.equal(book.archived, false)
+			assert.equal(book.url.toString(), "http://localhost:9876/assets/alice/OPS/package.json")
+		})
+		it("should have a local coverUrl", async () => {
+			const coverUrl = await book.coverUrl()
+			assert.equal(coverUrl, "http://localhost:9876/assets/alice/OPS/images/cover_th.jpg")
+		})
+	})
 })

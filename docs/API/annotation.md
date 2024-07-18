@@ -31,7 +31,7 @@ Constructor
 | cfiRange | <code>string</code> | EpubCFI range to attach annotation to |
 | [options] | <code>object</code> |  |
 | [options.data] | <code>object</code> | Data to assign to annotation |
-| [options.cb] | <code>method</code> | Callback after annotation is clicked |
+| [options.cb] | <code>function</code> | Callback after annotation is clicked |
 | [options.className] | <code>string</code> | CSS class to assign to annotation |
 | [options.styles] | <code>object</code> | CSS styles to assign to annotation |
 

@@ -8,22 +8,21 @@ Find Locations for a Book
 * [Locations](#Locations)
     * [new Locations([sections], [request], [pause])](#new_Locations_new)
     * _instance_
-        * [.generate([chars])](#Locations+generate) ⇒ <code>Promise</code>
-        * [.createRange()](#Locations+createRange) ⇒ <code>object</code>
-        * [.process(section)](#Locations+process) ⇒ <code>Promise</code>
+        * [.generate([chars])](#Locations+generate) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
+        * [.process(section)](#Locations+process) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.parse(contents, cfiBase, [chars])](#Locations+parse) ⇒ [<code>Locations</code>](#Locations)
         * [.locationFromCfi(value)](#Locations+locationFromCfi) ⇒ <code>number</code>
         * [.percentageFromCfi(cfi)](#Locations+percentageFromCfi) ⇒ <code>number</code>
-        * [.percentageFromLocation(loc)](#Locations+percentageFromLocation) ⇒ <code>number</code>
-        * [.cfiFromLocation(loc)](#Locations+cfiFromLocation) ⇒ <code>string</code> \| <code>null</code>
-        * [.cfiFromPercentage(percentage)](#Locations+cfiFromPercentage) ⇒ <code>string</code> \| <code>null</code>
-        * [.load(locations)](#Locations+load)
-        * [.save()](#Locations+save) ⇒ <code>json</code>
-        * [.set(options)](#Locations+set)
+        * [.percentageFromLocation(index)](#Locations+percentageFromLocation) ⇒ <code>number</code>
+        * [.cfiFromLocation(index)](#Locations+cfiFromLocation) ⇒ <code>string</code> \| <code>null</code>
+        * [.cfiFromPercentage(value)](#Locations+cfiFromPercentage) ⇒ <code>string</code> \| <code>null</code>
+        * [.load(locations)](#Locations+load) ⇒ [<code>Locations</code>](#Locations)
+        * [.save()](#Locations+save) ⇒ <code>string</code>
+        * [.set([options])](#Locations+set) ⇒ [<code>Locations</code>](#Locations)
         * [.clear()](#Locations+clear)
         * [.destroy()](#Locations+destroy)
     * _static_
-        * [.current](#Locations.current) : <code>object</code>
+        * [.current](#Locations.current) : <code>Location</code>
         * [.generated](#Locations.generated) : <code>Promise</code>
         * ["changed" (current, changed)](#Locations.event_changed)
 
@@ -36,30 +35,24 @@ Constructor
 | Param | Type | Default |
 | --- | --- | --- |
 | [sections] | <code>Sections</code> |  | 
-| [request] | <code>method</code> |  | 
+| [request] | <code>function</code> |  | 
 | [pause] | <code>number</code> | <code>100</code> | 
 
 <a name="Locations+generate"></a>
 
-## locations.generate([chars]) ⇒ <code>Promise</code>
+## locations.generate([chars]) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
 Load all of sections in the book to generate locations
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>Promise</code> - locations  
+**Returns**: [<code>Promise.&lt;Locations&gt;</code>](#Locations) - Locations  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | [chars] | <code>number</code> | how many chars to split on (default:150) |
 
-<a name="Locations+createRange"></a>
-
-## locations.createRange() ⇒ <code>object</code>
-createRange
-
-**Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations+process"></a>
 
-## locations.process(section) ⇒ <code>Promise</code>
+## locations.process(section) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
 process
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
@@ -87,11 +80,11 @@ parse
 Get a location from an EpubCFI
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>number</code> - Location index  
+**Returns**: <code>number</code> - Location index or -1 otherwise  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>string</code> | EpubCFI string format |
+| value | <code>string</code> \| <code>EpubCFI</code> | EpubCFI |
 
 <a name="Locations+percentageFromCfi"></a>
 
@@ -103,11 +96,11 @@ Get a percentage position in locations from an EpubCFI
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> | EpubCFI string format |
+| cfi | <code>string</code> \| <code>EpubCFI</code> | EpubCFI |
 
 <a name="Locations+percentageFromLocation"></a>
 
-## locations.percentageFromLocation(loc) ⇒ <code>number</code>
+## locations.percentageFromLocation(index) ⇒ <code>number</code>
 Get a percentage position from a location index
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
@@ -115,11 +108,11 @@ Get a percentage position from a location index
 
 | Param | Type | Description |
 | --- | --- | --- |
-| loc | <code>number</code> | Location index |
+| index | <code>number</code> | Location index |
 
 <a name="Locations+cfiFromLocation"></a>
 
-## locations.cfiFromLocation(loc) ⇒ <code>string</code> \| <code>null</code>
+## locations.cfiFromLocation(index) ⇒ <code>string</code> \| <code>null</code>
 Get an EpubCFI from location index
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
@@ -127,23 +120,23 @@ Get an EpubCFI from location index
 
 | Param | Type | Description |
 | --- | --- | --- |
-| loc | <code>number</code> | Location index |
+| index | <code>number</code> | Location index |
 
 <a name="Locations+cfiFromPercentage"></a>
 
-## locations.cfiFromPercentage(percentage) ⇒ <code>string</code> \| <code>null</code>
+## locations.cfiFromPercentage(value) ⇒ <code>string</code> \| <code>null</code>
 Get an EpubCFI from location percentage
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 **Returns**: <code>string</code> \| <code>null</code> - EpubCFI string format  
 
-| Param | Type |
-| --- | --- |
-| percentage | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>number</code> | Percentage in ranging from 0 to 1 |
 
 <a name="Locations+load"></a>
 
-## locations.load(locations)
+## locations.load(locations) ⇒ [<code>Locations</code>](#Locations)
 Load locations from JSON
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
@@ -154,20 +147,21 @@ Load locations from JSON
 
 <a name="Locations+save"></a>
 
-## locations.save() ⇒ <code>json</code>
+## locations.save() ⇒ <code>string</code>
 Save locations to JSON
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
+**Returns**: <code>string</code> - A JSON string  
 <a name="Locations+set"></a>
 
-## locations.set(options)
+## locations.set([options]) ⇒ [<code>Locations</code>](#Locations)
 Set current location
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options | <code>object</code> |  |
+| [options] | <code>object</code> |  |
 | [options.cfi] | <code>string</code> | EpubCFI string format |
 | [options.index] | <code>number</code> | Location index |
 | [options.percentage] | <code>number</code> | Percentage |
@@ -186,19 +180,11 @@ destroy
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations.current"></a>
 
-## Locations.current : <code>object</code>
+## Locations.current : <code>Location</code>
 Current Location
 
 **Kind**: static property of [<code>Locations</code>](#Locations)  
 **Read only**: true  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| current.cfi | <code>string</code> | 
-| current.index | <code>number</code> | 
-| current.percentage | <code>number</code> | 
-
 <a name="Locations.generated"></a>
 
 ## Locations.generated : <code>Promise</code>

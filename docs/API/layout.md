@@ -6,11 +6,11 @@ Figures out the CSS values to apply for a layout
 **Kind**: global class  
 
 * [Layout](#Layout)
-    * [new Layout(options)](#new_Layout_new)
+    * [new Layout([options])](#new_Layout_new)
     * _instance_
         * [.set(options)](#Layout+set)
         * [.calculate([width], [height], [gap])](#Layout+calculate)
-        * [.format(contents, [section], [axis])](#Layout+format) ⇒ <code>Promise</code>
+        * [.format(contents, [section], [axis])](#Layout+format) ⇒ <code>void</code> \| <code>Promise.&lt;any&gt;</code>
         * [.count(totalLength, [pageLength])](#Layout+count) ⇒ <code>Object</code>
     * _static_
         * [.name](#Layout.name) : <code>string</code>
@@ -30,13 +30,13 @@ Figures out the CSS values to apply for a layout
 
 <a name="new_Layout_new"></a>
 
-## new Layout(options)
+## new Layout([options])
 Constructor
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| options | <code>object</code> |  |  |
+| [options] | <code>object</code> |  |  |
 | [options.name] | <code>string</code> | <code>&quot;&#x27;reflowable&#x27;&quot;</code> | values: `"reflowable"` OR `"pre-paginated"` |
 | [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"` |
 | [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"none"` |
@@ -70,7 +70,7 @@ Calculate the dimensions of the pagination
 
 <a name="Layout+format"></a>
 
-## layout.format(contents, [section], [axis]) ⇒ <code>Promise</code>
+## layout.format(contents, [section], [axis]) ⇒ <code>void</code> \| <code>Promise.&lt;any&gt;</code>
 Apply Css to a Document
 
 **Kind**: instance method of [<code>Layout</code>](#Layout)  

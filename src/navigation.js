@@ -1,4 +1,10 @@
-import { qs, qsa, querySelectorByType, filterChildren } from "./utils/core";
+import PageList from "./pagelist";
+import {
+	qs,
+	qsa,
+	querySelectorByType,
+	filterChildren
+} from "./utils/core";
 
 /**
  * Navigation Parser
@@ -9,13 +15,30 @@ class Navigation {
 	 * @param {Document} xml navigation html / xhtml / ncx
 	 */
 	constructor(xml) {
-
+		/**
+		 * Navigation items
+		 * @member {object[]} toc
+		 * @memberof Navigation
+		 * @readonly
+		 */
 		this.toc = [];
 		this.tocByHref = {};
 		this.tocById = {};
 		this.landmarks = [];
 		this.landmarksByType = {};
+		/**
+		 * number of navigation items
+		 * @member {number} length
+		 * @memberof Navigation
+		 * @readonly
+		 */
 		this.length = 0;
+		/**
+		 * @member {PageList} pageList
+		 * @memberof Navigation
+		 * @readonly
+		 */
+		this.pageList = new PageList(xml);
 		if (xml) {
 			this.parse(xml);
 		}
@@ -52,7 +75,7 @@ class Navigation {
 
 	/**
 	 * Unpack navigation items
-	 * @param {Array} toc
+	 * @param {object[]} toc
 	 * @private
 	 */
 	unpack(toc) {
@@ -101,7 +124,7 @@ class Navigation {
 	 * Get an item from navigation subitems recursively by index
 	 * @param {string} target
 	 * @param {number} index
-	 * @param {Array} navItems
+	 * @param {object[]} navItems
 	 * @return {object} navItem
 	 */
 	getByIndex(target, index, navItems) {
@@ -116,7 +139,11 @@ class Navigation {
 		} else {
 			let result;
 			for (let i = 0; i < navItems.length; ++i) {
-				result = this.getByIndex(target, index, navItems[i].subitems);
+				result = this.getByIndex(
+					target,
+					index,
+					navItems[i].subitems
+				); // recursive call
 				if (result) {
 					break;
 				}
@@ -144,7 +171,7 @@ class Navigation {
 	/**
 	 * Parse toc from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array} navigation list
+	 * @return {object[]} navigation list
 	 * @private
 	 */
 	parseNav(navHtml) {
@@ -164,7 +191,7 @@ class Navigation {
 	 * Parses lists in the toc
 	 * @param {Document} navListHtml
 	 * @param {string} parent id
-	 * @return {Array} navigation list
+	 * @return {object[]} navigation list
 	 */
 	parseNavList(navListHtml, parent) {
 
@@ -196,7 +223,7 @@ class Navigation {
 	navItem(item, parent) {
 
 		const content = filterChildren(item, "a", true) ||
-						filterChildren(item, "span", true);
+			filterChildren(item, "span", true);
 
 		if (!content) {
 			return;
@@ -224,7 +251,7 @@ class Navigation {
 	/**
 	 * Parse landmarks from a Epub > 3.0 Nav
 	 * @param {Document} navHtml
-	 * @return {Array} landmarks list
+	 * @return {object[]} landmarks list
 	 * @private
 	 */
 	parseLandmarks(navHtml) {
@@ -264,16 +291,16 @@ class Navigation {
 		const text = content.textContent || "";
 
 		return {
+			type: type,
 			href: href,
-			label: text,
-			type: type
+			label: text
 		};
 	}
 
 	/**
 	 * Parse from a Epub > 3.0 NC
 	 * @param {Document} navHtml
-	 * @return {Array} navigation list
+	 * @return {object[]} navigation list
 	 * @private
 	 */
 	parseNcx(tocXml) {
@@ -301,7 +328,7 @@ class Navigation {
 
 	/**
 	 * Create a ncxItem
-	 * @param  {Element} item
+	 * @param {Element} item
 	 * @return {object} ncxItem
 	 * @private
 	 */
@@ -322,15 +349,15 @@ class Navigation {
 			id: item.getAttribute("id") || false,
 			href: content.getAttribute("src"),
 			label: text,
-			subitems: [],
-			parent: parent
+			parent: parent,
+			subitems: []
 		};
 	}
 
 	/**
 	 * Load Spine Items
-	 * @param  {object} json the items to be loaded
-	 * @return {Array} navItems
+	 * @param {object} json the items to be loaded
+	 * @return {object[]} navItems
 	 */
 	load(json) {
 
@@ -344,12 +371,26 @@ class Navigation {
 
 	/**
 	 * forEach pass through
-	 * @param {Function} fn function to run on each item
-	 * @return {method} forEach loop
+	 * @param {IArguments} args
 	 */
-	forEach(fn) {
+	forEach(...args) {
 
-		return this.toc.forEach(fn);
+		this.toc.forEach(...args);
+	}
+
+	/**
+	 * destroy
+	 */
+	destroy() {
+
+		this.toc = undefined;
+		this.tocByHref = undefined;
+		this.tocById = undefined;
+		this.landmarks = undefined;
+		this.landmarksByType = undefined;
+		this.length = 0;
+		this.pageList.destroy();
+		this.pageList = undefined;
 	}
 }
 

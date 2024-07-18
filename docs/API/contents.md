@@ -20,14 +20,14 @@ Handles DOM manipulation, queries and events for View contents
         * [.overflowY([overflow])](#Contents+overflowY)
         * [.css(property, value, [priority])](#Contents+css)
         * [.viewport([options])](#Contents+viewport)
-        * [.root()](#Contents+root) ⇒ <code>element</code>
-        * [.locationOf(target, [ignoreClass])](#Contents+locationOf) ⇒ <code>object</code>
-        * [.appendStylesheet(src, key)](#Contents+appendStylesheet) ⇒ <code>Promise</code>
+        * [.root()](#Contents+root) ⇒ <code>Element</code>
+        * [.locationOf(target, [ignoreClass])](#Contents+locationOf) ⇒ <code>Object</code>
+        * [.appendStylesheet(src, key)](#Contents+appendStylesheet) ⇒ <code>Promise.&lt;Node&gt;</code>
         * [.removeStylesheet(key)](#Contents+removeStylesheet) ⇒ <code>boolean</code>
         * [.clearStylesheets()](#Contents+clearStylesheets)
         * [.appendSerializedCSS(css, key)](#Contents+appendSerializedCSS)
         * [.appendStylesheetRules(rules, key)](#Contents+appendStylesheetRules)
-        * [.appendScript(src, key)](#Contents+appendScript) ⇒ <code>Promise</code>
+        * [.appendScript(src, key)](#Contents+appendScript) ⇒ <code>Promise.&lt;Node&gt;</code>
         * [.removeScript(key)](#Contents+removeScript) ⇒ <code>boolean</code>
         * [.clearScripts()](#Contents+clearScripts)
         * [.appendClass(className)](#Contents+appendClass)
@@ -59,8 +59,8 @@ Constructor
 
 | Param | Type | Description |
 | --- | --- | --- |
-| doc | <code>document</code> | Document |
-| content | <code>element</code> | Parent Element (typically Body) |
+| doc | <code>Document</code> | Document |
+| content | <code>Element</code> | Parent Element (typically Body) |
 | section | <code>Section</code> | Section object reference |
 
 <a name="Contents+width"></a>
@@ -196,18 +196,18 @@ Get or Set the viewport element
 
 <a name="Contents+root"></a>
 
-## contents.root() ⇒ <code>element</code>
+## contents.root() ⇒ <code>Element</code>
 Get the documentElement
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>element</code> - documentElement  
+**Returns**: <code>Element</code> - documentElement  
 <a name="Contents+locationOf"></a>
 
-## contents.locationOf(target, [ignoreClass]) ⇒ <code>object</code>
+## contents.locationOf(target, [ignoreClass]) ⇒ <code>Object</code>
 Get the location offset of a EpubCFI or an #id
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>object</code> - target position left and top  
+**Returns**: <code>Object</code> - target position left and top  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -216,7 +216,7 @@ Get the location offset of a EpubCFI or an #id
 
 <a name="Contents+appendStylesheet"></a>
 
-## contents.appendStylesheet(src, key) ⇒ <code>Promise</code>
+## contents.appendStylesheet(src, key) ⇒ <code>Promise.&lt;Node&gt;</code>
 Append a stylesheet link to the document head
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -286,11 +286,11 @@ appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
 ```
 <a name="Contents+appendScript"></a>
 
-## contents.appendScript(src, key) ⇒ <code>Promise</code>
+## contents.appendScript(src, key) ⇒ <code>Promise.&lt;Node&gt;</code>
 Append a script node to the document head
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>Promise</code> - loaded  
+**Returns**: <code>Promise.&lt;Node&gt;</code> - loaded  
 
 | Param | Type | Description |
 | --- | --- | --- |

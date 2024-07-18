@@ -283,7 +283,7 @@ class DefaultViewManager {
 
 	/**
 	 * Require the view from passed string, or as a class function
-	 * @param  {string|object} view
+	 * @param {string|Function|object} view
 	 * @return {any}
 	 * @private
 	 */
@@ -306,7 +306,7 @@ class DefaultViewManager {
 	 * createView
 	 * @param {Section} section 
 	 * @param {boolean} [forceRight]
-	 * @returns {object} View object (default: IframeView)
+	 * @returns {object} View (default: IframeView)
 	 * @private
 	 */
 	createView(section, forceRight) {
@@ -328,7 +328,7 @@ class DefaultViewManager {
 	 * handleNextPrePaginated
 	 * @param {boolean} forceRight 
 	 * @param {Section} section 
-	 * @param {function} action callback function
+	 * @param {Function} action callback function
 	 * @returns {any}
 	 * @private
 	 */
@@ -350,7 +350,7 @@ class DefaultViewManager {
 	 * display
 	 * @param {Section} section 
 	 * @param {string|number} [target] 
-	 * @returns {Promise} displaying promise
+	 * @returns {Promise<any>} displaying promise
 	 */
 	display(section, target) {
 
@@ -477,8 +477,8 @@ class DefaultViewManager {
 	/**
 	 * append
 	 * @param {Section} section Section object
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 */
 	add(section, forceRight) {
 
@@ -508,8 +508,8 @@ class DefaultViewManager {
 	/**
 	 * append
 	 * @param {Section} section Section object
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	append(section, forceRight) {
@@ -520,8 +520,8 @@ class DefaultViewManager {
 	/**
 	 * prepend
 	 * @param {Section} section 
-	 * @param {boolean} forceRight 
-	 * @returns {Promise}
+	 * @param {boolean} [forceRight] 
+	 * @returns {Promise<any>}
 	 * @private
 	 */
 	prepend(section, forceRight) {
@@ -566,7 +566,7 @@ class DefaultViewManager {
 
 	/**
 	 * next
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 */
 	next() {
 
@@ -659,7 +659,7 @@ class DefaultViewManager {
 
 	/**
 	 * prev
-	 * @returns {Promise}
+	 * @returns {Promise<any>}
 	 */
 	prev() {
 
@@ -958,7 +958,7 @@ class DefaultViewManager {
 
 	/**
 	 * isVisible
-	 * @param {*} view 
+	 * @param {any} view 
 	 * @param {number} offsetPrev 
 	 * @param {number} offsetNext 
 	 * @param {DOMRect} [rect] 
@@ -1170,7 +1170,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get contents array from views
-	 * @returns {object[]} [view.contents]
+	 * @returns {Array<Contents>} [view.contents]
 	 */
 	getContents() {
 
