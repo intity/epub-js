@@ -462,9 +462,8 @@ class Book {
 			replacements: this.get_replacements_cfg()
 		});
 
-		this.loadNavigation(this.packaging).then(() => {
-			// this.toc = this.navigation.toc;
-			this.loading.navigation.resolve(this.navigation);
+		this.loadNavigation().then((navigation) => {
+			this.loading.navigation.resolve(navigation);
 		});
 
 		if (this.packaging.manifest.coverPath) {
@@ -493,26 +492,12 @@ class Book {
 
 	/**
 	 * Load Navigation and PageList from package
-	 * @param {Packaging} packaging
 	 * @returns {Promise<Navigation>}
 	 * @private
 	 */
-	async loadNavigation(packaging) {
+	async loadNavigation() {
 
-		const navPath = packaging.manifest.navPath;
-		const toc = packaging.toc;
-
-		if (toc) { // From json manifest
-			return new Promise((resolve, reject) => {
-				this.navigation = new Navigation(toc);
-
-				if (packaging.pageList) {
-					this.pageList = new PageList(packaging.pageList); // TODO: handle page lists from Manifest
-				}
-
-				resolve(this.navigation);
-			});
-		}
+		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
 			return this.load(navPath, "xml").then((xml) => {
