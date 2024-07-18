@@ -15,9 +15,11 @@ Navigation Parser
         * [.parseNavList(navListHtml, parent)](#Navigation+parseNavList) ⇒ <code>Array.&lt;object&gt;</code>
         * [.load(json)](#Navigation+load) ⇒ <code>Array.&lt;object&gt;</code>
         * [.forEach(...args)](#Navigation+forEach)
+        * [.destroy()](#Navigation+destroy)
     * _static_
         * [.toc](#Navigation.toc) : <code>Array.&lt;object&gt;</code>
         * [.length](#Navigation.length) : <code>number</code>
+        * [.pageList](#Navigation.pageList) : <code>PageList</code>
 
 <a name="new_Navigation_new"></a>
 
@@ -115,6 +117,12 @@ forEach pass through
 | --- | --- |
 | ...args | <code>IArguments</code> | 
 
+<a name="Navigation+destroy"></a>
+
+## navigation.destroy()
+destroy
+
+**Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation.toc"></a>
 
 ## Navigation.toc : <code>Array.&lt;object&gt;</code>
@@ -127,5 +135,10 @@ Navigation items
 ## Navigation.length : <code>number</code>
 number of navigation items
 
+**Kind**: static property of [<code>Navigation</code>](#Navigation)  
+**Read only**: true  
+<a name="Navigation.pageList"></a>
+
+## Navigation.pageList : <code>PageList</code>
 **Kind**: static property of [<code>Navigation</code>](#Navigation)  
 **Read only**: true  

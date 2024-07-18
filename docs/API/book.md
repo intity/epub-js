@@ -28,7 +28,6 @@ parsing and manipulation of its contents.
         * [.isRendered](#Book.isRendered) : <code>boolean</code>
         * [.request](#Book.request) : <code>function</code>
         * [.navigation](#Book.navigation) : <code>Navigation</code>
-        * [.pagelist](#Book.pagelist) : <code>PageList</code>
         * [.url](#Book.url) : <code>Url</code>
         * [.path](#Book.path) : <code>Path</code>
         * [.archived](#Book.archived) : <code>boolean</code>
@@ -285,11 +284,6 @@ Queue for methods used before opening
 <a name="Book.navigation"></a>
 
 ## Book.navigation : <code>Navigation</code>
-**Kind**: static property of [<code>Book</code>](#Book)  
-**Read only**: true  
-<a name="Book.pagelist"></a>
-
-## Book.pagelist : <code>PageList</code>
 **Kind**: static property of [<code>Book</code>](#Book)  
 **Read only**: true  
 <a name="Book.url"></a>

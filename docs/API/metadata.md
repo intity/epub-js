@@ -8,6 +8,7 @@ Metadata class
 
 * [Metadata](#Metadata) ⇐ <code>Map</code>
     * [.parse(node)](#Metadata+parse)
+    * [.load(metadata)](#Metadata+load)
     * [.destroy()](#Metadata+destroy)
 
 <a name="Metadata+parse"></a>
@@ -20,6 +21,17 @@ Parse the metadata node
 | Param | Type |
 | --- | --- |
 | node | <code>Node</code> | 
+
+<a name="Metadata+load"></a>
+
+## metadata.load(metadata)
+Load metadata from JSON
+
+**Kind**: instance method of [<code>Metadata</code>](#Metadata)  
+
+| Param | Type |
+| --- | --- |
+| metadata | <code>object</code> | 
 
 <a name="Metadata+destroy"></a>
 
