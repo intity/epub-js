@@ -14,19 +14,19 @@ export function defaults(obj: object): object;
 
 export function extend(target: object): object;
 
-export function insert(item: any, array: Array<any>, compareFunction: Function): number;
+export function insert(item: any, array: any[], compareFunction: Function): number;
 
-export function locationOf(item: any, array: Array<any>, compareFunction: Function, _start: Function, _end: Function): number;
+export function locationOf(item: any, array: any[], compareFunction: Function, start: Function, end: Function): number;
 
-export function indexOfSorted(item: any, array: Array<any>, compareFunction: Function, _start: Function, _end: Function): number;
+export function indexOfSorted(item: any, array: any[], compareFunction: Function, start: Function, end: Function): number;
 
-export function bounds(el: Element): { width: Number, height: Number};
+export function bounds(el: Element): { width: number, height: number};
 
-export function borders(el: Element): { width: Number, height: Number};
+export function borders(el: Element): { width: number, height: number};
 
 export function nodeBounds(node: Node): object;
 
-export function windowBounds(): { width: Number, height: Number, top: Number, left: Number, right: Number, bottom: Number };
+export function windowBounds(): { width: number, height: number, top: number, left: number, right: number, bottom: number };
 
 export function indexOfNode(node: Node, typeId: string): number;
 
@@ -52,7 +52,7 @@ export function qs(el: Element, sel: string): Element;
 
 export function qsa(el: Element, sel: string): ArrayLike<Element>;
 
-export function qsp(el: Element, sel: string, props: Array<object>): ArrayLike<Element>;
+export function qsp(el: Element, sel: string, props: object[]): ArrayLike<Element>;
 
 export function sprint(root: Node, func: Function): void;
 
@@ -64,16 +64,12 @@ export function blob2base64(blob: Blob): string;
 
 export function defer(): Promise<any>;
 
-export function querySelectorByType(html: Element, element: string, type: string): Array<Element>;
+export function querySelectorByType(html: Element, element: string, type: string): Element[];
 
-export function findChildren(el: Element): Array<Element>;
+export function findChildren(el: Element): Element[];
 
-export function parents(node: Element): Array<Element>;
+export function parents(node: Element): Element[];
 
-export function filterChildren(el: Element, nodeName: string, single: boolean): Array<Element>;
+export function filterChildren(el: Element, nodeName: string, single: boolean): Element[];
 
-export function getParentByTagName(node: Element, tagname: string): Array<Element>;
-
-export class RangeObject extends Range {
-
-}
+export function getParentByTagName(node: Element, tagname: string): Element[];

@@ -1,79 +1,31 @@
-import { SpineItem } from "./section";
+import Metadata from "./metadata";
+import Manifest from "./manifest";
+import Spine from "./spine";
 
 export interface PackagingObject {
-  metadata: PackagingMetadataObject,
-  spine: Array<SpineItem>,
-  manifest: PackagingManifestObject,
-  navPath: string,
-  ncxPath: string,
-  coverPath: string,
-  spineNodeIndex: number
-}
-
-export interface PackagingMetadataObject {
-  title: string,
-  creator: string,
-  description: string,
-  pubdate: string,
-  publisher: string,
-  identifier: string,
-  language: string,
-  rights: string,
-  modified_date: string,
-  layout: string,
-  orientation: string,
-  flow: string,
-  viewport: string,
-  spread: string,
-  direction: string,
-}
-
-export interface PackagingSpineItem {
-  idref: string,
-  properties: Array<string>,
-  index: number
-}
-
-export interface PackagingManifestItem {
-  href: string,
-  type: string,
-  properties: Array<string>
-}
-
-export interface PackagingManifestObject {
-  [key: string]: PackagingManifestItem
+    metadata: Metadata,
+    manifest: Manifest,
+    spine: Spine,
+    direction: string,
+    version: string
 }
 
 export default class Packaging {
-  constructor(packageDocument: XMLDocument);
 
-  manifest: PackagingManifestObject;
-  navPath: string;
-  ncxPath: string;
-  coverPath: string;
-  spineNodeIndex: number;
-  spine: Array<PackagingSpineItem>;
-  metadata: PackagingMetadataObject;
+    constructor(packageXML: XMLDocument);
 
-  parse(packageDocument: XMLDocument): PackagingObject;
+    metadata: Metadata;
+    manifest: Manifest;
+    spine: Spine;
+    direction: string;
+    version: string;
+    uniqueIdentifier: string;
 
-  load(json: string): PackagingObject;
+    parse(packageXML: XMLDocument): PackagingObject;
+    parseDirection(packageXML: XMLDocument): string;
+    parseVersion(packageXML: XMLDocument): string;
+    load(json: string): PackagingObject;
+    destroy(): void;
 
-  destroy(): void;
-
-  private parseMetadata(xml: Node): PackagingMetadataObject;
-
-  private parseManifest(xml: Node): PackagingManifestObject;
-
-  private parseSpine(xml: Node, manifest: PackagingManifestObject): Array<PackagingSpineItem>;
-
-  private findNavPath(manifestNode: Node): string | false;
-
-  private findNcxPath(manifestNode: Node, spineNode: Node): string | false;
-
-  private findCoverPath(packageXml: Node): string;
-
-  private getElementText(xml: Node, tag: string): string
-
-  private getPropertyText(xml: Node, property: string): string
+    private findUniqueIdentifier(packageXML: XMLDocument): string;
 }

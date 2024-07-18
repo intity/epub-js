@@ -9,8 +9,8 @@ In most books this is equivalent to a Chapter
 * [Section](#Section)
     * [new Section(item, hooks)](#new_Section_new)
     * _instance_
-        * [.load(request)](#Section+load) ⇒ <code>Promise</code>
-        * [.render(request)](#Section+render) ⇒ <code>Promise</code>
+        * [.load(request)](#Section+load) ⇒ <code>Promise.&lt;Element&gt;</code>
+        * [.render(request)](#Section+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.find(query)](#Section+find) ⇒ <code>Array.&lt;object&gt;</code>
         * [.search(query, [maxSeqEle])](#Section+search) ⇒ <code>Array.&lt;object&gt;</code>
         * [.reconcileLayoutSettings(globalLayout)](#Section+reconcileLayoutSettings) ⇒ <code>object</code>
@@ -28,7 +28,10 @@ In most books this is equivalent to a Chapter
         * [.cfiBase](#Section.cfiBase) : <code>string</code>
         * [.next](#Section.next) : <code>function</code>
         * [.prev](#Section.prev) : <code>function</code>
-        * [.properties](#Section.properties) : <code>Array.&lt;object&gt;</code>
+        * [.properties](#Section.properties) : <code>Array.&lt;string&gt;</code>
+        * [.document](#Section.document) : <code>Document</code>
+        * [.contents](#Section.contents) : <code>Element</code>
+        * [.output](#Section.output) : <code>string</code>
 
 <a name="new_Section_new"></a>
 
@@ -36,18 +39,18 @@ In most books this is equivalent to a Chapter
 Constructor
 
 
-| Param | Type |
-| --- | --- |
-| item | <code>object</code> | 
-| hooks | <code>object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| item | <code>object</code> | Spine Item |
+| hooks | <code>object</code> |  |
 
 <a name="Section+load"></a>
 
-## section.load(request) ⇒ <code>Promise</code>
+## section.load(request) ⇒ <code>Promise.&lt;Element&gt;</code>
 Load the section from its url
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Promise</code> - a promise with the xml document  
+**Returns**: <code>Promise.&lt;Element&gt;</code> - a promise with the xml document  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -55,11 +58,11 @@ Load the section from its url
 
 <a name="Section+render"></a>
 
-## section.render(request) ⇒ <code>Promise</code>
+## section.render(request) ⇒ <code>Promise.&lt;string&gt;</code>
 Render the contents of a section
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Promise</code> - output a serialized XML Document  
+**Returns**: <code>Promise.&lt;string&gt;</code> - output a serialized XML Document  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -71,7 +74,7 @@ Render the contents of a section
 Find a string in a section
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form {cfi, excerpt}  
+**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form { cfi, excerpt }  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -85,7 +88,7 @@ If the document.createTreeWalker api is missed(eg: IE8), use
 `find` as a fallback.
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form {cfi, excerpt}  
+**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form { cfi, excerpt }  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -99,7 +102,7 @@ Reconciles the current chapters layout properties with
 the global layout properties.
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>object</code> - layoutProperties Object with layout properties  
+**Returns**: <code>object</code> - layoutProperties object with layout properties  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -115,7 +118,7 @@ Get a CFI from a Range in the Section
 
 | Param | Type |
 | --- | --- |
-| range | <code>range</code> | 
+| range | <code>Range</code> | 
 
 <a name="Section+cfiFromElement"></a>
 
@@ -127,7 +130,7 @@ Get a CFI from an Element in the Section
 
 | Param | Type |
 | --- | --- |
-| el | <code>element</code> | 
+| el | <code>Element</code> | 
 
 <a name="Section+unload"></a>
 
@@ -188,6 +191,21 @@ destroy
 **Read only**: true  
 <a name="Section.properties"></a>
 
-## Section.properties : <code>Array.&lt;object&gt;</code>
+## Section.properties : <code>Array.&lt;string&gt;</code>
+**Kind**: static property of [<code>Section</code>](#Section)  
+**Read only**: true  
+<a name="Section.document"></a>
+
+## Section.document : <code>Document</code>
+**Kind**: static property of [<code>Section</code>](#Section)  
+**Read only**: true  
+<a name="Section.contents"></a>
+
+## Section.contents : <code>Element</code>
+**Kind**: static property of [<code>Section</code>](#Section)  
+**Read only**: true  
+<a name="Section.output"></a>
+
+## Section.output : <code>string</code>
 **Kind**: static property of [<code>Section</code>](#Section)  
 **Read only**: true  

@@ -39,7 +39,7 @@
 		range.onchange = (e) => {
 
 			percentage = parseInt(e.target.value) / 100
-			book.locations.set({ percentage: percentage })
+			book.locations.set({ percentage })
 			rendition.display(book.locations.current.cfi)
 		}
 		prev.onclick = (e) => {
@@ -109,7 +109,7 @@
 
 			// Save out the generated locations to JSON
 			localStorage.setItem(book.key() + '-locations', book.locations.save())
-			console.log("locations.length: " + locations.length)
+			console.log("locations.length: " + locations.size)
 			if (stored) {
 				console.log(`locations.load: ${Date.now() - timeStamp} ms`)
 			} else {

@@ -57,7 +57,7 @@ class Packaging {
 	/**
 	 * Parse OPF XML
 	 * @param {Document} packageXml OPF XML
-	 * @return {object} parsed package parts
+	 * @return {Packaging}
 	 */
 	parse(packageXml) {
 
@@ -90,13 +90,7 @@ class Packaging {
 			this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
 		}
 
-		return {
-			metadata: this.metadata,
-			manifest: this.manifest,
-			spine: this.spine,
-			direction: this.direction,
-			version: this.version
-		}
+		return this;
 	}
 
 	/**
@@ -156,42 +150,20 @@ class Packaging {
 	}
 
 	/**
-	 * Load JSON Manifest
-	 * @param {json} json 
-	 * @return {object} parsed package parts
+	 * Load package from JSON
+	 * @param {object} data Serialized JSON object data
+	 * @return {Packaging}
 	 */
-	load(json) {
+	load(data) {
 
-		const metadata = json.metadata;
-		Object.keys(metadata).forEach((prop) => {
-			this.metadata.set(prop, metadata[prop]);
-		});
+		this.metadata.load(data.metadata);
+		this.manifest.load(data.manifest);
+		this.spine.load(data.spine);
+		this.direction = data.direction;
+		this.version = data.version;
+		this.uniqueIdentifier = this.metadata.get("identifier");
 
-		const spine = json.readingOrder || json.spine;
-		this.spine.items = spine.map((item, index) => {
-			item.index = index;
-			item.linear = item.linear || "yes";
-			return item;
-		});
-
-		json.resources.forEach((item, index) => {
-			this.manifest.set(index, item);
-			if (item.rel && item.rel[0] === "cover") {
-				this.manifest.coverPath = item.href;
-			}
-		});
-
-		this.toc = json.toc.map((item, index) => {
-			item.label = item.title;
-			return item;
-		});
-
-		return {
-			metadata: this.metadata,
-			manifest: this.manifest,
-			spine: this.spine,
-			toc: this.toc
-		}
+		return this;
 	}
 
 	/**

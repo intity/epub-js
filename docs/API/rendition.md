@@ -13,26 +13,25 @@ the section content.
         * [.setManager(manager)](#Rendition+setManager)
         * [.requireManager(manager)](#Rendition+requireManager) ⇒ <code>any</code>
         * [.start()](#Rendition+start)
-        * [.attachTo(element)](#Rendition+attachTo) ⇒ <code>Promise</code>
-        * [.display(target)](#Rendition+display) ⇒ <code>Promise</code>
+        * [.attachTo(element)](#Rendition+attachTo) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.display([target])](#Rendition+display) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.moveTo(offset)](#Rendition+moveTo)
         * [.resize([width], [height], [epubcfi])](#Rendition+resize)
         * [.clear()](#Rendition+clear)
-        * [.next()](#Rendition+next) ⇒ <code>Promise</code>
-        * [.prev()](#Rendition+prev) ⇒ <code>Promise</code>
+        * [.next()](#Rendition+next) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.prev()](#Rendition+prev) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.updateLayout(options)](#Rendition+updateLayout)
-        * [.reportLocation()](#Rendition+reportLocation) ⇒ <code>Promise</code>
         * [.currentLocation()](#Rendition+currentLocation) ⇒ <code>displayedLocation</code> \| <code>Promise</code>
         * [.destroy()](#Rendition+destroy)
         * [.getRange(epubcfi, ignoreClass)](#Rendition+getRange) ⇒ <code>Range</code>
-        * [.getContents()](#Rendition+getContents) ⇒ <code>Array.&lt;object&gt;</code>
-        * [.views()](#Rendition+views) ⇒ <code>Array.&lt;object&gt;</code>
+        * [.getContents()](#Rendition+getContents) ⇒ <code>Array.&lt;Contents&gt;</code>
+        * [.views()](#Rendition+views) ⇒ <code>Views</code>
     * _static_
         * [.settings](#Rendition.settings) : <code>object</code>
         * [.hooks](#Rendition.hooks) : <code>object</code>
         * [.annotations](#Rendition.annotations) : <code>Annotations</code>
         * [.themes](#Rendition.themes) : <code>Themes</code>
-        * [.started](#Rendition.started) : <code>Promise</code>
+        * [.started](#Rendition.started) : <code>Promise.&lt;any&gt;</code>
         * ["layout" (props, changed)](#Rendition.event_layout)
         * ["started"](#Rendition.event_started)
         * ["attached"](#Rendition.event_attached)
@@ -45,7 +44,7 @@ the section content.
         * ["relocated"](#Rendition.event_relocated)
         * ["selected" (cfirange, contents)](#Rendition.event_selected)
         * ["markClicked" (cfiRange, data, contents)](#Rendition.event_markClicked)
-        * [.location](#Rendition.location) : <code>Object</code>
+        * [.location](#Rendition.location) : <code>object</code>
 
 <a name="new_Rendition_new"></a>
 
@@ -103,7 +102,7 @@ Start the rendering
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+attachTo"></a>
 
-## rendition.attachTo(element) ⇒ <code>Promise</code>
+## rendition.attachTo(element) ⇒ <code>Promise.&lt;any&gt;</code>
 Call to attach the container to an element in the dom
 Container must be attached before rendering can begin
 
@@ -115,7 +114,7 @@ Container must be attached before rendering can begin
 
 <a name="Rendition+display"></a>
 
-## rendition.display(target) ⇒ <code>Promise</code>
+## rendition.display([target]) ⇒ <code>Promise.&lt;any&gt;</code>
 Display a point in the book
 The request will be added to the rendering Queue,
 so it will wait until book is opened, rendering started
@@ -125,8 +124,28 @@ and all other rendering tasks have finished to be called.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| target | <code>string</code> | Url or EpubCFI |
+| [target] | <code>string</code> \| <code>number</code> | `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI |
 
+**Example**  
+```js
+rendition.display()
+```
+**Example**  
+```js
+rendition.display(3)
+```
+**Example**  
+```js
+rendition.display("#chapter_001")
+```
+**Example**  
+```js
+rendition.display("chapter_001.xhtml")
+```
+**Example**  
+```js
+rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
+```
 <a name="Rendition+moveTo"></a>
 
 ## rendition.moveTo(offset)
@@ -160,13 +179,13 @@ Clear all rendered views
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+next"></a>
 
-## rendition.next() ⇒ <code>Promise</code>
+## rendition.next() ⇒ <code>Promise.&lt;any&gt;</code>
 Go to the next "page" in the rendition
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+prev"></a>
 
-## rendition.prev() ⇒ <code>Promise</code>
+## rendition.prev() ⇒ <code>Promise.&lt;any&gt;</code>
 Go to the previous "page" in the rendition
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
@@ -181,13 +200,6 @@ Layout configuration
 | --- | --- |
 | options | <code>object</code> | 
 
-<a name="Rendition+reportLocation"></a>
-
-## rendition.reportLocation() ⇒ <code>Promise</code>
-Report the current location
-
-**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
-**Emits**: <code>event:relocated</code>  
 <a name="Rendition+currentLocation"></a>
 
 ## rendition.currentLocation() ⇒ <code>displayedLocation</code> \| <code>Promise</code>
@@ -215,13 +227,13 @@ Get a Range from a Visible CFI
 
 <a name="Rendition+getContents"></a>
 
-## rendition.getContents() ⇒ <code>Array.&lt;object&gt;</code>
+## rendition.getContents() ⇒ <code>Array.&lt;Contents&gt;</code>
 Get the Contents object of each rendered view
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+views"></a>
 
-## rendition.views() ⇒ <code>Array.&lt;object&gt;</code>
+## rendition.views() ⇒ <code>Views</code>
 Get the views member from the manager
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
@@ -259,7 +271,7 @@ Adds Hook methods to the Rendition prototype
 **Read only**: true  
 <a name="Rendition.started"></a>
 
-## Rendition.started : <code>Promise</code>
+## Rendition.started : <code>Promise.&lt;any&gt;</code>
 returns after the rendition has started
 
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
@@ -307,7 +319,7 @@ Emit that has been an error displaying
 
 | Param | Type |
 | --- | --- |
-| err | <code>\*</code> | 
+| err | <code>Error</code> | 
 
 <a name="Rendition.event_rendered"></a>
 
@@ -387,7 +399,7 @@ Emit that a mark was clicked
 
 <a name="Rendition.location"></a>
 
-## Rendition.location : <code>Object</code>
+## Rendition.location : <code>object</code>
 A Rendered Location Range
 
 **Kind**: static typedef of [<code>Rendition</code>](#Rendition)  

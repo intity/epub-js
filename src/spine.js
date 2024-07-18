@@ -41,6 +41,24 @@ class Spine extends Map {
 	}
 
 	/**
+	 * Load spine from JSON
+	 * @param {object[]} spine 
+	 */
+	load(spine) {
+		
+		spine.forEach((item, index) => {
+			this.set(item.idref, {
+				id: item.id || null,
+				idref: item.idref,
+				index: index,
+				linear: item.linear,
+				properties: item.properties
+			});
+		});
+		this.nodeIndex = 0;
+	}
+
+	/**
 	 * destroy
 	 */
 	destroy() {

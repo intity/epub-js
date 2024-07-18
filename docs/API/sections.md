@@ -10,7 +10,7 @@ Sections class
     * [.first()](#Sections+first) ⇒ <code>Section</code>
     * [.last()](#Sections+last) ⇒ <code>Section</code>
     * [.unpack(packaging, resolve, canonical)](#Sections+unpack)
-    * [.each()](#Sections+each) ⇒ <code>method</code>
+    * [.destroy()](#Sections+destroy)
 
 <a name="Sections+get"></a>
 
@@ -30,15 +30,19 @@ sections.get();
 ```
 **Example**  
 ```js
-sections.get(1);
+sections.get(3);
 ```
 **Example**  
 ```js
-sections.get("chap1.html");
+sections.get("#chapter_001");
 ```
 **Example**  
 ```js
-sections.get("#id1234");
+sections.get("chapter_001.xhtml");
+```
+**Example**  
+```js
+sections.get("epubcfi(/6/8!/4/2/16/1:0)")
 ```
 <a name="Sections+first"></a>
 
@@ -64,13 +68,12 @@ Unpack items from a opf into spine items
 | Param | Type | Description |
 | --- | --- | --- |
 | packaging | <code>Packaging</code> |  |
-| resolve | <code>method</code> | URL resolve |
-| canonical | <code>method</code> | Resolve canonical url |
+| resolve | <code>function</code> | URL resolve |
+| canonical | <code>function</code> | Resolve canonical url |
 
-<a name="Sections+each"></a>
+<a name="Sections+destroy"></a>
 
-## sections.each() ⇒ <code>method</code>
-Loop over the Sections in the Spine
+## sections.destroy()
+destroy
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>method</code> - forEach  

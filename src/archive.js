@@ -35,7 +35,7 @@ class Archive {
 	 * Open an archive
 	 * @param {binary} input
 	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-	 * @return {Promise} zipfile
+	 * @return {Promise<any>} zipfile
 	 */
 	open(input, isBase64) {
 
@@ -48,7 +48,7 @@ class Archive {
 	 * Load and Open an archive
 	 * @param {string} zipUrl
 	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-	 * @return {Promise} zipfile
+	 * @return {Promise<any>} zipfile
 	 */
 	async openUrl(zipUrl, isBase64) {
 
@@ -183,7 +183,7 @@ class Archive {
 	 * @param {string} url
 	 * @param {object} [options] 
 	 * @param {object} [options.base64] use base64 encoding or blob url
-	 * @return {Promise} url promise with Url string
+	 * @return {Promise<string>} url promise with Url string
 	 */
 	createUrl(url, options) {
 

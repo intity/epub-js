@@ -6,23 +6,23 @@ Handles Unzipping a requesting files from an Epub Archive
 **Kind**: global class  
 
 * [Archive](#Archive)
-    * [.open(input, [isBase64])](#Archive+open) ⇒ <code>Promise</code>
-    * [.openUrl(zipUrl, [isBase64])](#Archive+openUrl) ⇒ <code>Promise</code>
+    * [.open(input, [isBase64])](#Archive+open) ⇒ <code>Promise.&lt;any&gt;</code>
+    * [.openUrl(zipUrl, [isBase64])](#Archive+openUrl) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.request(url, [type])](#Archive+request) ⇒ <code>Promise.&lt;(Blob\|string\|JSON\|Document\|XMLDocument)&gt;</code>
     * [.getBlob(url, [mimeType])](#Archive+getBlob) ⇒ <code>Blob</code>
     * [.getText(url)](#Archive+getText) ⇒ <code>string</code>
     * [.getBase64(url, [mimeType])](#Archive+getBase64) ⇒ <code>string</code>
-    * [.createUrl(url, [options])](#Archive+createUrl) ⇒ <code>Promise</code>
+    * [.createUrl(url, [options])](#Archive+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
     * [.revokeUrl(url)](#Archive+revokeUrl)
     * [.destroy()](#Archive+destroy)
 
 <a name="Archive+open"></a>
 
-## archive.open(input, [isBase64]) ⇒ <code>Promise</code>
+## archive.open(input, [isBase64]) ⇒ <code>Promise.&lt;any&gt;</code>
 Open an archive
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise</code> - zipfile  
+**Returns**: <code>Promise.&lt;any&gt;</code> - zipfile  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -31,11 +31,11 @@ Open an archive
 
 <a name="Archive+openUrl"></a>
 
-## archive.openUrl(zipUrl, [isBase64]) ⇒ <code>Promise</code>
+## archive.openUrl(zipUrl, [isBase64]) ⇒ <code>Promise.&lt;any&gt;</code>
 Load and Open an archive
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise</code> - zipfile  
+**Returns**: <code>Promise.&lt;any&gt;</code> - zipfile  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -92,11 +92,11 @@ Get a base64 encoded result from Archive by Url
 
 <a name="Archive+createUrl"></a>
 
-## archive.createUrl(url, [options]) ⇒ <code>Promise</code>
+## archive.createUrl(url, [options]) ⇒ <code>Promise.&lt;string&gt;</code>
 Create a Url from an unarchived item
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise</code> - url promise with Url string  
+**Returns**: <code>Promise.&lt;string&gt;</code> - url promise with Url string  
 
 | Param | Type | Description |
 | --- | --- | --- |

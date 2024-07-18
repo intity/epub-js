@@ -1,7 +1,6 @@
 import EpubCFI from "./epubcfi";
 import Defer from "./utils/defer";
 import { sprint } from "./utils/core";
-import { replaceBase } from "./utils/replacements";
 
 /**
  * Represents a Section of the Book
@@ -10,7 +9,7 @@ import { replaceBase } from "./utils/replacements";
 class Section {
 	/**
 	 * Constructor
-	 * @param {object} item 
+	 * @param {object} item Spine Item
 	 * @param {object} hooks 
 	 */
 	constructor(item, hooks) {
@@ -57,33 +56,48 @@ class Section {
 		 */
 		this.cfiBase = item.cfiBase;
 		/**
-		 * @member {function} next
+		 * @member {Function} next
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.next = item.next;
 		/**
-		 * @member {function} prev
+		 * @member {Function} prev
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.prev = item.prev;
 		/**
-		 * @member {object[]} properties
+		 * @member {string[]} properties
 		 * @memberof Section
 		 * @readonly
 		 */
 		this.properties = item.properties;
 		this.hooks = hooks;
+		/**
+		 * @member {Document} document
+		 * @memberof Section
+		 * @readonly
+		 */
 		this.document = undefined;
+		/**
+		 * @member {Element} contents
+		 * @memberof Section
+		 * @readonly
+		 */
 		this.contents = undefined;
+		/**
+		 * @member {string} output
+		 * @memberof Section
+		 * @readonly
+		 */
 		this.output = undefined;
 	}
 
 	/**
 	 * Load the section from its url
-	 * @param {function} request a request method to use for loading
-	 * @return {Promise} a promise with the xml document
+	 * @param {Function} request a request method to use for loading
+	 * @return {Promise<Element>} a promise with the xml document
 	 */
 	load(request) {
 
@@ -108,18 +122,9 @@ class Section {
 	}
 
 	/**
-	 * Adds a base tag for resolving urls in the section (unused)
-	 * @private
-	 */
-	base() {
-
-		return replaceBase(this.document, this);
-	}
-
-	/**
 	 * Render the contents of a section
-	 * @param {function} request a request method to use for loading
-	 * @return {Promise} output a serialized XML Document
+	 * @param {Function} request a request method to use for loading
+	 * @return {Promise<string>} output a serialized XML Document
 	 */
 	render(request) {
 
@@ -144,7 +149,7 @@ class Section {
 	/**
 	 * Find a string in a section
 	 * @param {string} query The query string to find
-	 * @return {object[]} A list of matches, with form {cfi, excerpt}
+	 * @return {object[]} A list of matches, with form { cfi, excerpt }
 	 */
 	find(query) {
 
@@ -201,7 +206,7 @@ class Section {
 	 * `find` as a fallback.
 	 * @param {string} query The query string to search
 	 * @param {number} [maxSeqEle=5] The maximum number of Element that are combined for search, default value is 5.
-	 * @return {object[]} A list of matches, with form {cfi, excerpt}
+	 * @return {object[]} A list of matches, with form { cfi, excerpt }
 	 */
 	search(query, maxSeqEle = 5) {
 
@@ -274,7 +279,7 @@ class Section {
 	* Reconciles the current chapters layout properties with
 	* the global layout properties.
 	* @param {object} globalLayout The global layout settings object, chapter properties string
-	* @return {object} layoutProperties Object with layout properties
+	* @return {object} layoutProperties object with layout properties
 	*/
 	reconcileLayoutSettings(globalLayout) {
 		//-- Get the global defaults
@@ -301,7 +306,7 @@ class Section {
 
 	/**
 	 * Get a CFI from a Range in the Section
-	 * @param {range} range
+	 * @param {Range} range
 	 * @return {string} cfi an EpubCFI string
 	 */
 	cfiFromRange(range) {
@@ -311,7 +316,7 @@ class Section {
 
 	/**
 	 * Get a CFI from an Element in the Section
-	 * @param {element} el
+	 * @param {Element} el
 	 * @return {string} cfi an EpubCFI string
 	 */
 	cfiFromElement(el) {

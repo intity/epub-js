@@ -1,17 +1,14 @@
 export default class Path {
-  constructor(pathString: string);
 
-  parse(what: string): object;
+    constructor(uri: string);
 
-  isAbsolute(what: string): boolean;
-
-  isDirectory(what: string): boolean;
-
-  resolve(what: string): string;
-
-  relative(what: string): string;
-
-  splitPath(filename: string): string;
-
-  toString(): string;
+    parse(path: string): object;
+    dirname(path: string): string;
+    isAbsolute(path: string): boolean;
+    isDirectory(path: string): boolean;
+    resolve(...args: any[]): string;
+    relative(from: string, to: string): string;
+    normalize(path: string): string;
+    splitPath(filename: string): string;
+    toString(): string;
 }

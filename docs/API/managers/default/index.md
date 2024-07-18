@@ -11,17 +11,17 @@ Default View Manager
         * [.render(element, size)](#DefaultViewManager+render)
         * [.destroy()](#DefaultViewManager+destroy)
         * [.resize([width], [height], [epubcfi])](#DefaultViewManager+resize)
-        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise</code>
-        * [.add(section, forceRight)](#DefaultViewManager+add) ⇒ <code>Promise</code>
-        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise</code>
-        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise</code>
+        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.add(section, [forceRight])](#DefaultViewManager+add) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.current()](#DefaultViewManager+current) ⇒ <code>\*</code>
         * [.clear()](#DefaultViewManager+clear)
         * [.currentLocation()](#DefaultViewManager+currentLocation) ⇒ <code>Array.&lt;object&gt;</code>
         * [.visible()](#DefaultViewManager+visible) ⇒ <code>Array.&lt;object&gt;</code>
         * [.bounds()](#DefaultViewManager+bounds) ⇒ <code>DOMRect</code>
         * [.updateLayout()](#DefaultViewManager+updateLayout)
-        * [.getContents()](#DefaultViewManager+getContents) ⇒ <code>Array.&lt;object&gt;</code>
+        * [.getContents()](#DefaultViewManager+getContents) ⇒ <code>Array.&lt;Contents&gt;</code>
         * [.isRendered()](#DefaultViewManager+isRendered) ⇒ <code>boolean</code>
     * _static_
         * [.name](#DefaultViewManager.name) : <code>string</code>
@@ -86,11 +86,11 @@ resize
 
 <a name="DefaultViewManager+display"></a>
 
-## defaultViewManager.display(section, [target]) ⇒ <code>Promise</code>
+## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;any&gt;</code>
 display
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise</code> - displaying promise  
+**Returns**: <code>Promise.&lt;any&gt;</code> - displaying promise  
 
 | Param | Type |
 | --- | --- |
@@ -99,7 +99,7 @@ display
 
 <a name="DefaultViewManager+add"></a>
 
-## defaultViewManager.add(section, forceRight) ⇒ <code>Promise</code>
+## defaultViewManager.add(section, [forceRight]) ⇒ <code>Promise.&lt;any&gt;</code>
 append
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
@@ -107,17 +107,17 @@ append
 | Param | Type | Description |
 | --- | --- | --- |
 | section | <code>Section</code> | Section object |
-| forceRight | <code>boolean</code> |  |
+| [forceRight] | <code>boolean</code> |  |
 
 <a name="DefaultViewManager+next"></a>
 
-## defaultViewManager.next() ⇒ <code>Promise</code>
+## defaultViewManager.next() ⇒ <code>Promise.&lt;any&gt;</code>
 next
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+prev"></a>
 
-## defaultViewManager.prev() ⇒ <code>Promise</code>
+## defaultViewManager.prev() ⇒ <code>Promise.&lt;any&gt;</code>
 prev
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
@@ -162,11 +162,11 @@ Update Layout
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+getContents"></a>
 
-## defaultViewManager.getContents() ⇒ <code>Array.&lt;object&gt;</code>
+## defaultViewManager.getContents() ⇒ <code>Array.&lt;Contents&gt;</code>
 Get contents array from views
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Array.&lt;object&gt;</code> - [view.contents]  
+**Returns**: <code>Array.&lt;Contents&gt;</code> - [view.contents]  
 <a name="DefaultViewManager+isRendered"></a>
 
 ## defaultViewManager.isRendered() ⇒ <code>boolean</code>

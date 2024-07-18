@@ -14,8 +14,8 @@ class Storage {
 	/**
 	 * Constructor
 	 * @param {string} name This should be the name of the application for modals
-	 * @param {method} request
-	 * @param {method} resolve
+	 * @param {Function} request
+	 * @param {Function} resolve
 	 */
 	constructor(name, request, resolve) {
 
@@ -128,7 +128,7 @@ class Storage {
 	 * Put binary data from a url to storage
 	 * @param {string} url  a url to request from storage
 	 * @param {boolean} [withCredentials]
-	 * @param {object} [headers]
+	 * @param {string[]} [headers]
 	 * @return {Promise<Blob>}
 	 */
 	async put(url, withCredentials, headers) {
@@ -137,7 +137,12 @@ class Storage {
 
 		return await this.instance.getItem(encodedUrl).then((result) => {
 			if (!result) {
-				return this.request(url, "binary", withCredentials, headers).then((data) => {
+				return this.request(
+					url,
+					"binary",
+					withCredentials,
+					headers
+				).then((data) => {
 					return this.instance.setItem(encodedUrl, data);
 				});
 			}
@@ -150,14 +155,19 @@ class Storage {
 	 * @param {string} url a url to request from storage
 	 * @param {string} [type] specify the type of the returned result
 	 * @param {boolean} [withCredentials]
-	 * @param {Array} [headers]
+	 * @param {string[]} [headers]
 	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
 	 */
 	async dispatch(url, type, withCredentials, headers) {
 
 		if (this.online) {
 			// From network
-			return this.request(url, type, withCredentials, headers).then(async (data) => {
+			return this.request(
+				url,
+				type,
+				withCredentials,
+				headers
+			).then(async (data) => {
 				// save to store if not present
 				await this.put(url);
 				return data;

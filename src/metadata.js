@@ -67,6 +67,17 @@ class Metadata extends Map {
     }
 
     /**
+     * Load metadata from JSON
+     * @param {object} metadata 
+     */
+    load(metadata) {
+
+        Object.keys(metadata).forEach((prop) => {
+			this.set(prop, metadata[prop]);
+		});
+    }
+
+    /**
      * destroy
      */
     destroy() {

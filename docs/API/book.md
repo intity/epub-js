@@ -1,32 +1,32 @@
 <a name="Book"></a>
 
 # Book
-An Epub representation with methods for the loading, parsing and manipulation
-of its contents.
+An Epub representation with methods for the loading, 
+parsing and manipulation of its contents.
 
 **Kind**: global class  
 
 * [Book](#Book)
-    * [new Book([url], [options])](#new_Book_new)
+    * [new Book([uri], [options])](#new_Book_new)
     * _instance_
-        * [.open(input, [what])](#Book+open) ⇒ <code>Promise</code>
-        * [.load(path)](#Book+load) ⇒ <code>Promise</code>
+        * [.open(input, [what])](#Book+open) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.load(path)](#Book+load) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.resolve(path, [absolute])](#Book+resolve) ⇒ <code>string</code>
         * [.canonical(path)](#Book+canonical) ⇒ <code>string</code>
         * [.section([target])](#Book+section) ⇒ <code>Section</code> \| <code>null</code>
         * [.renderTo(element, [options])](#Book+renderTo) ⇒ <code>Rendition</code>
         * [.setRequestCredentials(credentials)](#Book+setRequestCredentials)
         * [.setRequestHeaders(headers)](#Book+setRequestHeaders)
-        * [.coverUrl()](#Book+coverUrl) ⇒ <code>Promise.&lt;?string&gt;</code>
-        * [.getRange(cfiRange)](#Book+getRange) ⇒ <code>Promise</code>
+        * [.coverUrl()](#Book+coverUrl) ⇒ <code>Promise.&lt;string&gt;</code>
+        * [.getRange(cfiRange)](#Book+getRange) ⇒ <code>Promise.&lt;Range&gt;</code>
         * [.key([identifier])](#Book+key) ⇒ <code>string</code>
         * [.destroy()](#Book+destroy)
     * _static_
-        * [.opened](#Book.opened) : <code>promise</code>
+        * [.opened](#Book.opened) : <code>Promise.&lt;any&gt;</code>
         * [.isOpen](#Book.isOpen) : <code>boolean</code>
-        * [.ready](#Book.ready) : <code>promise</code>
+        * [.ready](#Book.ready) : <code>Promise.&lt;any&gt;</code>
         * [.isRendered](#Book.isRendered) : <code>boolean</code>
-        * [.request](#Book.request) : <code>method</code>
+        * [.request](#Book.request) : <code>function</code>
         * [.navigation](#Book.navigation) : <code>Navigation</code>
         * [.pagelist](#Book.pagelist) : <code>PageList</code>
         * [.url](#Book.url) : <code>Url</code>
@@ -43,37 +43,45 @@ of its contents.
 
 <a name="new_Book_new"></a>
 
-## new Book([url], [options])
+## new Book([uri], [options])
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [url] | <code>string</code> |  |  |
+| [uri] | <code>string</code> |  |  |
 | [options] | <code>object</code> |  |  |
 | [options.request] | <code>object</code> |  | object options to xhr request |
-| [options.request.method] | <code>method</code> | <code></code> | a request function to use instead of the default |
+| [options.request.method] | <code>function</code> | <code></code> | a request function to use instead of the default |
 | [options.request.withCredentials] | <code>boolean</code> | <code>false</code> | send the xhr request withCredentials |
-| [options.request.headers] | <code>object</code> | <code>[]</code> | send the xhr request headers |
-| [options.encoding] | <code>string</code> | <code>&quot;&#x27;binary&#x27;&quot;</code> | optional to pass 'binary' or 'base64' for archived Epubs |
-| [options.replacements] | <code>string</code> | <code>null</code> | use base64, blobUrl, or none for replacing assets in archived Epubs |
-| [options.canonical] | <code>method</code> |  | optional function to determine canonical urls for a path |
+| [options.request.headers] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | send the xhr request headers |
+| [options.encoding] | <code>string</code> | <code>&quot;&#x27;binary&#x27;&quot;</code> | optional to pass `"binary"` or `"base64"` for archived Epubs |
+| [options.replacements] | <code>string</code> | <code>null</code> | use `"base64"` or `"blobUrl"` for replacing assets |
+| [options.canonical] | <code>function</code> |  | optional function to determine canonical urls for a path |
 | [options.openAs] | <code>string</code> |  | optional string to determine the input type |
-| [options.store] | <code>string</code> |  | cache the contents in local storage, value should be the name of the reader |
+| [options.store] | <code>string</code> | <code>false</code> | cache the contents in local storage, value should be the name of the reader |
 
 **Example**  
 ```js
-new Book("/path/to/book.epub", {})
+new Book("/path/to/book/")
 ```
 **Example**  
 ```js
-new Book({ replacements: "blobUrl" })
+new Book("/path/to/book/", { replacements: "blobUrl" })
+```
+**Example**  
+```js
+new Book("/path/to/book.epub")
+```
+**Example**  
+```js
+new Book("/path/to/book.epub", { replacements: "base64" })
 ```
 <a name="Book+open"></a>
 
-## book.open(input, [what]) ⇒ <code>Promise</code>
+## book.open(input, [what]) ⇒ <code>Promise.&lt;any&gt;</code>
 Open a epub or url
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>Promise</code> - of when the book has been loaded  
+**Returns**: <code>Promise.&lt;any&gt;</code> - of when the book has been loaded  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -106,11 +114,11 @@ book.open("https://example.com/book.epub")
 ```
 <a name="Book+load"></a>
 
-## book.load(path) ⇒ <code>Promise</code>
+## book.load(path) ⇒ <code>Promise.&lt;any&gt;</code>
 Load a resource from the Book
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>Promise</code> - returns a promise with the requested resource  
+**Returns**: <code>Promise.&lt;any&gt;</code> - returns a promise with the requested resource  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -159,15 +167,19 @@ book.section()
 ```
 **Example**  
 ```js
-book.section(1)
+book.section(3)
 ```
 **Example**  
 ```js
-book.section("chapter.html")
+book.section("#chapter_001")
 ```
 **Example**  
 ```js
-book.section("#id1234")
+book.section("chapter_001.xhtml")
+```
+**Example**  
+```js
+book.section("epubcfi(/6/8!/4/2/16/1:0)")
 ```
 <a name="Book+renderTo"></a>
 
@@ -201,18 +213,18 @@ Set headers request should use
 
 | Param | Type |
 | --- | --- |
-| headers | <code>object</code> | 
+| headers | <code>Array.&lt;string&gt;</code> | 
 
 <a name="Book+coverUrl"></a>
 
-## book.coverUrl() ⇒ <code>Promise.&lt;?string&gt;</code>
+## book.coverUrl() ⇒ <code>Promise.&lt;string&gt;</code>
 Get the cover url
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>Promise.&lt;?string&gt;</code> - coverUrl  
+**Returns**: <code>Promise.&lt;string&gt;</code> - coverUrl  
 <a name="Book+getRange"></a>
 
-## book.getRange(cfiRange) ⇒ <code>Promise</code>
+## book.getRange(cfiRange) ⇒ <code>Promise.&lt;Range&gt;</code>
 Find a DOM Range for a given CFI Range
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
@@ -241,7 +253,7 @@ Destroy the Book and all associated objects
 **Kind**: instance method of [<code>Book</code>](#Book)  
 <a name="Book.opened"></a>
 
-## Book.opened : <code>promise</code>
+## Book.opened : <code>Promise.&lt;any&gt;</code>
 returns after the book is loaded
 
 **Kind**: static property of [<code>Book</code>](#Book)  
@@ -253,7 +265,7 @@ returns after the book is loaded
 **Read only**: true  
 <a name="Book.ready"></a>
 
-## Book.ready : <code>promise</code>
+## Book.ready : <code>Promise.&lt;any&gt;</code>
 returns after the book is loaded and parsed
 
 **Kind**: static property of [<code>Book</code>](#Book)  
@@ -267,7 +279,7 @@ Queue for methods used before opening
 **Read only**: true  
 <a name="Book.request"></a>
 
-## Book.request : <code>method</code>
+## Book.request : <code>function</code>
 **Kind**: static property of [<code>Book</code>](#Book)  
 **Read only**: true  
 <a name="Book.navigation"></a>

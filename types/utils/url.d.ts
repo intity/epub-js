@@ -1,13 +1,12 @@
 import Path from "./path";
 
 export default class Url {
-  constructor(urlString: string, baseString: string);
 
-  path(): Path;
+    constructor(url: string, base: string);
 
-  resolve(what: string): string;
-
-  relative(what: string): string;
-
-  toString(): string;
+    readonly path: Path;
+    
+    resolve(what: string): string;
+    relative(what: string): string;
+    toString(): string;
 }

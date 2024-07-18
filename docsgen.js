@@ -23,6 +23,7 @@ const docs = [
     "epub",
     "epubcfi",
     "layout",
+    "location",
     "locations",
     "managers/continuous/index",
     "managers/default/index",

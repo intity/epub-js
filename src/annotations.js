@@ -22,7 +22,7 @@ class Annotations extends Map {
 	 * @param {string} cfiRange EpubCFI range to attach annotation to
 	 * @param {object} [options]
 	 * @param {object} [options.data] Data to assign to annotation
-	 * @param {method} [options.cb] Callback after annotation is added
+	 * @param {Function} [options.cb] Callback after annotation is added
 	 * @param {string} [options.className] CSS class to assign to annotation
 	 * @param {object} [options.styles] CSS styles to assign to annotation
 	 * @returns {Annotation} Annotation that was append

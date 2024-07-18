@@ -154,8 +154,8 @@ class IframeView {
 
 	/**
 	 * render
-	 * @param {function} request 
-	 * @returns {object} section render object
+	 * @param {Function} request 
+	 * @returns {Promise<string>} section render
 	 */
 	render(request) {
 
@@ -401,7 +401,7 @@ class IframeView {
 	/**
 	 * load
 	 * @param {string} contents 
-	 * @returns {Promise} loading promise
+	 * @returns {Promise<any>} loading promise
 	 */
 	load(contents) {
 
@@ -442,9 +442,9 @@ class IframeView {
 	/**
 	 * onLoad
 	 * @param {Event} event 
-	 * @param {Defer} promise 
+	 * @param {Defer} defer 
 	 */
-	onLoad(event, promise) {
+	onLoad(event, defer) {
 
 		this.window = this.iframe.contentWindow;
 		this.document = this.iframe.contentDocument;
@@ -480,7 +480,7 @@ class IframeView {
 			}
 		});
 
-		promise.resolve(this.contents);
+		defer.resolve(this.contents);
 	}
 
 	/**
@@ -534,8 +534,8 @@ class IframeView {
 
 	/**
 	 * display
-	 * @param {method} request 
-	 * @returns {Promise} displayed promise
+	 * @param {Function} request 
+	 * @returns {Promise<any>} displayed promise
 	 */
 	display(request) {
 
@@ -603,7 +603,7 @@ class IframeView {
 
 	/**
 	 * offset
-	 * @returns {object}
+	 * @returns {{ top: number, left: number }}
 	 */
 	offset() {
 
@@ -625,23 +625,24 @@ class IframeView {
 	/**
 	 * locationOf
 	 * @param {string|EpubCFI} target 
-	 * @returns {object}
+	 * @returns {{ top: number, left: number }}
 	 */
 	locationOf(target) {
 
 		const pos = this.contents.locationOf(
-			target, this.settings.ignoreClass);
+			target, this.settings.ignoreClass
+		);
 
 		return {
-			left: pos.left,
-			top: pos.top
+			top: pos.top,
+			left: pos.left
 		};
 	}
 
 	/**
 	 * bounds
 	 * @param {boolean} [force=false] 
-	 * @returns {Element}
+	 * @returns {{ height: number, width: number }}
 	 */
 	bounds(force = false) {
 
@@ -656,7 +657,7 @@ class IframeView {
 	 * highlight
 	 * @param {string} cfiRange 
 	 * @param {object} [data={}] 
-	 * @param {method} [cb=null] callback function
+	 * @param {Function} [cb=null] callback function
 	 * @param {string} [className='epubjs-hl'] 
 	 * @param {object} [styles={}] 
 	 * @returns {object}
@@ -713,7 +714,7 @@ class IframeView {
 	 * underline
 	 * @param {string} cfiRange 
 	 * @param {object} [data={}] 
-	 * @param {method} [cb=null]
+	 * @param {Function} [cb=null]
 	 * @param {string} [className='epubjs-ul'] 
 	 * @param {object} [styles={}] 
 	 * @returns {object}

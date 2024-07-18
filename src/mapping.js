@@ -11,7 +11,7 @@ class Mapping {
 	 * @param {string} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
 	 * @param {boolean} [dev=false] toggle developer highlighting
 	 */
-	constructor(layout, axis, dev = false) {
+	constructor(layout, axis = "horizontal", dev = false) {
 
 		this.layout = layout;
 		this.horizontal = axis === "horizontal";
@@ -20,7 +20,7 @@ class Mapping {
 
 	/**
 	 * Find CFI pairs for entire section at once
-	 * @param {*} view 
+	 * @param {any} view 
 	 * @returns {object[]}
 	 */
 	section(view) {
@@ -35,13 +35,13 @@ class Mapping {
 	 * @param {string} cfiBase string of the base for a cfi
 	 * @param {number} start position to start at
 	 * @param {number} end position to end at
-	 * @returns {any}
+	 * @returns {{ start: string, end: string }}
 	 */
 	page(contents, cfiBase, start, end) {
 
 		const root = contents && contents.document ? contents.document.body : false;
 
-		if (!root) return;
+		if (!root) return null;
 
 		const result = this.rangePairToCfiPair(cfiBase, {
 			start: this.findStart(root, start, end),
@@ -66,8 +66,8 @@ class Mapping {
 	/**
 	 * Walk a node, preforming a function on each node it finds
 	 * @param {Node} root Node to walkToNode
-	 * @param {function} func walk function
-	 * @return {*} returns the result of the walk function
+	 * @param {Function} func walk function
+	 * @return {any} returns the result of the walk function
 	 * @private
 	 */
 	walk(root, func) {
@@ -92,7 +92,12 @@ class Mapping {
 		const safeFilter = filter.acceptNode;
 		safeFilter.acceptNode = filter.acceptNode;
 
-		const treeWalker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, safeFilter, false);
+		const treeWalker = document.createTreeWalker(
+			root,
+			NodeFilter.SHOW_TEXT,
+			safeFilter,
+			false
+		);
 		let node;
 		let result;
 		while ((node = treeWalker.nextNode())) {
@@ -132,11 +137,11 @@ class Mapping {
 
 	/**
 	 * Find Start Range
-	 * @private
 	 * @param {Node} root root node
 	 * @param {number} start position to start at
 	 * @param {number} end position to end at
 	 * @return {Range}
+	 * @private
 	 */
 	findStart(root, start, end) {
 
@@ -203,11 +208,11 @@ class Mapping {
 
 	/**
 	 * Find End Range
-	 * @private
 	 * @param {Node} root root node
 	 * @param {number} start position to start at
 	 * @param {number} end position to end at
 	 * @return {Range}
+	 * @private
 	 */
 	findEnd(root, start, end) {
 
@@ -274,11 +279,11 @@ class Mapping {
 
 	/**
 	 * Find Text Start Range
-	 * @private
 	 * @param {Node} root root node
 	 * @param {number} start position to start at
 	 * @param {number} end position to end at
 	 * @return {Range}
+	 * @private
 	 */
 	findTextStartRange(node, start, end) {
 
@@ -309,11 +314,11 @@ class Mapping {
 
 	/**
 	 * Find Text End Range
-	 * @private
 	 * @param {Node} root root node
 	 * @param {number} start position to start at
 	 * @param {number} end position to end at
 	 * @return {Range}
+	 * @private
 	 */
 	findTextEndRange(node, start, end) {
 
@@ -354,10 +359,10 @@ class Mapping {
 
 	/**
 	 * Split up a text node into ranges for each word
-	 * @private
 	 * @param {Node} root root node
 	 * @param {string} [splitter=' '] what to split on
-	 * @return {Range[]}
+	 * @return {Array<Range>}
+	 * @private
 	 */
 	splitTextNodeIntoRanges(node, splitter = " ") {
 
@@ -406,7 +411,7 @@ class Mapping {
 	 * Turn a pair of ranges into a pair of CFIs
 	 * @param {string} cfiBase base string for an EpubCFI
 	 * @param {{ start: Range, end: Range }} rangePair Range pair
-	 * @return {{ start: string, end: string }} EpubCFI string format pair
+	 * @return {{ start: string, end: string }} EpubCFI pair
 	 * @private
 	 */
 	rangePairToCfiPair(cfiBase, rangePair) {
@@ -425,8 +430,8 @@ class Mapping {
 
 	/**
 	 * rangeListToCfiList
-	 * @param {*} cfiBase 
-	 * @param {*} columns 
+	 * @param {string} cfiBase 
+	 * @param {object[]} columns 
 	 * @returns {object[]}
 	 */
 	rangeListToCfiList(cfiBase, columns) {

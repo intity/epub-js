@@ -1,80 +1,50 @@
+import Defer from "../utils/defer";
 import Section from "../section";
 import Contents from "../contents";
 import Layout from "../layout";
 
 export interface ViewSettings {
-  ignoreClass?: string,
-  axis?: string,
-  flow?: string,
-  layout?: Layout,
-  method?: string,
-  width?: number,
-  height?: number,
-  forceEvenPages?: boolean,
-  allowScriptedContent?: boolean
+    axis?: string,
+    method?: string,
+    forceRight?: boolean,
+    forceEvenPages?: boolean,
+    ignoreClass?: string,
+    allowPopups?: boolean,
+    allowScriptedContent?: boolean
 }
 
 export default class View {
-  constructor(section: Section, options: ViewSettings);
 
-  create(): any;
+    constructor(layout: Layout, section: Section, options: ViewSettings);
 
-  render(request?: Function, show?: boolean): Promise<void>;
-
-  reset(): void;
-
-  size(_width: Number, _height: Number): void;
-
-  load(content: Contents): Promise<any>;
-
-  setLayout(layout: Layout): void;
-
-  setAxis(axis: string): void;
-
-  display(request?: Function): Promise<any>;
-
-  show(): void;
-
-  hide(): void;
-
-  offset(): { top: Number, left: Number };
-
-  width(): Number;
-
-  height(): Number;
-
-  position(): object;
-
-  locationOf(target: string): { top: Number, left: Number };
-
-  onDisplayed(view: View): void;
-
-  onResize(view: View): void;
-
-  bounds(force?: boolean): object;
-
-  highlight(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
-
-	underline(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
-
-	mark(cfiRange: string, data?: object, cb?: Function): void;
-
-  unhighlight(cfiRange: string): void;
-
-  ununderline(cfiRange: string): void;
-
-  unmark(cfiRange: string): void;
-
-  destroy(): void;
-
-  private onLoad(event: Event, promise: Promise<any>): void;
-
-  // Event emitters
-  emit(type: any, ...args: any[]): void;
-
-  off(type: any, listener: any): any;
-
-  on(type: any, listener: any): any;
-
-  once(type: any, listener: any, ...args: any[]): any;
+    readonly id: string;
+    readonly contents: Contents;
+    
+    create(): Element;
+    render(request: Function): Promise<string>;
+    reset(): void;
+    size(width?: number, height?: number): void;
+    load(content: Contents): Promise<any>;
+    setAxis(axis: string): void;
+    display(request?: Function): Promise<any>;
+    show(): void;
+    hide(): void;
+    offset(): { top: number, left: number };
+    width(): number;
+    height(): number;
+    position(): DOMRect;
+    locationOf(target: string): { top: number, left: number };
+    bounds(force?: boolean): { height: number, width: number };
+    highlight(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
+    underline(cfiRange: string, data?: object, cb?: Function, className?: string, styles?: object): void;
+    unhighlight(cfiRange: string): void;
+    ununderline(cfiRange: string): void;
+    destroy(): void;
+    //-- event emitters
+    emit(type: any, ...args: any[]): void;
+    off(type: any, listener: any): any;
+    on(type: any, listener: any): any;
+    once(type: any, listener: any, ...args: any[]): any;
+    //-- event handlers
+    private onLoad(event: Event, defer: Defer): void;
 }

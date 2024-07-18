@@ -46,11 +46,15 @@ Add themes to be used by a rendition
 
 | Param | Type |
 | --- | --- |
-| args | <code>object</code> \| <code>Array.&lt;object&gt;</code> \| <code>string</code> | 
+| args | <code>IArguments</code> | 
 
 **Example**  
 ```js
-register("light", "http://example.com/light.css")
+register("light", "/path/to/light.css")
+```
+**Example**  
+```js
+register("light", "https://example.com/to/light.css")
 ```
 **Example**  
 ```js
@@ -163,7 +167,7 @@ Adjust the font size of a rendition
 
 | Param | Type |
 | --- | --- |
-| size | <code>number</code> | 
+| size | <code>string</code> | 
 
 <a name="Themes+font"></a>
 
