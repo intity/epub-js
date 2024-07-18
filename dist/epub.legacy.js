@@ -9575,7 +9575,7 @@ const indexOfSorted = (item, array, compareFunction, start, end) => {
  * Find the bounds of an element
  * taking padding and margin into account
  * @param {Element} el
- * @returns {{ height: Number, width: Number }}
+ * @returns {{ height: number, width: number }}
  */
 const bounds = el => {
   const style = window.getComputedStyle(el);
@@ -9598,7 +9598,7 @@ const bounds = el => {
  * Find the bounds of an element
  * taking padding, margin and borders into account
  * @param {Element} el
- * @returns {{ height: Number, width: Number }}
+ * @returns {{ height: number, width: number }}
  */
 const borders = el => {
   const style = window.getComputedStyle(el);
@@ -9638,7 +9638,7 @@ const nodeBounds = node => {
 
 /**
  * Find the equivalent of getBoundingClientRect of a browser window
- * @returns {{ width: Number, height: Number, top: Number, left: Number, right: Number, bottom: Number }}
+ * @returns {{ width: number, height: number, top: number, left: number, right: number, bottom: number }}
  */
 const windowBounds = () => {
   const width = window.innerWidth;
@@ -10405,183 +10405,6 @@ class Url {
   }
 }
 /* harmony default export */ const utils_url = (Url);
-;// CONCATENATED MODULE: ./src/utils/queue.js
-
-
-
-
-/**
- * Queue for handling tasks one at a time
- */
-class Queue {
-  /**
-   * Constructor
-   * @param {object} context what this will resolve to in the tasks
-   */
-  constructor(context) {
-    this._q = [];
-    this.context = context;
-    this.tick = core_requestAnimationFrame;
-    this.running = false;
-    this.paused = false;
-  }
-
-  /**
-   * Add an item to the queue
-   * @return {Promise}
-   */
-  enqueue() {
-    const task = [].shift.call(arguments);
-    if (!task) {
-      throw new Error("No Task Provided");
-    }
-    let queued;
-    if (typeof task === "function") {
-      const deferred = new defer();
-      const promise = deferred.promise;
-      queued = {
-        task: task,
-        args: arguments,
-        //context: context,
-        deferred: deferred,
-        promise: promise
-      };
-    } else {
-      // Task is a promise
-      queued = {
-        "promise": task
-      };
-    }
-    this._q.push(queued);
-
-    // Wait to start queue flush
-    if (this.paused == false && !this.running) {
-      // setTimeout(this.flush.bind(this), 0);
-      // this.tick.call(window, this.run.bind(this));
-      this.run();
-    }
-    return queued.promise;
-  }
-
-  /**
-   * Run one item
-   * @return {Promise}
-   */
-  dequeue() {
-    let inwait;
-    if (this._q.length && !this.paused) {
-      inwait = this._q.shift();
-      const task = inwait.task;
-      if (task) {
-        const result = task.apply(this.context, inwait.args);
-        if (result && typeof result["then"] === "function") {
-          // Task is a function that returns a promise
-          return result.then(() => {
-            inwait.deferred.resolve.apply(this.context, arguments);
-          }, () => {
-            inwait.deferred.reject.apply(this.context, arguments);
-          });
-        } else {
-          // Task resolves immediately
-          inwait.deferred.resolve.apply(this.context, result);
-          return inwait.promise;
-        }
-      } else if (inwait.promise) {
-        // Task is a promise
-        return inwait.promise;
-      }
-    } else {
-      inwait = new defer();
-      inwait.deferred.resolve();
-      return inwait.promise;
-    }
-  }
-
-  /**
-   * Run All Immediately
-   */
-  dump() {
-    while (this._q.length) {
-      this.dequeue();
-    }
-  }
-
-  /**
-   * Run all tasks sequentially, at convince
-   * @return {Promise}
-   */
-  run() {
-    if (!this.running) {
-      this.running = true;
-      this.defered = new defer();
-    }
-    this.tick.call(window, () => {
-      if (this._q.length) {
-        this.dequeue().then(() => {
-          this.run();
-        });
-      } else {
-        this.defered.resolve();
-        this.running = undefined;
-      }
-    });
-
-    // Unpause
-    if (this.paused == true) {
-      this.paused = false;
-    }
-    return this.defered.promise;
-  }
-
-  /**
-   * Flush all, as quickly as possible
-   * @return {Promise}
-   */
-  flush() {
-    if (this.running) {
-      return this.running;
-    }
-    if (this._q.length) {
-      this.running = this.dequeue().then(() => {
-        this.running = undefined;
-        return this.flush();
-      });
-      return this.running;
-    }
-  }
-
-  /**
-   * Clear all items in wait
-   */
-  clear() {
-    this._q = [];
-  }
-
-  /**
-   * Get the number of tasks in the queue
-   * @return {number} tasks
-   */
-  length() {
-    return this._q.length;
-  }
-
-  /**
-   * Pause a running queue
-   */
-  pause() {
-    this.paused = true;
-  }
-
-  /**
-   * End the queue
-   */
-  stop() {
-    this._q = [];
-    this.running = false;
-    this.paused = true;
-  }
-}
-/* harmony default export */ const queue = (Queue);
 ;// CONCATENATED MODULE: ./src/utils/rangeobject.js
 
 
@@ -11669,6 +11492,225 @@ class EpubCFI {
   }
 }
 /* harmony default export */ const src_epubcfi = (EpubCFI);
+;// CONCATENATED MODULE: ./src/location.js
+
+
+/**
+ * Location class
+ */
+class Location {
+  /**
+   * Constructor
+   */
+  constructor() {
+    /**
+     * @member {string} cfi EpubCFI string format
+     * @memberof Location
+     */
+    this.cfi = null;
+    /**
+     * @member {number} index Location index
+     * @memberof Location
+     */
+    this.index = 0;
+    /**
+     * Percentage in the range from 0 to 1
+     * @member {number} percentage
+     * @memberof Location
+     */
+    this.percentage = 0;
+  }
+
+  /**
+   * Set location properties
+   * @param {object} [props]
+   * @param {string} [props.cfi]
+   * @param {number} [props.index]
+   * @param {number} [props.percentage]
+   */
+  set(props) {
+    extend(this, props || {});
+    return this;
+  }
+}
+/* harmony default export */ const src_location = (Location);
+;// CONCATENATED MODULE: ./src/utils/queue.js
+
+
+
+
+/**
+ * Queue for handling tasks one at a time
+ */
+class Queue {
+  /**
+   * Constructor
+   * @param {object} context what this will resolve to in the tasks
+   */
+  constructor(context) {
+    this._q = [];
+    this.context = context;
+    this.tick = core_requestAnimationFrame;
+    this.running = false;
+    this.paused = false;
+  }
+
+  /**
+   * Add an item to the queue
+   * @return {Promise}
+   */
+  enqueue() {
+    const task = [].shift.call(arguments);
+    if (!task) {
+      throw new Error("No Task Provided");
+    }
+    let queued;
+    if (typeof task === "function") {
+      const deferred = new defer();
+      const promise = deferred.promise;
+      queued = {
+        task: task,
+        args: arguments,
+        //context: context,
+        deferred: deferred,
+        promise: promise
+      };
+    } else {
+      // Task is a promise
+      queued = {
+        "promise": task
+      };
+    }
+    this._q.push(queued);
+
+    // Wait to start queue flush
+    if (this.paused == false && !this.running) {
+      // setTimeout(this.flush.bind(this), 0);
+      // this.tick.call(window, this.run.bind(this));
+      this.run();
+    }
+    return queued.promise;
+  }
+
+  /**
+   * Run one item
+   * @return {Promise}
+   */
+  dequeue() {
+    let inwait;
+    if (this._q.length && !this.paused) {
+      inwait = this._q.shift();
+      const task = inwait.task;
+      if (task) {
+        const result = task.apply(this.context, inwait.args);
+        if (result && typeof result["then"] === "function") {
+          // Task is a function that returns a promise
+          return result.then(() => {
+            inwait.deferred.resolve.apply(this.context, arguments);
+          }, () => {
+            inwait.deferred.reject.apply(this.context, arguments);
+          });
+        } else {
+          // Task resolves immediately
+          inwait.deferred.resolve.apply(this.context, result);
+          return inwait.promise;
+        }
+      } else if (inwait.promise) {
+        // Task is a promise
+        return inwait.promise;
+      }
+    } else {
+      inwait = new defer();
+      inwait.deferred.resolve();
+      return inwait.promise;
+    }
+  }
+
+  /**
+   * Run All Immediately
+   */
+  dump() {
+    while (this._q.length) {
+      this.dequeue();
+    }
+  }
+
+  /**
+   * Run all tasks sequentially, at convince
+   * @return {Promise}
+   */
+  run() {
+    if (!this.running) {
+      this.running = true;
+      this.defered = new defer();
+    }
+    this.tick.call(window, () => {
+      if (this._q.length) {
+        this.dequeue().then(() => {
+          this.run();
+        });
+      } else {
+        this.defered.resolve();
+        this.running = undefined;
+      }
+    });
+
+    // Unpause
+    if (this.paused == true) {
+      this.paused = false;
+    }
+    return this.defered.promise;
+  }
+
+  /**
+   * Flush all, as quickly as possible
+   * @return {Promise}
+   */
+  flush() {
+    if (this.running) {
+      return this.running;
+    }
+    if (this._q.length) {
+      this.running = this.dequeue().then(() => {
+        this.running = undefined;
+        return this.flush();
+      });
+      return this.running;
+    }
+  }
+
+  /**
+   * Clear all items in wait
+   */
+  clear() {
+    this._q = [];
+  }
+
+  /**
+   * Get the number of tasks in the queue
+   * @return {number} tasks
+   */
+  length() {
+    return this._q.length;
+  }
+
+  /**
+   * Pause a running queue
+   */
+  pause() {
+    this.paused = true;
+  }
+
+  /**
+   * End the queue
+   */
+  stop() {
+    this._q = [];
+    this.running = false;
+    this.paused = true;
+  }
+}
+/* harmony default export */ const queue = (Queue);
 ;// CONCATENATED MODULE: ./src/utils/constants.js
 /**
  * @module constants
@@ -11751,11 +11793,11 @@ const EVENTS = {
 /**
  * Find Locations for a Book
  */
-class Locations extends Array {
+class Locations extends Map {
   /**
    * Constructor
    * @param {Sections} [sections]
-   * @param {method} [request]
+   * @param {Function} [request]
    * @param {number} [pause=100]
    */
   constructor(sections, request, pause) {
@@ -11765,18 +11807,11 @@ class Locations extends Array {
     this.break = 150;
     this.request = request;
     /**
-     * @member {object} current Current Location
-     * @property {string} current.cfi
-     * @property {number} current.index
-     * @property {number} current.percentage
+     * @member {Location} current Current Location
      * @memberof Locations
      * @readonly
      */
-    this.current = {
-      cfi: null,
-      index: -1,
-      percentage: 0
-    };
+    this.current = new src_location();
     this.processing = new defer();
     /**
      * @member {Promise} generated
@@ -11791,7 +11826,7 @@ class Locations extends Array {
   /**
    * Load all of sections in the book to generate locations
    * @param {number} [chars] how many chars to split on (default:150)
-   * @return {Promise} locations
+   * @return {Promise<Locations>} Locations
    */
   async generate(chars) {
     if (Number.isInteger(chars)) {
@@ -11801,16 +11836,20 @@ class Locations extends Array {
       console.warn("The input value type is not an integer");
     }
     this.q.pause();
-    this.sections.each(section => {
+    this.sections.forEach(section => {
       if (section.linear) {
         this.q.enqueue(this.process.bind(this), section);
       }
     });
     return this.q.run().then(() => {
-      if (this.length) {
-        this.current.cfi = [0];
-        this.current.index = 0;
-        this.current.percentage = 0;
+      const len = this.size === 1 ? 1 : this.size - 1;
+      const arr = [...this.values()];
+      arr.forEach((loc, index) => {
+        loc.index = index;
+        loc.percentage = index / len;
+      });
+      if (this.size) {
+        this.current.set(arr[0]);
       }
       this.processing.resolve(this);
       return this;
@@ -11820,6 +11859,7 @@ class Locations extends Array {
   /**
    * createRange
    * @returns {object}
+   * @private
    */
   createRange() {
     return {
@@ -11833,15 +11873,16 @@ class Locations extends Array {
   /**
    * process
    * @param {Section} section 
-   * @returns {Promise}
+   * @returns {Promise<Locations>}
    */
   async process(section) {
     return section.load(this.request).then(contents => {
       const completed = new defer();
       const locations = this.parse(contents, section.cfiBase);
-      locations.forEach(i => this.push(i));
       section.unload();
-      this.processingTimeout = setTimeout(() => completed.resolve(locations), this.pause);
+      this.processingTimeout = setTimeout(() => {
+        completed.resolve(locations);
+      }, this.pause);
       return completed.promise;
     });
   }
@@ -11850,12 +11891,11 @@ class Locations extends Array {
    * parse
    * @param {Element} contents 
    * @param {string} cfiBase 
-   * @param {number} [chars] 
+   * @param {number} [chars]
    * @returns {Locations}
    */
   parse(contents, cfiBase, chars) {
-    const locations = new Locations();
-    locations.break = chars || this.break;
+    chars = chars || this.break;
     let range;
     let counter = 0;
     let prev;
@@ -11871,7 +11911,7 @@ class Locations extends Array {
         range.startOffset = 0;
       }
       const len = node.length;
-      let dist = locations.break - counter;
+      let dist = chars - counter;
       let pos = 0;
 
       // Node is smaller than a break,
@@ -11881,7 +11921,7 @@ class Locations extends Array {
         pos = len;
       }
       while (pos < len) {
-        dist = locations.break - counter;
+        dist = chars - counter;
         if (counter === 0) {
           // Start new range
           pos += 1;
@@ -11904,7 +11944,10 @@ class Locations extends Array {
           range.endContainer = node;
           range.endOffset = pos;
           const cfi = new src_epubcfi(range, cfiBase).toString();
-          locations.push(cfi);
+          const loc = new src_location().set({
+            cfi
+          });
+          this.set(cfi, loc);
           counter = 0;
         }
       }
@@ -11919,99 +11962,102 @@ class Locations extends Array {
       range.endContainer = prev;
       range.endOffset = prev.length;
       const cfi = new src_epubcfi(range, cfiBase).toString();
-      locations.push(cfi);
+      const loc = new src_location().set({
+        cfi
+      });
+      this.set(cfi, loc);
       counter = 0;
     }
-    return locations;
+    return this;
   }
 
   /**
    * Get a location from an EpubCFI
-   * @param {string} value EpubCFI string format
-   * @return {number} Location index
+   * @param {string|EpubCFI} value EpubCFI
+   * @return {number} Location index or -1 otherwise
    */
   locationFromCfi(value) {
-    if (this.length === 0) return -1;
-    const cmp = src_epubcfi.prototype.compare;
+    if (this.size === 0) return -1;
     const cfi = new src_epubcfi(value);
-    const loc = locationOf(cfi, this, cmp);
-    const ind = this.length - 1;
-    return loc > ind ? ind : loc;
+    const arr = [...this.keys()];
+    const ind = locationOf(cfi, arr, cfi.compare);
+    const max = this.size - 1;
+    return ind > max ? -1 : ind;
   }
 
   /**
    * Get a percentage position in locations from an EpubCFI
-   * @param {string} cfi EpubCFI string format
+   * @param {string|EpubCFI} cfi EpubCFI
    * @return {number} Percentage
    */
   percentageFromCfi(cfi) {
-    if (this.length === 0) {
+    if (this.size === 0) {
       return 0;
     }
     // Find closest cfi
-    const loc = this.locationFromCfi(cfi);
+    const index = this.locationFromCfi(cfi);
     // Get percentage in total
-    return this.percentageFromLocation(loc);
+    return this.percentageFromLocation(index);
   }
 
   /**
    * Get a percentage position from a location index
-   * @param {number} loc Location index
+   * @param {number} index Location index
    * @return {number} Percentage
    */
-  percentageFromLocation(loc) {
-    if (this.length === 0 || this.length >= loc && loc < 0) {
+  percentageFromLocation(index) {
+    if (this.size === 0 || this.size >= index && index < 0) {
       return 0;
     }
-    return loc / (this.length - 1);
+    const len = this.size === 1 ? 1 : this.size - 1;
+    return index / len;
   }
 
   /**
    * Get an EpubCFI from location index
-   * @param {number} loc Location index
+   * @param {number} index Location index
    * @return {string|null} EpubCFI string format
    */
-  cfiFromLocation(loc) {
-    if (this.length === 0 || this.length >= loc && loc < 0) {
+  cfiFromLocation(index) {
+    if (this.size === 0 || this.size >= index && index < 0) {
       return null;
     }
-    return this[loc];
+    return [...this.keys()][index];
   }
 
   /**
    * Get an EpubCFI from location percentage
-   * @param {number} percentage
+   * @param {number} value Percentage in ranging from 0 to 1
    * @return {string|null} EpubCFI string format
    */
-  cfiFromPercentage(percentage) {
-    if (percentage > 1) {
-      console.warn("Normalize cfiFromPercentage value to between 0 - 1");
-    }
-
-    // Make sure 1 goes to very end
-    if (percentage >= 1) {
-      const cfi = new src_epubcfi(this[this.length - 1]);
+  cfiFromPercentage(value) {
+    let ret,
+      max = this.size - 1;
+    if (value >= 0 && value <= 1) {
+      const index = Math.round(max * value);
+      ret = this.cfiFromLocation(index);
+    } else {
+      const cfi = new src_epubcfi([...this.keys()][max]);
       cfi.collapse();
-      return cfi.toString();
+      ret = cfi.toString();
+      console.warn("Recommended a normalize value to between 0 - 1");
     }
-    const loc = Math.floor((this.length - 1) * percentage);
-    return this.cfiFromLocation(loc);
+    return ret;
   }
 
   /**
    * Load locations from JSON
    * @param {string} locations
+   * @returns {Locations}
    */
   load(locations) {
     if (typeof locations === "string") {
-      this.splice(0);
+      this.clear();
       const data = JSON.parse(locations);
-      data.items.forEach(i => this.push(i));
+      data.items.forEach(i => this.set(i.cfi, i));
       this.break = data.break;
       this.pause = data.pause;
-      this.current.cfi = this[data.index];
-      this.current.index = data.index;
-      this.current.percentage = this.percentageFromLocation(data.index);
+      this.current.set(this.get(data.idref));
     } else {
       console.error("Invalid argument type");
     }
@@ -12020,12 +12066,12 @@ class Locations extends Array {
 
   /**
    * Save locations to JSON
-   * @return {json}
+   * @return {string} A JSON string
    */
   save() {
     return JSON.stringify({
-      items: this,
-      index: this.current.index,
+      items: [...this.values()],
+      idref: this.current.cfi,
       break: this.break,
       pause: this.pause
     });
@@ -12033,50 +12079,59 @@ class Locations extends Array {
 
   /**
    * Set current location
-   * @param {object} options
+   * @param {object} [options]
    * @param {string} [options.cfi] EpubCFI string format
    * @param {number} [options.index] Location index
    * @param {number} [options.percentage] Percentage
+   * @returns {Locations}
    */
   set(options) {
-    if (this.length === 0) return;
-    const setup = (index, value) => {
-      if (index >= 0 && index < this.length) {
-        this.current.cfi = this[index];
-        this.current.index = index;
-        this.current.percentage = value || index / (this.length - 1);
-      }
-    };
-    Object.keys(options).forEach(opt => {
+    if (arguments.length === 2) {
+      super.set(arguments[0], arguments[1]);
+      return this;
+    } else if (this.size === 0) {
+      return this;
+    }
+    Object.keys(options || {}).forEach(opt => {
       const value = options[opt];
       if (this.current[opt] === value || typeof value === "undefined") {
         delete options[opt];
       } else if (typeof value === "string") {
         if (opt === "cfi" && src_epubcfi.prototype.isCfiString(value)) {
-          const index = this.locationFromCfi(value);
-          setup(index);
+          const ind = this.locationFromCfi(value);
+          const loc = [...this.values()][ind];
+          if (loc) {
+            this.current.set(loc);
+          } else {
+            delete options[opt];
+          }
         }
       } else if (typeof value === "number") {
         if (opt === "index") {
-          setup(value);
+          const cfi = this.cfiFromLocation(value);
+          const loc = this.get(cfi);
+          if (loc) {
+            this.current.set(loc);
+          } else {
+            delete options[opt];
+          }
         } else if (opt === "percentage") {
-          if (value >= 0 && value <= 1) {
-            const index = Math.ceil((this.length - 1) * value);
-            setup(index, value);
-          } else if (value > 1) {
-            const cfi = new src_epubcfi(this[this.length - 1]);
-            cfi.collapse();
-            this.current.cfi = cfi.toString();
-            this.current.index = this.locationFromCfi(this.current.cfi);
-            this.current.percentage = value;
-            console.warn("The input value must be normalized in the range 0-1");
+          const cfi = this.cfiFromPercentage(value);
+          const loc = this.get(cfi);
+          if (loc) {
+            this.current.set(loc);
+          } else {
+            delete options[opt];
           }
         }
       } else {
         console.error("Invalid value type to " + opt);
       }
     });
-    if (Object.keys(options).length) {
+    if (Object.keys(options || {}).length) {
+      const {
+        ...current
+      } = this.current;
       /**
        * Current location changed
        * @event changed
@@ -12084,32 +12139,33 @@ class Locations extends Array {
        * @param {object} changed Changed properties
        * @memberof Locations
        */
-      this.emit(EVENTS.LOCATIONS.CHANGED, this.current, options);
+      this.emit(EVENTS.LOCATIONS.CHANGED, current, options);
     }
+    return this;
   }
 
   /**
    * clear locations
    */
   clear() {
+    super.clear();
     this.current.cfi = null;
     this.current.index = -1;
     this.current.percentage = 0;
-    this.splice(0);
   }
 
   /**
    * destroy
    */
   destroy() {
-    this.sections = undefined;
+    this.clear();
     this.pause = undefined;
     this.break = undefined;
+    this.current = undefined;
     this.request = undefined;
     this.q.stop();
     this.q = undefined;
-    this.clear();
-    this.current = undefined;
+    this.sections = undefined;
     this.generated = undefined;
     clearTimeout(this.processingTimeout);
   }
@@ -12266,6 +12322,26 @@ class Manifest extends Map {
   }
 
   /**
+   * Load manifest from JSON
+   * @param {object[]} manifest 
+   */
+  load(manifest) {
+    manifest.forEach(item => {
+      for (const prop of item.properties) {
+        switch (prop) {
+          case "nav":
+            this.navPath = item.href;
+            break;
+          case "cover-image":
+            this.coverPath = item.href;
+            break;
+        }
+      }
+      this.set(item.id, item);
+    });
+  }
+
+  /**
    * destroy
    */
   destroy() {
@@ -12342,6 +12418,16 @@ class Metadata extends Map {
   }
 
   /**
+   * Load metadata from JSON
+   * @param {object} metadata 
+   */
+  load(metadata) {
+    Object.keys(metadata).forEach(prop => {
+      this.set(prop, metadata[prop]);
+    });
+  }
+
+  /**
    * destroy
    */
   destroy() {
@@ -12386,6 +12472,23 @@ class Spine extends Map {
       });
     });
     this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
+  }
+
+  /**
+   * Load spine from JSON
+   * @param {object[]} spine 
+   */
+  load(spine) {
+    spine.forEach((item, index) => {
+      this.set(item.idref, {
+        id: item.id || null,
+        idref: item.idref,
+        index: index,
+        linear: item.linear,
+        properties: item.properties
+      });
+    });
+    this.nodeIndex = 0;
   }
 
   /**
@@ -12456,7 +12559,7 @@ class Packaging {
   /**
    * Parse OPF XML
    * @param {Document} packageXml OPF XML
-   * @return {object} parsed package parts
+   * @return {Packaging}
    */
   parse(packageXml) {
     if (!packageXml) {
@@ -12483,13 +12586,7 @@ class Packaging {
     if (typeof this.uniqueIdentifier === "undefined") {
       this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
     }
-    return {
-      metadata: this.metadata,
-      manifest: this.manifest,
-      spine: this.spine,
-      direction: this.direction,
-      version: this.version
-    };
+    return this;
   }
 
   /**
@@ -12542,37 +12639,18 @@ class Packaging {
   }
 
   /**
-   * Load JSON Manifest
-   * @param {json} json 
-   * @return {object} parsed package parts
+   * Load package from JSON
+   * @param {object} data Serialized JSON object data
+   * @return {Packaging}
    */
-  load(json) {
-    const metadata = json.metadata;
-    Object.keys(metadata).forEach(prop => {
-      this.metadata.set(prop, metadata[prop]);
-    });
-    const spine = json.readingOrder || json.spine;
-    this.spine.items = spine.map((item, index) => {
-      item.index = index;
-      item.linear = item.linear || "yes";
-      return item;
-    });
-    json.resources.forEach((item, index) => {
-      this.manifest.set(index, item);
-      if (item.rel && item.rel[0] === "cover") {
-        this.manifest.coverPath = item.href;
-      }
-    });
-    this.toc = json.toc.map((item, index) => {
-      item.label = item.title;
-      return item;
-    });
-    return {
-      metadata: this.metadata,
-      manifest: this.manifest,
-      spine: this.spine,
-      toc: this.toc
-    };
+  load(data) {
+    this.metadata.load(data.metadata);
+    this.manifest.load(data.manifest);
+    this.spine.load(data.spine);
+    this.direction = data.direction;
+    this.version = data.version;
+    this.uniqueIdentifier = this.metadata.get("identifier");
+    return this;
   }
 
   /**
@@ -12591,7 +12669,280 @@ class Packaging {
   }
 }
 /* harmony default export */ const packaging = (Packaging);
+;// CONCATENATED MODULE: ./src/pagelist.js
+
+
+
+
+/**
+ * Page List Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav-pagelist
+ * @extends {Array}
+ */
+class PageList extends Array {
+  /**
+   * Constructor
+   * @param {Document} [xml] 
+   */
+  constructor(xml) {
+    super();
+    this.epubcfi = new src_epubcfi();
+    /**
+     * Page indexes
+     * @member {number[]} pages
+     * @memberof PageList
+     * @readonly
+     */
+    this.pages = [];
+    /**
+     * @member {string[]} locations
+     * @memberof PageList
+     * @readonly
+     */
+    this.locations = [];
+    /**
+     * @member {number} firstPage
+     * @memberof PageList
+     * @readonly
+     */
+    this.firstPage = 0;
+    /**
+     * @member {number} lastPage
+     * @memberof PageList
+     * @readonly
+     */
+    this.lastPage = 0;
+    /**
+     * @member {number} totalPages
+     * @memberof PageList
+     * @readonly
+     */
+    this.totalPages = 0;
+    this.toc = undefined;
+    this.ncx = undefined;
+    if (xml) {
+      this.parse(xml);
+    }
+    if (this.length) {
+      this.process();
+    }
+  }
+
+  /**
+   * Parse PageList Xml
+   * @param {Document} xml
+   * @returns {PageList}
+   */
+  parse(xml) {
+    const html = qs(xml, "html");
+    const ncx = qs(xml, "ncx");
+    if (html) {
+      this.parseNav(xml);
+    } else if (ncx) {
+      this.parseNcx(xml);
+    }
+    return this;
+  }
+
+  /**
+   * Parse a Nav PageList
+   * @param {Node} node
+   * @return {PageList}
+   * @private
+   */
+  parseNav(node) {
+    const navElement = querySelectorByType(node, "nav", "page-list");
+    const navItems = navElement ? qsa(navElement, "li") : [];
+    const length = navItems.length;
+    if (!navItems || length === 0) return this;
+    for (let i = 0; i < length; ++i) {
+      const item = this.navItem(navItems[i]);
+      this.push(item);
+    }
+    return this;
+  }
+
+  /**
+   * Create navItem
+   * @param {Node} node
+   * @return {object} PageList item
+   * @private
+   */
+  navItem(node) {
+    const content = qs(node, "a");
+    const href = content.getAttribute("href") || "";
+    const text = content.textContent || "";
+    const page = parseInt(text);
+    if (href.indexOf("epubcfi") !== -1) {
+      const split = href.split("#");
+      return {
+        cfi: split.length > 1 ? split[1] : null,
+        packageUrl: split[0],
+        href,
+        page
+      };
+    } else {
+      return {
+        href,
+        page
+      };
+    }
+  }
+
+  /**
+   * parseNcx
+   * @param {Node} node 
+   * @returns {PageList}
+   * @private
+   */
+  parseNcx(node) {
+    const pageList = qs(node, "pageList");
+    if (!pageList) return this;
+    const pageTargets = qsa(pageList, "pageTarget");
+    const length = pageTargets.length;
+    if (!pageTargets || pageTargets.length === 0) {
+      return this;
+    }
+    for (let i = 0; i < length; ++i) {
+      const item = this.ncxItem(pageTargets[i]);
+      this.push(item);
+    }
+    return this;
+  }
+
+  /**
+   * Create ncxItem
+   * @param {Node} node 
+   * @returns {object}
+   * @private
+   */
+  ncxItem(node) {
+    const navLabel = qs(node, "navLabel");
+    const navLabelText = qs(navLabel, "text");
+    const pageText = navLabelText.textContent;
+    const content = qs(node, "content");
+    return {
+      href: content.getAttribute("src"),
+      page: parseInt(pageText, 10)
+    };
+  }
+
+  /**
+   * Process pageList items
+   * @private
+   */
+  process() {
+    this.forEach(item => {
+      this.pages.push(item.page);
+      if (item.cfi) {
+        this.locations.push(item.cfi);
+      }
+    }, this);
+    this.firstPage = parseInt(this.pages[0]);
+    this.lastPage = parseInt(this.pages[this.pages.length - 1]);
+    this.totalPages = this.lastPage - this.firstPage;
+  }
+
+  /**
+   * Get a page index from a EpubCFI
+   * @param {string} cfi EpubCFI
+   * @return {number} Page index
+   */
+  pageFromCfi(cfi) {
+    // Check if the pageList has not been set yet
+    if (this.locations.length === 0) {
+      return -1;
+    }
+    // TODO: check if CFI is valid?
+
+    // check if the cfi is in the location list
+    let pg,
+      index = indexOfSorted(cfi, this.locations, this.epubcfi.compare);
+    if (index != -1) {
+      pg = this.pages[index];
+    } else {
+      // Otherwise add it to the list of locations
+      // Insert it in the correct position in the locations page
+      index = locationOf(cfi, this.locations, this.epubcfi.compare);
+      // Get the page at the location just before the new one, or return the first
+      pg = index - 1 >= 0 ? this.pages[index - 1] : this.pages[0];
+      if (pg !== undefined) {
+        // Add the new page in so that the locations and page array match up
+        //this.pages.splice(index, 0, pg);
+      } else {
+        pg = -1;
+      }
+    }
+    return pg;
+  }
+
+  /**
+   * Get a EpubCFI by Page index
+   * @param {string|number} pg Page index
+   * @return {string|null} cfi
+   */
+  cfiFromPage(pg) {
+    // check that pg is an int
+    if (typeof pg !== "number") {
+      pg = parseInt(pg);
+    }
+
+    // check if the cfi is in the page list
+    // Pages could be unsorted.
+    const index = this.pages.indexOf(pg);
+    let cfi = null;
+    if (index !== -1) {
+      cfi = this.locations[index];
+    }
+    // TODO: handle pages not in the list
+    return cfi;
+  }
+
+  /**
+   * Get a Page index from Book percentage
+   * @param {number} value Percentage
+   * @return {number} Page index
+   */
+  pageFromPercentage(value) {
+    return Math.round(this.totalPages * value);
+  }
+
+  /**
+   * Returns a value between 0 - 1 corresponding to the location of a page
+   * @param {number} pg the page
+   * @return {number} Percentage
+   */
+  percentageFromPage(pg) {
+    const percentage = (pg - this.firstPage) / this.totalPages;
+    return Math.round(percentage * 1000) / 1000;
+  }
+
+  /**
+   * Returns a value between 0 - 1 corresponding to the location of a cfi
+   * @param {string} cfi EpubCFI
+   * @return {number} Percentage
+   */
+  percentageFromCfi(cfi) {
+    const pg = this.pageFromCfi(cfi);
+    const percentage = this.percentageFromPage(pg);
+    return percentage;
+  }
+
+  /**
+   * Destroy
+   */
+  destroy() {
+    this.pages = undefined;
+    this.locations = undefined;
+    this.epubcfi = undefined;
+    this.toc = undefined;
+    this.ncx = undefined;
+    this.splice(0);
+  }
+}
+/* harmony default export */ const pagelist = (PageList);
 ;// CONCATENATED MODULE: ./src/navigation.js
+
 
 
 
@@ -12604,12 +12955,30 @@ class Navigation {
    * @param {Document} xml navigation html / xhtml / ncx
    */
   constructor(xml) {
+    /**
+     * Navigation items
+     * @member {object[]} toc
+     * @memberof Navigation
+     * @readonly
+     */
     this.toc = [];
     this.tocByHref = {};
     this.tocById = {};
     this.landmarks = [];
     this.landmarksByType = {};
+    /**
+     * number of navigation items
+     * @member {number} length
+     * @memberof Navigation
+     * @readonly
+     */
     this.length = 0;
+    /**
+     * @member {PageList} pageList
+     * @memberof Navigation
+     * @readonly
+     */
+    this.pageList = new pagelist(xml);
     if (xml) {
       this.parse(xml);
     }
@@ -12641,7 +13010,7 @@ class Navigation {
 
   /**
    * Unpack navigation items
-   * @param {Array} toc
+   * @param {object[]} toc
    * @private
    */
   unpack(toc) {
@@ -12682,7 +13051,7 @@ class Navigation {
    * Get an item from navigation subitems recursively by index
    * @param {string} target
    * @param {number} index
-   * @param {Array} navItems
+   * @param {object[]} navItems
    * @return {object} navItem
    */
   getByIndex(target, index, navItems) {
@@ -12695,7 +13064,7 @@ class Navigation {
     } else {
       let result;
       for (let i = 0; i < navItems.length; ++i) {
-        result = this.getByIndex(target, index, navItems[i].subitems);
+        result = this.getByIndex(target, index, navItems[i].subitems); // recursive call
         if (result) {
           break;
         }
@@ -12721,7 +13090,7 @@ class Navigation {
   /**
    * Parse toc from a Epub > 3.0 Nav
    * @param {Document} navHtml
-   * @return {Array} navigation list
+   * @return {object[]} navigation list
    * @private
    */
   parseNav(navHtml) {
@@ -12737,7 +13106,7 @@ class Navigation {
    * Parses lists in the toc
    * @param {Document} navListHtml
    * @param {string} parent id
-   * @return {Array} navigation list
+   * @return {object[]} navigation list
    */
   parseNavList(navListHtml, parent) {
     const result = [];
@@ -12785,7 +13154,7 @@ class Navigation {
   /**
    * Parse landmarks from a Epub > 3.0 Nav
    * @param {Document} navHtml
-   * @return {Array} landmarks list
+   * @return {object[]} landmarks list
    * @private
    */
   parseLandmarks(navHtml) {
@@ -12817,16 +13186,16 @@ class Navigation {
     const href = content.getAttribute("href") || "";
     const text = content.textContent || "";
     return {
+      type: type,
       href: href,
-      label: text,
-      type: type
+      label: text
     };
   }
 
   /**
    * Parse from a Epub > 3.0 NC
    * @param {Document} navHtml
-   * @return {Array} navigation list
+   * @return {object[]} navigation list
    * @private
    */
   parseNcx(tocXml) {
@@ -12850,7 +13219,7 @@ class Navigation {
 
   /**
    * Create a ncxItem
-   * @param  {Element} item
+   * @param {Element} item
    * @return {object} ncxItem
    * @private
    */
@@ -12867,15 +13236,15 @@ class Navigation {
       id: item.getAttribute("id") || false,
       href: content.getAttribute("src"),
       label: text,
-      subitems: [],
-      parent: parent
+      parent: parent,
+      subitems: []
     };
   }
 
   /**
    * Load Spine Items
-   * @param  {object} json the items to be loaded
-   * @return {Array} navItems
+   * @param {object} json the items to be loaded
+   * @return {object[]} navItems
    */
   load(json) {
     return json.map(item => {
@@ -12887,11 +13256,24 @@ class Navigation {
 
   /**
    * forEach pass through
-   * @param {Function} fn function to run on each item
-   * @return {method} forEach loop
+   * @param {IArguments} args
    */
-  forEach(fn) {
-    return this.toc.forEach(fn);
+  forEach(...args) {
+    this.toc.forEach(...args);
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    this.toc = undefined;
+    this.tocByHref = undefined;
+    this.tocById = undefined;
+    this.landmarks = undefined;
+    this.landmarksByType = undefined;
+    this.length = 0;
+    this.pageList.destroy();
+    this.pageList = undefined;
   }
 }
 /* harmony default export */ const navigation = (Navigation);
@@ -13220,10 +13602,10 @@ class Resources {
   /**
    * Constructor
    * @param {Manifest} manifest
-   * @param {object} [options]
+   * @param {object} options
    * @param {Archive} [options.archive]
-   * @param {method} [options.request]
-   * @param {method} [options.resolve]
+   * @param {Function} options.request
+   * @param {Function} options.resolve
    * @param {string} [options.replacements]
    */
   constructor(manifest, {
@@ -13292,7 +13674,7 @@ class Resources {
 
   /**
    * Create blob urls for all the assets
-   * @return {Promise} returns replacement urls
+   * @return {Promise<string[]>} returns replacement urls
    */
   async replacements() {
     if (this.settings.replacements === null) {
@@ -13311,7 +13693,7 @@ class Resources {
   /**
    * Replace URLs
    * @param {string} absoluteUri 
-   * @returns {Promise[]} replacements
+   * @returns {Array<Promise<string[]>>} replacements
    * @private
    */
   replaceUrls() {
@@ -13326,16 +13708,12 @@ class Resources {
 
   /**
    * Replace URLs in CSS resources
-   * @param {Archive} [archive]
-   * @param {method} [resolve]
-   * @return {Promise}
+   * @return {Promise<string[]>}
    */
-  replaceCss(archive, resolve) {
+  replaceCss() {
     const replaced = [];
-    archive = archive || this.archive;
-    resolve = resolve || this.resolve;
     this.css.forEach(item => {
-      const replacement = this.createCssFile(item.href, archive, resolve).then(url => {
+      const replacement = this.createCssFile(item.href).then(url => {
         // switch the url in the replacementUrls
         const index = this.urls.indexOf(item.href);
         if (index > -1) {
@@ -13350,7 +13728,7 @@ class Resources {
   /**
    * Create a new CSS file with the replaced URLs
    * @param {string} href the original css file
-   * @return {Promise} returns a BlobUrl to the new CSS file or a data url
+   * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
    * @private
    */
   createCssFile(href) {
@@ -13400,15 +13778,12 @@ class Resources {
   /**
    * Resolve all resources URLs relative to an absolute URL
    * @param {string} absoluteUri to be resolved to
-   * @param {method} [resolve]
    * @return {string[]} array with relative Urls
    */
-  relativeTo(absoluteUri, resolve) {
-    resolve = resolve || this.resolve;
-
+  relativeTo(absoluteUri) {
     // Get Urls relative to current sections
     return this.urls.map(href => {
-      const resolved = resolve(href);
+      const resolved = this.resolve(href);
       const path = new utils_path(absoluteUri);
       return path.relative(path.directory, resolved);
     });
@@ -13417,12 +13792,14 @@ class Resources {
   /**
    * Get a URL for a resource
    * @param {string} path
-   * @return {string|null} url
+   * @return {Promise<string>}
    */
   get(path) {
     const index = this.urls.indexOf(path);
     if (index === -1) {
-      return null;
+      return new Promise((resolve, reject) => {
+        resolve(null);
+      });
     } else if (this.replacementUrls.length) {
       return new Promise((resolve, reject) => {
         resolve(this.replacementUrls[index]);
@@ -13462,254 +13839,6 @@ class Resources {
   }
 }
 /* harmony default export */ const resources = (Resources);
-;// CONCATENATED MODULE: ./src/pagelist.js
-
-
-
-
-/**
- * Page List Parser
- */
-class PageList {
-  /**
-   * Constructor
-   * @param {Document} [xml] 
-   */
-  constructor(xml) {
-    this.pages = [];
-    this.locations = [];
-    this.epubcfi = new src_epubcfi();
-    this.firstPage = 0;
-    this.lastPage = 0;
-    this.totalPages = 0;
-    this.toc = undefined;
-    this.ncx = undefined;
-    if (xml) {
-      this.pageList = this.parse(xml);
-    }
-    if (this.pageList && this.pageList.length) {
-      this.process(this.pageList);
-    }
-  }
-
-  /**
-   * Parse PageList Xml
-   * @param {Document} xml
-   * @returns {Array}
-   */
-  parse(xml) {
-    const html = qs(xml, "html");
-    const ncx = qs(xml, "ncx");
-    if (html) {
-      return this.parseNav(xml);
-    } else if (ncx) {
-      return this.parseNcx(xml);
-    }
-    return [];
-  }
-
-  /**
-   * Parse a Nav PageList
-   * @param {Node} navHtml
-   * @return {PageList.item[]} list
-   * @private
-   */
-  parseNav(navHtml) {
-    const navElement = querySelectorByType(navHtml, "nav", "page-list");
-    const navItems = navElement ? qsa(navElement, "li") : [];
-    const length = navItems.length;
-    const list = [];
-    if (!navItems || length === 0) return list;
-    for (let i = 0; i < length; ++i) {
-      const item = this.item(navItems[i]);
-      list.push(item);
-    }
-    return list;
-  }
-
-  /**
-   * parseNcx
-   * @param {Node} navXml 
-   * @returns {Array}
-   * @private
-   */
-  parseNcx(navXml) {
-    const list = [];
-    const pageList = qs(navXml, "pageList");
-    if (!pageList) return list;
-    const pageTargets = qsa(pageList, "pageTarget");
-    const length = pageTargets.length;
-    if (!pageTargets || pageTargets.length === 0) {
-      return list;
-    }
-    for (let i = 0; i < length; ++i) {
-      const item = this.ncxItem(pageTargets[i]);
-      list.push(item);
-    }
-    return list;
-  }
-
-  /**
-   * ncxItem
-   * @param {Node} item 
-   * @returns {object}
-   * @private
-   */
-  ncxItem(item) {
-    const navLabel = qs(item, "navLabel");
-    const navLabelText = qs(navLabel, "text");
-    const pageText = navLabelText.textContent;
-    const content = qs(item, "content");
-    return {
-      href: content.getAttribute("src"),
-      page: parseInt(pageText, 10)
-    };
-  }
-
-  /**
-   * Page List Item
-   * @param {Node} item
-   * @return {object} pageListItem
-   * @private
-   */
-  item(item) {
-    const content = qs(item, "a");
-    const href = content.getAttribute("href") || "";
-    const text = content.textContent || "";
-    const page = parseInt(text);
-    if (href.indexOf("epubcfi") !== -1) {
-      const split = href.split("#");
-      return {
-        cfi: split.length > 1 ? split[1] : false,
-        href: href,
-        packageUrl: split[0],
-        page: page
-      };
-    } else {
-      return {
-        href: href,
-        page: page
-      };
-    }
-  }
-
-  /**
-   * Process pageList items
-   * @param {array} pageList
-   * @private
-   */
-  process(pageList) {
-    pageList.forEach(item => {
-      this.pages.push(item.page);
-      if (item.cfi) {
-        this.locations.push(item.cfi);
-      }
-    }, this);
-    this.firstPage = parseInt(this.pages[0]);
-    this.lastPage = parseInt(this.pages[this.pages.length - 1]);
-    this.totalPages = this.lastPage - this.firstPage;
-  }
-
-  /**
-   * Get a PageList result from a EpubCFI
-   * @param {string} cfi EpubCFI String
-   * @return {number} page
-   */
-  pageFromCfi(cfi) {
-    // Check if the pageList has not been set yet
-    if (this.locations.length === 0) {
-      return -1;
-    }
-    // TODO: check if CFI is valid?
-
-    // check if the cfi is in the location list
-    // var index = this.locations.indexOf(cfi);
-    let pg,
-      index = indexOfSorted(cfi, this.locations, this.epubcfi.compare);
-    if (index != -1) {
-      pg = this.pages[index];
-    } else {
-      // Otherwise add it to the list of locations
-      // Insert it in the correct position in the locations page
-      //index = EPUBJS.core.insert(cfi, this.locations, this.epubcfi.compare);
-      index = locationOf(cfi, this.locations, this.epubcfi.compare);
-      // Get the page at the location just before the new one, or return the first
-      pg = index - 1 >= 0 ? this.pages[index - 1] : this.pages[0];
-      if (pg !== undefined) {
-        // Add the new page in so that the locations and page array match up
-        //this.pages.splice(index, 0, pg);
-      } else {
-        pg = -1;
-      }
-    }
-    return pg;
-  }
-
-  /**
-   * Get an EpubCFI from a Page List Item
-   * @param {string|number} pg
-   * @return {string} cfi
-   */
-  cfiFromPage(pg) {
-    // check that pg is an int
-    if (typeof pg !== "number") {
-      pg = parseInt(pg);
-    }
-
-    // check if the cfi is in the page list
-    // Pages could be unsorted.
-    const index = this.pages.indexOf(pg);
-    let cfi = -1;
-    if (index !== -1) {
-      cfi = this.locations[index];
-    }
-    // TODO: handle pages not in the list
-    return cfi;
-  }
-
-  /**
-   * Get a Page from Book percentage
-   * @param {number} percent
-   * @return {number} page
-   */
-  pageFromPercentage(percent) {
-    return Math.round(this.totalPages * percent);
-  }
-
-  /**
-   * Returns a value between 0 - 1 corresponding to the location of a page
-   * @param {number} pg the page
-   * @return {number} percentage
-   */
-  percentageFromPage(pg) {
-    const percentage = (pg - this.firstPage) / this.totalPages;
-    return Math.round(percentage * 1000) / 1000;
-  }
-
-  /**
-   * Returns a value between 0 - 1 corresponding to the location of a cfi
-   * @param {string} cfi EpubCFI String
-   * @return {number} percentage
-   */
-  percentageFromCfi(cfi) {
-    const pg = this.pageFromCfi(cfi);
-    const percentage = this.percentageFromPage(pg);
-    return percentage;
-  }
-
-  /**
-   * Destroy
-   */
-  destroy() {
-    this.pages = undefined;
-    this.locations = undefined;
-    this.epubcfi = undefined;
-    this.pageList = undefined;
-    this.toc = undefined;
-    this.ncx = undefined;
-  }
-}
-/* harmony default export */ const pagelist = (PageList);
 ;// CONCATENATED MODULE: ./src/annotation.js
 
 
@@ -13725,7 +13854,7 @@ class Annotation {
    * @param {string} cfiRange EpubCFI range to attach annotation to
    * @param {object} [options]
    * @param {object} [options.data] Data to assign to annotation
-   * @param {method} [options.cb] Callback after annotation is clicked
+   * @param {Function} [options.cb] Callback after annotation is clicked
    * @param {string} [options.className] CSS class to assign to annotation
    * @param {object} [options.styles] CSS styles to assign to annotation
    */
@@ -13848,7 +13977,7 @@ class Annotations extends Map {
    * @param {string} cfiRange EpubCFI range to attach annotation to
    * @param {object} [options]
    * @param {object} [options.data] Data to assign to annotation
-   * @param {method} [options.cb] Callback after annotation is added
+   * @param {Function} [options.cb] Callback after annotation is added
    * @param {string} [options.className] CSS class to assign to annotation
    * @param {object} [options.styles] CSS styles to assign to annotation
    * @returns {Annotation} Annotation that was append
@@ -13936,7 +14065,7 @@ class Annotations extends Map {
 class Layout {
   /**
    * Constructor
-   * @param {object} options 
+   * @param {object} [options] 
    * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
    * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
    * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
@@ -14156,7 +14285,7 @@ class Layout {
    * @param {Contents} contents
    * @param {Section} [section] 
    * @param {string} [axis] 
-   * @return {Promise}
+   * @return {void|Promise<any>}
    */
   format(contents, section, axis) {
     let formating;
@@ -14236,8 +14365,9 @@ class Themes extends Map {
 
   /**
    * Add themes to be used by a rendition
-   * @param {object|Array<object>|string} args
-   * @example register("light", "http://example.com/light.css")
+   * @param {IArguments} args
+   * @example register("light", "/path/to/light.css")
+   * @example register("light", "https://example.com/to/light.css")
    * @example register("light", { body: { color: "purple"}})
    * @example register({ light: {...}, dark: {...}})
    */
@@ -14472,7 +14602,7 @@ class Themes extends Map {
 
   /**
    * Adjust the font size of a rendition
-   * @param {number} size
+   * @param {string} size
    */
   fontSize(size) {
     this.appendRule("font-size", size);
@@ -14513,7 +14643,7 @@ class Hook {
    */
   constructor(context) {
     this.context = context || this;
-    this.hooks = [];
+    this.tasks = [];
   }
 
   /**
@@ -14523,7 +14653,7 @@ class Hook {
   register() {
     for (let i = 0; i < arguments.length; ++i) {
       if (typeof arguments[i] === "function") {
-        this.hooks.push(arguments[i]);
+        this.tasks.push(arguments[i]);
       } else if (arguments[i] instanceof Array) {
         // unpack array
         this.register(arguments[i]); // recursive call
@@ -14538,9 +14668,9 @@ class Hook {
    * @example this.content.deregister(() => {...});
    */
   deregister(func) {
-    for (let i = 0; i < this.hooks.length; i++) {
-      if (this.hooks[i] === func) {
-        this.hooks.splice(i, 1);
+    for (let i = 0; i < this.tasks.length; i++) {
+      if (this.tasks[i] === func) {
+        this.tasks.splice(i, 1);
         break;
       }
     }
@@ -14556,7 +14686,7 @@ class Hook {
     const context = this.context;
     const promises = [];
     let executing;
-    this.hooks.forEach(task => {
+    this.tasks.forEach(task => {
       try {
         executing = task.apply(context, args);
       } catch (err) {
@@ -14575,14 +14705,14 @@ class Hook {
    * @returns {Array}
    */
   list() {
-    return this.hooks;
+    return this.tasks;
   }
 
   /**
    * clear
    */
   clear() {
-    this.hooks = [];
+    this.tasks = [];
   }
 }
 /* harmony default export */ const hook = (Hook);
@@ -14601,7 +14731,7 @@ class Mapping {
    * @param {string} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
    * @param {boolean} [dev=false] toggle developer highlighting
    */
-  constructor(layout, axis, dev = false) {
+  constructor(layout, axis = "horizontal", dev = false) {
     this.layout = layout;
     this.horizontal = axis === "horizontal";
     this.devMode = dev;
@@ -14609,7 +14739,7 @@ class Mapping {
 
   /**
    * Find CFI pairs for entire section at once
-   * @param {*} view 
+   * @param {any} view 
    * @returns {object[]}
    */
   section(view) {
@@ -14623,11 +14753,11 @@ class Mapping {
    * @param {string} cfiBase string of the base for a cfi
    * @param {number} start position to start at
    * @param {number} end position to end at
-   * @returns {any}
+   * @returns {{ start: string, end: string }}
    */
   page(contents, cfiBase, start, end) {
     const root = contents && contents.document ? contents.document.body : false;
-    if (!root) return;
+    if (!root) return null;
     const result = this.rangePairToCfiPair(cfiBase, {
       start: this.findStart(root, start, end),
       end: this.findEnd(root, start, end)
@@ -14649,8 +14779,8 @@ class Mapping {
   /**
    * Walk a node, preforming a function on each node it finds
    * @param {Node} root Node to walkToNode
-   * @param {function} func walk function
-   * @return {*} returns the result of the walk function
+   * @param {Function} func walk function
+   * @return {any} returns the result of the walk function
    * @private
    */
   walk(root, func) {
@@ -14709,11 +14839,11 @@ class Mapping {
 
   /**
    * Find Start Range
-   * @private
    * @param {Node} root root node
    * @param {number} start position to start at
    * @param {number} end position to end at
    * @return {Range}
+   * @private
    */
   findStart(root, start, end) {
     const stack = [root];
@@ -14769,11 +14899,11 @@ class Mapping {
 
   /**
    * Find End Range
-   * @private
    * @param {Node} root root node
    * @param {number} start position to start at
    * @param {number} end position to end at
    * @return {Range}
+   * @private
    */
   findEnd(root, start, end) {
     const stack = [root];
@@ -14829,11 +14959,11 @@ class Mapping {
 
   /**
    * Find Text Start Range
-   * @private
    * @param {Node} root root node
    * @param {number} start position to start at
    * @param {number} end position to end at
    * @return {Range}
+   * @private
    */
   findTextStartRange(node, start, end) {
     const ranges = this.splitTextNodeIntoRanges(node);
@@ -14859,11 +14989,11 @@ class Mapping {
 
   /**
    * Find Text End Range
-   * @private
    * @param {Node} root root node
    * @param {number} start position to start at
    * @param {number} end position to end at
    * @return {Range}
+   * @private
    */
   findTextEndRange(node, start, end) {
     const ranges = this.splitTextNodeIntoRanges(node);
@@ -14899,10 +15029,10 @@ class Mapping {
 
   /**
    * Split up a text node into ranges for each word
-   * @private
    * @param {Node} root root node
    * @param {string} [splitter=' '] what to split on
-   * @return {Range[]}
+   * @return {Array<Range>}
+   * @private
    */
   splitTextNodeIntoRanges(node, splitter = " ") {
     const ranges = [];
@@ -14943,7 +15073,7 @@ class Mapping {
    * Turn a pair of ranges into a pair of CFIs
    * @param {string} cfiBase base string for an EpubCFI
    * @param {{ start: Range, end: Range }} rangePair Range pair
-   * @return {{ start: string, end: string }} EpubCFI string format pair
+   * @return {{ start: string, end: string }} EpubCFI pair
    * @private
    */
   rangePairToCfiPair(cfiBase, rangePair) {
@@ -14959,8 +15089,8 @@ class Mapping {
 
   /**
    * rangeListToCfiList
-   * @param {*} cfiBase 
-   * @param {*} columns 
+   * @param {string} cfiBase 
+   * @param {object[]} columns 
    * @returns {object[]}
    */
   rangeListToCfiList(cfiBase, columns) {
@@ -15483,8 +15613,8 @@ const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userA
 class Contents {
   /**
    * Constructor
-   * @param {document} doc Document
-   * @param {element} content Parent Element (typically Body)
+   * @param {Document} doc Document
+   * @param {Element} content Parent Element (typically Body)
    * @param {Section} section Section object reference
    */
   constructor(doc, content, section) {
@@ -15812,7 +15942,7 @@ class Contents {
 
   /**
    * Get the documentElement
-   * @returns {element} documentElement
+   * @returns {Element} documentElement
    */
   root() {
     if (!this.document) return null;
@@ -15823,12 +15953,12 @@ class Contents {
    * Get the location offset of a EpubCFI or an #id
    * @param {string | EpubCFI} target
    * @param {string} [ignoreClass] for the cfi
-   * @returns {object} target position left and top
+   * @returns {{ left: number, top: number }} target position left and top
    */
   locationOf(target, ignoreClass) {
     const targetPos = {
-      "left": 0,
-      "top": 0
+      left: 0,
+      top: 0
     };
     if (!this.document) return targetPos;
     let position;
@@ -15930,7 +16060,7 @@ class Contents {
    * @param {string} key 
    * @example appendStylesheet("/pach/to/stylesheet.css", "common")
    * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
-   * @returns {Promise}
+   * @returns {Promise<Node>}
    */
   appendStylesheet(src, key) {
     return new Promise((resolve, reject) => {
@@ -16027,7 +16157,7 @@ class Contents {
    * @param {string} key 
    * @example appendScript("/path/to/script.js", "common")
    * @example appendScript("https://examples.com/to/script.js", "common")
-   * @returns {Promise} loaded
+   * @returns {Promise<Node>} loaded
    */
   appendScript(src, key) {
     return new Promise((resolve, reject) => {
@@ -16329,7 +16459,7 @@ class Contents {
   }
 
   /**
-   * Set the layoutStyle of the content
+   * Set the layout style of the content
    * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
    * @private
    */
@@ -17107,8 +17237,8 @@ class IframeView {
 
   /**
    * render
-   * @param {function} request 
-   * @returns {object} section render object
+   * @param {Function} request 
+   * @returns {Promise<string>} section render
    */
   render(request) {
     this.create();
@@ -17322,7 +17452,7 @@ class IframeView {
   /**
    * load
    * @param {string} contents 
-   * @returns {Promise} loading promise
+   * @returns {Promise<any>} loading promise
    */
   load(contents) {
     const loading = new defer();
@@ -17357,9 +17487,9 @@ class IframeView {
   /**
    * onLoad
    * @param {Event} event 
-   * @param {Defer} promise 
+   * @param {Defer} defer 
    */
-  onLoad(event, promise) {
+  onLoad(event, defer) {
     this.window = this.iframe.contentWindow;
     this.document = this.iframe.contentDocument;
     this.document.body.style.overflow = "hidden";
@@ -17390,7 +17520,7 @@ class IframeView {
         }
       }
     });
-    promise.resolve(this.contents);
+    defer.resolve(this.contents);
   }
 
   /**
@@ -17437,8 +17567,8 @@ class IframeView {
 
   /**
    * display
-   * @param {method} request 
-   * @returns {Promise} displayed promise
+   * @param {Function} request 
+   * @returns {Promise<any>} displayed promise
    */
   display(request) {
     const displayed = new defer();
@@ -17498,7 +17628,7 @@ class IframeView {
 
   /**
    * offset
-   * @returns {object}
+   * @returns {{ top: number, left: number }}
    */
   offset() {
     return {
@@ -17518,20 +17648,20 @@ class IframeView {
   /**
    * locationOf
    * @param {string|EpubCFI} target 
-   * @returns {object}
+   * @returns {{ top: number, left: number }}
    */
   locationOf(target) {
     const pos = this.contents.locationOf(target, this.settings.ignoreClass);
     return {
-      left: pos.left,
-      top: pos.top
+      top: pos.top,
+      left: pos.left
     };
   }
 
   /**
    * bounds
    * @param {boolean} [force=false] 
-   * @returns {Element}
+   * @returns {{ height: number, width: number }}
    */
   bounds(force = false) {
     if (force || !this.elementBounds) {
@@ -17544,7 +17674,7 @@ class IframeView {
    * highlight
    * @param {string} cfiRange 
    * @param {object} [data={}] 
-   * @param {method} [cb=null] callback function
+   * @param {Function} [cb=null] callback function
    * @param {string} [className='epubjs-hl'] 
    * @param {object} [styles={}] 
    * @returns {object}
@@ -17594,7 +17724,7 @@ class IframeView {
    * underline
    * @param {string} cfiRange 
    * @param {object} [data={}] 
-   * @param {method} [cb=null]
+   * @param {Function} [cb=null]
    * @param {string} [className='epubjs-ul'] 
    * @param {object} [styles={}] 
    * @returns {object}
@@ -18048,7 +18178,7 @@ class DefaultViewManager {
 
   /**
    * Require the view from passed string, or as a class function
-   * @param  {string|object} view
+   * @param {string|Function|object} view
    * @return {any}
    * @private
    */
@@ -18069,7 +18199,7 @@ class DefaultViewManager {
    * createView
    * @param {Section} section 
    * @param {boolean} [forceRight]
-   * @returns {object} View object (default: IframeView)
+   * @returns {object} View (default: IframeView)
    * @private
    */
   createView(section, forceRight) {
@@ -18090,7 +18220,7 @@ class DefaultViewManager {
    * handleNextPrePaginated
    * @param {boolean} forceRight 
    * @param {Section} section 
-   * @param {function} action callback function
+   * @param {Function} action callback function
    * @returns {any}
    * @private
    */
@@ -18111,7 +18241,7 @@ class DefaultViewManager {
    * display
    * @param {Section} section 
    * @param {string|number} [target] 
-   * @returns {Promise} displaying promise
+   * @returns {Promise<any>} displaying promise
    */
   display(section, target) {
     const displaying = new defer();
@@ -18222,8 +18352,8 @@ class DefaultViewManager {
   /**
    * append
    * @param {Section} section Section object
-   * @param {boolean} forceRight 
-   * @returns {Promise}
+   * @param {boolean} [forceRight] 
+   * @returns {Promise<any>}
    */
   add(section, forceRight) {
     const view = this.createView(section, forceRight);
@@ -18246,8 +18376,8 @@ class DefaultViewManager {
   /**
    * append
    * @param {Section} section Section object
-   * @param {boolean} forceRight 
-   * @returns {Promise}
+   * @param {boolean} [forceRight] 
+   * @returns {Promise<any>}
    * @private
    */
   append(section, forceRight) {
@@ -18257,8 +18387,8 @@ class DefaultViewManager {
   /**
    * prepend
    * @param {Section} section 
-   * @param {boolean} forceRight 
-   * @returns {Promise}
+   * @param {boolean} [forceRight] 
+   * @returns {Promise<any>}
    * @private
    */
   prepend(section, forceRight) {
@@ -18295,7 +18425,7 @@ class DefaultViewManager {
 
   /**
    * next
-   * @returns {Promise}
+   * @returns {Promise<any>}
    */
   next() {
     let left, section;
@@ -18364,7 +18494,7 @@ class DefaultViewManager {
 
   /**
    * prev
-   * @returns {Promise}
+   * @returns {Promise<any>}
    */
   prev() {
     let left, section;
@@ -18614,7 +18744,7 @@ class DefaultViewManager {
 
   /**
    * isVisible
-   * @param {*} view 
+   * @param {any} view 
    * @param {number} offsetPrev 
    * @param {number} offsetNext 
    * @param {DOMRect} [rect] 
@@ -18786,7 +18916,7 @@ class DefaultViewManager {
 
   /**
    * Get contents array from views
-   * @returns {object[]} [view.contents]
+   * @returns {Array<Contents>} [view.contents]
    */
   getContents() {
     const contents = [];
@@ -19781,8 +19911,8 @@ class ContinuousViewManager extends managers_default {
  * @param {number} [options.width]
  * @param {number} [options.height]
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|function|object} [options.manager='default'] string values: default / continuous
- * @param {string|function} [options.view='iframe']
+ * @param {string|Function|object} [options.manager='default'] string values: default / continuous
+ * @param {string|Function} [options.view='iframe']
  * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
@@ -19876,7 +20006,7 @@ class Rendition {
     /**
      * A Rendered Location Range
      * @typedef location
-     * @type {Object}
+     * @type {object}
      * @property {object} start
      * @property {string} start.index
      * @property {string} start.href
@@ -19906,7 +20036,7 @@ class Rendition {
     this.starting = new defer();
     /**
      * returns after the rendition has started
-     * @member {Promise} started
+     * @member {Promise<any>} started
      * @memberof Rendition
      */
     this.started = this.starting.promise;
@@ -19917,7 +20047,7 @@ class Rendition {
 
   /**
    * Set the manager function
-   * @param {function} manager
+   * @param {Function} manager
    */
   setManager(manager) {
     this.manager = manager;
@@ -19925,7 +20055,7 @@ class Rendition {
 
   /**
    * Require the manager from passed string, or as a class function
-   * @param  {string|object} manager [description]
+   * @param {string|object} manager [description]
    * @return {any}
    */
   requireManager(manager) {
@@ -20003,8 +20133,8 @@ class Rendition {
   /**
    * Call to attach the container to an element in the dom
    * Container must be attached before rendering can begin
-   * @param  {Element} element to attach to
-   * @return {Promise}
+   * @param {Element} element to attach to
+   * @return {Promise<any>}
    */
   attachTo(element) {
     return this.q.enqueue(() => {
@@ -20013,7 +20143,6 @@ class Rendition {
         width: this.settings.width,
         height: this.settings.height
       });
-
       /**
        * Emit that rendering has attached to an element
        * @event attached
@@ -20028,8 +20157,13 @@ class Rendition {
    * The request will be added to the rendering Queue,
    * so it will wait until book is opened, rendering started
    * and all other rendering tasks have finished to be called.
-   * @param  {string} target Url or EpubCFI
-   * @return {Promise}
+   * @param {string|number} [target] `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI
+   * @example rendition.display()
+   * @example rendition.display(3)
+   * @example rendition.display("#chapter_001")
+   * @example rendition.display("chapter_001.xhtml")
+   * @example rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
+   * @return {Promise<any>}
    */
   display(target) {
     if (this.displaying) {
@@ -20040,8 +20174,8 @@ class Rendition {
 
   /**
    * Tells the manager what to display immediately
-   * @param  {string} target Url or EpubCFI
-   * @return {Promise}
+   * @param {string} [target]
+   * @return {Promise<Section>}
    * @private
    */
   _display(target) {
@@ -20074,7 +20208,7 @@ class Rendition {
       /**
        * Emit that has been an error displaying
        * @event displayError
-       * @param {*} err
+       * @param {Error} err
        * @memberof Rendition
        */
       this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
@@ -20198,7 +20332,7 @@ class Rendition {
 
   /**
    * Go to the next "page" in the rendition
-   * @return {Promise}
+   * @return {Promise<any>}
    */
   next() {
     return this.q.enqueue(this.manager.next.bind(this.manager)).then(this.reportLocation.bind(this));
@@ -20206,7 +20340,7 @@ class Rendition {
 
   /**
    * Go to the previous "page" in the rendition
-   * @return {Promise}
+   * @return {Promise<any>}
    */
   prev() {
     return this.q.enqueue(this.manager.prev.bind(this.manager)).then(this.reportLocation.bind(this));
@@ -20244,7 +20378,8 @@ class Rendition {
   /**
    * Report the current location
    * @fires relocated
-   * @returns {Promise}
+   * @returns {Promise<any>}
+   * @private
    */
   reportLocation() {
     const report = location => {
@@ -20291,7 +20426,7 @@ class Rendition {
   /**
    * Creates a Rendition#locationRange from location
    * passed by the Manager
-   * @param {object[]} location Location sections
+   * @param {object} location Location sections
    * @returns {displayedLocation}
    * @private
    */
@@ -20329,8 +20464,8 @@ class Rendition {
       located.end.location = locationEnd;
       located.end.percentage = this.book.locations.percentageFromLocation(locationEnd);
     }
-    const pageStart = this.book.pageList.pageFromCfi(start.mapping.start);
-    const pageEnd = this.book.pageList.pageFromCfi(end.mapping.end);
+    const pageStart = this.book.navigation.pageList.pageFromCfi(start.mapping.start);
+    const pageEnd = this.book.navigation.pageList.pageFromCfi(end.mapping.end);
     if (pageStart != -1) {
       located.start.page = pageStart;
     }
@@ -20374,7 +20509,7 @@ class Rendition {
 
   /**
    * Pass the events from a view's Contents
-   * @param  {Contents} view contents
+   * @param {Contents} view contents
    * @private
    */
   passEvents(contents) {
@@ -20386,7 +20521,7 @@ class Rendition {
 
   /**
    * Emit events passed by a view
-   * @param  {event} e
+   * @param {event} e
    * @private
    */
   triggerViewEvent(e, contents) {
@@ -20395,7 +20530,7 @@ class Rendition {
 
   /**
    * Emit a selection event's CFI Range passed from a a view
-   * @param  {string} cfirange
+   * @param {string} cfirange
    * @private
    */
   triggerSelectedEvent(cfirange, contents) {
@@ -20411,7 +20546,7 @@ class Rendition {
 
   /**
    * Emit a markClicked event with the cfiRange and data from a mark
-   * @param  {EpubCFI} cfirange
+   * @param {EpubCFI} cfirange
    * @param {object} data 
    * @param {Contents} contents 
    * @private
@@ -20430,8 +20565,8 @@ class Rendition {
 
   /**
    * Get a Range from a Visible CFI
-   * @param  {string} epubcfi EpubCfi string
-   * @param  {string} ignoreClass
+   * @param {string} epubcfi EpubCfi string
+   * @param {string} ignoreClass
    * @return {Range}
    */
   getRange(epubcfi, ignoreClass) {
@@ -20448,7 +20583,7 @@ class Rendition {
 
   /**
    * Hook to adjust images to fit in columns
-   * @param  {Contents} contents
+   * @param {Contents} contents
    * @private
    */
   adjustImages(contents) {
@@ -20493,7 +20628,7 @@ class Rendition {
 
   /**
    * Get the Contents object of each rendered view
-   * @returns {object[]}
+   * @returns {Array<Contents>}
    */
   getContents() {
     return this.manager ? this.manager.getContents() : [];
@@ -20501,7 +20636,7 @@ class Rendition {
 
   /**
    * Get the views member from the manager
-   * @returns {object[]}
+   * @returns {Views}
    */
   views() {
     const views = this.manager ? this.manager.views : undefined;
@@ -20556,10 +20691,11 @@ class Rendition {
   /**
    * Hook to handle the document identifier before
    * a Section is serialized
-   * @param {document} doc
+   * @param {Document} doc
+   * @param {Section} section 
    * @private
    */
-  injectIdentifier(doc) {
+  injectIdentifier(doc, section) {
     const ident = this.book.packaging.metadata.get("identifier");
     const meta = doc.createElement("meta");
     meta.setAttribute("name", "dc.relation.ispartof");
@@ -20610,7 +20746,7 @@ const load = (e, type, def) => {
       r = parse(xhr.response, "text/html");
     }
   } else if (xhr.responseType === "json") {
-    r = JSON.parse(xhr.response);
+    r = xhr.response;
   } else if (xhr.responseType === "blob") {
     if (SUPPORTS_URL) {
       r = xhr.response;
@@ -20631,7 +20767,7 @@ const load = (e, type, def) => {
  * @param {string} [type] 
  * @param {boolean} [withCredentials=false] 
  * @param {object[]} [headers=[]] 
- * @returns {Promise}
+ * @returns {Promise<any>}
  */
 const request = (url, type, withCredentials = false, headers = []) => {
   const def = new defer();
@@ -20651,7 +20787,6 @@ const request = (url, type, withCredentials = false, headers = []) => {
     xhr.responseType = BLOB_RESPONSE;
   } else if (type === "json") {
     xhr.responseType = "json";
-    xhr.setRequestHeader("Accept", "application/json");
   }
   xhr.onreadystatechange = e => read(e, def);
   xhr.onload = e => load(e, type, def);
@@ -20711,7 +20846,7 @@ class Archive {
    * Open an archive
    * @param {binary} input
    * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-   * @return {Promise} zipfile
+   * @return {Promise<any>} zipfile
    */
   open(input, isBase64) {
     return this.zip.loadAsync(input, {
@@ -20723,7 +20858,7 @@ class Archive {
    * Load and Open an archive
    * @param {string} zipUrl
    * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-   * @return {Promise} zipfile
+   * @return {Promise<any>} zipfile
    */
   async openUrl(zipUrl, isBase64) {
     return utils_request(zipUrl, "binary").then(data => {
@@ -20849,7 +20984,7 @@ class Archive {
    * @param {string} url
    * @param {object} [options] 
    * @param {object} [options.base64] use base64 encoding or blob url
-   * @return {Promise} url promise with Url string
+   * @return {Promise<string>} url promise with Url string
    */
   createUrl(url, options) {
     const deferred = new defer();
@@ -20926,8 +21061,8 @@ class Storage {
   /**
    * Constructor
    * @param {string} name This should be the name of the application for modals
-   * @param {method} request
-   * @param {method} resolve
+   * @param {Function} request
+   * @param {Function} resolve
    */
   constructor(name, request, resolve) {
     this.name = name;
@@ -21032,7 +21167,7 @@ class Storage {
    * Put binary data from a url to storage
    * @param {string} url  a url to request from storage
    * @param {boolean} [withCredentials]
-   * @param {object} [headers]
+   * @param {string[]} [headers]
    * @return {Promise<Blob>}
    */
   async put(url, withCredentials, headers) {
@@ -21052,7 +21187,7 @@ class Storage {
    * @param {string} url a url to request from storage
    * @param {string} [type] specify the type of the returned result
    * @param {boolean} [withCredentials]
-   * @param {Array} [headers]
+   * @param {string[]} [headers]
    * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
    */
   async dispatch(url, type, withCredentials, headers) {
@@ -21261,7 +21396,6 @@ event_emitter_default()(Storage.prototype);
 
 
 
-
 /**
  * Represents a Section of the Book
  * In most books this is equivalent to a Chapter
@@ -21269,7 +21403,7 @@ event_emitter_default()(Storage.prototype);
 class Section {
   /**
    * Constructor
-   * @param {object} item 
+   * @param {object} item Spine Item
    * @param {object} hooks 
    */
   constructor(item, hooks) {
@@ -21316,33 +21450,48 @@ class Section {
      */
     this.cfiBase = item.cfiBase;
     /**
-     * @member {function} next
+     * @member {Function} next
      * @memberof Section
      * @readonly
      */
     this.next = item.next;
     /**
-     * @member {function} prev
+     * @member {Function} prev
      * @memberof Section
      * @readonly
      */
     this.prev = item.prev;
     /**
-     * @member {object[]} properties
+     * @member {string[]} properties
      * @memberof Section
      * @readonly
      */
     this.properties = item.properties;
     this.hooks = hooks;
+    /**
+     * @member {Document} document
+     * @memberof Section
+     * @readonly
+     */
     this.document = undefined;
+    /**
+     * @member {Element} contents
+     * @memberof Section
+     * @readonly
+     */
     this.contents = undefined;
+    /**
+     * @member {string} output
+     * @memberof Section
+     * @readonly
+     */
     this.output = undefined;
   }
 
   /**
    * Load the section from its url
-   * @param {function} request a request method to use for loading
-   * @return {Promise} a promise with the xml document
+   * @param {Function} request a request method to use for loading
+   * @return {Promise<Element>} a promise with the xml document
    */
   load(request) {
     const loading = new defer();
@@ -21364,17 +21513,9 @@ class Section {
   }
 
   /**
-   * Adds a base tag for resolving urls in the section (unused)
-   * @private
-   */
-  base() {
-    return replaceBase(this.document, this);
-  }
-
-  /**
    * Render the contents of a section
-   * @param {function} request a request method to use for loading
-   * @return {Promise} output a serialized XML Document
+   * @param {Function} request a request method to use for loading
+   * @return {Promise<string>} output a serialized XML Document
    */
   render(request) {
     const rendering = new defer();
@@ -21397,7 +21538,7 @@ class Section {
   /**
    * Find a string in a section
    * @param {string} query The query string to find
-   * @return {object[]} A list of matches, with form {cfi, excerpt}
+   * @return {object[]} A list of matches, with form { cfi, excerpt }
    */
   find(query) {
     const section = this;
@@ -21445,7 +21586,7 @@ class Section {
    * `find` as a fallback.
    * @param {string} query The query string to search
    * @param {number} [maxSeqEle=5] The maximum number of Element that are combined for search, default value is 5.
-   * @return {object[]} A list of matches, with form {cfi, excerpt}
+   * @return {object[]} A list of matches, with form { cfi, excerpt }
    */
   search(query, maxSeqEle = 5) {
     if (typeof document.createTreeWalker == "undefined") {
@@ -21517,7 +21658,7 @@ class Section {
   * Reconciles the current chapters layout properties with
   * the global layout properties.
   * @param {object} globalLayout The global layout settings object, chapter properties string
-  * @return {object} layoutProperties Object with layout properties
+  * @return {object} layoutProperties object with layout properties
   */
   reconcileLayoutSettings(globalLayout) {
     //-- Get the global defaults
@@ -21542,7 +21683,7 @@ class Section {
 
   /**
    * Get a CFI from a Range in the Section
-   * @param {range} range
+   * @param {Range} range
    * @return {string} cfi an EpubCFI string
    */
   cfiFromRange(range) {
@@ -21551,7 +21692,7 @@ class Section {
 
   /**
    * Get a CFI from an Element in the Section
-   * @param {element} el
+   * @param {Element} el
    * @return {string} cfi an EpubCFI string
    */
   cfiFromElement(el) {
@@ -21597,9 +21738,9 @@ class Section {
 /**
  * Sections class
  */
-class Sections {
+class Sections extends Array {
   constructor() {
-    this.spineItems = [];
+    super();
     this.spineByHref = {};
     this.spineById = {};
     /**
@@ -21617,7 +21758,6 @@ class Sections {
     this.hooks.content.register(replaceBase);
     this.hooks.content.register(replaceMeta);
     this.hooks.content.register(replaceCanonical);
-    this.epubcfi = new src_epubcfi();
     /**
      * @member {boolean} loaded
      * @memberof Spine
@@ -21631,33 +21771,35 @@ class Sections {
    * @param {string|number} [target]
    * @return {Section|null} section
    * @example sections.get();
-   * @example sections.get(1);
-   * @example sections.get("chap1.html");
-   * @example sections.get("#id1234");
+   * @example sections.get(3);
+   * @example sections.get("#chapter_001");
+   * @example sections.get("chapter_001.xhtml");
+   * @example sections.get("epubcfi(/6/8!/4/2/16/1:0)")
    */
   get(target) {
     let index = 0;
     if (typeof target === "undefined") {
-      while (index < this.spineItems.length) {
-        let next = this.spineItems[index];
+      while (index < this.length) {
+        let next = this[index];
         if (next && next.linear) {
           break;
         }
         index += 1;
       }
-    } else if (this.epubcfi.isCfiString(target)) {
-      let cfi = new src_epubcfi(target);
-      index = cfi.spinePos;
-    } else if (typeof target === "number" || isNaN(target) === false) {
+    } else if (typeof target === "number" && isNaN(target) === false) {
       index = target;
-    } else if (typeof target === "string" && target.indexOf("#") === 0) {
-      index = this.spineById[target.substring(1)];
     } else if (typeof target === "string") {
-      // Remove fragments
-      target = target.split("#")[0];
-      index = this.spineByHref[target] || this.spineByHref[encodeURI(target)];
+      if (src_epubcfi.prototype.isCfiString(target)) {
+        const cfi = new src_epubcfi(target);
+        index = cfi.spinePos;
+      } else if (target.indexOf("#") === 0) {
+        index = this.spineById[target.substring(1)];
+      } else {
+        target = target.split("#")[0]; // Remove fragments
+        index = this.spineByHref[target] || this.spineByHref[encodeURI(target)];
+      }
     }
-    return this.spineItems[index] || null;
+    return this[index] || null;
   }
 
   /**
@@ -21672,7 +21814,7 @@ class Sections {
         return next;
       }
       index += 1;
-    } while (index < this.spineItems.length);
+    } while (index < this.length);
   }
 
   /**
@@ -21680,7 +21822,7 @@ class Sections {
    * @return {Section} last section
    */
   last() {
-    let index = this.spineItems.length - 1;
+    let index = this.length - 1;
     do {
       const prev = this.get(index);
       if (prev && prev.linear) {
@@ -21697,9 +21839,9 @@ class Sections {
    * @private
    */
   append(section) {
-    const index = this.spineItems.length;
+    const index = this.length;
     section.index = index;
-    this.spineItems.push(section);
+    this.push(section);
 
     // Encode and Decode href lookups
     // see pr for details: https://github.com/futurepress/epub.js/pull/358
@@ -21717,12 +21859,11 @@ class Sections {
    * @private
    */
   prepend(section) {
-    // var index = this.spineItems.unshift(section);
     this.spineByHref[section.href] = 0;
     this.spineById[section.idref] = 0;
 
     // Re-index
-    this.spineItems.forEach((item, index) => {
+    this.forEach((item, index) => {
       item.index = index;
     });
     return 0;
@@ -21734,26 +21875,26 @@ class Sections {
    * @private
    */
   remove(section) {
-    const index = this.spineItems.indexOf(section);
+    const index = this.indexOf(section);
     if (index > -1) {
       delete this.spineByHref[section.href];
       delete this.spineById[section.idref];
-      return this.spineItems.splice(index, 1);
+      return this.splice(index, 1);
     }
   }
 
   /**
    * Unpack items from a opf into spine items
    * @param {Packaging} packaging
-   * @param {method} resolve URL resolve
-   * @param {method} canonical Resolve canonical url
+   * @param {Function} resolve URL resolve
+   * @param {Function} canonical Resolve canonical url
    */
   unpack(packaging, resolve, canonical) {
     const manifest = packaging.manifest;
     const spine = packaging.spine;
     spine.forEach((item, key) => {
       const manifestItem = manifest.get(key);
-      item.cfiBase = this.epubcfi.generateChapterComponent(spine.nodeIndex, item.index, item.id);
+      item.cfiBase = src_epubcfi.prototype.generateChapterComponent(spine.nodeIndex, item.index, item.id);
       if (manifestItem) {
         item.href = manifestItem.href;
         item.url = resolve(item.href, true);
@@ -21776,7 +21917,7 @@ class Sections {
         };
         item.next = () => {
           let nextIndex = item.index;
-          while (nextIndex < this.spineItems.length - 1) {
+          while (nextIndex < this.length - 1) {
             let next = this.get(nextIndex + 1);
             if (next && next.linear) {
               return next;
@@ -21800,27 +21941,21 @@ class Sections {
   }
 
   /**
-   * Loop over the Sections in the Spine
-   * @return {method} forEach
+   * destroy
    */
-  each() {
-    return this.spineItems.forEach.apply(this.spineItems, arguments);
-  }
   destroy() {
-    this.each(section => section.destroy());
-    this.spineItems = undefined;
+    this.forEach(i => i.destroy());
+    this.splice(0);
     this.spineByHref = undefined;
     this.spineById = undefined;
     this.hooks.serialize.clear();
     this.hooks.content.clear();
     this.hooks = undefined;
-    this.epubcfi = undefined;
     this.loaded = false;
   }
 }
 /* harmony default export */ const sections = (Sections);
 ;// CONCATENATED MODULE: ./src/book.js
-
 
 
 
@@ -21852,30 +21987,32 @@ const INPUT_TYPE = {
 };
 
 /**
- * An Epub representation with methods for the loading, parsing and manipulation
- * of its contents.
+ * An Epub representation with methods for the loading, 
+ * parsing and manipulation of its contents.
  * @class
- * @param {string} [url]
+ * @param {string} [uri]
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
- * @param {method} [options.request.method=null] a request function to use instead of the default
+ * @param {Function} [options.request.method=null] a request function to use instead of the default
  * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
- * @param {object} [options.request.headers=[]] send the xhr request headers
- * @param {string} [options.encoding='binary'] optional to pass 'binary' or 'base64' for archived Epubs
- * @param {string} [options.replacements=null] use base64, blobUrl, or none for replacing assets in archived Epubs
- * @param {method} [options.canonical] optional function to determine canonical urls for a path
+ * @param {string[]} [options.request.headers=[]] send the xhr request headers
+ * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
+ * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
+ * @param {Function} [options.canonical] optional function to determine canonical urls for a path
  * @param {string} [options.openAs] optional string to determine the input type
- * @param {string} [options.store] cache the contents in local storage, value should be the name of the reader
+ * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
- * @example new Book("/path/to/book.epub", {})
- * @example new Book({ replacements: "blobUrl" })
+ * @example new Book("/path/to/book/")
+ * @example new Book("/path/to/book/", { replacements: "blobUrl" })
+ * @example new Book("/path/to/book.epub")
+ * @example new Book("/path/to/book.epub", { replacements: "base64" })
  */
 class Book {
-  constructor(url, options) {
+  constructor(uri, options) {
     // Allow passing just options to the Book
-    if (typeof options === "undefined" && typeof url !== "string" && url instanceof Blob === false && url instanceof ArrayBuffer === false) {
-      options = url;
-      url = undefined;
+    if (typeof options === "undefined" && typeof uri !== "string" && uri instanceof Blob === false && uri instanceof ArrayBuffer === false) {
+      options = uri;
+      uri = undefined;
     }
     this.settings = extend({
       request: {
@@ -21891,7 +22028,7 @@ class Book {
     }, options || {});
     this.opening = new defer(); // Promises
     /**
-     * @member {promise} opened returns after the book is loaded
+     * @member {Promise<any>} opened returns after the book is loaded
      * @memberof Book
      * @readonly
      */
@@ -21907,7 +22044,6 @@ class Book {
       spine: new defer(),
       manifest: new defer(),
       metadata: new defer(),
-      pageList: new defer(),
       resources: new defer(),
       navigation: new defer()
     };
@@ -21916,16 +22052,15 @@ class Book {
       spine: this.loading.spine.promise,
       manifest: this.loading.manifest.promise,
       metadata: this.loading.metadata.promise,
-      pageList: this.loading.pageList.promise,
       resources: this.loading.resources.promise,
       navigation: this.loading.navigation.promise
     };
     /**
-     * @member {promise} ready returns after the book is loaded and parsed
+     * @member {Promise<any>} ready returns after the book is loaded and parsed
      * @memberof Book
      * @readonly
      */
-    this.ready = Promise.all([this.loaded.manifest, this.loaded.spine, this.loaded.metadata, this.loaded.cover, this.loaded.navigation, this.loaded.resources]);
+    this.ready = Promise.all([this.loaded.cover, this.loaded.metadata, this.loaded.manifest, this.loaded.spine, this.loaded.resources, this.loaded.navigation]);
     /**
      * Queue for methods used before opening
      * @member {boolean} isRendered
@@ -21934,7 +22069,7 @@ class Book {
      */
     this.isRendered = false;
     /**
-     * @member {method} request
+     * @member {Function} request
      * @memberof Book
      * @readonly
      */
@@ -21945,12 +22080,6 @@ class Book {
      * @readonly
      */
     this.navigation = undefined;
-    /**
-     * @member {PageList} pagelist
-     * @memberof Book
-     * @readonly
-     */
-    this.pageList = undefined;
     /**
      * @member {Url} url
      * @memberof Book
@@ -22022,8 +22151,8 @@ class Book {
     if (this.settings.store) {
       this.store(this.settings.store);
     }
-    if (url) {
-      this.open(url, this.settings.openAs).catch(error => {
+    if (uri) {
+      this.open(uri, this.settings.openAs).catch(error => {
         /**
          * @event openFailed
          * @param {object} error
@@ -22038,7 +22167,7 @@ class Book {
    * Open a epub or url
    * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
    * @param {string} [what='binary', 'base64', 'epub', 'opf', 'json', 'directory'] force opening as a certain type
-   * @returns {Promise} of when the book has been loaded
+   * @returns {Promise<any>} of when the book has been loaded
    * @example book.open("/path/to/book/")
    * @example book.open("/path/to/book/OPS/package.opf")
    * @example book.open("/path/to/book.epub")
@@ -22078,7 +22207,7 @@ class Book {
    * Open an archived epub
    * @param {binary} data
    * @param {string} [encoding]
-   * @returns {Promise}
+   * @returns {Promise<any>}
    * @private
    */
   async openEpub(data, encoding) {
@@ -22093,7 +22222,7 @@ class Book {
   /**
    * Open the epub container
    * @param {string} url
-   * @returns {Promise}
+   * @returns {Promise<any>}
    * @private
    */
   async openContainer(url) {
@@ -22106,7 +22235,7 @@ class Book {
   /**
    * Open the Open Packaging Format Xml
    * @param {string} url
-   * @returns {Promise}
+   * @returns {Promise<any>}
    * @private
    */
   async openPackaging(url) {
@@ -22120,7 +22249,7 @@ class Book {
   /**
    * Open the manifest JSON
    * @param {string} url
-   * @returns {Promise}
+   * @returns {Promise<any>}
    * @private
    */
   async openManifest(url) {
@@ -22134,7 +22263,7 @@ class Book {
   /**
    * Load a resource from the Book
    * @param {string} path path to the resource to load
-   * @returns {Promise} returns a promise with the requested resource
+   * @returns {Promise<any>} returns a promise with the requested resource
    */
   load(path) {
     const resolved = this.resolve(path);
@@ -22227,9 +22356,8 @@ class Book {
       resolve: this.resolve.bind(this),
       replacements: this.get_replacements_cfg()
     });
-    this.loadNavigation(this.packaging).then(() => {
-      // this.toc = this.navigation.toc;
-      this.loading.navigation.resolve(this.navigation);
+    this.loadNavigation().then(navigation => {
+      this.loading.navigation.resolve(navigation);
     });
     if (this.packaging.manifest.coverPath) {
       this.cover = this.resolve(this.packaging.manifest.coverPath);
@@ -22240,7 +22368,7 @@ class Book {
     this.loading.spine.resolve(this.packaging.spine);
     this.loading.cover.resolve(this.cover);
     this.loading.resources.resolve(this.resources);
-    this.loading.pageList.resolve(this.pageList);
+    this.loading.navigation.resolve(this.navigation);
     this.isOpen = true;
     if (this.archived || this.settings.replacements && this.settings.replacements !== null) {
       this.replacements().then(() => {
@@ -22253,36 +22381,22 @@ class Book {
 
   /**
    * Load Navigation and PageList from package
-   * @param {Packaging} packaging
-   * @returns {Promise}
+   * @returns {Promise<Navigation>}
    * @private
    */
-  async loadNavigation(packaging) {
-    const navPath = packaging.manifest.navPath;
-    const toc = packaging.toc;
-
-    // From json manifest
-    if (toc) {
-      return new Promise((resolve, reject) => {
-        this.navigation = new navigation(toc);
-        if (packaging.pageList) {
-          this.pageList = new pagelist(packaging.pageList); // TODO: handle page lists from Manifest
-        }
-        resolve(this.navigation);
+  async loadNavigation() {
+    const navPath = this.packaging.manifest.navPath;
+    if (navPath) {
+      return this.load(navPath, "xml").then(xml => {
+        this.navigation = new navigation(xml);
+        return this.navigation;
       });
-    }
-    if (!navPath) {
+    } else {
       return new Promise((resolve, reject) => {
         this.navigation = new navigation();
-        this.pageList = new pagelist();
         resolve(this.navigation);
       });
     }
-    return this.load(navPath, "xml").then(xml => {
-      this.navigation = new navigation(xml);
-      this.pageList = new pagelist(xml);
-      return this.navigation;
-    });
   }
 
   /**
@@ -22291,9 +22405,10 @@ class Book {
    * @param {string|number} [target]
    * @returns {Section|null}
    * @example book.section()
-   * @example book.section(1)
-   * @example book.section("chapter.html")
-   * @example book.section("#id1234")
+   * @example book.section(3)
+   * @example book.section("#chapter_001")
+   * @example book.section("chapter_001.xhtml")
+   * @example book.section("epubcfi(/6/8!/4/2/16/1:0)")
    */
   section(target) {
     return this.sections.get(target);
@@ -22327,7 +22442,7 @@ class Book {
 
   /**
    * Set headers request should use
-   * @param {object} headers
+   * @param {string[]} headers
    */
   setRequestHeaders(headers) {
     this.settings.request.headers = headers;
@@ -22337,7 +22452,7 @@ class Book {
    * Unarchive a zipped epub
    * @param {binary} input epub data
    * @param {string} [encoding]
-   * @returns {Archive}
+   * @returns {Promise<any>}
    * @private
    */
   unarchive(input, encoding) {
@@ -22347,7 +22462,7 @@ class Book {
 
   /**
    * Storage the epubs contents
-   * @param {binary} input epub data
+   * @param {string} input Storage name for epub data
    * @returns {Storage}
    * @private
    */
@@ -22392,7 +22507,7 @@ class Book {
 
   /**
    * Get the cover url
-   * @returns {Promise<?string>} coverUrl
+   * @returns {Promise<string>} coverUrl
    */
   async coverUrl() {
     return this.loaded.cover.then(() => {
@@ -22409,7 +22524,7 @@ class Book {
 
   /**
    * Load replacement urls
-   * @returns {Promise} completed loading urls
+   * @returns {Promise<string[]>} completed loading urls
    * @private
    */
   async replacements() {
@@ -22439,7 +22554,7 @@ class Book {
   /**
    * Find a DOM Range for a given CFI Range
    * @param {EpubCFI} cfiRange a epub cfi range
-   * @returns {Promise}
+   * @returns {Promise<Range>}
    */
   async getRange(cfiRange) {
     const cfi = new src_epubcfi(cfiRange);
@@ -22477,19 +22592,18 @@ class Book {
     this.isOpen = false;
     this.isRendered = false;
     this.locations && this.locations.destroy();
-    this.pageList && this.pageList.destroy();
     this.archive && this.archive.destroy();
     this.resources && this.resources.destroy();
     this.container && this.container.destroy();
     this.packaging && this.packaging.destroy();
     this.rendition && this.rendition.destroy();
     this.locations = undefined;
-    this.pageList = undefined;
     this.archive = undefined;
     this.resources = undefined;
     this.container = undefined;
     this.packaging = undefined;
     this.rendition = undefined;
+    this.navigation.destroy();
     this.navigation = undefined;
     this.url = undefined;
     this.path = undefined;
