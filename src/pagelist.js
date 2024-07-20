@@ -53,9 +53,6 @@ class PageList extends Array {
 		 */
 		this.totalPages = 0;
 
-		this.toc = undefined;
-		this.ncx = undefined;
-
 		if (xml) {
 			this.parse(xml);
 		}
@@ -296,8 +293,6 @@ class PageList extends Array {
 		this.pages = undefined;
 		this.locations = undefined;
 		this.epubcfi = undefined;
-		this.toc = undefined;
-		this.ncx = undefined;
 		this.splice(0);
 	}
 }
