@@ -299,7 +299,6 @@ class PageList extends Array {
 	/**
 	 * Load PageList from JSON
 	 * @param {object[]} data Serialized JSON data items
-	 * @returns {PageList}
 	 * @private
 	 */
 	load(data) {
