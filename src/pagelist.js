@@ -63,19 +63,30 @@ class PageList extends Array {
 	}
 
 	/**
-	 * Parse PageList Xml
-	 * @param {Document} xml
+	 * Parse PageList
+	 * @param {Document|object} target
 	 * @returns {PageList}
 	 */
-	parse(xml) {
+	parse(target) {
 
-		const html = qs(xml, "html");
-		const ncx = qs(xml, "ncx");
+		this.clear();
+		
+		const isXml = target.nodeType;
+		
+		let html;
+		let ncx;
 
-		if (html) {
-			this.parseNav(xml);
+		if (isXml) {
+			html = qs(target, "html");
+			ncx = qs(target, "ncx");
+		}
+
+		if (!isXml) {
+			this.load(target["page-list"]);
+		} else if (html) {
+			this.parseNav(target);
 		} else if (ncx) {
-			this.parseNcx(xml);
+			this.parseNcx(target);
 		}
 
 		return this;
@@ -286,14 +297,46 @@ class PageList extends Array {
 	}
 
 	/**
+	 * Load PageList from JSON
+	 * @param {object[]} data Serialized JSON data items
+	 * @returns {PageList}
+	 * @private
+	 */
+	load(data) {
+
+		if (!data) return;
+		data.forEach((item) => {
+			this.push(item);
+		});
+	}
+
+	/**
+	 * Clear PageList
+	 */
+	clear() {
+
+		if (this.length) {
+			this.splice(0);
+			this.pages.splice(0);
+			this.locations.splice(0);
+			this.firstPage = 0;
+			this.lastPage = 0;
+			this.totalPages = 0;
+		}
+	}
+
+	/**
 	 * Destroy
 	 */
 	destroy() {
 
+		this.clear();
 		this.pages = undefined;
 		this.locations = undefined;
+		this.firstPage = undefined;
+		this.lastPage = undefined;
+		this.totalPages = undefined;
 		this.epubcfi = undefined;
-		this.splice(0);
 	}
 }
 
