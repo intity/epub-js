@@ -466,7 +466,6 @@ class Book {
 		this.loading.spine.resolve(this.packaging.spine);
 		this.loading.cover.resolve(this.cover);
 		this.loading.resources.resolve(this.resources);
-		this.loading.navigation.resolve(this.navigation);
 
 		this.isOpen = true;
 
