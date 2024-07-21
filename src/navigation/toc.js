@@ -2,7 +2,7 @@ import {
     qs,
     filterChildren,
     querySelectorByType
-} from "./utils/core";
+} from "../utils/core";
 
 /**
  * Table Of Contents Parser

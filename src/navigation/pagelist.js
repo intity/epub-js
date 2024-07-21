@@ -1,11 +1,11 @@
-import EpubCFI from "./epubcfi";
+import EpubCFI from "../epubcfi";
 import {
 	qs,
 	qsa,
 	querySelectorByType,
 	indexOfSorted,
 	locationOf
-} from "./utils/core";
+} from "../utils/core";
 
 /**
  * Page List Parser

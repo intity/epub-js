@@ -3,7 +3,7 @@ import {
     qsa,
     filterChildren,
     querySelectorByType
-} from "./utils/core";
+} from "../utils/core";
 
 /**
  * Landmarks Parser

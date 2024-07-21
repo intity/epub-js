@@ -1,9 +1,10 @@
-import Landmarks from "./landmarks";
-import PageList from "./pagelist";
-import Toc from "./toc";
+import Landmarks from "./navigation/landmarks";
+import PageList from "./navigation/pagelist";
+import Toc from "./navigation/toc";
 
 /**
  * Navigation Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav
  */
 class Navigation {
 	/**
