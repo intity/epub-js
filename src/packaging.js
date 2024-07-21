@@ -1,6 +1,6 @@
-import Manifest from "./manifest";
-import Metadata from "./metadata";
-import Spine from "./spine";
+import Metadata from "./packaging/metadata";
+import Manifest from "./packaging/manifest";
+import Spine from "./packaging/spine";
 import { qs } from "./utils/core";
 
 /**

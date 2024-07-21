@@ -1,4 +1,4 @@
-import { qsa, qsp } from "./utils/core";
+import { qsa, qsp } from "../utils/core";
 
 /**
  * Manifest class

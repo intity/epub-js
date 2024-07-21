@@ -1,4 +1,4 @@
-import { qsa, indexOfNode } from "./utils/core";
+import { qsa, indexOfNode } from "../utils/core";
 
 /**
  * A collection of Spine Items
