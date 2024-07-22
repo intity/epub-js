@@ -8,8 +8,8 @@ Manifest class
 
 * [Manifest](#Manifest) ⇐ <code>Map</code>
     * _instance_
-        * [.parse(node)](#Manifest+parse)
-        * [.load(manifest)](#Manifest+load)
+        * [.parse(node)](#Manifest+parse) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
+        * [.load(manifest)](#Manifest+load) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
         * [.destroy()](#Manifest+destroy)
     * _static_
         * [.navPath](#Manifest.navPath) : <code>string</code>
@@ -17,18 +17,18 @@ Manifest class
 
 <a name="Manifest+parse"></a>
 
-## manifest.parse(node)
+## manifest.parse(node) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
 Parse the manifest node
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 
-| Param | Type |
-| --- | --- |
-| node | <code>Node</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| node | <code>Node</code> | manifest |
 
 <a name="Manifest+load"></a>
 
-## manifest.load(manifest)
+## manifest.load(manifest) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
 Load manifest from JSON
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  

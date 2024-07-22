@@ -1,4 +1,4 @@
-import { qsa, indexOfNode } from "./utils/core";
+import { qsa, indexOfNode } from "../utils/core";
 
 /**
  * A collection of Spine Items
@@ -20,7 +20,8 @@ class Spine extends Map {
 
 	/**
 	 * Parse element spine
-	 * @param {Node} node 
+	 * @param {Node} node spine
+	 * @returns {Promise<Spine>}
 	 */
 	parse(node) {
 
@@ -38,11 +39,16 @@ class Spine extends Map {
 			})
 		});
 		this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
+
+		return new Promise((resolve, reject) => {
+            resolve(this);
+        });
 	}
 
 	/**
 	 * Load spine from JSON
 	 * @param {object[]} spine 
+	 * @returns {Promise<Spine>}
 	 */
 	load(spine) {
 		
@@ -56,6 +62,10 @@ class Spine extends Map {
 			});
 		});
 		this.nodeIndex = 0;
+
+		return new Promise((resolve, reject) => {
+            resolve(this);
+        });
 	}
 
 	/**

@@ -51,6 +51,10 @@
         - isNumber
         - RangeObject
         - type
+- [Landmarks](API/navigation/landmarks.md) `from ./navigation/landmarks`
+    - [core](API/utils/core.md) `from ../utils/core`
+        - qsa
+        - filterChildren
 - [Layout](API/layout.md) `from ./layout`
     - [core](API/utils/core.md) `from ./utils/core`
         - extend
@@ -70,34 +74,35 @@
     - [EpubCFI](API/epubcfi.md)
     - [Location](API/location.md)
     - [Queue](API/utils/queue.md)
-- [Manifest](API/manifest.md) `from ./manifest`
-    - [core](API/utils/core.md) `from ./utils/core`
+- [Manifest](API/packaging/manifest.md) `from ./packaging/manifest`
+    - [core](API/utils/core.md) `from ../utils/core`
         - qsa
+        - qsp
 - [Mapping](API/mapping.md) `from ./mapping`
     - [core](API/utils/core.md) `from ./utils/core`
         - nodeBounds
     - [EpubCFI](API/epubcfi.md)
-- [Metadata](API/metadata.md) `from ./metadata`
+- [Metadata](API/packaging/metadata.md) `from ./packaging/metadata`
 - [Navigation](API/navigation.md) `from ./navigation`
     - [core](API/utils/core.md) `from ./utils/core`
-        - filterChildren
         - qs
         - qsa
-        - querySelectorByType
+    - [Landmarks](API/navigation/landmarks.md)
+    - [PageList](API/navigation/pagelist.md)
+    - [Toc](API/navigation/toc.md)
 - [Packaging](API/packaging.md) `from ./packaging`
     - [core](API/utils/core.md) `from ./utils/core`
         - qs
         - qsp
-    - [Manifest](API/manifest.md)
-    - [Metadata](API/metadata.md)
-    - [Spine](API/spine.md)
-- [Pagelist](API/pagelist.md) `from ./pagelist`
-    - [core](API/utils/core.md) `from ./utils/core`
+    - [Manifest](API/packaging/manifest.md)
+    - [Metadata](API/packaging/metadata.md)
+    - [Spine](API/packaging/spine.md)
+- [PageList](API/navigation/pagelist.md) `from ./navigation/pagelist`
+    - [core](API/utils/core.md) `from ../utils/core`
         - indexOfSorted
         - locationOf
         - qs
         - qsa
-        - querySelectorByType
     - [EpubCFI](API/epubcfi.md)
 - [Rendition](API/rendition.md) `from ./rendition`
     - [Annotations](API/annotations.md)
@@ -181,12 +186,16 @@
         - replaceCanonical
         - replaceMeta
     - [Section](API/section.md)
-- [Spine](API/spine.md) `from ./spine`
-    - [core](API/utils/core.md) `from ./utils/core`
-        - qsa
+- [Spine](API/packaging/spine.md) `from ./packaging/spine`
+    - [core](API/utils/core.md) `from ../utils/core`
         - indexOfNode
+        - qsa
 - [Themes](API/themes.md) `from ./themes`
     - [Url](API/utils/url.md)
+- [Toc](API/navigation/toc.md) `from ./navigation/toc`
+    - [core](API/utils/core.md) `from ../utils/core`
+        - filterChildren
+        - qs
 
 ### utils classes
 
