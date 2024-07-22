@@ -490,8 +490,9 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath, "xml").then((xml) => {
-				this.navigation = new Navigation(xml);
+			return this.load(navPath).then(async (target) => {
+				this.navigation = new Navigation();
+				await this.navigation.parse(target);
 				return this.navigation;
 			});
 		} else {

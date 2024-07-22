@@ -1,19 +1,18 @@
 import {
     qs,
-    filterChildren,
-    querySelectorByType
+    filterChildren
 } from "../utils/core";
 
 /**
  * Table Of Contents Parser
  * @link https://www.w3.org/TR/epub/#sec-nav-toc
+ * @extends {Array}
  */
 class Toc extends Array {
     /**
      * Constructor
-     * @param {Document|object} target 
      */
-    constructor(target) {
+    constructor() {
 
         super();
         /**
@@ -22,9 +21,6 @@ class Toc extends Array {
          * @readonly
          */
         this.links = new Map();
-        if (target) {
-            this.parse(target);
-        }
     }
 
     /**
@@ -40,34 +36,22 @@ class Toc extends Array {
 
     /**
      * Parse out the toc items
-     * @param {Document|object} target 
-     * @returns {Toc}
+     * @param {Node|object[]} target 
+     * @returns {Promise<Toc>}
      */
     parse(target) {
 
-        this.clear();
-
-        const isXml = target.nodeType;
-
-        let html;
-        let ncx;
-
-        if (isXml) {
-            html = qs(target, "html");
-            ncx = qs(target, "ncx");
+        if (Array.isArray(target)) {
+            this.load(target);
+        } else if (target.nodeName === "nav") {
+            this.parseNav(target);
+        } else if (target.nodeName === "navMap") {
+            this.parseNcx(target);
         }
 
-        if (!isXml) {
-            this.load(target.toc);
-        } else if (html) {
-            const nav = querySelectorByType(target, "nav", "toc");
-            this.parseNav(nav);
-        } else if (ncx) {
-            const nav = qs(target, "navMap");
-            this.parseNcx(nav);
-        }
-
-        return this;
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**
@@ -77,8 +61,6 @@ class Toc extends Array {
      * @private
      */
     parseNav(nav, toc = null) {
-
-        if (!nav) return;
 
         const navList = filterChildren(nav, "ol", true);
 
@@ -130,23 +112,22 @@ class Toc extends Array {
     /**
      * Parse from a Epub 2 NCX
      * @link https://www.w3.org/TR/epub/#sec-opf2-ncx
-     * @param {Node} nav
+     * @param {Node} node navMap
      * @param {object[]} [toc=null]
      * @private
      */
-    parseNcx(nav, toc = null) {
+    parseNcx(node, toc = null) {
 
-        if (!nav) return;
-        if (!nav.children) return;
+        if (!node.children) return;
 
-        const len = nav.children.length;
+        const len = node.children.length;
         const items = toc || this;
 
         for (let i = 0; i < len; ++i) {
-            const child = nav.children[i];
+            const child = node.children[i];
             if (child.nodeName !== "navPoint")
                 continue;
-            const item = this.ncxItem(child, nav);
+            const item = this.ncxItem(child, node);
             items.push(item);
             this.parseNcx(child, item.subitems); // recursive call
         }
@@ -154,7 +135,7 @@ class Toc extends Array {
 
     /**
      * Create a ncxItem
-     * @param {Node} item
+     * @param {Node} item navPoint
      * @param {Node} parent 
      * @return {object} ncxItem
      * @private
@@ -179,23 +160,18 @@ class Toc extends Array {
 
     /**
      * Load navigation items from JSON
-     * @param {object[]} data Serialized JSON data items
-     * @param {object[]} [toc=null] 
+     * @param {object[]} items Serialized JSON items
      * @private
      */
-    load(data, toc = null) {
-
-        if (!data) return;
-
-        const items = toc || this;
-
-        data.forEach((item) => {
-            items.push(item);
+    load(items, level = 0) {
+        
+        level += 1;
+        items.forEach((item) => {
+            if (level === 1) {
+                this.push(item);
+            }
             this.links.set(item.href, item);
-            this.load(
-                item.subitems,
-                items[items.length - 1].subitems
-            ); // recursive call
+            this.load(item.subitems, level); // recursive call
         });
     }
 

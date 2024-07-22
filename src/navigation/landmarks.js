@@ -1,102 +1,80 @@
 import {
-    qs,
     qsa,
-    filterChildren,
-    querySelectorByType
+    filterChildren
 } from "../utils/core";
 
 /**
  * Landmarks Parser
  * @link https://www.w3.org/TR/epub/#sec-nav-landmarks
+ * @extends {Map}
  */
 class Landmarks extends Map {
     /**
      * Constructor
-     * @param {Document|object} target 
      */
-    constructor(target) {
-
-        super();
-        if (target) {
-            this.parse(target);
-        }
-    }
+    constructor() { super(); }
 
     /**
      * Parse Landmarks
-     * @param {Document|object} target 
-     * @returns {Landmarks}
+     * @param {Node|object[]} target nav
+     * @returns {Promise<Landmarks>}
      */
     parse(target) {
 
-        this.clear();
-
-        const isXml = target.nodeType;
-
-        let html;
-        if (isXml) {
-            html = qs(target, "html");
-        }
-
-        if (!isXml){
-            this.load(target.landmarks);
-        } else if (html) {
+        if (Array.isArray(target)) {
+            this.load(target);
+        } else if (target.nodeName === "nav") {
             this.parseNav(target);
         }
-        
-        return this;
+
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
+    }
+
+    parseNav(node) {
+
+        const navItems = node ? qsa(node, "li") : [];
+
+        navItems.forEach((item) => {
+            const entry = this.navItem(item);
+            if (entry) {
+                this.set(entry.type, entry);
+            }
+        });
     }
 
     /**
-	 * Parse landmarks from a Epub >= 3.0 Nav
-	 * @param {Document} navHtml
-	 * @private
-	 */
-	parseNav(navHtml) {
+     * Create a LandmarkItem
+     * @param {Node} node li
+     * @return {object|null} LandmarkItem
+     * @private
+     */
+    navItem(node) {
 
-		const navElement = querySelectorByType(navHtml, "nav", "landmarks");
-		const navItems = navElement ? qsa(navElement, "li") : [];
-		const len = navItems.length;
+        const link = filterChildren(node, "a", true);
 
-		if (!navItems || len === 0) return;
+        if (!link) return null;
 
-		for (let i = 0; i < len; ++i) {
-			const item = this.navItem(navItems[i]);
-			if (item) {
-				this.set(item.type, item);
-			}
-		}
-	}
+        const type = link.getAttribute("epub:type");
+        const href = link.getAttribute("href") || "";
 
-    /**
-	 * Create a landmarkItem
-	 * @param {Node} item
-	 * @return {object|null} LandmarkItem
-	 * @private
-	 */
-	navItem(item) {
+        if (!type) return null;
 
-		const link = filterChildren(item, "a", true);
-
-		if (!link) return null;
-
-		const type = link.getAttributeNS("http://www.idpf.org/2007/ops", "type") || undefined;
-		const href = link.getAttribute("href") || "";
-
-		return {
-			type,
-			href,
-			label: link.textContent || ""
-		};
-	}
+        return {
+            type,
+            href,
+            label: link.textContent || ""
+        };
+    }
 
     /**
      * Load Landmarks from JSON
      * @param {object[]} items Serialized items
+     * @private
      */
     load(items) {
 
-        if (!items) return;
         items.forEach((item) => {
             this.set(item.type, item);
         });
