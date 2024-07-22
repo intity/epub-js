@@ -11567,110 +11567,7 @@ class Container {
   }
 }
 /* harmony default export */ const container = (Container);
-;// CONCATENATED MODULE: ./src/manifest.js
-
-
-/**
- * Manifest class
- * @extends {Map}
- */
-class Manifest extends Map {
-  constructor() {
-    super();
-    /**
-     * @member {string} navPath
-     * @memberof Manifest
-     * @readonly
-     */
-    this.navPath = null;
-    /**
-     * @member {string} coverPath
-     * @memberof Manifest
-     * @readonly
-     */
-    this.coverPath = null;
-  }
-
-  /**
-   * Parse the manifest node
-   * @param {Node} node 
-   */
-  parse(node) {
-    //-- Turn items into an array
-    const items = qsa(node, "item");
-    //-- Create an object with the id as key
-    items.forEach(item => {
-      const props = item.getAttribute("properties") || "";
-      const entry = {
-        id: item.getAttribute("id"),
-        href: item.getAttribute("href") || "",
-        type: item.getAttribute("media-type") || "",
-        overlay: item.getAttribute("media-overlay") || "",
-        properties: props.length ? props.split(" ") : []
-      };
-      this.set(entry.id, entry);
-      if (this.navPath === null && (props === "nav" || entry.type === "application/x-dtbncx+xml")) {
-        this.navPath = entry.href;
-      }
-      if (this.coverPath === null && props === "cover-image") {
-        this.coverPath = entry.href;
-      }
-    });
-    if (this.coverPath === null) {
-      this.coverPath = this.findCoverPath(node);
-    }
-  }
-
-  /**
-   * Find the Cover Path for Epub 2.0
-   * @param {Node} node manifest node
-   * @return {string} href
-   * @private
-   */
-  findCoverPath(node) {
-    const doc = node.ownerDocument;
-    const meta = qsp(doc, "meta", {
-      name: "cover"
-    });
-    if (meta) {
-      const id = meta.getAttribute("content");
-      const item = doc.getElementById(id);
-      return item ? item.getAttribute("href") : null;
-    }
-    return null;
-  }
-
-  /**
-   * Load manifest from JSON
-   * @param {object[]} manifest 
-   */
-  load(manifest) {
-    manifest.forEach(item => {
-      for (const prop of item.properties) {
-        switch (prop) {
-          case "nav":
-            this.navPath = item.href;
-            break;
-          case "cover-image":
-            this.coverPath = item.href;
-            break;
-        }
-      }
-      this.set(item.id, item);
-    });
-  }
-
-  /**
-   * destroy
-   */
-  destroy() {
-    this.clear();
-    this.navPath = undefined;
-    this.coverPath = undefined;
-  }
-}
-/* harmony default export */ const manifest = (Manifest);
-;// CONCATENATED MODULE: ./src/metadata.js
+;// CONCATENATED MODULE: ./src/packaging/metadata.js
 /**
  * Metadata class
  * @extends {Map}
@@ -11682,7 +11579,8 @@ class Metadata extends Map {
 
   /**
    * Parse the metadata node
-   * @param {Node} node 
+   * @param {Node} node metadata
+   * @returns {Promise<Metadata>}
    */
   parse(node) {
     for (const item of node.children) {
@@ -11703,6 +11601,9 @@ class Metadata extends Map {
         this.set(key, item.textContent);
       }
     }
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
   }
 
   /**
@@ -11739,10 +11640,14 @@ class Metadata extends Map {
   /**
    * Load metadata from JSON
    * @param {object} metadata 
+   * @returns {Promise<Metadata>}
    */
   load(metadata) {
     Object.keys(metadata).forEach(prop => {
       this.set(prop, metadata[prop]);
+    });
+    return new Promise((resolve, reject) => {
+      resolve(this);
     });
   }
 
@@ -11754,7 +11659,118 @@ class Metadata extends Map {
   }
 }
 /* harmony default export */ const metadata = (Metadata);
-;// CONCATENATED MODULE: ./src/spine.js
+;// CONCATENATED MODULE: ./src/packaging/manifest.js
+
+
+/**
+ * Manifest class
+ * @extends {Map}
+ */
+class Manifest extends Map {
+  constructor() {
+    super();
+    /**
+     * @member {string} navPath
+     * @memberof Manifest
+     * @readonly
+     */
+    this.navPath = null;
+    /**
+     * @member {string} coverPath
+     * @memberof Manifest
+     * @readonly
+     */
+    this.coverPath = null;
+  }
+
+  /**
+   * Parse the manifest node
+   * @param {Node} node manifest
+   * @returns {Promise<Manifest>}
+   */
+  parse(node) {
+    //-- Turn items into an array
+    const items = qsa(node, "item");
+    //-- Create an object with the id as key
+    items.forEach(item => {
+      const props = item.getAttribute("properties") || "";
+      const entry = {
+        id: item.getAttribute("id"),
+        href: item.getAttribute("href") || "",
+        type: item.getAttribute("media-type") || "",
+        overlay: item.getAttribute("media-overlay") || "",
+        properties: props.length ? props.split(" ") : []
+      };
+      this.set(entry.id, entry);
+      if (this.navPath === null && (props === "nav" || entry.type === "application/x-dtbncx+xml")) {
+        this.navPath = entry.href;
+      }
+      if (this.coverPath === null && props === "cover-image") {
+        this.coverPath = entry.href;
+      }
+    });
+    if (this.coverPath === null) {
+      this.coverPath = this.findCoverPath(node);
+    }
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
+  }
+
+  /**
+   * Find the Cover Path for Epub 2.0
+   * @param {Node} node manifest node
+   * @return {string} href
+   * @private
+   */
+  findCoverPath(node) {
+    const doc = node.ownerDocument;
+    const meta = qsp(doc, "meta", {
+      name: "cover"
+    });
+    if (meta) {
+      const id = meta.getAttribute("content");
+      const item = doc.getElementById(id);
+      return item ? item.getAttribute("href") : null;
+    }
+    return null;
+  }
+
+  /**
+   * Load manifest from JSON
+   * @param {object[]} manifest 
+   * @returns {Promise<Manifest>}
+   */
+  load(manifest) {
+    manifest.forEach(item => {
+      for (const prop of item.properties) {
+        switch (prop) {
+          case "nav":
+            this.navPath = item.href;
+            break;
+          case "cover-image":
+            this.coverPath = item.href;
+            break;
+        }
+      }
+      this.set(item.id, item);
+    });
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    this.clear();
+    this.navPath = undefined;
+    this.coverPath = undefined;
+  }
+}
+/* harmony default export */ const manifest = (Manifest);
+;// CONCATENATED MODULE: ./src/packaging/spine.js
 
 
 /**
@@ -11775,7 +11791,8 @@ class Spine extends Map {
 
   /**
    * Parse element spine
-   * @param {Node} node 
+   * @param {Node} node spine
+   * @returns {Promise<Spine>}
    */
   parse(node) {
     const items = qsa(node, "itemref");
@@ -11791,11 +11808,15 @@ class Spine extends Map {
       });
     });
     this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
   }
 
   /**
    * Load spine from JSON
    * @param {object[]} spine 
+   * @returns {Promise<Spine>}
    */
   load(spine) {
     spine.forEach((item, index) => {
@@ -11808,6 +11829,9 @@ class Spine extends Map {
       });
     });
     this.nodeIndex = 0;
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
   }
 
   /**
@@ -11831,9 +11855,8 @@ class Spine extends Map {
 class Packaging {
   /**
    * Constructor
-   * @param {Document} [packageXml] OPF XML
    */
-  constructor(packageXml) {
+  constructor() {
     /**
      * @member {Metadata} metadata
      * @memberof Packaging
@@ -11870,15 +11893,12 @@ class Packaging {
      * @readonly
      */
     this.uniqueIdentifier = null;
-    if (packageXml) {
-      this.parse(packageXml);
-    }
   }
 
   /**
    * Parse OPF XML
    * @param {Document} packageXml OPF XML
-   * @return {Packaging}
+   * @return {Promise<any>}
    */
   parse(packageXml) {
     if (!packageXml) {
@@ -11896,16 +11916,17 @@ class Packaging {
     if (!spineNode) {
       throw new Error("No Spine Found");
     }
-    this.metadata.parse(metadataNode);
-    this.manifest.parse(manifestNode);
-    this.spine.parse(spineNode);
+    const tasks = [];
+    tasks.push(this.metadata.parse(metadataNode));
+    tasks.push(this.manifest.parse(manifestNode));
+    tasks.push(this.spine.parse(spineNode));
     this.direction = this.parseDirection(packageXml, spineNode);
     this.version = this.parseVersion(packageXml);
     this.uniqueIdentifier = this.metadata.get("identifier");
     if (typeof this.uniqueIdentifier === "undefined") {
       this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
     }
-    return this;
+    return Promise.all(tasks);
   }
 
   /**
@@ -11960,16 +11981,17 @@ class Packaging {
   /**
    * Load package from JSON
    * @param {object} data Serialized JSON object data
-   * @return {Packaging}
+   * @return {Promise<any>}
    */
   load(data) {
-    this.metadata.load(data.metadata);
-    this.manifest.load(data.manifest);
-    this.spine.load(data.spine);
+    const tasks = [];
+    tasks.push(this.metadata.load(data.metadata));
+    tasks.push(this.manifest.load(data.manifest));
+    tasks.push(this.spine.load(data.spine));
     this.direction = data.direction;
     this.version = data.version;
     this.uniqueIdentifier = this.metadata.get("identifier");
-    return this;
+    return Promise.all(tasks);
   }
 
   /**
@@ -11988,7 +12010,92 @@ class Packaging {
   }
 }
 /* harmony default export */ const packaging = (Packaging);
-;// CONCATENATED MODULE: ./src/pagelist.js
+;// CONCATENATED MODULE: ./src/navigation/landmarks.js
+
+
+/**
+ * Landmarks Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav-landmarks
+ * @extends {Map}
+ */
+class Landmarks extends Map {
+  /**
+   * Constructor
+   */
+  constructor() {
+    super();
+  }
+
+  /**
+   * Parse Landmarks
+   * @param {Node|object[]} target nav
+   * @returns {Promise<Landmarks>}
+   */
+  parse(target) {
+    if (Array.isArray(target)) {
+      this.load(target);
+    } else if (target.nodeName === "nav") {
+      this.parseNav(target);
+    }
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
+  }
+
+  /**
+   * Parse landmarks from a Epub >= 3.0 Nav
+   * @param {Node} node nav
+   * @private
+   */
+  parseNav(node) {
+    const navItems = node ? qsa(node, "li") : [];
+    navItems.forEach(item => {
+      const entry = this.navItem(item);
+      if (entry) {
+        this.set(entry.type, entry);
+      }
+    });
+  }
+
+  /**
+   * Create a LandmarkItem
+   * @param {Node} node li
+   * @return {object|null} LandmarkItem
+   * @private
+   */
+  navItem(node) {
+    const link = filterChildren(node, "a", true);
+    if (!link) return null;
+    const type = link.getAttribute("epub:type");
+    const href = link.getAttribute("href") || "";
+    if (!type) return null;
+    return {
+      type,
+      href,
+      label: link.textContent || ""
+    };
+  }
+
+  /**
+   * Load Landmarks from JSON
+   * @param {object[]} items Serialized items
+   * @private
+   */
+  load(items) {
+    items.forEach(item => {
+      this.set(item.type, item);
+    });
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    this.clear();
+  }
+}
+/* harmony default export */ const landmarks = (Landmarks);
+;// CONCATENATED MODULE: ./src/navigation/pagelist.js
 
 
 
@@ -12000,9 +12107,8 @@ class Packaging {
 class PageList extends Array {
   /**
    * Constructor
-   * @param {Document} [xml] 
    */
-  constructor(xml) {
+  constructor() {
     super();
     this.epubcfi = new src_epubcfi();
     /**
@@ -12036,53 +12142,44 @@ class PageList extends Array {
      * @readonly
      */
     this.totalPages = 0;
-    this.toc = undefined;
-    this.ncx = undefined;
-    if (xml) {
-      this.parse(xml);
+  }
+
+  /**
+   * Parse Page List
+   * @param {Node|object[]} target
+   * @returns {Promise<PageList>}
+   */
+  parse(target) {
+    if (Array.isArray(target)) {
+      this.load(target);
+    } else if (target.nodeName === "nav") {
+      this.parseNav(target);
+    } else if (target.nodeName === "pageList") {
+      this.parseNcx(target);
     }
     if (this.length) {
       this.process();
     }
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
   }
 
   /**
-   * Parse PageList Xml
-   * @param {Document} xml
-   * @returns {PageList}
-   */
-  parse(xml) {
-    const html = qs(xml, "html");
-    const ncx = qs(xml, "ncx");
-    if (html) {
-      this.parseNav(xml);
-    } else if (ncx) {
-      this.parseNcx(xml);
-    }
-    return this;
-  }
-
-  /**
-   * Parse a Nav PageList
-   * @param {Node} node
-   * @return {PageList}
+   * Parse page-list from a Epub >= 3.0 Nav
+   * @param {Node} node nav
    * @private
    */
   parseNav(node) {
-    const navElement = querySelectorByType(node, "nav", "page-list");
-    const navItems = navElement ? qsa(navElement, "li") : [];
-    const length = navItems.length;
-    if (!navItems || length === 0) return this;
-    for (let i = 0; i < length; ++i) {
-      const item = this.navItem(navItems[i]);
-      this.push(item);
-    }
-    return this;
+    const navItems = node ? qsa(node, "li") : [];
+    navItems.forEach(item => {
+      this.push(this.navItem(item));
+    });
   }
 
   /**
    * Create navItem
-   * @param {Node} node
+   * @param {Node} node li
    * @return {object} PageList item
    * @private
    */
@@ -12109,28 +12206,19 @@ class PageList extends Array {
 
   /**
    * parseNcx
-   * @param {Node} node 
-   * @returns {PageList}
+   * @param {Node} node pageList
    * @private
    */
   parseNcx(node) {
-    const pageList = qs(node, "pageList");
-    if (!pageList) return this;
-    const pageTargets = qsa(pageList, "pageTarget");
-    const length = pageTargets.length;
-    if (!pageTargets || pageTargets.length === 0) {
-      return this;
-    }
-    for (let i = 0; i < length; ++i) {
-      const item = this.ncxItem(pageTargets[i]);
-      this.push(item);
-    }
-    return this;
+    const pageTargets = qsa(node, "pageTarget") || [];
+    pageTargets.forEach(item => {
+      this.push(this.ncxItem(item));
+    });
   }
 
   /**
    * Create ncxItem
-   * @param {Node} node 
+   * @param {Node} node pageTarget
    * @returns {object}
    * @private
    */
@@ -12247,328 +12335,309 @@ class PageList extends Array {
   }
 
   /**
+   * Load PageList from JSON
+   * @param {object[]} items Serialized JSON data items
+   * @private
+   */
+  load(items) {
+    items.forEach(item => {
+      this.push(item);
+    });
+  }
+
+  /**
+   * Clear PageList
+   */
+  clear() {
+    if (this.length) {
+      this.splice(0);
+      this.pages.splice(0);
+      this.locations.splice(0);
+      this.firstPage = 0;
+      this.lastPage = 0;
+      this.totalPages = 0;
+    }
+  }
+
+  /**
    * Destroy
    */
   destroy() {
+    this.clear();
     this.pages = undefined;
     this.locations = undefined;
+    this.firstPage = undefined;
+    this.lastPage = undefined;
+    this.totalPages = undefined;
     this.epubcfi = undefined;
-    this.toc = undefined;
-    this.ncx = undefined;
-    this.splice(0);
   }
 }
 /* harmony default export */ const pagelist = (PageList);
+;// CONCATENATED MODULE: ./src/navigation/toc.js
+
+
+/**
+ * Table Of Contents Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav-toc
+ * @extends {Array}
+ */
+class Toc extends Array {
+  /**
+   * Constructor
+   */
+  constructor() {
+    super();
+    /**
+     * @member {Map} links
+     * @memberof Toc
+     * @readonly
+     */
+    this.links = new Map();
+  }
+
+  /**
+   * Get navigation item by href
+   * @param {string} target
+   * @return {object} navItem
+   * @example toc.get("chapter_001.xhtml")
+   */
+  get(target) {
+    return this.links.get(target);
+  }
+
+  /**
+   * Parse out the toc items
+   * @param {Node|object[]} target 
+   * @returns {Promise<Toc>}
+   */
+  parse(target) {
+    if (Array.isArray(target)) {
+      this.load(target);
+    } else if (target.nodeName === "nav") {
+      this.parseNav(target);
+    } else if (target.nodeName === "navMap") {
+      this.parseNcx(target);
+    }
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
+  }
+
+  /**
+   * Parse toc from a Epub >= 3.0 Nav
+   * @param {Node} nav
+   * @param {object[]} [toc=null]
+   * @private
+   */
+  parseNav(nav, toc = null) {
+    const navList = filterChildren(nav, "ol", true);
+    if (!navList) return;
+    if (!navList.children) return;
+    const len = navList.children.length;
+    const items = toc || this;
+    for (let i = 0; i < len; i++) {
+      const child = navList.children[i];
+      if (child.nodeName !== "li") continue;
+      const item = this.navItem(child, navList);
+      if (item) {
+        items.push(item);
+        this.parseNav(child, item.subitems); // recursive call
+      }
+    }
+  }
+
+  /**
+   * Create a navItem
+   * @param {Node} item
+   * @param {Node} parent 
+   * @return {object|null} navItem
+   * @private
+   */
+  navItem(item, parent) {
+    const link = qs(item, "a") || qs(item, "span");
+    if (!link) return null;
+    const href = link.getAttribute("href");
+    const id = item.getAttribute("id") || href;
+    const label = link.textContent || "";
+    const entry = {
+      id,
+      href,
+      label,
+      parent,
+      subitems: []
+    };
+    this.links.set(href, entry);
+    return entry;
+  }
+
+  /**
+   * Parse from a Epub 2 NCX
+   * @link https://www.w3.org/TR/epub/#sec-opf2-ncx
+   * @param {Node} node navMap
+   * @param {object[]} [toc=null]
+   * @private
+   */
+  parseNcx(node, toc = null) {
+    if (!node.children) return;
+    const len = node.children.length;
+    const items = toc || this;
+    for (let i = 0; i < len; ++i) {
+      const child = node.children[i];
+      if (child.nodeName !== "navPoint") continue;
+      const item = this.ncxItem(child, node);
+      items.push(item);
+      this.parseNcx(child, item.subitems); // recursive call
+    }
+  }
+
+  /**
+   * Create a ncxItem
+   * @param {Node} item navPoint
+   * @param {Node} parent 
+   * @return {object} ncxItem
+   * @private
+   */
+  ncxItem(item, parent) {
+    const content = qs(item, "content");
+    const navLabel = qs(item, "navLabel");
+    const href = content.getAttribute("src");
+    const id = item.getAttribute("id") || href;
+    const label = navLabel.textContent || "";
+    const entry = {
+      id,
+      href,
+      label,
+      parent,
+      subitems: []
+    };
+    this.links.set(href, entry);
+    return entry;
+  }
+
+  /**
+   * Load navigation items from JSON
+   * @param {object[]} items Serialized JSON items
+   * @private
+   */
+  load(items, level = 0) {
+    level += 1;
+    items.forEach(item => {
+      if (level === 1) {
+        this.push(item);
+      }
+      this.links.set(item.href, item);
+      this.load(item.subitems, level); // recursive call
+    });
+  }
+
+  /**
+   * Clear navigation items
+   */
+  clear() {
+    if (this.length) {
+      this.links.clear();
+      this.splice(0);
+    }
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    this.clear();
+    this.links = undefined;
+  }
+}
+/* harmony default export */ const toc = (Toc);
 ;// CONCATENATED MODULE: ./src/navigation.js
+
+
 
 
 
 /**
  * Navigation Parser
+ * @link https://www.w3.org/TR/epub/#sec-nav
  */
 class Navigation {
   /**
    * Constructor
-   * @param {Document} xml navigation html / xhtml / ncx
    */
-  constructor(xml) {
+  constructor() {
     /**
-     * Navigation items
-     * @member {object[]} toc
+     * Landmarks
+     * @member {Landmarks} landmarks
      * @memberof Navigation
      * @readonly
      */
-    this.toc = [];
-    this.tocByHref = {};
-    this.tocById = {};
-    this.landmarks = [];
-    this.landmarksByType = {};
+    this.landmarks = new landmarks();
     /**
-     * number of navigation items
-     * @member {number} length
-     * @memberof Navigation
-     * @readonly
-     */
-    this.length = 0;
-    /**
+     * List of numbered pages
      * @member {PageList} pageList
      * @memberof Navigation
      * @readonly
      */
-    this.pageList = new pagelist(xml);
-    if (xml) {
-      this.parse(xml);
-    }
+    this.pageList = new pagelist();
+    /**
+     * Table of Contents
+     * @member {Toc} toc
+     * @memberof Navigation
+     * @readonly
+     */
+    this.toc = new toc();
   }
 
   /**
-   * Parse out the navigation items
-   * @param {Document} xml navigation html / xhtml / ncx
+   * Clear all navigation parts
    */
-  parse(xml) {
-    const isXml = xml.nodeType;
-    let html;
-    let ncx;
-    if (isXml) {
-      html = qs(xml, "html");
-      ncx = qs(xml, "ncx");
-    }
-    if (!isXml) {
-      this.toc = this.load(xml);
-    } else if (html) {
-      this.toc = this.parseNav(xml);
-      this.landmarks = this.parseLandmarks(xml);
-    } else if (ncx) {
-      this.toc = this.parseNcx(xml);
-    }
-    this.length = 0;
-    this.unpack(this.toc);
+  clear() {
+    this.landmarks.clear();
+    this.pageList.clear();
+    this.toc.clear();
   }
 
   /**
-   * Unpack navigation items
-   * @param {object[]} toc
-   * @private
+   * Parse navigation
+   * @param {Document|object} target navigation html OR xhtml OR ncx OR json
+   * @returns {Promise<any>}
    */
-  unpack(toc) {
-    for (let i = 0; i < toc.length; i++) {
-      const item = toc[i];
-      if (item.href) {
-        this.tocByHref[item.href] = i;
-      }
-      if (item.id) {
-        this.tocById[item.id] = i;
-      }
-      this.length++;
-      if (item.subitems.length) {
-        this.unpack(item.subitems);
-      }
-    }
-  }
-
-  /**
-   * Get an item from the navigation
-   * @param {string} target
-   * @return {object} navItem
-   */
-  get(target) {
-    if (!target) {
-      return this.toc;
-    }
-    let index;
-    if (target.indexOf("#") === 0) {
-      index = this.tocById[target.substring(1)];
-    } else if (target in this.tocByHref) {
-      index = this.tocByHref[target];
-    }
-    return this.getByIndex(target, index, this.toc);
-  }
-
-  /**
-   * Get an item from navigation subitems recursively by index
-   * @param {string} target
-   * @param {number} index
-   * @param {object[]} navItems
-   * @return {object} navItem
-   */
-  getByIndex(target, index, navItems) {
-    if (navItems.length === 0) {
-      return;
-    }
-    const item = navItems[index];
-    if (item && (target === item.id || target === item.href)) {
-      return item;
-    } else {
-      let result;
-      for (let i = 0; i < navItems.length; ++i) {
-        result = this.getByIndex(target, index, navItems[i].subitems); // recursive call
-        if (result) {
-          break;
+  parse(target) {
+    const tasks = [];
+    if (target.nodeType === Node.DOCUMENT_NODE) {
+      let items, ncx;
+      if (target.body && (items = qsa(target, "nav"))) {
+        items.forEach(nav => {
+          const type = nav.getAttribute("epub:type");
+          switch (type) {
+            case "landmarks":
+              tasks.push(this.landmarks.parse(nav));
+              break;
+            case "page-list":
+              tasks.push(this.pageList.parse(nav));
+              break;
+            case "toc":
+              tasks.push(this.toc.parse(nav));
+              break;
+          }
+        });
+      } else if (ncx = qs(target, "ncx")) {
+        for (const ch of ncx.children) {
+          switch (ch.nodeName) {
+            case "navMap":
+              tasks.push(this.toc.parse(ch));
+              break;
+            case "pageList":
+              tasks.push(this.pageList.parse(ch));
+              break;
+          }
         }
       }
-      return result;
+    } else if (typeof target === "object") {
+      tasks.push(this.landmarks.parse(target["landmarks"] || []));
+      tasks.push(this.pageList.parse(target["page-list"] || []));
+      tasks.push(this.toc.parse(target["toc"] || []));
     }
-  }
-
-  /**
-   * Get a landmark by type
-   * @link https://idpf.github.io/epub-vocabs/structure/
-   * @param {string} type
-   * @return {object} landmarkItem
-   */
-  landmark(type) {
-    if (!type) {
-      return this.landmarks;
-    }
-    const index = this.landmarksByType[type];
-    return this.landmarks[index];
-  }
-
-  /**
-   * Parse toc from a Epub > 3.0 Nav
-   * @param {Document} navHtml
-   * @return {object[]} navigation list
-   * @private
-   */
-  parseNav(navHtml) {
-    const navElement = querySelectorByType(navHtml, "nav", "toc");
-    const list = [];
-    if (!navElement) return list;
-    const navList = filterChildren(navElement, "ol", true);
-    if (!navList) return list;
-    return this.parseNavList(navList);
-  }
-
-  /**
-   * Parses lists in the toc
-   * @param {Document} navListHtml
-   * @param {string} parent id
-   * @return {object[]} navigation list
-   */
-  parseNavList(navListHtml, parent) {
-    const result = [];
-    if (!navListHtml) return result;
-    if (!navListHtml.children) return result;
-    const len = navListHtml.children.length;
-    for (let i = 0; i < len; i++) {
-      const child = navListHtml.children[i];
-      const item = this.navItem(child, parent);
-      if (item) {
-        result.push(item);
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Create a navItem
-   * @param {Element} item
-   * @return {object} navItem
-   * @private
-   */
-  navItem(item, parent) {
-    const content = filterChildren(item, "a", true) || filterChildren(item, "span", true);
-    if (!content) {
-      return;
-    }
-    let src = content.getAttribute("href") || "";
-    let id = item.getAttribute("id") || undefined;
-    if (!id) id = src;
-    let subitems;
-    let nested = filterChildren(item, "ol", true);
-    if (nested) {
-      subitems = this.parseNavList(nested, id);
-    }
-    return {
-      id: id,
-      href: src,
-      label: content.textContent || "",
-      subitems: subitems || [],
-      parent: parent
-    };
-  }
-
-  /**
-   * Parse landmarks from a Epub > 3.0 Nav
-   * @param {Document} navHtml
-   * @return {object[]} landmarks list
-   * @private
-   */
-  parseLandmarks(navHtml) {
-    const navElement = querySelectorByType(navHtml, "nav", "landmarks");
-    const navItems = navElement ? qsa(navElement, "li") : [];
-    const length = navItems.length;
-    const list = [];
-    if (!navItems || length === 0) return list;
-    for (let i = 0; i < length; ++i) {
-      const item = this.landmarkItem(navItems[i]);
-      if (item) {
-        list.push(item);
-        this.landmarksByType[item.type] = i;
-      }
-    }
-    return list;
-  }
-
-  /**
-   * Create a landmarkItem
-   * @param {Element} item
-   * @return {object|null} landmarkItem
-   * @private
-   */
-  landmarkItem(item) {
-    const content = filterChildren(item, "a", true);
-    if (!content) return null;
-    const type = content.getAttributeNS("http://www.idpf.org/2007/ops", "type") || undefined;
-    const href = content.getAttribute("href") || "";
-    const text = content.textContent || "";
-    return {
-      type: type,
-      href: href,
-      label: text
-    };
-  }
-
-  /**
-   * Parse from a Epub > 3.0 NC
-   * @param {Document} navHtml
-   * @return {object[]} navigation list
-   * @private
-   */
-  parseNcx(tocXml) {
-    const navPoints = qsa(tocXml, "navPoint");
-    const length = navPoints.length;
-    const toc = {};
-    const list = [];
-    if (!navPoints || length === 0) return list;
-    for (let i = 0; i < length; ++i) {
-      const item = this.ncxItem(navPoints[i]);
-      toc[item.id] = item;
-      if (!item.parent) {
-        list.push(item);
-      } else {
-        const parent = toc[item.parent];
-        parent.subitems.push(item);
-      }
-    }
-    return list;
-  }
-
-  /**
-   * Create a ncxItem
-   * @param {Element} item
-   * @return {object} ncxItem
-   * @private
-   */
-  ncxItem(item) {
-    const content = qs(item, "content");
-    const navLabel = qs(item, "navLabel");
-    const text = navLabel.textContent ? navLabel.textContent : "";
-    const pn = item.parentNode;
-    let parent;
-    if (pn && (pn.nodeName === "navPoint" || pn.nodeName.split(":").slice(-1)[0] === "navPoint")) {
-      parent = pn.getAttribute("id");
-    }
-    return {
-      id: item.getAttribute("id") || false,
-      href: content.getAttribute("src"),
-      label: text,
-      parent: parent,
-      subitems: []
-    };
-  }
-
-  /**
-   * Load Spine Items
-   * @param {object} json the items to be loaded
-   * @return {object[]} navItems
-   */
-  load(json) {
-    return json.map(item => {
-      item.label = item.title;
-      item.subitems = item.children ? this.load(item.children) : [];
-      return item;
-    });
+    return Promise.all(tasks);
   }
 
   /**
@@ -12583,14 +12652,12 @@ class Navigation {
    * destroy
    */
   destroy() {
-    this.toc = undefined;
-    this.tocByHref = undefined;
-    this.tocById = undefined;
+    this.landmarks.destroy();
     this.landmarks = undefined;
-    this.landmarksByType = undefined;
-    this.length = 0;
     this.pageList.destroy();
     this.pageList = undefined;
+    this.toc.destroy();
+    this.toc = undefined;
   }
 }
 /* harmony default export */ const navigation = (Navigation);
@@ -21335,26 +21402,22 @@ class Book {
     this.isOpen = false;
     this.loading = {
       cover: new defer(),
-      spine: new defer(),
-      manifest: new defer(),
-      metadata: new defer(),
-      resources: new defer(),
-      navigation: new defer()
+      navigation: new defer(),
+      packaging: new defer(),
+      resources: new defer()
     };
     this.loaded = {
       cover: this.loading.cover.promise,
-      spine: this.loading.spine.promise,
-      manifest: this.loading.manifest.promise,
-      metadata: this.loading.metadata.promise,
-      resources: this.loading.resources.promise,
-      navigation: this.loading.navigation.promise
+      navigation: this.loading.navigation.promise,
+      packaging: this.loading.packaging.promise,
+      resources: this.loading.resources.promise
     };
     /**
      * @member {Promise<any>} ready returns after the book is loaded and parsed
      * @memberof Book
      * @readonly
      */
-    this.ready = Promise.all([this.loaded.cover, this.loaded.metadata, this.loaded.manifest, this.loaded.spine, this.loaded.resources, this.loaded.navigation]);
+    this.ready = Promise.all([this.loaded.cover, this.loaded.navigation, this.loaded.packaging, this.loaded.resources]);
     /**
      * Queue for methods used before opening
      * @member {boolean} isRendered
@@ -21534,8 +21597,8 @@ class Book {
    */
   async openPackaging(url) {
     this.path = new utils_path(url);
-    return this.load(url).then(xml => {
-      this.packaging.parse(xml);
+    return this.load(url).then(async xml => {
+      await this.packaging.parse(xml);
       return this.unpack();
     });
   }
@@ -21548,8 +21611,8 @@ class Book {
    */
   async openManifest(url) {
     this.path = new utils_path(url);
-    return this.load(url).then(json => {
-      this.packaging.load(json);
+    return this.load(url).then(async json => {
+      await this.packaging.load(json);
       return this.unpack();
     });
   }
@@ -21656,13 +21719,10 @@ class Book {
     if (this.packaging.manifest.coverPath) {
       this.cover = this.resolve(this.packaging.manifest.coverPath);
     }
-    // Resolve promises
-    this.loading.manifest.resolve(this.packaging.manifest);
-    this.loading.metadata.resolve(this.packaging.metadata);
-    this.loading.spine.resolve(this.packaging.spine);
+    //-- resolve promises
     this.loading.cover.resolve(this.cover);
+    this.loading.packaging.resolve(this.packaging);
     this.loading.resources.resolve(this.resources);
-    this.loading.navigation.resolve(this.navigation);
     this.isOpen = true;
     if (this.archived || this.settings.replacements && this.settings.replacements !== null) {
       this.replacements().then(() => {
@@ -21681,8 +21741,9 @@ class Book {
   async loadNavigation() {
     const navPath = this.packaging.manifest.navPath;
     if (navPath) {
-      return this.load(navPath, "xml").then(xml => {
-        this.navigation = new navigation(xml);
+      return this.load(navPath).then(async target => {
+        this.navigation = new navigation();
+        await this.navigation.parse(target);
         return this.navigation;
       });
     } else {
@@ -21885,14 +21946,14 @@ class Book {
     this.ready = undefined;
     this.isOpen = false;
     this.isRendered = false;
-    this.locations && this.locations.destroy();
     this.archive && this.archive.destroy();
+    this.locations && this.locations.destroy();
     this.resources && this.resources.destroy();
     this.container && this.container.destroy();
     this.packaging && this.packaging.destroy();
     this.rendition && this.rendition.destroy();
-    this.locations = undefined;
     this.archive = undefined;
+    this.locations = undefined;
     this.resources = undefined;
     this.container = undefined;
     this.packaging = undefined;
