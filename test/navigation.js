@@ -14,12 +14,14 @@ describe("Navigation", () => {
             assert.equal(navigation.landmarks.size, 1)
             assert.equal(navigation.pageList.length, 48)
             assert.equal(navigation.toc.links.size, 11)
+            navigation.clear()
         })
         it("should parse navigation from nav.ncx document", async () => {
             const nav = await request("/assets/alice/OPS/nav.ncx")
             await navigation.parse(nav)
             assert.equal(navigation.pageList.length, 48)
             assert.equal(navigation.toc.links.size, 11)
+            navigation.clear()
         })
         it("should parse navigation from nav.json object", async () => {
             const nav = await request("/assets/alice/OPS/nav.json")
@@ -27,6 +29,7 @@ describe("Navigation", () => {
             assert.equal(navigation.landmarks.size, 1)
             assert.equal(navigation.pageList.length, 48)
             assert.equal(navigation.toc.links.size, 11)
+            navigation.clear()
         })
     })
 })
