@@ -36,15 +36,22 @@ class Navigation {
 	}
 
 	/**
+	 * Clear all navigation parts
+	 */
+	clear() {
+
+		this.landmarks.clear();
+		this.pageList.clear();
+		this.toc.clear();
+	}
+
+	/**
 	 * Parse navigation
 	 * @param {Document|object} target navigation html OR xhtml OR ncx OR json
 	 * @returns {Promise<any>}
 	 */
 	parse(target) {
 
-		this.landmarks.clear();
-		this.pageList.clear();
-		this.toc.clear();
 		const tasks = [];
 
 		if (target.nodeType === Node.DOCUMENT_NODE) {
