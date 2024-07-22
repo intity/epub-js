@@ -25,7 +25,8 @@ class Manifest extends Map {
 
     /**
      * Parse the manifest node
-     * @param {Node} node 
+     * @param {Node} node manifest
+     * @returns {Promise<Manifest>}
      */
     parse(node) {
 
@@ -53,6 +54,10 @@ class Manifest extends Map {
         if (this.coverPath === null) {
             this.coverPath = this.findCoverPath(node);
         }
+
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**
@@ -78,6 +83,7 @@ class Manifest extends Map {
     /**
      * Load manifest from JSON
      * @param {object[]} manifest 
+     * @returns {Promise<Manifest>}
      */
     load(manifest) {
 
@@ -93,6 +99,10 @@ class Manifest extends Map {
 				}
 			}
             this.set(item.id, item);
+        });
+
+        return new Promise((resolve, reject) => {
+            resolve(this);
         });
     }
 
