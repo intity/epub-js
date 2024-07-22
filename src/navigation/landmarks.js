@@ -35,6 +35,7 @@ class Landmarks extends Map {
     /**
      * Parse landmarks from a Epub >= 3.0 Nav
      * @param {Node} node nav
+     * @private
      */
     parseNav(node) {
 
