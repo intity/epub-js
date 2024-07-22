@@ -8,7 +8,8 @@ class Metadata extends Map {
 
     /**
      * Parse the metadata node
-     * @param {Node} node 
+     * @param {Node} node metadata
+     * @returns {Promise<Metadata>}
      */
     parse(node) {
 
@@ -30,6 +31,10 @@ class Metadata extends Map {
                 this.set(key, item.textContent);
             }
         }
+
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**
@@ -69,12 +74,17 @@ class Metadata extends Map {
     /**
      * Load metadata from JSON
      * @param {object} metadata 
+     * @returns {Promise<Metadata>}
      */
     load(metadata) {
 
         Object.keys(metadata).forEach((prop) => {
 			this.set(prop, metadata[prop]);
 		});
+
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**

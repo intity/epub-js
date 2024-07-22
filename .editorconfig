@@ -7,13 +7,13 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-[*.{js,ts,cjs,css,html}]
+[*.{js,ts,cjs,css}]
 indent_size = 4
 indent_style = tab
 
 [*.{js,ts}]
 trim_trailing_whitespace = true
 
-[*.{json}]
+[*.{json,html,xhtml}]
 indent_size = 2
 indent_style = space

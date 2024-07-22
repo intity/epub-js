@@ -1,11 +1,10 @@
-import EpubCFI from "./epubcfi";
+import EpubCFI from "../epubcfi";
 import {
 	qs,
 	qsa,
-	querySelectorByType,
 	indexOfSorted,
 	locationOf
-} from "./utils/core";
+} from "../utils/core";
 
 /**
  * Page List Parser
@@ -15,9 +14,8 @@ import {
 class PageList extends Array {
 	/**
 	 * Constructor
-	 * @param {Document} [xml] 
 	 */
-	constructor(xml) {
+	constructor() {
 
 		super();
 		this.epubcfi = new EpubCFI();
@@ -52,63 +50,49 @@ class PageList extends Array {
 		 * @readonly
 		 */
 		this.totalPages = 0;
+	}
 
-		this.toc = undefined;
-		this.ncx = undefined;
+	/**
+	 * Parse Page List
+	 * @param {Node|object[]} target
+	 * @returns {Promise<PageList>}
+	 */
+	parse(target) {
 
-		if (xml) {
-			this.parse(xml);
+		if (Array.isArray(target)) {
+			this.load(target);
+		} else if (target.nodeName === "nav") {
+			this.parseNav(target);
+		} else if (target.nodeName === "pageList") {
+			this.parseNcx(target);
 		}
 
 		if (this.length) {
 			this.process();
 		}
+
+		return new Promise((resolve, reject) => {
+            resolve(this);
+        });
 	}
 
 	/**
-	 * Parse PageList Xml
-	 * @param {Document} xml
-	 * @returns {PageList}
-	 */
-	parse(xml) {
-
-		const html = qs(xml, "html");
-		const ncx = qs(xml, "ncx");
-
-		if (html) {
-			this.parseNav(xml);
-		} else if (ncx) {
-			this.parseNcx(xml);
-		}
-
-		return this;
-	}
-
-	/**
-	 * Parse a Nav PageList
-	 * @param {Node} node
-	 * @return {PageList}
+	 * Parse page-list from a Epub >= 3.0 Nav
+	 * @param {Node} node nav
 	 * @private
 	 */
 	parseNav(node) {
 
-		const navElement = querySelectorByType(node, "nav", "page-list");
-		const navItems = navElement ? qsa(navElement, "li") : [];
-		const length = navItems.length;
+		const navItems = node ? qsa(node, "li") : [];
 
-		if (!navItems || length === 0) return this;
-
-		for (let i = 0; i < length; ++i) {
-			const item = this.navItem(navItems[i]);
-			this.push(item);
-		}
-
-		return this;
+		navItems.forEach((item) => {
+			this.push(this.navItem(item));
+		});
 	}
 
 	/**
 	 * Create navItem
-	 * @param {Node} node
+	 * @param {Node} node li
 	 * @return {object} PageList item
 	 * @private
 	 */
@@ -137,34 +121,21 @@ class PageList extends Array {
 
 	/**
 	 * parseNcx
-	 * @param {Node} node 
-	 * @returns {PageList}
+	 * @param {Node} node pageList
 	 * @private
 	 */
 	parseNcx(node) {
 
-		const pageList = qs(node, "pageList");
+		const pageTargets = qsa(node, "pageTarget") || [];
 
-		if (!pageList) return this;
-
-		const pageTargets = qsa(pageList, "pageTarget");
-		const length = pageTargets.length;
-
-		if (!pageTargets || pageTargets.length === 0) {
-			return this;
-		}
-
-		for (let i = 0; i < length; ++i) {
-			const item = this.ncxItem(pageTargets[i]);
-			this.push(item);
-		}
-
-		return this;
+		pageTargets.forEach((item) => {
+			this.push(this.ncxItem(item));
+		});
 	}
 
 	/**
 	 * Create ncxItem
-	 * @param {Node} node 
+	 * @param {Node} node pageTarget
 	 * @returns {object}
 	 * @private
 	 */
@@ -289,16 +260,44 @@ class PageList extends Array {
 	}
 
 	/**
+	 * Load PageList from JSON
+	 * @param {object[]} items Serialized JSON data items
+	 * @private
+	 */
+	load(items) {
+
+		items.forEach((item) => {
+			this.push(item);
+		});
+	}
+
+	/**
+	 * Clear PageList
+	 */
+	clear() {
+
+		if (this.length) {
+			this.splice(0);
+			this.pages.splice(0);
+			this.locations.splice(0);
+			this.firstPage = 0;
+			this.lastPage = 0;
+			this.totalPages = 0;
+		}
+	}
+
+	/**
 	 * Destroy
 	 */
 	destroy() {
 
+		this.clear();
 		this.pages = undefined;
 		this.locations = undefined;
+		this.firstPage = undefined;
+		this.lastPage = undefined;
+		this.totalPages = undefined;
 		this.epubcfi = undefined;
-		this.toc = undefined;
-		this.ncx = undefined;
-		this.splice(0);
 	}
 }
 

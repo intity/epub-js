@@ -6,10 +6,10 @@ Open Packaging Format Parser
 **Kind**: global class  
 
 * [Packaging](#Packaging)
-    * [new Packaging([packageXml])](#new_Packaging_new)
+    * [new Packaging()](#new_Packaging_new)
     * _instance_
-        * [.parse(packageXml)](#Packaging+parse) ⇒ [<code>Packaging</code>](#Packaging)
-        * [.load(data)](#Packaging+load) ⇒ [<code>Packaging</code>](#Packaging)
+        * [.parse(packageXml)](#Packaging+parse) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.load(data)](#Packaging+load) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.destroy()](#Packaging+destroy)
     * _static_
         * [.metadata](#Packaging.metadata) : <code>Metadata</code>
@@ -21,17 +21,12 @@ Open Packaging Format Parser
 
 <a name="new_Packaging_new"></a>
 
-## new Packaging([packageXml])
+## new Packaging()
 Constructor
-
-
-| Param | Type | Description |
-| --- | --- | --- |
-| [packageXml] | <code>Document</code> | OPF XML |
 
 <a name="Packaging+parse"></a>
 
-## packaging.parse(packageXml) ⇒ [<code>Packaging</code>](#Packaging)
+## packaging.parse(packageXml) ⇒ <code>Promise.&lt;any&gt;</code>
 Parse OPF XML
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
@@ -42,7 +37,7 @@ Parse OPF XML
 
 <a name="Packaging+load"></a>
 
-## packaging.load(data) ⇒ [<code>Packaging</code>](#Packaging)
+## packaging.load(data) ⇒ <code>Promise.&lt;any&gt;</code>
 Load package from JSON
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  

@@ -1,6 +1,6 @@
-import Manifest from "./manifest";
-import Metadata from "./metadata";
-import Spine from "./spine";
+import Metadata from "./packaging/metadata";
+import Manifest from "./packaging/manifest";
+import Spine from "./packaging/spine";
 import { qs } from "./utils/core";
 
 /**
@@ -9,9 +9,8 @@ import { qs } from "./utils/core";
 class Packaging {
 	/**
 	 * Constructor
-	 * @param {Document} [packageXml] OPF XML
 	 */
-	constructor(packageXml) {
+	constructor() {
 		/**
 		 * @member {Metadata} metadata
 		 * @memberof Packaging
@@ -48,16 +47,12 @@ class Packaging {
 		 * @readonly
 		 */
 		this.uniqueIdentifier = null;
-
-		if (packageXml) {
-			this.parse(packageXml);
-		}
 	}
 
 	/**
 	 * Parse OPF XML
 	 * @param {Document} packageXml OPF XML
-	 * @return {Packaging}
+	 * @return {Promise<any>}
 	 */
 	parse(packageXml) {
 
@@ -80,9 +75,10 @@ class Packaging {
 			throw new Error("No Spine Found");
 		}
 
-		this.metadata.parse(metadataNode);
-		this.manifest.parse(manifestNode);
-		this.spine.parse(spineNode);
+		const tasks = [];
+		tasks.push(this.metadata.parse(metadataNode));
+		tasks.push(this.manifest.parse(manifestNode));
+		tasks.push(this.spine.parse(spineNode));
 		this.direction = this.parseDirection(packageXml, spineNode);
 		this.version = this.parseVersion(packageXml);
 		this.uniqueIdentifier = this.metadata.get("identifier");
@@ -90,7 +86,7 @@ class Packaging {
 			this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
 		}
 
-		return this;
+		return Promise.all(tasks);
 	}
 
 	/**
@@ -152,18 +148,19 @@ class Packaging {
 	/**
 	 * Load package from JSON
 	 * @param {object} data Serialized JSON object data
-	 * @return {Packaging}
+	 * @return {Promise<any>}
 	 */
 	load(data) {
 
-		this.metadata.load(data.metadata);
-		this.manifest.load(data.manifest);
-		this.spine.load(data.spine);
+		const tasks = [];
+		tasks.push(this.metadata.load(data.metadata));
+		tasks.push(this.manifest.load(data.manifest));
+		tasks.push(this.spine.load(data.spine));
 		this.direction = data.direction;
 		this.version = data.version;
 		this.uniqueIdentifier = this.metadata.get("identifier");
 
-		return this;
+		return Promise.all(tasks);
 	}
 
 	/**

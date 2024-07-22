@@ -8,26 +8,26 @@ A collection of Spine Items
 
 * [Spine](#Spine) ⇐ <code>Map</code>
     * _instance_
-        * [.parse(node)](#Spine+parse)
-        * [.load(spine)](#Spine+load)
+        * [.parse(node)](#Spine+parse) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
+        * [.load(spine)](#Spine+load) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
         * [.destroy()](#Spine+destroy)
     * _static_
         * [.nodeIndex](#Spine.nodeIndex) : <code>number</code>
 
 <a name="Spine+parse"></a>
 
-## spine.parse(node)
+## spine.parse(node) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
 Parse element spine
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  
 
-| Param | Type |
-| --- | --- |
-| node | <code>Node</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| node | <code>Node</code> | spine |
 
 <a name="Spine+load"></a>
 
-## spine.load(spine)
+## spine.load(spine) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
 Load spine from JSON
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  

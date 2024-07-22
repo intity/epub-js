@@ -3,9 +3,9 @@
     "direction": "ltr",
     "manifest": [
         {
-            "id": "toc",
-            "href": "toc.xhtml",
-            "media-type": "application/xhtml+xml",
+            "id": "navigation",
+            "href": "nav.json",
+            "media-type": "application/json",
             "properties": ["nav"]
         },
         {

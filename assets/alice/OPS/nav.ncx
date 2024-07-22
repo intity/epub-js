@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en">
+  <head>
+    <meta content="edu.nyu.itp.future-of-publishing.alice-in-wonderland" name="dtb:uid"/>
+  </head>
+  <docTitle>
+    <text>Contents</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="titlepage">
+      <navLabel>
+        <text>Title Page</text>
+      </navLabel>
+      <content src="titlepage.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_001">
+      <navLabel>
+        <text>Down The Rabbit-Hole</text>
+      </navLabel>
+      <content src="chapter_001.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_002">
+      <navLabel>
+        <text>The Pool Of Tears</text>
+      </navLabel>
+      <content src="chapter_002.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_003">
+      <navLabel>
+        <text>A Caucus-Race And A Long Tale</text>
+      </navLabel>
+      <content src="chapter_003.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_004">
+      <navLabel>
+        <text>The Rabbit Sends In A Little Bill</text>
+      </navLabel>
+      <content src="chapter_004.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_005">
+      <navLabel>
+        <text>Advice From A Caterpillar</text>
+      </navLabel>
+      <content src="chapter_005.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_006">
+      <navLabel>
+        <text>Pig And Pepper</text>
+      </navLabel>
+      <content src="chapter_006.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_007">
+      <navLabel>
+        <text>A Mad Tea-Party</text>
+      </navLabel>
+      <content src="chapter_007.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_008">
+      <navLabel>
+        <text>The Queen's Croquet Ground</text>
+      </navLabel>
+      <content src="chapter_008.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_009">
+      <navLabel>
+        <text>Who Stole The Tarts?</text>
+      </navLabel>
+      <content src="chapter_009.xhtml"/>
+    </navPoint>
+    <navPoint id="chapter_010">
+      <navLabel>
+        <text>Alice's Evidence</text>
+      </navLabel>
+      <content src="chapter_010.xhtml"/>
+    </navPoint>
+  </navMap>
+  <pageList>
+    <pageTarget id="Page_1" type="normal" value="1">
+      <navLabel><text>1</text></navLabel>
+      <content src="titlepage.xhtml#Page_1"/>
+    </pageTarget>
+    <pageTarget id="Page_2" type="normal" value="2">
+      <navLabel><text>2</text></navLabel>
+      <content src="titlepage.xhtml#Page_2"/>
+    </pageTarget>
+    <pageTarget id="Page_3" type="normal" value="3">
+      <navLabel><text>3</text></navLabel>
+      <content src="titlepage.xhtml#Page_3"/>
+    </pageTarget>
+    <pageTarget id="Page_4" type="normal" value="4">
+      <navLabel><text>4</text></navLabel>
+      <content src="chapter_001.xhtml#Page_4"/>
+    </pageTarget>
+    <pageTarget id="Page_5" type="normal" value="5">
+      <navLabel><text>5</text></navLabel>
+      <content src="chapter_001.xhtml#Page_5"/>
+    </pageTarget>
+    <pageTarget id="Page_6" type="normal" value="6">
+      <navLabel><text>6</text></navLabel>
+      <content src="chapter_001.xhtml#Page_6"/>
+    </pageTarget>
+    <pageTarget id="Page_7" type="normal" value="7">
+      <navLabel><text>7</text></navLabel>
+      <content src="chapter_001.xhtml#Page_7"/>
+    </pageTarget>
+    <pageTarget id="Page_8" type="normal" value="8">
+      <navLabel><text>8</text></navLabel>
+      <content src="chapter_001.xhtml#Page_8"/>
+    </pageTarget>
+    <pageTarget id="Page_9" type="normal" value="9">
+      <navLabel><text>9</text></navLabel>
+      <content src="chapter_001.xhtml#Page_9"/>
+    </pageTarget>
+    <pageTarget id="Page_10" type="normal" value="10">
+      <navLabel><text>10</text></navLabel>
+      <content src="chapter_002.xhtml#Page_10"/>
+    </pageTarget>
+    <pageTarget id="Page_11" type="normal" value="11">
+      <navLabel><text>11</text></navLabel>
+      <content src="chapter_002.xhtml#Page_11"/>
+    </pageTarget>
+    <pageTarget id="Page_12" type="normal" value="12">
+      <navLabel><text>12</text></navLabel>
+      <content src="chapter_002.xhtml#Page_12"/>
+    </pageTarget>
+    <pageTarget id="Page_13" type="normal" value="13">
+      <navLabel><text>13</text></navLabel>
+      <content src="chapter_002.xhtml#Page_13"/>
+    </pageTarget>
+    <pageTarget id="Page_14" type="normal" value="14">
+      <navLabel><text>14</text></navLabel>
+      <content src="chapter_002.xhtml#Page_14"/>
+    </pageTarget>
+    <pageTarget id="Page_15" type="normal" value="15">
+      <navLabel><text>15</text></navLabel>
+      <content src="chapter_003.xhtml#Page_15"/>
+    </pageTarget>
+    <pageTarget id="Page_16" type="normal" value="16">
+      <navLabel><text>16</text></navLabel>
+      <content src="chapter_003.xhtml#Page_16"/>
+    </pageTarget>
+    <pageTarget id="Page_17" type="normal" value="17">
+      <navLabel><text>17</text></navLabel>
+      <content src="chapter_003.xhtml#Page_17"/>
+    </pageTarget>
+    <pageTarget id="Page_18" type="normal" value="18">
+      <navLabel><text>18</text></navLabel>
+      <content src="chapter_003.xhtml#Page_18"/>
+    </pageTarget>
+    <pageTarget id="Page_19" type="normal" value="19">
+      <navLabel><text>19</text></navLabel>
+      <content src="chapter_003.xhtml#Page_19"/>
+    </pageTarget>
+    <pageTarget id="Page_20" type="normal" value="20">
+      <navLabel><text>20</text></navLabel>
+      <content src="chapter_003.xhtml#Page_20"/>
+    </pageTarget>
+    <pageTarget id="Page_21" type="normal" value="21">
+      <navLabel><text>21</text></navLabel>
+      <content src="chapter_004.xhtml#Page_21"/>
+    </pageTarget>
+    <pageTarget id="Page_22" type="normal" value="22">
+      <navLabel><text>22</text></navLabel>
+      <content src="chapter_004.xhtml#Page_22"/>
+    </pageTarget>
+    <pageTarget id="Page_23" type="normal" value="23">
+      <navLabel><text>23</text></navLabel>
+      <content src="chapter_004.xhtml#Page_23"/>
+    </pageTarget>
+    <pageTarget id="Page_24" type="normal" value="24">
+      <navLabel><text>24</text></navLabel>
+      <content src="chapter_004.xhtml#Page_24"/>
+    </pageTarget>
+    <pageTarget id="Page_25" type="normal" value="25">
+      <navLabel><text>25</text></navLabel>
+      <content src="chapter_004.xhtml#Page_25"/>
+    </pageTarget>
+    <pageTarget id="Page_26" type="normal" value="26">
+      <navLabel><text>26</text></navLabel>
+      <content src="chapter_004.xhtml#Page_26"/>
+    </pageTarget>
+    <pageTarget id="Page_27" type="normal" value="27">
+      <navLabel><text>27</text></navLabel>
+      <content src="chapter_005.xhtml#Page_27"/>
+    </pageTarget>
+    <pageTarget id="Page_28" type="normal" value="28">
+      <navLabel><text>28</text></navLabel>
+      <content src="chapter_005.xhtml#Page_28"/>
+    </pageTarget>
+    <pageTarget id="Page_29" type="normal" value="29">
+      <navLabel><text>29</text></navLabel>
+      <content src="chapter_005.xhtml#Page_29"/>
+    </pageTarget>
+    <pageTarget id="Page_30" type="normal" value="30">
+      <navLabel><text>30</text></navLabel>
+      <content src="chapter_005.xhtml#Page_30"/>
+    </pageTarget>
+    <pageTarget id="Page_31" type="normal" value="31">
+      <navLabel><text>31</text></navLabel>
+      <content src="chapter_005.xhtml#Page_31"/>
+    </pageTarget>
+    <pageTarget id="Page_32" type="normal" value="32">
+      <navLabel><text>32</text></navLabel>
+      <content src="chapter_006.xhtml#Page_32"/>
+    </pageTarget>
+    <pageTarget id="Page_33" type="normal" value="33">
+      <navLabel><text>33</text></navLabel>
+      <content src="chapter_006.xhtml#Page_33"/>
+    </pageTarget>
+    <pageTarget id="Page_34" type="normal" value="34">
+      <navLabel><text>34</text></navLabel>
+      <content src="chapter_006.xhtml#Page_34"/>
+    </pageTarget>
+    <pageTarget id="Page_35" type="normal" value="35">
+      <navLabel><text>35</text></navLabel>
+      <content src="chapter_006.xhtml#Page_35"/>
+    </pageTarget>
+    <pageTarget id="Page_36" type="normal" value="36">
+      <navLabel><text>36</text></navLabel>
+      <content src="chapter_007.xhtml#Page_36"/>
+    </pageTarget>
+    <pageTarget id="Page_37" type="normal" value="37">
+      <navLabel><text>37</text></navLabel>
+      <content src="chapter_007.xhtml#Page_37"/>
+    </pageTarget>
+    <pageTarget id="Page_38" type="normal" value="38">
+      <navLabel><text>38</text></navLabel>
+      <content src="chapter_008.xhtml#Page_38"/>
+    </pageTarget>
+    <pageTarget id="Page_39" type="normal" value="39">
+      <navLabel><text>39</text></navLabel>
+      <content src="chapter_008.xhtml#Page_39"/>
+    </pageTarget>
+    <pageTarget id="Page_40" type="normal" value="40">
+      <navLabel><text>40</text></navLabel>
+      <content src="chapter_008.xhtml#Page_40"/>
+    </pageTarget>
+    <pageTarget id="Page_41" type="normal" value="41">
+      <navLabel><text>41</text></navLabel>
+      <content src="chapter_008.xhtml#Page_41"/>
+    </pageTarget>
+    <pageTarget id="Page_42" type="normal" value="42">
+      <navLabel><text>42</text></navLabel>
+      <content src="chapter_008.xhtml#Page_42"/>
+    </pageTarget>
+    <pageTarget id="Page_43" type="normal" value="43">
+      <navLabel><text>43</text></navLabel>
+      <content src="chapter_009.xhtml#Page_43"/>
+    </pageTarget>
+    <pageTarget id="Page_44" type="normal" value="44">
+      <navLabel><text>44</text></navLabel>
+      <content src="chapter_009.xhtml#Page_44"/>
+    </pageTarget>
+    <pageTarget id="Page_45" type="normal" value="45">
+      <navLabel><text>45</text></navLabel>
+      <content src="chapter_009.xhtml#Page_45"/>
+    </pageTarget>
+    <pageTarget id="Page_46" type="normal" value="46">
+      <navLabel><text>46</text></navLabel>
+      <content src="chapter_010.xhtml#Page_46"/>
+    </pageTarget>
+    <pageTarget id="Page_47" type="normal" value="47">
+      <navLabel><text>47</text></navLabel>
+      <content src="chapter_010.xhtml#Page_47"/>
+    </pageTarget>
+    <pageTarget id="Page_48" type="normal" value="48">
+      <navLabel><text>48</text></navLabel>
+      <content src="chapter_010.xhtml#Page_48"/>
+    </pageTarget>
+  </pageList>
+</ncx>

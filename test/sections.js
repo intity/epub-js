@@ -19,11 +19,11 @@ describe("Sections", () => {
         })
         it("should get section from index", () => {
             const section = book.sections.get(1)
-            assert.equal(section.idref, "toc")
+            assert.equal(section.idref, "nav")
             assert.equal(section.linear, false)
             assert.equal(section.index, 1)
-            assert.equal(section.href, "toc.xhtml")
-            assert.equal(section.url, "/assets/alice/OPS/toc.xhtml")
+            assert.equal(section.href, "nav.xhtml")
+            assert.equal(section.url, "/assets/alice/OPS/nav.xhtml")
             assert.equal(section.cfiBase, "/6/4")
         })
         it("should get section from id", () => {

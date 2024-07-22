@@ -87,20 +87,16 @@ class Book {
 
 		this.loading = {
 			cover: new Defer(),
-			spine: new Defer(),
-			manifest: new Defer(),
-			metadata: new Defer(),
-			resources: new Defer(),
-			navigation: new Defer()
+			navigation: new Defer(),
+			packaging: new Defer(),
+			resources: new Defer()
 		};
 
 		this.loaded = {
 			cover: this.loading.cover.promise,
-			spine: this.loading.spine.promise,
-			manifest: this.loading.manifest.promise,
-			metadata: this.loading.metadata.promise,
-			resources: this.loading.resources.promise,
-			navigation: this.loading.navigation.promise
+			navigation: this.loading.navigation.promise,
+			packaging: this.loading.packaging.promise,
+			resources: this.loading.resources.promise
 		};
 		/**
 		 * @member {Promise<any>} ready returns after the book is loaded and parsed
@@ -109,11 +105,9 @@ class Book {
 		 */
 		this.ready = Promise.all([
 			this.loaded.cover,
-			this.loaded.metadata,
-			this.loaded.manifest,
-			this.loaded.spine,
-			this.loaded.resources,
-			this.loaded.navigation
+			this.loaded.navigation,
+			this.loaded.packaging,
+			this.loaded.resources
 		]);
 		/**
 		 * Queue for methods used before opening
@@ -309,8 +303,8 @@ class Book {
 	async openPackaging(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then((xml) => {
-			this.packaging.parse(xml);
+		return this.load(url).then(async (xml) => {
+			await this.packaging.parse(xml);
 			return this.unpack();
 		});
 	}
@@ -324,8 +318,8 @@ class Book {
 	async openManifest(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then((json) => {
-			this.packaging.load(json);
+		return this.load(url).then(async (json) => {
+			await this.packaging.load(json);
 			return this.unpack();
 		});
 	}
@@ -460,13 +454,10 @@ class Book {
 		if (this.packaging.manifest.coverPath) {
 			this.cover = this.resolve(this.packaging.manifest.coverPath);
 		}
-		// Resolve promises
-		this.loading.manifest.resolve(this.packaging.manifest);
-		this.loading.metadata.resolve(this.packaging.metadata);
-		this.loading.spine.resolve(this.packaging.spine);
+		//-- resolve promises
 		this.loading.cover.resolve(this.cover);
+		this.loading.packaging.resolve(this.packaging);
 		this.loading.resources.resolve(this.resources);
-		this.loading.navigation.resolve(this.navigation);
 
 		this.isOpen = true;
 
@@ -491,8 +482,9 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath, "xml").then((xml) => {
-				this.navigation = new Navigation(xml);
+			return this.load(navPath).then(async (target) => {
+				this.navigation = new Navigation();
+				await this.navigation.parse(target);
 				return this.navigation;
 			});
 		} else {
@@ -722,15 +714,15 @@ class Book {
 		this.isOpen = false;
 		this.isRendered = false;
 
-		this.locations && this.locations.destroy();
 		this.archive && this.archive.destroy();
+		this.locations && this.locations.destroy();
 		this.resources && this.resources.destroy();
 		this.container && this.container.destroy();
 		this.packaging && this.packaging.destroy();
 		this.rendition && this.rendition.destroy();
 
-		this.locations = undefined;
 		this.archive = undefined;
+		this.locations = undefined;
 		this.resources = undefined;
 		this.container = undefined;
 		this.packaging = undefined;

@@ -8,14 +8,15 @@ Page List Parser
 **Link**: https://www.w3.org/TR/epub/#sec-nav-pagelist  
 
 * [PageList](#PageList) ⇐ <code>Array</code>
-    * [new PageList([xml])](#new_PageList_new)
+    * [new PageList()](#new_PageList_new)
     * _instance_
-        * [.parse(xml)](#PageList+parse) ⇒ [<code>PageList</code>](#PageList)
+        * [.parse(target)](#PageList+parse) ⇒ [<code>Promise.&lt;PageList&gt;</code>](#PageList)
         * [.pageFromCfi(cfi)](#PageList+pageFromCfi) ⇒ <code>number</code>
         * [.cfiFromPage(pg)](#PageList+cfiFromPage) ⇒ <code>string</code> \| <code>null</code>
         * [.pageFromPercentage(value)](#PageList+pageFromPercentage) ⇒ <code>number</code>
         * [.percentageFromPage(pg)](#PageList+percentageFromPage) ⇒ <code>number</code>
         * [.percentageFromCfi(cfi)](#PageList+percentageFromCfi) ⇒ <code>number</code>
+        * [.clear()](#PageList+clear)
         * [.destroy()](#PageList+destroy)
     * _static_
         * [.pages](#PageList.pages) : <code>Array.&lt;number&gt;</code>
@@ -26,24 +27,19 @@ Page List Parser
 
 <a name="new_PageList_new"></a>
 
-## new PageList([xml])
+## new PageList()
 Constructor
-
-
-| Param | Type |
-| --- | --- |
-| [xml] | <code>Document</code> | 
 
 <a name="PageList+parse"></a>
 
-## pageList.parse(xml) ⇒ [<code>PageList</code>](#PageList)
-Parse PageList Xml
+## pageList.parse(target) ⇒ [<code>Promise.&lt;PageList&gt;</code>](#PageList)
+Parse Page List
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
 
 | Param | Type |
 | --- | --- |
-| xml | <code>Document</code> | 
+| target | <code>Node</code> \| <code>Array.&lt;object&gt;</code> | 
 
 <a name="PageList+pageFromCfi"></a>
 
@@ -105,6 +101,12 @@ Returns a value between 0 - 1 corresponding to the location of a cfi
 | --- | --- | --- |
 | cfi | <code>string</code> | EpubCFI |
 
+<a name="PageList+clear"></a>
+
+## pageList.clear()
+Clear PageList
+
+**Kind**: instance method of [<code>PageList</code>](#PageList)  
 <a name="PageList+destroy"></a>
 
 ## pageList.destroy()
