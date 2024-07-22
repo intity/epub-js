@@ -17,6 +17,7 @@ module.exports = defineConfig({
             // "cypress/e2e/packaging.cy.js",
             // "cypress/e2e/path.cy.js",
             // "cypress/e2e/section.cy.js",
+            // "cypress/e2e/sections.cy.js",
             // "cypress/e2e/themes.cy.js",
             // "cypress/e2e/url.cy.js"
         ]
