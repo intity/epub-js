@@ -212,11 +212,6 @@ class Sections extends Array {
                     }
                     return null;
                 };
-                if (typeof this.points.first === "undefined") {
-                    this.points["first"] = item;
-                } else if (item.index === (len - 1)) {
-                    this.points["last"] = item;
-                }
             } else {
                 item.prev = () => {
                     return null;
@@ -227,6 +222,11 @@ class Sections extends Array {
             }
 
             const section = new Section(item, this.hooks);
+            if (section.linear && !this.points.first) {
+                this.points["first"] = section;
+            } else if (section.index === (len - 1)) {
+                this.points["last"] = section;
+            }
             this.append(section);
         });
 
