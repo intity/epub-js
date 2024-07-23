@@ -9,7 +9,8 @@ export const DOM_EVENTS = ["keydown", "keyup", "keypressed", "mouseup", "mousedo
 
 export const EVENTS = {
     BOOK: {
-        OPEN_FAILED: "openFailed"
+        OPEN_FAILED: "openFailed",
+        UNPACK: "unpack"
     },
     CONTENTS: {
         EXPAND: "expand",

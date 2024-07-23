@@ -443,6 +443,12 @@ class Book {
 			this.canonical.bind(this)
 		).then((sections) => {
 			this.loading.sections.resolve(sections);
+			/**
+			 * @event unpack
+			 * @param {Sections} sections
+			 * @memberof Book
+			 */
+			this.emit(EVENTS.BOOK.UNPACK, sections);
 		});
 
 		this.resources = new Resources(this.packaging.manifest, {
