@@ -9,8 +9,7 @@ export const DOM_EVENTS = ["keydown", "keyup", "keypressed", "mouseup", "mousedo
 
 export const EVENTS = {
     BOOK: {
-        OPEN_FAILED: "openFailed",
-        UNPACK: "unpack"
+        OPEN_FAILED: "openFailed"
     },
     CONTENTS: {
         EXPAND: "expand",
@@ -30,6 +29,9 @@ export const EVENTS = {
         SCROLL: "scroll",
         SCROLLED: "scrolled",
         REMOVED: "removed",
+    },
+    SECTIONS: {
+        UNPAKED: "unpacked"
     },
     VIEWS: {
         AXIS: "axis",
