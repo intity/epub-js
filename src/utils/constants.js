@@ -30,9 +30,6 @@ export const EVENTS = {
         SCROLLED: "scrolled",
         REMOVED: "removed",
     },
-    SECTIONS: {
-        UNPAKED: "unpacked"
-    },
     VIEWS: {
         AXIS: "axis",
         WRITING_MODE: "writingMode",

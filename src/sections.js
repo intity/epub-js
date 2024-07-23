@@ -1,4 +1,3 @@
-import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Hook from "./utils/hook";
 import Section from "./section";
@@ -7,7 +6,6 @@ import {
     replaceMeta,
     replaceCanonical
 } from "./utils/replacements";
-import { EVENTS } from "./utils/constants";
 
 /**
  * Sections class
@@ -236,13 +234,6 @@ class Sections extends Array {
 
         this.loaded = true;
         return new Promise((resolve, reject) => {
-            /**
-             * Emit unpacked sections
-             * @event unpacked
-             * @param {Sections} sections
-             * @memberof Sections
-             */
-            this.emit(EVENTS.SECTIONS.UNPAKED, this);
             resolve(this);
         });
     }
@@ -266,7 +257,5 @@ class Sections extends Array {
         this.points = undefined;
     }
 }
-
-EventEmitter(Sections.prototype);
 
 export default Sections;
