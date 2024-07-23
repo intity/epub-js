@@ -201,7 +201,6 @@ class Book {
 			this.load.bind(this)
 		);
 
-		// this.toc = undefined;
 		if (this.settings.store) {
 			this.store(this.settings.store);
 		}
