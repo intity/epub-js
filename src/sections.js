@@ -38,6 +38,7 @@ class Sections extends Array {
          * @readonly
          */
         this.loaded = false;
+        this.points = {};
     }
 
     /**
@@ -81,36 +82,20 @@ class Sections extends Array {
 
     /**
      * Find the first Section in the Spine
-     * @return {Section} first section
+     * @return {Section|null} first section
      */
     first() {
 
-        let index = 0;
-
-        do {
-            const next = this.get(index);
-            if (next && next.linear) {
-                return next;
-            }
-            index += 1;
-        } while (index < this.length);
+        return this.points.first || null;
     }
 
     /**
      * Find the last Section in the Spine
-     * @return {Section} last section
+     * @return {Section|null} last section
      */
     last() {
 
-        let index = this.length - 1;
-
-        do {
-            const prev = this.get(index);
-            if (prev && prev.linear) {
-                return prev;
-            }
-            index -= 1;
-        } while (index >= 0);
+        return this.points.last || null;
     }
 
     /**
@@ -180,6 +165,7 @@ class Sections extends Array {
 
         const manifest = packaging.manifest;
         const spine = packaging.spine;
+        const len = packaging.spine.size;
         spine.forEach((item, key) => {
 
             const manifestItem = manifest.get(key);
@@ -226,6 +212,11 @@ class Sections extends Array {
                     }
                     return null;
                 };
+                if (typeof this.points.first === "undefined") {
+                    this.points["first"] = item;
+                } else if (item.index === (len - 1)) {
+                    this.points["last"] = item;
+                }
             } else {
                 item.prev = () => {
                     return null;
@@ -258,6 +249,7 @@ class Sections extends Array {
         this.hooks = undefined;
 
         this.loaded = false;
+        this.points = undefined;
     }
 }
 
