@@ -28,6 +28,10 @@
             height: "100%",
             spread: "none"
         })
+        book.sections.on("unpacked", (sections) => {
+
+            put("book.sections.unpacked")
+        })
         rendition.display(6)
         prev.onclick = (e) => {
 
