@@ -436,6 +436,7 @@ class Book {
 	 */
 	async unpack() {
 
+		this.loading.packaging.resolve(this.packaging);
 		this.sections.unpack(
 			this.packaging,
 			this.resolve.bind(this),
@@ -443,7 +444,6 @@ class Book {
 		).then((sections) => {
 			this.loading.sections.resolve(sections);
 		});
-
 		this.resources = new Resources({
 			archive: this.archive,
 			request: this.request.bind(this),
@@ -453,7 +453,6 @@ class Book {
 		this.resources.process(this.packaging.manifest).then((resources) => {
 			this.loading.resources.resolve(resources);
 		});
-
 		this.loadNavigation().then((navigation) => {
 			this.loading.navigation.resolve(navigation);
 		});
@@ -461,10 +460,8 @@ class Book {
 		if (this.packaging.manifest.coverPath) {
 			this.cover = this.resolve(this.packaging.manifest.coverPath);
 		}
-		//-- resolve promises
-		this.loading.cover.resolve(this.cover);
-		this.loading.packaging.resolve(this.packaging);
 
+		this.loading.cover.resolve(this.cover);
 		this.isOpen = true;
 
 		if (this.archived ||
