@@ -87,6 +87,7 @@ class Book {
 
 		this.loading = {
 			cover: new Defer(),
+			sections: new Defer(),
 			navigation: new Defer(),
 			packaging: new Defer(),
 			resources: new Defer()
@@ -94,6 +95,7 @@ class Book {
 
 		this.loaded = {
 			cover: this.loading.cover.promise,
+			sections: this.loading.sections.promise,
 			navigation: this.loading.navigation.promise,
 			packaging: this.loading.packaging.promise,
 			resources: this.loading.resources.promise
@@ -105,6 +107,7 @@ class Book {
 		 */
 		this.ready = Promise.all([
 			this.loaded.cover,
+			this.loaded.sections,
 			this.loaded.navigation,
 			this.loaded.packaging,
 			this.loaded.resources
@@ -438,7 +441,9 @@ class Book {
 			this.packaging,
 			this.resolve.bind(this),
 			this.canonical.bind(this)
-		);
+		).then((sections) => {
+			this.loading.sections.resolve(sections);
+		});
 
 		this.resources = new Resources(this.packaging.manifest, {
 			archive: this.archive,

@@ -9,6 +9,7 @@ import {
 
 /**
  * Sections class
+ * @extends {Array}
  */
 class Sections extends Array {
 
@@ -160,6 +161,7 @@ class Sections extends Array {
      * @param {Packaging} packaging
      * @param {Function} resolve URL resolve
      * @param {Function} canonical Resolve canonical url
+     * @returns {Promise<Sections>}
      */
     unpack(packaging, resolve, canonical) {
 
@@ -231,6 +233,9 @@ class Sections extends Array {
         });
 
         this.loaded = true;
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**
