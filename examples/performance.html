@@ -28,9 +28,21 @@
             height: "100%",
             spread: "none"
         })
-        book.sections.on("unpacked", (sections) => {
+        book.loaded.sections.then((sections) => {
 
-            put("book.sections.unpacked")
+            put("book.loaded.sections")
+        })
+        book.loaded.navigation.then((navigation) => {
+
+            put("book.loaded.navigation")
+        })
+        book.loaded.packaging.then((packaging) => {
+
+            put("book.loaded.packaging")
+        })
+        book.loaded.resources.then((resources) => {
+
+            put("book.loaded.resources")
         })
         rendition.display(6)
         prev.onclick = (e) => {
@@ -67,7 +79,6 @@
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-            put("book.ready")
         })
         rendition.on("started", () => {
 
