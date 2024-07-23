@@ -10,14 +10,13 @@ import Path from "./utils/path";
 class Resources {
 	/**
 	 * Constructor
-	 * @param {Manifest} manifest
 	 * @param {object} options
 	 * @param {Archive} [options.archive]
 	 * @param {Function} options.request
 	 * @param {Function} options.resolve
 	 * @param {string} [options.replacements]
 	 */
-	constructor(manifest, { archive, request, resolve, replacements }) {
+	constructor({ archive, request, resolve, replacements }) {
 
 		this.settings = {
 			replacements: replacements,
@@ -26,12 +25,12 @@ class Resources {
 		this.archive = archive;
 		this.request = request;
 		this.resolve = resolve;
-		this.process(manifest);
 	}
 
 	/**
 	 * Process resources
 	 * @param {Manifest} manifest
+	 * @returns {Promise<Resources>}
 	 */
 	process(manifest) {
 
@@ -52,6 +51,10 @@ class Resources {
 				this.assets.push(item);
 				this.urls.push(item.href);
 			}
+		});
+
+		return new Promise((resolve, reject) => {
+			resolve(this);
 		});
 	}
 

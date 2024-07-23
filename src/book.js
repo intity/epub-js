@@ -444,11 +444,14 @@ class Book {
 			this.loading.sections.resolve(sections);
 		});
 
-		this.resources = new Resources(this.packaging.manifest, {
+		this.resources = new Resources({
 			archive: this.archive,
 			request: this.request.bind(this),
 			resolve: this.resolve.bind(this),
 			replacements: this.get_replacements_cfg()
+		});
+		this.resources.process(this.packaging.manifest).then((resources) => {
+			this.loading.resources.resolve(resources);
 		});
 
 		this.loadNavigation().then((navigation) => {
@@ -461,7 +464,6 @@ class Book {
 		//-- resolve promises
 		this.loading.cover.resolve(this.cover);
 		this.loading.packaging.resolve(this.packaging);
-		this.loading.resources.resolve(this.resources);
 
 		this.isOpen = true;
 
