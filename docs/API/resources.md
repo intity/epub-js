@@ -6,8 +6,8 @@ Handle Package Resources
 **Kind**: global class  
 
 * [Resources](#Resources)
-    * [new Resources(manifest, options)](#new_Resources_new)
-    * [.process(manifest)](#Resources+process)
+    * [new Resources(options)](#new_Resources_new)
+    * [.process(manifest)](#Resources+process) ⇒ [<code>Promise.&lt;Resources&gt;</code>](#Resources)
     * [.createUrl(uri)](#Resources+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
     * [.replacements()](#Resources+replacements) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
     * [.replaceCss()](#Resources+replaceCss) ⇒ <code>Promise.&lt;Array.&lt;string&gt;&gt;</code>
@@ -18,13 +18,12 @@ Handle Package Resources
 
 <a name="new_Resources_new"></a>
 
-## new Resources(manifest, options)
+## new Resources(options)
 Constructor
 
 
 | Param | Type |
 | --- | --- |
-| manifest | <code>Manifest</code> | 
 | options | <code>object</code> | 
 | [options.archive] | <code>Archive</code> | 
 | options.request | <code>function</code> | 
@@ -33,7 +32,7 @@ Constructor
 
 <a name="Resources+process"></a>
 
-## resources.process(manifest)
+## resources.process(manifest) ⇒ [<code>Promise.&lt;Resources&gt;</code>](#Resources)
 Process resources
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  

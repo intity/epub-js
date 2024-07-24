@@ -1,15 +1,16 @@
 <a name="Sections"></a>
 
-# Sections
+# Sections ⇐ <code>Array</code>
 Sections class
 
 **Kind**: global class  
+**Extends**: <code>Array</code>  
 
-* [Sections](#Sections)
+* [Sections](#Sections) ⇐ <code>Array</code>
     * [.get([target])](#Sections+get) ⇒ <code>Section</code> \| <code>null</code>
-    * [.first()](#Sections+first) ⇒ <code>Section</code>
-    * [.last()](#Sections+last) ⇒ <code>Section</code>
-    * [.unpack(packaging, resolve, canonical)](#Sections+unpack)
+    * [.first()](#Sections+first) ⇒ <code>Section</code> \| <code>null</code>
+    * [.last()](#Sections+last) ⇒ <code>Section</code> \| <code>null</code>
+    * [.unpack(packaging, resolve, canonical)](#Sections+unpack) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
     * [.destroy()](#Sections+destroy)
 
 <a name="Sections+get"></a>
@@ -46,21 +47,21 @@ sections.get("epubcfi(/6/8!/4/2/16/1:0)")
 ```
 <a name="Sections+first"></a>
 
-## sections.first() ⇒ <code>Section</code>
+## sections.first() ⇒ <code>Section</code> \| <code>null</code>
 Find the first Section in the Spine
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>Section</code> - first section  
+**Returns**: <code>Section</code> \| <code>null</code> - first section  
 <a name="Sections+last"></a>
 
-## sections.last() ⇒ <code>Section</code>
+## sections.last() ⇒ <code>Section</code> \| <code>null</code>
 Find the last Section in the Spine
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>Section</code> - last section  
+**Returns**: <code>Section</code> \| <code>null</code> - last section  
 <a name="Sections+unpack"></a>
 
-## sections.unpack(packaging, resolve, canonical)
+## sections.unpack(packaging, resolve, canonical) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
 Unpack items from a opf into spine items
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
