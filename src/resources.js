@@ -108,8 +108,7 @@ class Resources {
 
 	/**
 	 * Replace URLs
-	 * @param {string} absoluteUri 
-	 * @returns {Array<Promise<string[]>>} replacements
+	 * @returns {Array<Promise<string>>} replacements
 	 * @private
 	 */
 	replaceUrls() {
@@ -220,7 +219,7 @@ class Resources {
 	/**
 	 * Get a URL for a resource
 	 * @param {string} path
-	 * @return {Promise<string>}
+	 * @return {Promise<string|null>}
 	 */
 	get(path) {
 
