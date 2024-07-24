@@ -28,34 +28,25 @@ class Resources {
 	}
 
 	/**
-	 * Process resources
-	 * @param {Manifest} manifest
-	 * @returns {Promise<Resources>}
+	 * Get a URL for a resource
+	 * @param {string} path
+	 * @return {Promise<string|null>}
 	 */
-	process(manifest) {
+	get(path) {
 
-		this.css = [];
-		this.html = [];
-		this.assets = [];
-		this.urls = [];
-		this.replacementUrls = [];
-		
-		manifest.forEach((item, key) => {
-			if (item.type === "application/xhtml+xml" ||
-				item.type === "text/html") {
-				this.html.push(item);
-			} else {
-				if (item.type === "text/css") {
-					this.css.push(item);
-				}
-				this.assets.push(item);
-				this.urls.push(item.href);
-			}
-		});
+		const index = this.urls.indexOf(path);
 
-		return new Promise((resolve, reject) => {
-			resolve(this);
-		});
+		if (index === -1) {
+			return new Promise((resolve, reject) => {
+				resolve(null);
+			});
+		} else if (this.replacementUrls.length) {
+			return new Promise((resolve, reject) => {
+				resolve(this.replacementUrls[index]);
+			});
+		} else {
+			return this.createUrl(path);
+		}
 	}
 
 	/**
@@ -217,28 +208,6 @@ class Resources {
 	}
 
 	/**
-	 * Get a URL for a resource
-	 * @param {string} path
-	 * @return {Promise<string|null>}
-	 */
-	get(path) {
-
-		const index = this.urls.indexOf(path);
-
-		if (index === -1) {
-			return new Promise((resolve, reject) => {
-				resolve(null);
-			});
-		} else if (this.replacementUrls.length) {
-			return new Promise((resolve, reject) => {
-				resolve(this.replacementUrls[index]);
-			});
-		} else {
-			return this.createUrl(path);
-		}
-	}
-
-	/**
 	 * Substitute urls in content, with replacements,
 	 * relative to a url if provided
 	 * @param {string} content
@@ -254,6 +223,37 @@ class Resources {
 			relUrls = this.urls;
 		}
 		return substitute(content, relUrls, this.replacementUrls);
+	}
+
+	/**
+	 * Unpack resources from manifest
+	 * @param {Manifest} manifest
+	 * @returns {Promise<Resources>}
+	 */
+	unpack(manifest) {
+
+		this.css = [];
+		this.html = [];
+		this.assets = [];
+		this.urls = [];
+		this.replacementUrls = [];
+
+		manifest.forEach((item, key) => {
+			if (item.type === "application/xhtml+xml" ||
+				item.type === "text/html") {
+				this.html.push(item);
+			} else {
+				if (item.type === "text/css") {
+					this.css.push(item);
+				}
+				this.assets.push(item);
+				this.urls.push(item.href);
+			}
+		});
+
+		return new Promise((resolve, reject) => {
+			resolve(this);
+		});
 	}
 
 	/**

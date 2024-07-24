@@ -450,7 +450,9 @@ class Book {
 			resolve: this.resolve.bind(this),
 			replacements: this.get_replacements_cfg()
 		});
-		this.resources.process(this.packaging.manifest).then((resources) => {
+		this.resources.unpack(
+			this.packaging.manifest
+		).then((resources) => {
 			this.loading.resources.resolve(resources);
 		});
 		this.loadNavigation().then((navigation) => {
