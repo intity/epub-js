@@ -598,13 +598,17 @@ class Book {
 			this.storage.on("online", () => {
 				// Restore original url
 				this.url = originalUrl;
-				replacements();
+				if (this.resources.replacements) {
+					replacements();
+				}
 			});
 
 			this.storage.on("offline", () => {
 				// Remove url to use relative resolving for hrefs
 				this.url = new Url("/", "");
-				replacements(true);
+				if (this.resources.replacements) {
+					replacements(true);
+				}
 			});
 		});
 
