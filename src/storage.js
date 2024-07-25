@@ -39,7 +39,7 @@ class Storage {
 		 * @memberof Storage
 		 * @readonly
 		 */
-		this.online = true;
+		this.online = window.navigator.onLine;
 
 		this.checkRequirements();
 		this.appendListeners();
@@ -194,7 +194,7 @@ class Storage {
 		}
 
 		let response;
-		if (type === "blob") {
+		if (type === "blob" || type === "binary") {
 			response = this.getBlob(url);
 		} else {
 			response = this.getText(url);
@@ -248,11 +248,11 @@ class Storage {
 	getBlob(url, mimeType) {
 
 		const encodedUrl = window.encodeURIComponent(url);
-		mimeType = mimeType || mime.lookup(url);
+		const type = mimeType || mime.lookup(url);
 
 		return this.instance.getItem(encodedUrl).then((uint8array) => {
 			if (!uint8array) return;
-			return new Blob([uint8array], { type: mimeType });
+			return new Blob([uint8array], { type });
 		});
 	}
 
@@ -265,18 +265,18 @@ class Storage {
 	getText(url, mimeType) {
 
 		const encodedUrl = window.encodeURIComponent(url);
-		mimeType = mimeType || mime.lookup(url);
+		const type = mimeType || mime.lookup(url);
 
-		return this.instance.getItem(encodedUrl).then(function (uint8array) {
+		return this.instance.getItem(encodedUrl).then((uint8array) => {
 			if (!uint8array) return;
 			const deferred = new Defer();
 			const reader = new FileReader();
-			const blob = new Blob([uint8array], { type: mimeType });
+			const blob = new Blob([uint8array], { type });
 
 			reader.onloadend = () => {
 				deferred.resolve(reader.result);
 			};
-			reader.readAsText(blob, mimeType);
+			reader.readAsText(blob, type);
 			return deferred.promise;
 		});
 	}
