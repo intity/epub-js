@@ -585,30 +585,16 @@ class Book {
 				this.storage.request = this.archive.request.bind(this.archive);
 			}
 
-			const replacements = (register) => {
-				const func = this.resources.substitute.bind(this.resources);
-				if (register) {
-					this.sections.hooks.serialize.register(func);
-				} else {
-					this.sections.hooks.serialize.deregister(func);
-				}
-			};
 			const originalUrl = this.url; // Save original url
 
 			this.storage.on("online", () => {
 				// Restore original url
 				this.url = originalUrl;
-				if (this.resources.replacements) {
-					replacements();
-				}
 			});
 
 			this.storage.on("offline", () => {
 				// Remove url to use relative resolving for hrefs
 				this.url = new Url("/", "");
-				if (this.resources.replacements) {
-					replacements(true);
-				}
 			});
 		});
 
