@@ -130,7 +130,7 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.navigation = undefined;
+		this.navigation = new Navigation();
 		/**
 		 * @member {Url} url
 		 * @memberof Book
@@ -166,7 +166,11 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.resources = undefined;
+		this.resources = new Resources(
+			this.request.bind(this),
+			this.resolve.bind(this),
+			this.settings.replacements
+		);
 		/**
 		 * @member {Rendition} rendition
 		 * @memberof Book
@@ -437,6 +441,12 @@ class Book {
 	async unpack() {
 
 		this.loading.packaging.resolve(this.packaging);
+		this.resources.unpack(
+			this.packaging.manifest,
+			this.archive
+		).then((resources) => {
+			this.loading.resources.resolve(resources);
+		});
 		this.sections.unpack(
 			this.packaging,
 			this.resolve.bind(this),
@@ -444,41 +454,29 @@ class Book {
 		).then((sections) => {
 			this.loading.sections.resolve(sections);
 		});
-		this.resources = new Resources({
-			archive: this.archive,
-			request: this.request.bind(this),
-			resolve: this.resolve.bind(this),
-			replacements: this.get_replacements_cfg()
-		});
-		this.resources.unpack(
-			this.packaging.manifest
-		).then((resources) => {
-			this.loading.resources.resolve(resources);
-		});
 		this.loadNavigation().then((navigation) => {
 			this.loading.navigation.resolve(navigation);
 		});
+
+		if (this.resources.replacements) {
+			this.sections.hooks.serialize.register(
+				this.resources.substitute.bind(this.resources)
+			);
+		}
 
 		if (this.packaging.manifest.coverPath) {
 			this.cover = this.resolve(this.packaging.manifest.coverPath);
 		}
 
 		this.loading.cover.resolve(this.cover);
-		this.isOpen = true;
-
-		if (this.archived ||
-			this.settings.replacements &&
-			this.settings.replacements !== null) {
-			this.replacements().then(() => {
-				this.opening.resolve(this);
-			}).catch((err) => console.error(err.message));
-		} else {
+		this.ready.then(() => {
+			this.isOpen = true;
 			this.opening.resolve(this);
-		}
+		});
 	}
 
 	/**
-	 * Load Navigation and PageList from package
+	 * Load navigation
 	 * @returns {Promise<Navigation>}
 	 * @private
 	 */
@@ -487,14 +485,13 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath).then(async (target) => {
-				this.navigation = new Navigation();
-				await this.navigation.parse(target);
+			return this.load(navPath).then((target) => {
+				return this.navigation.parse(target);
+			}).then(() => {
 				return this.navigation;
 			});
 		} else {
-			return new Promise((resolve, reject) => {
-				this.navigation = new Navigation();
+			return new Promise((resolve) => {
 				resolve(this.navigation);
 			});
 		}
@@ -587,33 +584,27 @@ class Book {
 			if (this.archived) {
 				this.storage.request = this.archive.request.bind(this.archive);
 			}
-			// Substitute hook
-			const substituteResources = (output, section) => {
-				section.output = this.resources.substitute(output, section.url);
+
+			const replacements = (register) => {
+				const func = this.resources.substitute.bind(this.resources);
+				if (register) {
+					this.sections.hooks.serialize.register(func);
+				} else {
+					this.sections.hooks.serialize.deregister(func);
+				}
 			};
-
-			// Use "blobUrl" or "base64" for replacements
-			this.resources.settings.replacements = this.get_replacements_cfg();
-
-			// Create replacement urls
-			this.resources.replacements().then(() => {
-				return this.resources.replaceCss();
-			});
-
-			let originalUrl = this.url; // Save original url
+			const originalUrl = this.url; // Save original url
 
 			this.storage.on("online", () => {
 				// Restore original url
 				this.url = originalUrl;
-				// Remove hook
-				this.sections.hooks.serialize.deregister(substituteResources);
+				replacements();
 			});
 
 			this.storage.on("offline", () => {
 				// Remove url to use relative resolving for hrefs
 				this.url = new Url("/", "");
-				// Add hook to replace resources in contents
-				this.sections.hooks.serialize.register(substituteResources);
+				replacements(true);
 			});
 		});
 
@@ -638,38 +629,6 @@ class Book {
 				return this.cover;
 			}
 		});
-	}
-
-	/**
-	 * Load replacement urls
-	 * @returns {Promise<string[]>} completed loading urls
-	 * @private
-	 */
-	async replacements() {
-
-		this.sections.hooks.serialize.register((output, section) => {
-			section.output = this.resources.substitute(output, section.url);
-		});
-
-		return this.resources.replacements().then(() => {
-			return this.resources.replaceCss();
-		});
-	}
-
-	/**
-	 * Get replacements setting
-	 * @returns {string}
-	 * @private
-	 */
-	get_replacements_cfg() {
-
-		let replacements = this.settings.replacements;
-		if (replacements === null) {
-			replacements = this.archived ? "blobUrl" : "base64";
-		} else if (replacements === "base64") {
-			replacements = this.archived ? "base64" : null;
-		}
-		return replacements;
 	}
 
 	/**
