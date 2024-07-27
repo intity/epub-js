@@ -33,14 +33,14 @@ class Archive {
 
 	/**
 	 * Open an archive
-	 * @param {binary} input
-	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
+	 * @param {string|ArrayBuffer} input
+	 * @param {string} [encoding] tells JSZip if the input data is base64 encoded
 	 * @return {Promise<any>} zipfile
 	 */
-	open(input, isBase64) {
+	open(input, encoding) {
 
 		return this.zip.loadAsync(input, {
-			base64: isBase64
+			base64: encoding === "base64"
 		});
 	}
 
