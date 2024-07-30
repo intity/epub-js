@@ -65,9 +65,9 @@ class Packaging {
 	/**
 	 * Parse OPF XML
 	 * @param {Document} packageXml OPF XML
-	 * @return {Promise<any>}
+	 * @return {Promise<Packaging>}
 	 */
-	parse(packageXml) {
+	async parse(packageXml) {
 
 		if (!packageXml) {
 			throw new Error("Package File Not Found");
@@ -99,7 +99,9 @@ class Packaging {
 			this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
 		}
 
-		return Promise.all(tasks);
+		return Promise.all(tasks).then(() => {
+			return this;
+		});
 	}
 
 	/**
