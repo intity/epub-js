@@ -30,7 +30,7 @@ const INPUT_TYPE = {
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
  * @class
- * @param {string} [uri]
+ * @param {string|ArrayBuffer} [uri]
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
  * @param {Function} [options.request.method=null] a request function to use instead of the default
@@ -39,7 +39,7 @@ const INPUT_TYPE = {
  * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
  * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
  * @param {Function} [options.canonical] optional function to determine canonical urls for a path
- * @param {string} [options.openAs] optional string to determine the input type
+ * @param {string} [options.openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"`
  * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
  * @example new Book("/path/to/book/")
@@ -160,7 +160,11 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.storage = undefined;
+		this.storage = new Storage(
+			this.settings.store,
+			this.request.bind(this),
+			this.resolve.bind(this)
+		);
 		/**
 		 * @member {Resources} resources
 		 * @memberof Book
@@ -182,7 +186,7 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.container = undefined;
+		this.container = new Container();
 		/**
 		 * @member {Packaging} packaging
 		 * @memberof Book
@@ -206,7 +210,7 @@ class Book {
 		);
 
 		if (this.settings.store) {
-			this.store(this.settings.store);
+			this.storage.createInstance();
 		}
 
 		if (uri) {
@@ -222,9 +226,25 @@ class Book {
 	}
 
 	/**
+	 * Clear parts
+	 */
+	clear() {
+
+		this.url = undefined;
+		this.path = undefined;
+		this.container.clear();
+		this.cover = null;
+		this.packaging.clear();
+		this.resources.clear();
+		this.sections.clear();
+		this.navigation.clear();
+		this.locations.clear();
+	}
+
+	/**
 	 * Open a epub or url
 	 * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
-	 * @param {string} [what='binary', 'base64', 'epub', 'opf', 'json', 'directory'] force opening as a certain type
+	 * @param {string} [openAs] 
 	 * @returns {Promise<any>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
 	 * @example book.open("/path/to/book/OPS/package.opf")
@@ -232,11 +252,16 @@ class Book {
 	 * @example book.open("https://example.com/book/")
 	 * @example book.open("https://example.com/book/OPS/package.opf")
 	 * @example book.open("https://example.com/book.epub")
+	 * @example book.open([arraybuffer], "binary")
 	 */
-	open(input, what) {
+	async open(input, openAs) {
 
 		let opening;
-		const type = what || this.determineType(input);
+		const type = openAs || this.determineType(input);
+
+		if (this.settings.store) {
+			this.store(input);
+		}
 
 		if (type === INPUT_TYPE.BINARY) {
 			this.archived = true;
@@ -270,16 +295,16 @@ class Book {
 
 	/**
 	 * Open an archived epub
-	 * @param {binary} data
+	 * @param {string|ArrayBuffer} input
 	 * @param {string} [encoding]
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openEpub(data, encoding) {
+	async openEpub(input, encoding) {
 
 		encoding = encoding || this.settings.encoding;
 
-		return this.unarchive(data, encoding).then(() => {
+		return this.unarchive(input, encoding).then(() => {
 			return this.openContainer(CONTAINER_PATH);
 		}).then((packagePath) => {
 			return this.openPackaging(packagePath);
@@ -289,14 +314,15 @@ class Book {
 	/**
 	 * Open the epub container
 	 * @param {string} url
-	 * @returns {Promise<any>}
+	 * @returns {Promise<string>}
 	 * @private
 	 */
 	async openContainer(url) {
-
+		
 		return this.load(url).then((xml) => {
-			this.container = new Container(xml);
-			return this.resolve(this.container.fullPath);
+			return this.container.parse(xml);
+		}).then((container) => {
+			return this.resolve(container.fullPath);
 		});
 	}
 
@@ -552,8 +578,8 @@ class Book {
 
 	/**
 	 * Unarchive a zipped epub
-	 * @param {binary} input epub data
-	 * @param {string} [encoding]
+	 * @param {string|ArrayBuffer} input url string or arraybuffer data
+	 * @param {string} [encoding] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
@@ -565,40 +591,23 @@ class Book {
 
 	/**
 	 * Storage the epubs contents
-	 * @param {string} input Storage name for epub data
-	 * @returns {Storage}
+	 * @param {string|ArrayBuffer} input
+	 * @returns {Promise<Storage>}
 	 * @private
 	 */
-	store(input) {
+	async store(input) {
+		
+		if (typeof input === "string") {
+			//-- replace request method to go through store
+			this.request = this.storage.dispatch.bind(this.storage);
+		} else {
+			//-- set arraybuffer into storage
+			await this.storage.set(0, input);
+		}
 
-		// Create new Storage
-		this.storage = new Storage(input,
-			this.request.bind(this),
-			this.resolve.bind(this)
-		);
-		// Replace request method to go through store
-		this.request = this.storage.dispatch.bind(this.storage);
-
-		this.opened.then(() => {
-
-			if (this.archived) {
-				this.storage.request = this.archive.request.bind(this.archive);
-			}
-
-			const originalUrl = this.url; // Save original url
-
-			this.storage.on("online", () => {
-				// Restore original url
-				this.url = originalUrl;
-			});
-
-			this.storage.on("offline", () => {
-				// Remove url to use relative resolving for hrefs
-				this.url = new Url("/", "");
-			});
+		return new Promise((resolve) => {
+			resolve(this.storage);
 		});
-
-		return this.storage;
 	}
 
 	/**

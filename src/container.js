@@ -8,9 +8,8 @@ import { qs } from "./utils/core";
 class Container {
 	/**
 	 * Constructor
-	 * @param {Document} [containerDocument] xml document
 	 */
-	constructor(containerDocument) {
+	constructor() {
 		/**
 		 * @member {string} directory Package directory
 		 * @memberof Container
@@ -35,15 +34,23 @@ class Container {
 		 * @readonly
 		 */
 		this.mediaType = "";
+	}
 
-		if (containerDocument) {
-			this.parse(containerDocument);
-		}
+	/**
+	 * Clear parts
+	 */
+	clear() {
+
+		this.directory = "";
+		this.fullPath = "";
+		this.encoding = "";
+		this.mediaType = "";
 	}
 
 	/**
 	 * Parse the Container XML
 	 * @param {Document} containerDocument
+	 * @returns {Promise<Container>}
 	 */
 	parse(containerDocument) {
 
@@ -64,6 +71,10 @@ class Container {
 		this.directory = Path.prototype.dirname(this.fullPath);
 		this.encoding = containerDocument.characterSet;
 		this.mediaType = rootfile.getAttribute("media-type");
+
+		return new Promise((resolve) => {
+			resolve(this);
+		});
 	}
 
 	/**

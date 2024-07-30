@@ -1,7 +1,6 @@
 import { isXml, parse } from "./utils/core";
 import Defer from "./utils/defer";
 import mime from "./utils/mime";
-import Path from "./utils/path";
 import EventEmitter from "event-emitter";
 import localforage from "localforage";
 
@@ -40,21 +39,18 @@ class Storage {
 		 * @readonly
 		 */
 		this.online = window.navigator.onLine;
-
-		this.checkRequirements();
-		this.appendListeners();
 	}
 
 	/**
-	 * Checks to see if LocalForage exists in global namspace
-	 * @private
+	 * Create LocalForage instance
 	 */
-	checkRequirements() {
+	createInstance() {
 
 		if (localforage) {
 			this.instance = localforage.createInstance({
 				name: this.name
 			});
+			this.appendListeners();
 		} else {
 			throw new TypeError("LocalForage lib not loaded");
 		}
@@ -104,17 +100,17 @@ class Storage {
 	 */
 	add(manifest, force = false) {
 
-		const items = manifest.values().toArray();
+		const items = [...manifest.values()];
 		const mapped = items.map(async (item) => {
 
 			const { href } = item;
 			const url = this.resolve(href);
-			const encodedUrl = window.encodeURIComponent(url);
+			const key = this.getKey(url);
 
-			return await this.instance.getItem(encodedUrl).then((item) => {
+			return await this.instance.getItem(key).then((item) => {
 				if (!item || force) {
 					return this.request(url, "binary").then((data) => {
-						return this.instance.setItem(encodedUrl, data);
+						return this.instance.setItem(key, data);
 					});
 				} else {
 					return item;
@@ -125,29 +121,28 @@ class Storage {
 	}
 
 	/**
-	 * Put binary data from a url to storage
-	 * @param {string} url  a url to request from storage
-	 * @param {boolean} [withCredentials]
-	 * @param {string[]} [headers]
-	 * @return {Promise<Blob>}
+	 * Get entry from storage
+	 * @param {string|number} input key
+	 * @returns {Promise<any>}
+	 * @example storage.get(0).then(data => ...)
+	 * @example storage.get('entry-key').then(data => ...)
 	 */
-	async put(url, withCredentials, headers) {
+	async get(input) {
 
-		const encodedUrl = window.encodeURIComponent(url);
+		const key = this.getKey(input);
+		return this.instance.getItem(key);
+	}
 
-		return await this.instance.getItem(encodedUrl).then((result) => {
-			if (!result) {
-				return this.request(
-					url,
-					"binary",
-					withCredentials,
-					headers
-				).then((data) => {
-					return this.instance.setItem(encodedUrl, data);
-				});
-			}
-			return result;
-		});
+	/**
+	 * Set data into storage
+	 * @param {string|number} input
+	 * @param {ArrayBuffer} data
+	 * @return {Promise<ArrayBuffer|null>}
+	 */
+	async set(input, data) {
+
+		const key = this.getKey(input);
+		return this.instance.setItem(key, data);
 	}
 
 	/**
@@ -161,19 +156,17 @@ class Storage {
 	async dispatch(url, type, withCredentials, headers) {
 
 		if (this.online) {
-			// From network
+			//-- From network
 			return this.request(
 				url,
 				type,
 				withCredentials,
 				headers
-			).then(async (data) => {
-				// save to store if not present
-				await this.put(url);
-				return data;
+			).then((data) => {
+				return this.set(url, data);
 			});
 		} else {
-			// From storage
+			//-- From storage
 			return this.retrieve(url, type);
 		}
 	}
@@ -181,17 +174,10 @@ class Storage {
 	/**
 	 * Request a url from storage
 	 * @param {string} url a url to request from storage
-	 * @param {string} [type] specify the type of the returned result
+	 * @param {string} type specify the type of the returned result
 	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
 	 */
 	async retrieve(url, type) {
-
-		const path = new Path(url);
-
-		// If type isn't set, determine it from the file extension
-		if (!type) {
-			type = path.extension;
-		}
 
 		let response;
 		if (type === "blob" || type === "binary") {
@@ -240,6 +226,23 @@ class Storage {
 	}
 
 	/**
+	 * Get entry key from input
+	 * @param {string|number} input 
+	 * @returns {string} key
+	 * @private
+	 */
+	getKey(input) {
+
+		let key = null;
+		if (typeof input === "string") {
+			key = window.encodeURIComponent(input);
+		} else {
+			key = `book-${input}`;
+		}
+		return key;
+	}
+
+	/**
 	 * Get a Blob from Storage by Url
 	 * @param {string} url
 	 * @param {string} [mimeType]
@@ -247,10 +250,10 @@ class Storage {
 	 */
 	getBlob(url, mimeType) {
 
-		const encodedUrl = window.encodeURIComponent(url);
+		const key = this.getKey(url);
 		const type = mimeType || mime.lookup(url);
 
-		return this.instance.getItem(encodedUrl).then((uint8array) => {
+		return this.instance.getItem(key).then((uint8array) => {
 			if (!uint8array) return;
 			return new Blob([uint8array], { type });
 		});
@@ -264,10 +267,10 @@ class Storage {
 	 */
 	getText(url, mimeType) {
 
-		const encodedUrl = window.encodeURIComponent(url);
+		const key = this.getKey(url);
 		const type = mimeType || mime.lookup(url);
 
-		return this.instance.getItem(encodedUrl).then((uint8array) => {
+		return this.instance.getItem(key).then((uint8array) => {
 			if (!uint8array) return;
 			const deferred = new Defer();
 			const reader = new FileReader();
@@ -289,19 +292,19 @@ class Storage {
 	 */
 	getBase64(url, mimeType) {
 
-		let encodedUrl = window.encodeURIComponent(url);
-		mimeType = mimeType || mime.lookup(url);
+		const key = this.getKey(url);
+		const type = mimeType || mime.lookup(url);
 
-		return this.instance.getItem(encodedUrl).then((uint8array) => {
+		return this.instance.getItem(key).then((uint8array) => {
 			if (!uint8array) return;
 			const deferred = new Defer();
 			const reader = new FileReader();
-			const blob = new Blob([uint8array], { type: mimeType });
+			const blob = new Blob([uint8array], { type });
 
 			reader.onloadend = () => {
 				deferred.resolve(reader.result);
 			};
-			reader.readAsDataURL(blob, mimeType);
+			reader.readAsDataURL(blob, type);
 			return deferred.promise;
 		});
 	}
@@ -310,7 +313,7 @@ class Storage {
 	 * Create a Url from a stored item
 	 * @param {string} url
 	 * @param {object} [options.base64] use base64 encoding or blob url
-	 * @return {Promise} url promise with Url string
+	 * @return {Promise<string>} url promise with Url string
 	 */
 	createUrl(url, options) {
 
