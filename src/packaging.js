@@ -163,9 +163,9 @@ class Packaging {
 	/**
 	 * Load package from JSON
 	 * @param {object} data Serialized JSON object data
-	 * @return {Promise<any>}
+	 * @return {Promise<Packaging>}
 	 */
-	load(data) {
+	async load(data) {
 
 		const tasks = [];
 		tasks.push(this.metadata.load(data.metadata));
@@ -175,7 +175,9 @@ class Packaging {
 		this.version = data.version;
 		this.uniqueIdentifier = this.metadata.get("identifier");
 
-		return Promise.all(tasks);
+		return Promise.all(tasks).then(() => {
+			return this;
+		});
 	}
 
 	/**
