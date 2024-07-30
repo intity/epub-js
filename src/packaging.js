@@ -57,7 +57,6 @@ class Packaging {
 		this.metadata.clear();
 		this.manifest.clear();
 		this.spine.clear();
-		this.spine.nodeIndex = undefined;
 		this.direction = null;
 		this.version = null;
 		this.uniqueIdentifier = null;
