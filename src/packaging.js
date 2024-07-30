@@ -50,6 +50,20 @@ class Packaging {
 	}
 
 	/**
+	 * Clear packaging parts
+	 */
+	clear() {
+
+		this.metadata.clear();
+		this.manifest.clear();
+		this.spine.clear();
+		this.spine.nodeIndex = undefined;
+		this.direction = null;
+		this.version = null;
+		this.uniqueIdentifier = null;
+	}
+
+	/**
 	 * Parse OPF XML
 	 * @param {Document} packageXml OPF XML
 	 * @return {Promise<any>}
