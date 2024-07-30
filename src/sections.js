@@ -43,6 +43,21 @@ class Sections extends Array {
     }
 
     /**
+     * Clear sections
+     */
+    clear() {
+
+        this.forEach((i) => i.destroy());
+        this.splice(0);
+        this.hooks.serialize.clear();
+        this.hooks.content.clear();
+        this.spineByHref = {};
+        this.spineById = {};
+        this.points = {};
+        this.loaded = false;
+    }
+
+    /**
      * Get an item from the spine
      * @param {string|number} [target]
      * @return {Section|null} section
@@ -243,18 +258,12 @@ class Sections extends Array {
      */
     destroy() {
 
-        this.forEach((i) => i.destroy());
-        this.splice(0);
-
+        this.clear();
+        this.hooks = undefined;
         this.spineByHref = undefined;
         this.spineById = undefined;
-
-        this.hooks.serialize.clear();
-        this.hooks.content.clear();
-        this.hooks = undefined;
-
-        this.loaded = false;
         this.points = undefined;
+        this.loaded = false;
     }
 }
 
