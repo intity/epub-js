@@ -90,7 +90,8 @@ class Book {
 			sections: new Defer(),
 			navigation: new Defer(),
 			packaging: new Defer(),
-			resources: new Defer()
+			resources: new Defer(),
+			storage: new Defer()
 		};
 
 		this.loaded = {
@@ -98,7 +99,8 @@ class Book {
 			sections: this.loading.sections.promise,
 			navigation: this.loading.navigation.promise,
 			packaging: this.loading.packaging.promise,
-			resources: this.loading.resources.promise
+			resources: this.loading.resources.promise,
+			storage: this.loading.storage.promise
 		};
 		/**
 		 * @member {Promise<any>} ready returns after the book is loaded and parsed
@@ -110,7 +112,8 @@ class Book {
 			this.loaded.sections,
 			this.loaded.navigation,
 			this.loaded.packaging,
-			this.loaded.resources
+			this.loaded.resources,
+			this.loaded.storage
 		]);
 		/**
 		 * Queue for methods used before opening
@@ -160,11 +163,7 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.storage = new Storage(
-			this.settings.store,
-			this.request.bind(this),
-			this.resolve.bind(this)
-		);
+		this.storage = new Storage(this.settings.store);
 		/**
 		 * @member {Resources} resources
 		 * @memberof Book
@@ -296,18 +295,18 @@ class Book {
 	/**
 	 * Open an archived epub
 	 * @param {string|ArrayBuffer} input
-	 * @param {string} [encoding]
+	 * @param {string} [encoding] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
 	async openEpub(input, encoding) {
 
-		encoding = encoding || this.settings.encoding;
+		const type = encoding || this.settings.encoding;
 
-		return this.unarchive(input, encoding).then(() => {
+		return this.unarchive(input, type).then(() => {
 			return this.openContainer(CONTAINER_PATH);
-		}).then((packagePath) => {
-			return this.openPackaging(packagePath);
+		}).then((url) => {
+			return this.openPackaging(url);
 		});
 	}
 
@@ -327,7 +326,7 @@ class Book {
 	}
 
 	/**
-	 * Open the Open Packaging Format Xml
+	 * Open the package.opf
 	 * @param {string} url
 	 * @returns {Promise<any>}
 	 * @private
@@ -335,8 +334,9 @@ class Book {
 	async openPackaging(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then(async (xml) => {
-			await this.packaging.parse(xml);
+		return this.load(url).then((xml) => {
+			return this.packaging.parse(xml);
+		}).then(() => {
 			return this.unpack();
 		});
 	}
@@ -350,8 +350,9 @@ class Book {
 	async openManifest(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then(async (json) => {
-			await this.packaging.load(json);
+		return this.load(url).then((json) => {
+			return this.packaging.load(json);
+		}).then(() => {
 			return this.unpack();
 		});
 	}
@@ -359,16 +360,17 @@ class Book {
 	/**
 	 * Load a resource from the Book
 	 * @param {string} path path to the resource to load
+	 * @param {string} [type=null] 
 	 * @returns {Promise<any>} returns a promise with the requested resource
 	 */
-	load(path) {
+	load(path, type = null) {
 
 		const resolved = this.resolve(path);
 
 		if (this.archived) {
 			return this.archive.request(resolved);
 		} else {
-			return this.request(resolved, null,
+			return this.request(resolved, type,
 				this.settings.request.withCredentials,
 				this.settings.request.headers);
 		}
@@ -483,6 +485,17 @@ class Book {
 		this.loadNavigation().then((navigation) => {
 			this.loading.navigation.resolve(navigation);
 		});
+
+		if (this.settings.store && this.storage.online && !this.archived) {
+			this.storage.unpack(
+				this.packaging.spine,
+				this.resolve.bind(this)
+			).then((storage) => {
+				this.loading.storage.resolve(storage);
+			});
+		} else {
+			this.loading.storage.resolve(this.storage);
+		}
 
 		if (this.resources.replacements) {
 			this.sections.hooks.serialize.register(

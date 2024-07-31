@@ -1,31 +1,28 @@
-import { isXml, parse } from "./utils/core";
-import Defer from "./utils/defer";
 import request from "./utils/request";
 import mime from "./utils/mime";
-import Path from "./utils/path";
+import Input from "./input";
 import JSZip from "jszip/dist/jszip";
 
 /**
  * Handles Unzipping a requesting files from an Epub Archive
+ * @extends {Input}
  */
-class Archive {
+class Archive extends Input {
 
 	constructor() {
 
-		this.zip = undefined;
-		this.urlCache = {};
-		this.checkRequirements();
+		super();
+		this.createInstance();
 	}
 
 	/**
 	 * Checks to see if JSZip exists in global namspace,
 	 * Requires JSZip if it isn't there
-	 * @private
 	 */
-	checkRequirements() {
+	createInstance() {
 
 		if (JSZip) {
-			this.zip = new JSZip();
+			this.instance = new JSZip();
 		} else {
 			throw new Error("JSZip lib not loaded");
 		}
@@ -35,11 +32,11 @@ class Archive {
 	 * Open an archive
 	 * @param {string|ArrayBuffer} input
 	 * @param {string} [encoding] tells JSZip if the input data is base64 encoded
-	 * @return {Promise<any>} zipfile
+	 * @returns {Promise<any>} zipfile
 	 */
 	open(input, encoding) {
 
-		return this.zip.loadAsync(input, {
+		return this.instance.loadAsync(input, {
 			base64: encoding === "base64"
 		});
 	}
@@ -48,204 +45,105 @@ class Archive {
 	 * Load and Open an archive
 	 * @param {string} zipUrl
 	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-	 * @return {Promise<any>} zipfile
+	 * @returns {Promise<any>} zipfile
 	 */
 	async openUrl(zipUrl, isBase64) {
 
 		return request(zipUrl, "binary").then((data) => {
-			return this.zip.loadAsync(data, {
+			return this.instance.loadAsync(data, {
 				base64: isBase64
 			});
 		});
 	}
 
 	/**
-	 * Request a url from the archive
-	 * @param {string} url  a url to request from the archive
-	 * @param {string} [type] specify the type of the returned result
-	 * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
+	 * Get entry from Archive
+	 * @param {string} url 
+	 * @returns {object} entry
 	 */
-	request(url, type) {
+	get(url) {
 
-		const deferred = new Defer();
-		const path = new Path(url);
-
-		// If type isn't set, determine it from the file extension
-		if (!type) {
-			type = path.extension;
-		}
-
-		let response;
-		if (type == "blob") {
-			response = this.getBlob(url);
-		} else {
-			response = this.getText(url);
-		}
-
-		if (response) {
-			response.then((r) => {
-				const result = this.handleResponse(r, type);
-				deferred.resolve(result);
-			});
-		} else {
-			deferred.reject({
-				message: "File not found in the epub: " + url,
-				stack: new Error().stack
-			});
-		}
-		return deferred.promise;
+		const key = this.getKey(url);
+		return this.instance.file(key);
 	}
 
 	/**
-	 * Handle the response from request
-	 * @param {any} response
-	 * @param {string} [type]
-	 * @return {any} the parsed result
+	 * Get entry key from URL
+	 * @param {string} url 
+	 * @returns {string}
 	 * @private
 	 */
-	handleResponse(response, type) {
+	getKey(url) {
 
-		let r;
-		if (isXml(type)) {
-			r = parse(response, "text/xml");
-		} else if (type === "xhtml") {
-			r = parse(response, "application/xhtml+xml");
-		} else if (type == "html" || type == "htm") {
-			r = parse(response, "text/html");
-		} else if (type === "json") {
-			r = JSON.parse(response);
-		} else {
-			r = response;
-		}
-		return r;
+		const encodedUri = url.substring(1); // Remove first slash
+		return window.decodeURIComponent(encodedUri);
 	}
 
 	/**
-	 * Get a Blob from Archive by Url
+	 * Get a Blob from Archive by URL
 	 * @param {string} url
 	 * @param {string} [mimeType]
-	 * @return {Blob}
+	 * @returns {Promise<Blob|null>}
+	 * @override
 	 */
-	getBlob(url, mimeType) {
+	async getBlob(url, mimeType) {
 
-		const encodedUri = url.substring(1); // Remove first slash
-		const decodededUri = window.decodeURIComponent(encodedUri);
-		const entry = this.zip.file(decodededUri);
+		const entry = this.get(url);
 
 		if (entry) {
-			mimeType = mimeType || mime.lookup(entry.name);
-			return entry.async("uint8array").then((uint8array) => {
-				return new Blob([uint8array], { type: mimeType });
+			const type = mimeType || mime.lookup(entry.name);
+			return entry.async("uint8array").then((data) => {
+				return new Blob([data], { type });
+			});
+		} else {
+			return new Promise((resolve) => {
+				resolve(null);
 			});
 		}
 	}
 
 	/**
-	 * Get Text from Archive by Url
+	 * Get Text from Archive by URL
 	 * @param {string} url
-	 * @return {string}
+	 * @returns {Promise<string|null>}
+	 * @override
 	 */
-	getText(url) {
+	async getText(url) {
 
-		const encodedUri = url.substring(1); // Remove first slash
-		const decodededUri = window.decodeURIComponent(encodedUri);
-		const entry = this.zip.file(decodededUri);
+		const entry = this.get(url);
 
 		if (entry) {
 			return entry.async("string").then((text) => {
 				return text;
 			});
+		} else {
+			return new Promise((resolve) => {
+				resolve(null);
+			});
 		}
 	}
 
 	/**
-	 * Get a base64 encoded result from Archive by Url
+	 * Get a base64 encoded result from Archive by URL
 	 * @param {string} url
 	 * @param {string} [mimeType]
-	 * @return {string} base64 encoded
+	 * @returns {Promise<string|null>} base64 encoded
+	 * @override
 	 */
-	getBase64(url, mimeType) {
+	async getBase64(url, mimeType) {
 
-		const encodedUri = url.substring(1); // Remove first slash
-		const decodededUri = window.decodeURIComponent(encodedUri);
-		const entry = this.zip.file(decodededUri);
+		const entry = this.get(url);
 
 		if (entry) {
-			mimeType = mimeType || mime.lookup(entry.name);
+			const type = mimeType || mime.lookup(entry.name);
 			return entry.async("base64").then((data) => {
-				return "data:" + mimeType + ";base64," + data;
+				return "data:" + type + ";base64," + data;
+			});
+		} else {
+			return new Promise((resolve) => {
+				resolve(null);
 			});
 		}
-	}
-
-	/**
-	 * Create a Url from an unarchived item
-	 * @param {string} url
-	 * @param {object} [options] 
-	 * @param {object} [options.base64] use base64 encoding or blob url
-	 * @return {Promise<string>} url promise with Url string
-	 */
-	createUrl(url, options) {
-
-		const deferred = new Defer();
-		const _URL = window.URL || window.webkitURL || window.mozURL;
-		const base64 = options && options.base64;
-
-		if (url in this.urlCache) {
-			deferred.resolve(this.urlCache[url]);
-			return deferred.promise;
-		}
-
-		let response;
-		if (base64 && (response = this.getBase64(url))) {
-			response.then((tempUrl) => {
-
-				this.urlCache[url] = tempUrl;
-				deferred.resolve(tempUrl);
-
-			});
-		} else if (response = this.getBlob(url)) {
-			response.then((blob) => {
-
-				const tempUrl = _URL.createObjectURL(blob);
-				this.urlCache[url] = tempUrl;
-				deferred.resolve(tempUrl);
-
-			});
-		}
-
-		if (typeof response === "undefined") {
-			deferred.reject({
-				message: "File not found in the epub: " + url,
-				stack: new Error().stack
-			});
-		}
-
-		return deferred.promise;
-	}
-
-	/**
-	 * Revoke Temp Url for a archive item
-	 * @param {string} url url of the item in the archive
-	 */
-	revokeUrl(url) {
-
-		const _URL = window.URL || window.webkitURL || window.mozURL;
-		const fromCache = this.urlCache[url];
-		if (fromCache) _URL.revokeObjectURL(fromCache);
-	}
-
-	/**
-	 * destroy
-	 */
-	destroy() {
-
-		const _URL = window.URL || window.webkitURL || window.mozURL;
-		for (const fromCache in this.urlCache) {
-			_URL.revokeObjectURL(fromCache);
-		}
-		this.zip = undefined;
-		this.urlCache = {};
 	}
 }
 
