@@ -1,3 +1,4 @@
+const CopyPlugin = require("copy-webpack-plugin")
 const webpack = require("webpack")
 const path = require("path")
 const PROD = (process.env.NODE_ENV === "production")
@@ -43,6 +44,22 @@ module.exports = {
 	plugins: [
 		new webpack.ProvidePlugin({
 			process: "process/browser"
+		}),
+		new CopyPlugin({
+			patterns: [
+				{
+					from: "node_modules/jszip/dist/jszip.min.js",
+					to: "jszip.min.js",
+					toType: "file",
+					force: true
+				},
+				{
+					from: "node_modules/localforage/dist/localforage.min.js",
+					to: "localforage.min.js",
+					toType: "file",
+					force: true
+				}
+			]
 		})
 	],
 	resolve: {
