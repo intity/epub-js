@@ -7,7 +7,7 @@
     <title>EPUB.JS: Open from File - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="../dist/jszip.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
 
@@ -59,9 +59,12 @@
                     break;
             }
         }
-        const onload = (e) => {
+        const init = (data) => {
 
-            const data = e.target.result
+            if (rendition) {
+                rendition.destroy();
+            }
+            book.clear() // clear parts
             book.open(data, "binary")
             book.ready.then(() => {
 
@@ -77,6 +80,10 @@
                 update(location)
                 console.log(location)
             })
+        }
+        const onload = (e) => {
+
+            init(e.target.result)
             rendition.on("keyup", keybinding)
             document.onkeyup = keybinding
         }
