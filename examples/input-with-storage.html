@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPUB.JS: Open from File with storage - Example</title>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="stylesheet" type="text/css" href="examples.css">
+    <script src="../dist/jszip.min.js"></script>
+    <script src="../dist/localforage.min.js"></script>
+    <script src="../dist/epub.js"></script>
+</head>
+
+<body>
+    <div id="toolbar">
+        <input type="file" id="openbook" accept=".epub">
+    </div>
+    <div id="content">
+        <div id="viewer" class="paginated">
+            <div id="divider"></div>
+        </div>
+        <a id="prev" href="#prev" class="arrow"></a>
+        <a id="next" href="#next" class="arrow"></a>
+    </div>
+    <script>
+        const openbook = document.getElementById("openbook")
+        const divider = document.getElementById("divider")
+        const next = document.getElementById("next")
+        const prev = document.getElementById("prev")
+        const book = ePub({ store: "epub-js" })
+        let rendition;
+        prev.onclick = (e) => {
+
+            rendition.prev()
+            e.preventDefault()
+        }
+        next.onclick = (e) => {
+
+            rendition.next()
+            e.preventDefault()
+        }
+        const update = (location) => {
+
+            const div = rendition.layout.divisor
+            const loc = location || rendition.currentLocation()
+            prev.style.display = loc.atStart ? "none" : "block"
+            next.style.display = loc.atEnd ? "none" : "block"
+            divider.style.display = div === 1 ? "none" : "block"
+        }
+        const keybinding = (e) => {
+
+            const dir = rendition.layout.direction
+            switch (e.key) {
+                case "ArrowLeft":
+                    dir === "ltr" ? rendition.prev() : rendition.next()
+                    break;
+                case "ArrowRight":
+                    dir === "ltr" ? rendition.next() : rendition.prev()
+                    break;
+            }
+        }
+        const init = (data) => {
+
+            if (rendition) {
+                rendition.destroy();
+            }
+            book.clear() // clear parts
+            book.open(data, "binary")
+            book.ready.then(() => {
+
+                console.log(book)
+            })
+            rendition = book.renderTo("viewer", {
+                width: "100%",
+                height: "100%"
+            })
+            rendition.display()
+            rendition.on("relocated", (location) => {
+
+                update(location)
+                console.log(location)
+            })
+        }
+        const onload = (e) => {
+
+            init(e.target.result)
+            rendition.on("keyup", keybinding)
+            document.onkeyup = keybinding
+        }
+        openbook.onchange = (e) => {
+
+            const file = e.target.files[0]
+            if (window.FileReader) {
+                const reader = new FileReader()
+                reader.onload = onload
+                reader.readAsArrayBuffer(file)
+            }
+        }
+        book.storage.get(0).then((data) => {
+            if (data) init(data)
+        })
+    </script>
+</body>
+
+</html>
