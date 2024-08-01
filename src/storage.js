@@ -87,7 +87,7 @@ class Storage extends Input {
 	 * @param {string|number} input key
 	 * @returns {Promise<any>}
 	 * @example storage.get(0).then(data => ...)
-	 * @example storage.get('entry-key').then(data => ...)
+	 * @example storage.get('https://example.com/to/book.epub').then(data => ...)
 	 */
 	async get(input) {
 
@@ -122,7 +122,7 @@ class Storage extends Input {
 	}
 
 	/**
-	 * Dispatch request by url
+	 * Dispatch a request by URL
 	 * @param {string} url a url to request from storage
 	 * @param {string} [type] specify the type of the returned result
 	 * @param {boolean} [withCredentials]
@@ -230,7 +230,7 @@ class Storage extends Input {
 	}
 
 	/**
-	 * Unpack package manifest into Storage
+	 * Unpack spine items into Storage
 	 * @param {Spine} spine 
 	 * @param {Function} resolve
 	 * @returns {Promise<any>} store objects
@@ -251,6 +251,7 @@ class Storage extends Input {
 
 	/**
 	 * destroy
+	 * @override
 	 */
 	destroy() {
 
