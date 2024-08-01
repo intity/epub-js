@@ -16,8 +16,7 @@ class Archive extends Input {
 	}
 
 	/**
-	 * Checks to see if JSZip exists in global namspace,
-	 * Requires JSZip if it isn't there
+	 * Create JSZip instance
 	 */
 	createInstance() {
 
@@ -60,23 +59,12 @@ class Archive extends Input {
 	 * Get entry from Archive
 	 * @param {string} url 
 	 * @returns {object} entry
+	 * @private
 	 */
 	get(url) {
 
-		const key = this.getKey(url);
-		return this.instance.file(key);
-	}
-
-	/**
-	 * Get entry key from URL
-	 * @param {string} url 
-	 * @returns {string}
-	 * @private
-	 */
-	getKey(url) {
-
-		const encodedUri = url.substring(1); // Remove first slash
-		return window.decodeURIComponent(encodedUri);
+		const name = window.decodeURIComponent(url.substring(1));
+		return this.instance.file(name);
 	}
 
 	/**
