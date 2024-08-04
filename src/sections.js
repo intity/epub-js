@@ -22,7 +22,7 @@ class Sections extends Array {
          * @member {object} hooks
          * @property {Hook} content
          * @property {Hook} serialize
-         * @memberof Spine
+         * @memberof Sections
          * @readonly
          */
         this.hooks = {
@@ -35,7 +35,7 @@ class Sections extends Array {
         this.hooks.content.register(replaceCanonical);
         /**
          * @member {boolean} loaded
-         * @memberof Spine
+         * @memberof Sections
          * @readonly
          */
         this.loaded = false;
