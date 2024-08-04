@@ -22,29 +22,42 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
-        const book = ePub("../assets/alice.epub")
+        const book = ePub()
+        book.open("../assets/alice.epub")
+        book.loaded[0].then((packaging) => {
+
+            put("book.loaded.packaging")
+        })
+        book.loaded[1].then((resources) => {
+
+            put("book.loaded.resources")
+        })
+        book.loaded[2].then((sections) => {
+
+            put("book.loaded.sections")
+        })
+        book.loaded[3].then((navigation) => {
+
+            put("book.loaded.navigation")
+        })
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%",
             spread: "none"
         })
-        book.loaded.sections.then((sections) => {
+        const keybinding = (e) => {
 
-            put("book.loaded.sections")
-        })
-        book.loaded.navigation.then((navigation) => {
-
-            put("book.loaded.navigation")
-        })
-        book.loaded.packaging.then((packaging) => {
-
-            put("book.loaded.packaging")
-        })
-        book.loaded.resources.then((resources) => {
-
-            put("book.loaded.resources")
-        })
-        rendition.display(6)
+            switch (e.key) {
+                case "ArrowLeft":
+                    put("book.rendition.relocated", 0)
+                    rendition.prev()
+                    break
+                case "ArrowRight":
+                    put("book.rendition.relocated", 0)
+                    rendition.next()
+                    break
+            }
+        }
         prev.onclick = (e) => {
 
             put("book.rendition.relocated", 0)
@@ -62,20 +75,7 @@
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
         }
-        const keybinding = (e) => {
-
-            switch (e.key) {
-                case "ArrowLeft":
-                    put("book.rendition.relocated", 0)
-                    rendition.prev()
-                    break
-                case "ArrowRight":
-                    put("book.rendition.relocated", 0)
-                    rendition.next()
-                    break
-            }
-        }
-        book.ready.then(() => {
+        rendition.display(6).then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
