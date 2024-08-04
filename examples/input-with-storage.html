@@ -70,6 +70,8 @@
             book.ready.then(() => {
 
                 console.log(book)
+                rendition.on("keyup", keybinding)
+                document.onkeyup = keybinding
             })
             rendition = book.renderTo("viewer", {
                 width: "100%",
@@ -84,9 +86,10 @@
         }
         const onload = (e) => {
 
-            init(e.target.result)
-            rendition.on("keyup", keybinding)
-            document.onkeyup = keybinding
+            book.storage.set(0, e.target.result).then((data) => {
+
+                init(data)
+            })
         }
         openbook.onchange = (e) => {
 

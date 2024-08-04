@@ -277,10 +277,10 @@ class Book {
 				this.settings.request.withCredentials,
 				this.settings.request.headers
 			).then(this.openEpub.bind(this));
-		} else if (type == INPUT_TYPE.OPF) {
+		} else if (type === INPUT_TYPE.OPF) {
 			this.url = new Url(input);
 			opening = this.openPackaging(this.url.path.toString());
-		} else if (type == INPUT_TYPE.MANIFEST) {
+		} else if (type === INPUT_TYPE.MANIFEST) {
 			this.url = new Url(input);
 			opening = this.openManifest(this.url.path.toString());
 		} else {
@@ -603,24 +603,16 @@ class Book {
 	}
 
 	/**
-	 * Storage the epubs contents
+	 * Storage configure
 	 * @param {string|ArrayBuffer} input
-	 * @returns {Promise<Storage>}
 	 * @private
 	 */
-	async store(input) {
+	store(input) {
 		
 		if (typeof input === "string") {
 			//-- replace request method to go through store
 			this.request = this.storage.dispatch.bind(this.storage);
-		} else {
-			//-- set arraybuffer into storage
-			await this.storage.set(0, input);
 		}
-
-		return new Promise((resolve) => {
-			resolve(this.storage);
-		});
 	}
 
 	/**
