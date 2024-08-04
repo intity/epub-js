@@ -279,14 +279,15 @@ class Book {
 			).then(this.openEpub.bind(this));
 		} else if (type === INPUT_TYPE.OPF) {
 			this.url = new Url(input);
-			opening = this.openPackaging(this.url.path.toString());
+			const uri = this.url.path.toString();
+			opening = this.openPackaging(uri);
 		} else if (type === INPUT_TYPE.MANIFEST) {
 			this.url = new Url(input);
-			opening = this.openManifest(this.url.path.toString());
-		} else {
+			const uri = this.url.path.toString();
+			opening = this.openManifest(uri);
+		} else if (type === INPUT_TYPE.DIRECTORY) {
 			this.url = new Url(input);
-			opening = this.openContainer(CONTAINER_PATH)
-				.then(this.openPackaging.bind(this));
+			opening = this.openDirectory();
 		}
 
 		return opening;
@@ -354,6 +355,18 @@ class Book {
 			return this.packaging.load(json);
 		}).then(() => {
 			return this.unpack();
+		});
+	}
+
+	/**
+	 * Open book from directory
+	 * @returns {Promise<any>}
+	 * @private
+	 */
+	async openDirectory() {
+
+		return this.openContainer(CONTAINER_PATH).then((url) => {
+			return this.openPackaging(url);
 		});
 	}
 
