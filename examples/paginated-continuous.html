@@ -24,7 +24,8 @@
         const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
+        const book = ePub()
+        book.open("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             manager: swipe ? "continuous" : "default",
             flow: "paginated",
@@ -32,7 +33,6 @@
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         prev.onclick = (e) => {
 
             rendition.prev()
@@ -58,6 +58,10 @@
             content.dir = dir
             divider.style.display = div === 1 ? "none" : "block"
         }
+        rendition.display().then(() => {
+
+            console.log(book)
+        })
         rendition.on("displayed", (section) => {
 
             if (swipe) {
