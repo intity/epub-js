@@ -27,6 +27,17 @@ class Input {
 	}
 
 	/**
+	 * Clear the Archive cache
+	 */
+	clear() {
+
+		for (const fromCache in this.urlCache) {
+			_URL.revokeObjectURL(fromCache);
+		}
+		this.urlCache = {};
+	}
+
+	/**
 	 * Request a url from the archive
 	 * @param {string} url a url to request from the archive
 	 * @param {string} [type] specify the type of the returned result
@@ -168,9 +179,7 @@ class Input {
 	 */
 	destroy() {
 
-		for (const fromCache in this.urlCache) {
-			_URL.revokeObjectURL(fromCache);
-		}
+		this.clear();
 		this.urlCache = undefined;
 		this.instance = undefined;
 	}
