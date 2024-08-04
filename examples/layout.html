@@ -64,12 +64,12 @@
         const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
+        const book = ePub()
+        book.open("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         layout.onchange = (e) => {
 
             rendition.updateLayout({
@@ -146,14 +146,11 @@
                     break;
             }
         }
-        book.ready.then(() => {
+        rendition.display().then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-        })
-        rendition.on("displayed", (section) => {
-
-            console.log(rendition)
         })
         rendition.on("layout", (props, changed) => {
 
