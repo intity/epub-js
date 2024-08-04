@@ -20,16 +20,26 @@
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
-        const content = document.getElementById("content")
         const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("../assets/alice.epub")
+        const book = ePub()
+        book.open("../assets/alice.epub")
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%"
         })
-        rendition.display()
+        const keybinding = (e) => {
+
+            switch (e.key) {
+                case "ArrowLeft":
+                    rendition.prev()
+                    break
+                case "ArrowRight":
+                    rendition.next()
+                    break
+            }
+        }
         prev.onclick = (e) => {
 
             rendition.prev()
@@ -40,36 +50,18 @@
             rendition.next()
             e.preventDefault()
         }
-        const update = (location) => {
+        const update = (loc) => {
 
-            const dir = rendition.layout.direction
             const div = rendition.layout.divisor
-            const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
-            content.dir = dir
         }
-        const keybinding = (e) => {
+        rendition.display().then(() => {
 
-            const dir = rendition.layout.direction
-            switch (e.key) {
-                case "ArrowLeft":
-                    dir === "ltr" ? rendition.prev() : rendition.next()
-                    break
-                case "ArrowRight":
-                    dir === "ltr" ? rendition.next() : rendition.prev()
-                    break
-            }
-        }
-        book.ready.then(() => {
-
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-        })
-        rendition.on("rendered", (section, view) => {
-
-            console.log(rendition)
         })
         rendition.on("relocated", (location) => {
 
