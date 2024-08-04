@@ -1,6 +1,6 @@
 import Book from "./book";
 import Rendition from "./rendition";
-import CFI from "./epubcfi";
+import EpubCFI from "./epubcfi";
 import Contents from "./contents";
 import * as utils from "./utils/core";
 import { EPUBJS_VERSION } from "./utils/constants";
@@ -10,14 +10,14 @@ import DefaultViewManager from "./managers/default";
 import ContinuousViewManager from "./managers/continuous";
 
 /**
- * Creates a new Book
- * @param {string|ArrayBuffer} url URL, Path or ArrayBuffer
- * @param {object} options to pass to the book
+ * Create a new Book instance
+ * @param {object} [options] to pass to the book
  * @returns {Book} a new Book object
- * @example ePub("/path/to/book.epub", {})
+ * @example ePub()
+ * @example ePub(options)
  */
-function ePub(url, options) {
-	return new Book(url, options);
+function ePub(options) {
+	return new Book(options);
 }
 
 ePub.VERSION = EPUBJS_VERSION;
@@ -29,7 +29,7 @@ if (typeof(global) !== "undefined") {
 ePub.Book = Book;
 ePub.Rendition = Rendition;
 ePub.Contents = Contents;
-ePub.CFI = CFI;
+ePub.EpubCFI = EpubCFI;
 ePub.utils = utils;
 
 export default ePub;
