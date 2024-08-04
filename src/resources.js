@@ -22,6 +22,7 @@ class Resources extends Map {
 	constructor(request, resolve, replacements) {
 
 		super();
+		this.archive = undefined;
 		this.request = request;
 		this.resolve = resolve;
 		this.replacements = replacements || null;
@@ -30,12 +31,11 @@ class Resources extends Map {
 	/**
 	 * Create a new CSS file with the replaced URLs
 	 * @param {string} href the original css file
-	 * @param {Archive} [archive]
 	 * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
 	 * @private
 	 */
-	async createCss(href, archive) {
-		
+	async createCss(href) {
+
 		let path = new Path(href);
 		if (path.isAbsolute(path.toString())) {
 			return new Promise((resolve) => {
@@ -46,8 +46,8 @@ class Resources extends Map {
 		const uri = this.resolve(href); // absolute path
 
 		let response;
-		if (archive) {
-			response = archive.getText(uri);
+		if (this.archive) {
+			response = this.archive.getText(uri);
 		} else {
 			response = this.request(uri, "text");
 		}
@@ -73,19 +73,18 @@ class Resources extends Map {
 	/**
 	 * Create a url to a resource
 	 * @param {string} href
-	 * @param {Archive} [archive]
 	 * @return {Promise<string>} Promise resolves with url string
 	 * @private
 	 */
-	async createUrl(href, archive) {
-		
+	async createUrl(href) {
+
 		const uri = this.resolve(href); // absolute path
 		const url = new Url(uri);
 		const mimeType = mime.lookup(url.filename);
 		const base64 = this.replacements === "base64";
 
-		if (archive) {
-			return archive.createUrl(uri, { base64 });
+		if (this.archive) {
+			return this.archive.createUrl(uri, { base64 });
 		} else if (base64) {
 			return this.request(uri, "blob").then((blob) => {
 				return blob2base64(blob);
@@ -100,19 +99,18 @@ class Resources extends Map {
 	/**
 	 * Replace url to blobUrl or base64
 	 * @param {object} item manifest item
-	 * @param {Archive} [archive]
 	 * @returns {Promise<string>}
 	 * @private
 	 */
-	async replace(item, archive) {
+	async replace(item) {
 
 		if (item.type === "text/css") {
-			return this.createCss(item.href, archive).then((url) => {
+			return this.createCss(item.href).then((url) => {
 				this.set(item.href, url);
 				return url;
 			});
 		} else {
-			return this.createUrl(item.href, archive).then((url) => {
+			return this.createUrl(item.href).then((url) => {
 				this.set(item.href, url);
 				return url;
 			});
@@ -142,10 +140,12 @@ class Resources extends Map {
 	 */
 	async unpack(manifest, archive) {
 
+		this.archive = archive;
+
 		if (this.replacements === null) {
 			this.replacements = archive ? "blobUrl" : null;
 		}
-		
+
 		const tasks = [];
 
 		manifest.forEach((item, key) => {
@@ -170,6 +170,9 @@ class Resources extends Map {
 	destroy() {
 
 		this.clear();
+		this.archive = undefined;
+		this.request = undefined;
+		this.resolve = undefined;
 		this.replacements = undefined;
 	}
 }
