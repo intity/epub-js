@@ -66,8 +66,7 @@
                 rendition.destroy();
             }
             book.clear() // clear parts
-            book.open(data, "binary")
-            book.ready.then(() => {
+            book.open(data, "binary").then(() => {
 
                 console.log(book)
                 rendition.on("keyup", keybinding)
@@ -101,6 +100,7 @@
             }
         }
         book.storage.get(0).then((data) => {
+
             if (data) init(data)
         })
     </script>
