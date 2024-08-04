@@ -21,15 +21,13 @@
     <script>
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("https://intity.github.io/epub-js/assets/alice.epub", {
-            store: "epub-js"
-        })
+        const book = ePub({ store: "epub-js" })
+        book.open("https://intity.github.io/epub-js/assets/alice.epub")
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%",
             spread: "none"
         })
-        rendition.display(5)
         prev.onclick = (e) => {
 
             rendition.prev()
@@ -56,7 +54,7 @@
                     break
             }
         }
-        book.ready.then(() => {
+        rendition.display(5).then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
