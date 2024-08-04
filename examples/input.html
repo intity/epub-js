@@ -65,8 +65,7 @@
                 rendition.destroy();
             }
             book.clear() // clear parts
-            book.open(data, "binary")
-            book.ready.then(() => {
+            book.open(data, "binary").then(() => {
 
                 console.log(book)
             })
