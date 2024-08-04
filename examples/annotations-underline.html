@@ -23,13 +23,13 @@
         const list = document.getElementById("list")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
+        const book = ePub()
+        book.open("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%",
             spread: "none"
         })
-        rendition.display(6)
         prev.onclick = (e) => {
             rendition.prev()
             e.preventDefault()
@@ -54,11 +54,11 @@
                     break
             }
         }
-        rendition.on("displayed", (section) => {
+        rendition.display(6).then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-            console.log(rendition)
         })
         rendition.on("selected", (cfiRange, contents) => {
 
