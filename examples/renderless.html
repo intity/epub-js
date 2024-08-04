@@ -27,7 +27,8 @@
         const list = document.getElementById("toc")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
+        const book = ePub()
+        book.open("../assets/alice/")
         const update = () => {
 
             const index = list.selectedIndex
@@ -74,7 +75,7 @@
             }
             return section;
         }
-        book.loaded.navigation.then((toc) => {
+        book.loaded[3].then((toc) => {
 
             toc.forEach((chapter) => {
 
