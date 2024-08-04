@@ -20,14 +20,14 @@
 	</div>
 	<script>
 		const list = document.getElementById("toc")
-		const book = ePub("../assets/alice/")
+		const book = ePub()
+		book.open("../assets/alice/")
 		const rendition = book.renderTo("viewer", {
 			flow: "scrolled",
 			width: "100%",
 			height: "100%"
 		})
-		rendition.display()
-		book.loaded.navigation.then((toc) => {
+		book.loaded[3].then((toc) => {
 			
 			const fragment = document.createDocumentFragment()
 
@@ -46,6 +46,10 @@
 				const url = e.target[ind].ref
 				rendition.display(url)
 			}
+		})
+		rendition.display().then(() => {
+
+			console.log(book)
 		})
 		rendition.on("relocated", (location) => {
 
