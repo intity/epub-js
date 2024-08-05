@@ -183,20 +183,24 @@ class Book {
 		};
 		/**
 		 * Sequential loading of tasks
-		 * @member {Array<Promise<any>>} loaded
+		 * @member {object} loaded
+		 * @property {Promise<Packaging>} packaging
+		 * @property {Promise<Resources>} resources
+		 * @property {Promise<Sections>} sections
+		 * @property {Promise<Navigation>} navigation
+		 * @property {Promise<Storage>} storage
+		 * @property {Promise<string>} cover
 		 * @memberof Book
 		 * @readonly
-		 * @example book.loaded[0].then((packaging) => ...)
-		 * @example book.loaded[1].then((resources) => ...)
 		 */
-		this.loaded = [
-			this.loading.packaging.promise,
-			this.loading.resources.promise,
-			this.loading.sections.promise,
-			this.loading.navigation.promise,
-			this.loading.storage.promise,
-			this.loading.cover.promise
-		];
+		this.loaded = {
+			packaging: this.loading.packaging.promise,
+			resources: this.loading.resources.promise,
+			sections: this.loading.sections.promise,
+			navigation: this.loading.navigation.promise,
+			storage: this.loading.storage.promise,
+			cover: this.loading.cover.promise
+		};
 	}
 
 	/**
@@ -495,8 +499,9 @@ class Book {
 		}
 
 		this.loading.cover.resolve(this.cover);
+		const tasks = [...Object.values(this.loaded)];
 
-		return Promise.all(this.loaded).then(() => {
+		return Promise.all(tasks).then(() => {
 			this.isOpen = true;
 			this.opening.resolve(this)
 			return this.opened;
@@ -610,7 +615,7 @@ class Book {
 	 */
 	async coverUrl() {
 
-		return this.loaded[5].then(() => {
+		return this.loaded.cover.then(() => {
 			if (this.archived && this.cover) {
 				return this.archive.createUrl(this.cover);
 			} else {

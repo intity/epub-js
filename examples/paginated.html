@@ -36,19 +36,19 @@
         put("init", 0, false)
         const book = ePub()
         book.open("../assets/alice/")
-        book.loaded[0].then((packaging) => {
+        book.loaded.packaging.then((packaging) => {
 
             put("book.loaded.packaging")
         })
-        book.loaded[1].then((resources) => {
+        book.loaded.resources.then((resources) => {
 
             put("book.loaded.resources")
         })
-        book.loaded[2].then((sections) => {
+        book.loaded.sections.then((sections) => {
 
             put("book.loaded.sections")
         })
-        book.loaded[3].then((navigation) => {
+        book.loaded.navigation.then((navigation) => {
 
             put("book.loaded.navigation")
         })
