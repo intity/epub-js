@@ -35,6 +35,10 @@ class Archive extends Input {
 	 */
 	open(input, encoding) {
 
+		if (encoding === "base64") {
+			const data = input.split(",");
+			input = data.length === 2 ? data[1] : input;
+		}
 		return this.instance.loadAsync(input, {
 			base64: encoding === "base64"
 		});
