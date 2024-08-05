@@ -34,8 +34,7 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
-        const book = ePub()
-        book.open("../assets/alice/")
+        const book = ePub("../assets/alice/")
         book.loaded.packaging.then((packaging) => {
 
             put("book.loaded.packaging")

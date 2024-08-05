@@ -30,6 +30,7 @@ const INPUT_TYPE = {
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
  * @class
+ * @param {string|ArrayBuffer} input
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
  * @param {Function} [options.request.method=null] a request function to use instead of the default
@@ -40,13 +41,20 @@ const INPUT_TYPE = {
  * @param {Function} [options.canonical] optional function to determine canonical urls for a path
  * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
- * @example new Book({ replacements: "blobUrl" })
- * @example new Book({ replacements: "base64" })
+ * @example new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
  */
 class Book {
 
-	constructor(options) {
+	constructor(input, options) {
 
+		if (typeof (options) === "undefined" &&
+			typeof (input) !== "string" &&
+			input instanceof Blob === false &&
+			input instanceof ArrayBuffer === false) {
+			options = input;
+			input = undefined;
+		}
+		
 		this.settings = extend({
 			request: {
 				method: null,
@@ -134,6 +142,17 @@ class Book {
 
 		if (this.settings.store) {
 			this.storage.createInstance();
+		}
+
+		if (input) {
+			this.open(input).catch((error) => {
+				/**
+				 * @event openFailed
+				 * @param {object} error
+				 * @memberof Book
+				 */
+				this.emit(EVENTS.BOOK.OPEN_FAILED, error);
+			});
 		}
 	}
 

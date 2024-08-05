@@ -31,8 +31,7 @@
     <script>
         const theme = document.getElementById("theme")
         const fontSize = document.getElementById("font-size")
-        const book = ePub()
-        book.open("../assets/alice/")
+        const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             manager: "continuous",
             flow: "scrolled",

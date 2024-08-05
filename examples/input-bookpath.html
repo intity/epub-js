@@ -27,8 +27,7 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const time = Date.now()
-        const book = ePub()
-        book.open(uri)
+        const book = ePub(uri)
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%"
