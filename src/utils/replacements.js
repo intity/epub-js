@@ -27,6 +27,10 @@ export const replaceBase = (doc, section) => {
 
 	if (!absolute) {
 		url = doc.documentURI;
+		const uri = new URL(url);
+		if (uri.searchParams.size) {
+			url = [...uri.searchParams.values()][0];
+		}
 	}
 
 	base.setAttribute("href", url);
