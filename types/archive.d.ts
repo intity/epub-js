@@ -1,19 +1,16 @@
 import JSZip = require("jszip");
+import Input from "./input";
 
-export default class Archive {
+export default class Archive extends Input {
 
     constructor();
 
-    open(input: BinaryType, isBase64?: boolean): Promise<JSZip>;
+    createInstance(): void;
+    open(input: BinaryType, encoding?: string): Promise<JSZip>;
     openUrl(zipUrl: string, isBase64?: boolean): Promise<JSZip>;
-    request(url: string, type?: string): Promise<Blob | string | JSON | Document | XMLDocument>;
-    getBlob(url: string, mimeType?: string): Promise<Blob>;
-    getText(url: string): Promise<string>;
-    getBase64(url: string, mimeType?: string): Promise<string>;
-    createUrl(url: string, options: { base64: boolean }): Promise<string>;
-    revokeUrl(url: string): void;
-    destroy(): void;
+    getBlob(url: string, mimeType?: string): Promise<Blob | null>;
+    getText(url: string): Promise<string | null>;
+    getBase64(url: string, mimeType?: string): Promise<string | null>;
 
-    private checkRequirements(): void;
-    private handleResponse(response: any, type?: string): Blob | string | JSON | Document | XMLDocument;
+    private get(url: string): object;
 }
