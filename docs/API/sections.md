@@ -7,12 +7,23 @@ Sections class
 **Extends**: <code>Array</code>  
 
 * [Sections](#Sections) ⇐ <code>Array</code>
-    * [.get([target])](#Sections+get) ⇒ <code>Section</code> \| <code>null</code>
-    * [.first()](#Sections+first) ⇒ <code>Section</code> \| <code>null</code>
-    * [.last()](#Sections+last) ⇒ <code>Section</code> \| <code>null</code>
-    * [.unpack(packaging, resolve, canonical)](#Sections+unpack) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
-    * [.destroy()](#Sections+destroy)
+    * _instance_
+        * [.clear()](#Sections+clear)
+        * [.get([target])](#Sections+get) ⇒ <code>Section</code> \| <code>null</code>
+        * [.first()](#Sections+first) ⇒ <code>Section</code> \| <code>null</code>
+        * [.last()](#Sections+last) ⇒ <code>Section</code> \| <code>null</code>
+        * [.unpack(packaging, resolve, canonical)](#Sections+unpack) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
+        * [.destroy()](#Sections+destroy)
+    * _static_
+        * [.hooks](#Sections.hooks) : <code>object</code>
+        * [.loaded](#Sections.loaded) : <code>boolean</code>
 
+<a name="Sections+clear"></a>
+
+## sections.clear()
+Clear sections
+
+**Kind**: instance method of [<code>Sections</code>](#Sections)  
 <a name="Sections+get"></a>
 
 ## sections.get([target]) ⇒ <code>Section</code> \| <code>null</code>
@@ -78,3 +89,20 @@ Unpack items from a opf into spine items
 destroy
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
+<a name="Sections.hooks"></a>
+
+## Sections.hooks : <code>object</code>
+**Kind**: static property of [<code>Sections</code>](#Sections)  
+**Read only**: true  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| content | <code>Hook</code> | 
+| serialize | <code>Hook</code> | 
+
+<a name="Sections.loaded"></a>
+
+## Sections.loaded : <code>boolean</code>
+**Kind**: static property of [<code>Sections</code>](#Sections)  
+**Read only**: true  

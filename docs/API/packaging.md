@@ -8,8 +8,9 @@ Open Packaging Format Parser
 * [Packaging](#Packaging)
     * [new Packaging()](#new_Packaging_new)
     * _instance_
-        * [.parse(packageXml)](#Packaging+parse) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.load(data)](#Packaging+load) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.clear()](#Packaging+clear)
+        * [.parse(packageXml)](#Packaging+parse) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
+        * [.load(data)](#Packaging+load) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
         * [.destroy()](#Packaging+destroy)
     * _static_
         * [.metadata](#Packaging.metadata) : <code>Metadata</code>
@@ -24,9 +25,15 @@ Open Packaging Format Parser
 ## new Packaging()
 Constructor
 
+<a name="Packaging+clear"></a>
+
+## packaging.clear()
+Clear packaging parts
+
+**Kind**: instance method of [<code>Packaging</code>](#Packaging)  
 <a name="Packaging+parse"></a>
 
-## packaging.parse(packageXml) ⇒ <code>Promise.&lt;any&gt;</code>
+## packaging.parse(packageXml) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
 Parse OPF XML
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
@@ -37,7 +44,7 @@ Parse OPF XML
 
 <a name="Packaging+load"></a>
 
-## packaging.load(data) ⇒ <code>Promise.&lt;any&gt;</code>
+## packaging.load(data) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
 Load package from JSON
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  

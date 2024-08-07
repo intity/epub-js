@@ -8,6 +8,7 @@ Manifest class
 
 * [Manifest](#Manifest) ⇐ <code>Map</code>
     * _instance_
+        * [.clear()](#Manifest+clear)
         * [.parse(node)](#Manifest+parse) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
         * [.load(manifest)](#Manifest+load) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
         * [.destroy()](#Manifest+destroy)
@@ -15,6 +16,12 @@ Manifest class
         * [.navPath](#Manifest.navPath) : <code>string</code>
         * [.coverPath](#Manifest.coverPath) : <code>string</code>
 
+<a name="Manifest+clear"></a>
+
+## manifest.clear()
+Clear manifest
+
+**Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 <a name="Manifest+parse"></a>
 
 ## manifest.parse(node) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)

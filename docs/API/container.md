@@ -7,9 +7,10 @@ Parsing the Epub Container
 **Link**: https://www.w3.org/TR/epub/#sec-container-metainf  
 
 * [Container](#Container)
-    * [new Container([containerDocument])](#new_Container_new)
+    * [new Container()](#new_Container_new)
     * _instance_
-        * [.parse(containerDocument)](#Container+parse)
+        * [.clear()](#Container+clear)
+        * [.parse(containerDocument)](#Container+parse) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
         * [.destroy()](#Container+destroy)
     * _static_
         * [.directory](#Container.directory) : <code>string</code>
@@ -19,17 +20,18 @@ Parsing the Epub Container
 
 <a name="new_Container_new"></a>
 
-## new Container([containerDocument])
+## new Container()
 Constructor
 
+<a name="Container+clear"></a>
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [containerDocument] | <code>Document</code> | xml document |
+## container.clear()
+Clear parts
 
+**Kind**: instance method of [<code>Container</code>](#Container)  
 <a name="Container+parse"></a>
 
-## container.parse(containerDocument)
+## container.parse(containerDocument) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
 Parse the Container XML
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
