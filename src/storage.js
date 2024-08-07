@@ -233,7 +233,7 @@ class Storage extends Input {
 	 * Unpack spine items into Storage
 	 * @param {Spine} spine 
 	 * @param {Function} resolve
-	 * @returns {Promise<any>} store objects
+	 * @returns {Promise<Storage>} store objects
 	 */
 	async unpack(spine, resolve) {
 
