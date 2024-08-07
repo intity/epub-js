@@ -22,6 +22,7 @@ const docs = [
     "contents",
     "epub",
     "epubcfi",
+    "input",
     "layout",
     "location",
     "locations",
