@@ -23,7 +23,10 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
-        const book = ePub("../assets/alice.epub", { store: "epub-js" })
+        const book = ePub("../assets/alice/", {
+            replacements: "blobUrl",
+            store: "epub-js"
+        })
         book.loaded.packaging.then((packaging) => {
 
             put("book.loaded.packaging")
