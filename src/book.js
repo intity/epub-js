@@ -668,13 +668,11 @@ class Book {
 	 */
 	destroy() {
 
+		this.isOpen = false;
 		this.opened = undefined;
 		this.opening = undefined;
 		this.loading = undefined;
 		this.loaded = undefined;
-		this.ready = undefined;
-
-		this.isOpen = false;
 
 		this.archive && this.archive.destroy();
 		this.locations && this.locations.destroy();
