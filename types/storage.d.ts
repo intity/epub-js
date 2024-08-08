@@ -1,5 +1,4 @@
 import Input from "./input";
-import Spine from "./spine";
 
 export default class Storage extends Input {
 
@@ -16,7 +15,6 @@ export default class Storage extends Input {
     getBlob(url: string, mimeType?: string): Promise<Blob | null>;
     getText(url: string, mimeType?: string): Promise<string | null>;
     getBase64(url: string, mimeType?: string): Promise<string | null>;
-    unpack(spine: Spine, resolve: Function): Promise<Storage>;
     destroy(): void;
 
     private getKey(input: string | number): string;
