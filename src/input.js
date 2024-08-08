@@ -2,8 +2,6 @@ import { isXml, parse } from "./utils/core";
 import Defer from "./utils/defer";
 import Path from "./utils/path";
 
-const _URL = window.URL || window.webkitURL || window.mozURL;
-
 /**
  * Base class for Archive and Storage
  */
@@ -18,23 +16,6 @@ class Input {
 		 * @readonly
 		 */
 		this.instance = null;
-		/**
-		 * @member {object} urlCache
-		 * @memberof Input
-		 * @readonly
-		 */
-		this.urlCache = {};
-	}
-
-	/**
-	 * Clear the Archive cache
-	 */
-	clear() {
-
-		for (const fromCache in this.urlCache) {
-			_URL.revokeObjectURL(fromCache);
-		}
-		this.urlCache = {};
 	}
 
 	/**
@@ -50,6 +31,8 @@ class Input {
 		let response;
 		if (type === "blob" || type === "binary") {
 			response = this.getBlob(url);
+		} else if (type === "base64") {
+			response = this.getBase64(url);
 		} else {
 			response = this.getText(url);
 		}
@@ -120,67 +103,10 @@ class Input {
 	async getBase64(url, mimeType) { }
 
 	/**
-	 * Create a URL from a stored item
-	 * @param {string} url
-	 * @param {object} [options] 
-	 * @param {string} [options.base64] use base64 encoding or blob url
-	 * @returns {Promise<string>} url promise with Url string
-	 */
-	createUrl(url, options) {
-
-		const deferred = new Defer();
-		const base64 = options && options.base64;
-
-		if (url in this.urlCache) {
-			deferred.resolve(this.urlCache[url]);
-			return deferred.promise;
-		}
-
-		let response;
-		if (base64 && (response = this.getBase64(url))) {
-			response.then((tempUrl) => {
-
-				this.urlCache[url] = tempUrl;
-				deferred.resolve(tempUrl);
-			});
-		} else if (response = this.getBlob(url)) {
-			response.then((blob) => {
-
-				const tempUrl = _URL.createObjectURL(blob);
-				this.urlCache[url] = tempUrl;
-				deferred.resolve(tempUrl);
-			});
-		}
-
-		if (!response) {
-			deferred.reject({
-				message: "File not found in: " + url,
-				stack: new Error().stack
-			});
-		}
-
-		return deferred.promise;
-	}
-
-	/**
-	 * Revoke Temp Url for a archive item
-	 * @param {string} url url of the item in the store
-	 */
-	revokeUrl(url) {
-
-		const fromCache = this.urlCache[url];
-		if (fromCache) {
-			_URL.revokeObjectURL(fromCache);
-		}
-	}
-
-	/**
 	 * destroy
 	 */
 	destroy() {
 
-		this.clear();
-		this.urlCache = undefined;
 		this.instance = undefined;
 	}
 }

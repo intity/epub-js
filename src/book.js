@@ -623,10 +623,9 @@ class Book {
 
 		return this.loaded.cover.then(() => {
 			if (this.archived && this.cover) {
-				return this.archive.createUrl(this.cover);
-			} else {
-				return this.cover;
+				return this.resources.createUrl(this.cover);
 			}
+			return this.cover;
 		});
 	}
 

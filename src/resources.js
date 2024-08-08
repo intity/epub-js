@@ -8,6 +8,8 @@ import Url from "./utils/url";
 import mime from "./utils/mime";
 import Path from "./utils/path";
 
+const _URL = window.URL || window.webkitURL || window.mozURL;
+
 /**
  * Assets container for URL replacements
  * @extends {Map}
@@ -27,6 +29,20 @@ class Resources extends Map {
 		this.request = request;
 		this.resolve = resolve;
 		this.replacements = replacements || null;
+	}
+
+	/**
+	 * Clear replacement URLs
+	 * @override
+	 */
+	clear() {
+
+		if (this.replacements === "blobUrl") {
+			this.forEach((value, key) => {
+				_URL.revokeObjectURL(value);
+			});
+		}
+		super.clear();
 	}
 
 	/**
@@ -75,7 +91,6 @@ class Resources extends Map {
 	 * Create a url to a resource
 	 * @param {string} href
 	 * @return {Promise<string>} Promise resolves with url string
-	 * @private
 	 */
 	async createUrl(href) {
 
@@ -83,9 +98,12 @@ class Resources extends Map {
 		const url = new Url(uri);
 		const mimeType = mime.lookup(url.filename);
 		const base64 = this.replacements === "base64";
+		const type = base64 ? "base64" : "blob";
 
 		if (this.archive) {
-			return this.archive.createUrl(uri, { base64 });
+			return this.archive.request(uri, type).then((data) => {
+				return base64 ? data : _URL.createObjectURL(data);
+			});
 		} else if (base64) {
 			return this.request(uri, "blob").then((blob) => {
 				return blob2base64(blob);
@@ -94,6 +112,20 @@ class Resources extends Map {
 			return this.request(uri, "blob").then((blob) => {
 				return createBlobUrl(blob, mimeType);
 			});
+		}
+	}
+
+	/**
+	 * Revoke URL for a resource item
+	 * @param {string} url 
+	 */
+	revokeUrl(url) {
+
+		if (this.replacements === "blobUrl") {
+			const blobUrl = this.get(url);
+			if (blobUrl) {
+				_URL.revokeObjectURL(blobUrl);
+			}
 		}
 	}
 
@@ -146,7 +178,7 @@ class Resources extends Map {
 		this.storage = storage;
 
 		if (this.replacements === null) {
-			this.replacements = archive || storage ? "blobUrl" : null;
+			this.replacements = archive || storage.name ? "blobUrl" : null;
 		}
 
 		const tasks = [];
