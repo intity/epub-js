@@ -23,6 +23,7 @@ class Resources extends Map {
 
 		super();
 		this.archive = undefined;
+		this.storage = undefined;
 		this.request = request;
 		this.resolve = resolve;
 		this.replacements = replacements || null;
@@ -135,15 +136,17 @@ class Resources extends Map {
 	/**
 	 * Unpack resources from manifest
 	 * @param {Manifest} manifest
-	 * @param {Archive} [archive]
+	 * @param {Archive} archive
+	 * @param {Storage} storage
 	 * @returns {Promise<Resources>}
 	 */
-	async unpack(manifest, archive) {
+	async unpack(manifest, archive, storage) {
 
 		this.archive = archive;
+		this.storage = storage;
 
 		if (this.replacements === null) {
-			this.replacements = archive ? "blobUrl" : null;
+			this.replacements = archive || storage ? "blobUrl" : null;
 		}
 
 		const tasks = [];
@@ -151,7 +154,9 @@ class Resources extends Map {
 		manifest.forEach((item, key) => {
 			if (item.type === "application/xhtml+xml" ||
 				item.type === "text/html") {
-				//...
+				if (storage.name && !archive) {
+					storage.put(this.resolve(item.href));
+				}
 			} else if (this.replacements) {
 				tasks.push(this.replace(item, archive));
 			} else {
@@ -171,6 +176,7 @@ class Resources extends Map {
 
 		this.clear();
 		this.archive = undefined;
+		this.storage = undefined;
 		this.request = undefined;
 		this.resolve = undefined;
 		this.replacements = undefined;

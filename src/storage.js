@@ -230,26 +230,6 @@ class Storage extends Input {
 	}
 
 	/**
-	 * Unpack spine items into Storage
-	 * @param {Spine} spine 
-	 * @param {Function} resolve
-	 * @returns {Promise<Storage>} store objects
-	 */
-	async unpack(spine, resolve) {
-
-		const items = [...spine.values()];
-		const tasks = items.map((item) => {
-
-			const url = resolve(item.href);
-			return this.put(url);
-		});
-
-		return Promise.all(tasks).then(() => {
-			return this;
-		});
-	}
-
-	/**
 	 * destroy
 	 * @override
 	 */

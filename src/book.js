@@ -197,7 +197,6 @@ class Book {
 			resources: new Defer(),
 			sections: new Defer(),
 			navigation: new Defer(),
-			storage: new Defer(),
 			cover: new Defer(),
 		};
 		/**
@@ -207,7 +206,6 @@ class Book {
 		 * @property {Promise<Resources>} resources
 		 * @property {Promise<Sections>} sections
 		 * @property {Promise<Navigation>} navigation
-		 * @property {Promise<Storage>} storage
 		 * @property {Promise<string>} cover
 		 * @memberof Book
 		 * @readonly
@@ -217,7 +215,6 @@ class Book {
 			resources: this.loading.resources.promise,
 			sections: this.loading.sections.promise,
 			navigation: this.loading.navigation.promise,
-			storage: this.loading.storage.promise,
 			cover: this.loading.cover.promise
 		};
 	}
@@ -481,7 +478,8 @@ class Book {
 		this.loading.packaging.resolve(this.packaging);
 		this.resources.unpack(
 			this.packaging.manifest,
-			this.archive
+			this.archive,
+			this.storage
 		).then((resources) => {
 			this.loading.resources.resolve(resources);
 		});
@@ -495,17 +493,6 @@ class Book {
 		this.loadNavigation().then((navigation) => {
 			this.loading.navigation.resolve(navigation);
 		});
-
-		if (this.settings.store && this.storage.online && !this.archived) {
-			this.storage.unpack(
-				this.packaging.spine,
-				this.resolve.bind(this)
-			).then((storage) => {
-				this.loading.storage.resolve(storage);
-			});
-		} else {
-			this.loading.storage.resolve(this.storage);
-		}
 
 		if (this.resources.replacements) {
 			this.sections.hooks.serialize.register(
