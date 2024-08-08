@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/jszip.min.js"></script>
+    <script src="../dist/localforage.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
 
@@ -22,7 +23,7 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
-        const book = ePub("../assets/alice.epub")
+        const book = ePub("../assets/alice.epub", { store: "epub-js" })
         book.loaded.packaging.then((packaging) => {
 
             put("book.loaded.packaging")
@@ -38,6 +39,10 @@
         book.loaded.navigation.then((navigation) => {
 
             put("book.loaded.navigation")
+        })
+        book.loaded.storage.then((storage) => {
+
+            put("book.loaded.storage")
         })
         const rendition = book.renderTo("viewer", {
             width: "100%",
