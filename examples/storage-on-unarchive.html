@@ -21,8 +21,8 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("https://intity.github.io/epub-js/assets/alice/", {
-            store: "epub-js",
-            replacements: "blobUrl"
+            replacements: "base64",
+            store: "epub-js"
         })
         const rendition = book.renderTo("viewer", {
             width: "100%",

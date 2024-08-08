@@ -148,11 +148,11 @@ const book = ePub("/path/to/book/")
 
 should be defined as the root directory of the book container.
 
-By default, the `Resources.replacements` property is set to `null`. However, if the workbook is opened in the context of the `Storage` interface, then you need to set the value of the `Resources.replacements` property to `blobUrl` or `base64`. For example,
+By default, the `Resources.replacements` property is set to `null`. However, if the workbook is opened in the context of the `Storage` interface, then the value of the `Resources.replacements` property will be automatically changed to `blobUrl`. If you want links to resources to be in `base64` encoding, you need to explicitly specify this. For example,
 
 ```js
-const book = ePub("https://example.com/to/book/", {
-    replacements: "blobUrl",
+const book = ePub("/path/to/book/", {
+    replacements: "base64",
     store: "epub-js"
 })
 ```
