@@ -19,8 +19,8 @@ class Input {
 	}
 
 	/**
-	 * Request a url from the archive
-	 * @param {string} url a url to request from the archive
+	 * Request a URL from entries
+	 * @param {string} url a URL to request
 	 * @param {string} [type] specify the type of the returned result
 	 * @returns {Promise<Blob|string|JSON|Document|XMLDocument>}
 	 */
