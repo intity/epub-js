@@ -49,7 +49,6 @@ class Resources extends Map {
 	 * Create a new CSS file with the replaced URLs
 	 * @param {string} href the original css file
 	 * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
-	 * @private
 	 */
 	async createCss(href) {
 
