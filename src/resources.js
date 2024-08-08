@@ -158,7 +158,7 @@ class Resources extends Map {
 					storage.put(this.resolve(item.href));
 				}
 			} else if (this.replacements) {
-				tasks.push(this.replace(item, archive));
+				tasks.push(this.replace(item));
 			} else {
 				this.set(item.href, null);
 			}
