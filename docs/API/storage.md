@@ -17,7 +17,6 @@ Handles saving and requesting files from local storage
         * [.getBlob(url, [mimeType])](#Storage+getBlob) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>
         * [.getText(url, [mimeType])](#Storage+getText) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
         * [.getBase64(url, [mimeType])](#Storage+getBase64) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
-        * [.unpack(spine, resolve)](#Storage+unpack) ⇒ [<code>Promise.&lt;Storage&gt;</code>](#Storage)
         * [.destroy()](#Storage+destroy)
     * _static_
         * [.name](#Storage.name) : <code>string</code>
@@ -131,19 +130,6 @@ Get a base64 encoded result from Storage by URL
 | --- | --- |
 | url | <code>string</code> | 
 | [mimeType] | <code>string</code> | 
-
-<a name="Storage+unpack"></a>
-
-## storage.unpack(spine, resolve) ⇒ [<code>Promise.&lt;Storage&gt;</code>](#Storage)
-Unpack spine items into Storage
-
-**Kind**: instance method of [<code>Storage</code>](#Storage)  
-**Returns**: [<code>Promise.&lt;Storage&gt;</code>](#Storage) - store objects  
-
-| Param | Type |
-| --- | --- |
-| spine | <code>Spine</code> | 
-| resolve | <code>function</code> | 
 
 <a name="Storage+destroy"></a>
 

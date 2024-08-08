@@ -341,7 +341,6 @@ Sequential loading of tasks
 | resources | <code>Promise.&lt;Resources&gt;</code> | 
 | sections | <code>Promise.&lt;Sections&gt;</code> | 
 | navigation | <code>Promise.&lt;Navigation&gt;</code> | 
-| storage | <code>Promise.&lt;Storage&gt;</code> | 
 | cover | <code>Promise.&lt;string&gt;</code> | 
 
 <a name="Book.event_openFailed"></a>
