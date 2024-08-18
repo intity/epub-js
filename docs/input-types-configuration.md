@@ -97,7 +97,7 @@ const book = ePub("/path/to/book.epub")
 
 or URL,
 ```js
-const book = ePub("https:/example.com/to/book.epub")
+const book = ePub("https://example.com/to/book.epub")
 ```
 
 ### Required Dependencies
