@@ -29,22 +29,24 @@ const INPUT_TYPE = {
 /**
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
- * @class
- * @param {string|ArrayBuffer} input
- * @param {object} [options]
- * @param {object} [options.request] object options to xhr request
- * @param {Function} [options.request.method=null] a request function to use instead of the default
- * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
- * @param {string[]} [options.request.headers=[]] send the xhr request headers
- * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
- * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
- * @param {Function} [options.canonical] optional function to determine canonical urls for a path
- * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
- * @returns {Book}
- * @example new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
  */
 class Book {
-
+	/**
+	 * Constructor
+	 * @param {string|ArrayBuffer} [input] Url, Path or ArrayBuffer
+	 * @param {object} [options]
+	 * @param {object} [options.request] object options to xhr request
+	 * @param {Function} [options.request.method] a request function to use instead of the default
+	 * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
+	 * @param {string[]} [options.request.headers=[]] send the xhr request headers
+	 * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
+	 * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
+	 * @param {Function} [options.canonical] optional function to determine canonical urls for a path
+	 * @param {string} [options.store=null] cache the contents in local storage, value should be the name of the reader
+	 * @example new Book()
+	 * @example new Book("/path/to/book/" { store: "epub-js" })
+	 * @example new Book({ replacements: "base64", store: "epub-js" })
+	 */
 	constructor(input, options) {
 
 		if (typeof (options) === "undefined" &&
@@ -54,17 +56,17 @@ class Book {
 			options = input;
 			input = undefined;
 		}
-		
+
 		this.settings = extend({
+			canonical: undefined,
+			encoding: undefined,
+			replacements: null,
 			request: {
-				method: null,
+				method: undefined,
 				withCredentials: false,
 				headers: []
 			},
-			encoding: undefined,
-			replacements: null,
-			canonical: undefined,
-			store: undefined
+			store: null
 		}, options || {});
 		/**
 		 * @member {Function} request
@@ -311,7 +313,7 @@ class Book {
 	 * @private
 	 */
 	async openContainer(url) {
-		
+
 		return this.load(url).then((xml) => {
 			return this.container.parse(xml);
 		}).then((container) => {
@@ -608,7 +610,7 @@ class Book {
 	 * @private
 	 */
 	store(input) {
-		
+
 		if (typeof input === "string") {
 			//-- replace request method to go through store
 			this.request = this.storage.dispatch.bind(this.storage);
