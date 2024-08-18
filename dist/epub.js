@@ -6808,7 +6808,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ 4576:
+/***/ 2195:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -6832,7 +6832,7 @@ module.exports = function (it) {
 
 var TO_STRING_TAG_SUPPORT = __webpack_require__(2140);
 var isCallable = __webpack_require__(4901);
-var classofRaw = __webpack_require__(4576);
+var classofRaw = __webpack_require__(2195);
 var wellKnownSymbol = __webpack_require__(8227);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
@@ -6965,16 +6965,16 @@ module.exports = function (O, key, value, options) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 module.exports = function (key, value) {
   try {
-    defineProperty(global, key, { value: value, configurable: true, writable: true });
+    defineProperty(globalThis, key, { value: value, configurable: true, writable: true });
   } catch (error) {
-    global[key] = value;
+    globalThis[key] = value;
   } return value;
 };
 
@@ -7002,10 +7002,10 @@ module.exports = !fails(function () {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isObject = __webpack_require__(34);
 
-var document = global.document;
+var document = globalThis.document;
 // typeof document.createElement is 'object' in old IE
 var EXISTS = isObject(document) && isObject(document.createElement);
 
@@ -7052,26 +7052,50 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9392:
+/***/ 8727:
 /***/ ((module) => {
 
 "use strict";
 
-module.exports = typeof navigator != 'undefined' && String(navigator.userAgent) || '';
+// IE8- don't enum bug keys
+module.exports = [
+  'constructor',
+  'hasOwnProperty',
+  'isPrototypeOf',
+  'propertyIsEnumerable',
+  'toLocaleString',
+  'toString',
+  'valueOf'
+];
 
 
 /***/ }),
 
-/***/ 7388:
+/***/ 2839:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
 
-var global = __webpack_require__(4475);
-var userAgent = __webpack_require__(9392);
+var globalThis = __webpack_require__(4576);
 
-var process = global.process;
-var Deno = global.Deno;
+var navigator = globalThis.navigator;
+var userAgent = navigator && navigator.userAgent;
+
+module.exports = userAgent ? String(userAgent) : '';
+
+
+/***/ }),
+
+/***/ 9519:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var userAgent = __webpack_require__(2839);
+
+var process = globalThis.process;
+var Deno = globalThis.Deno;
 var versions = process && process.versions || Deno && Deno.version;
 var v8 = versions && versions.v8;
 var match, version;
@@ -7094,25 +7118,6 @@ if (!version && userAgent) {
 }
 
 module.exports = version;
-
-
-/***/ }),
-
-/***/ 8727:
-/***/ ((module) => {
-
-"use strict";
-
-// IE8- don't enum bug keys
-module.exports = [
-  'constructor',
-  'hasOwnProperty',
-  'isPrototypeOf',
-  'propertyIsEnumerable',
-  'toLocaleString',
-  'toString',
-  'valueOf'
-];
 
 
 /***/ }),
@@ -7146,7 +7151,7 @@ module.exports = function (stack, dropEntries) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var getOwnPropertyDescriptor = (__webpack_require__(7347).f);
 var createNonEnumerableProperty = __webpack_require__(6699);
 var defineBuiltIn = __webpack_require__(6840);
@@ -7175,11 +7180,11 @@ module.exports = function (options, source) {
   var STATIC = options.stat;
   var FORCED, target, key, targetProperty, sourceProperty, descriptor;
   if (GLOBAL) {
-    target = global;
+    target = globalThis;
   } else if (STATIC) {
-    target = global[TARGET] || defineGlobalProperty(TARGET, {});
+    target = globalThis[TARGET] || defineGlobalProperty(TARGET, {});
   } else {
-    target = global[TARGET] && global[TARGET].prototype;
+    target = globalThis[TARGET] && globalThis[TARGET].prototype;
   }
   if (target) for (key in source) {
     sourceProperty = source[key];
@@ -7322,7 +7327,7 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isCallable = __webpack_require__(4901);
 
 var aFunction = function (argument) {
@@ -7330,7 +7335,7 @@ var aFunction = function (argument) {
 };
 
 module.exports = function (namespace, method) {
-  return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
+  return arguments.length < 2 ? aFunction(globalThis[namespace]) : globalThis[namespace] && globalThis[namespace][method];
 };
 
 
@@ -7354,7 +7359,7 @@ module.exports = function (V, P) {
 
 /***/ }),
 
-/***/ 4475:
+/***/ 4576:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -7435,7 +7440,7 @@ module.exports = !DESCRIPTORS && !fails(function () {
 
 var uncurryThis = __webpack_require__(9504);
 var fails = __webpack_require__(9039);
-var classof = __webpack_require__(4576);
+var classof = __webpack_require__(2195);
 
 var $Object = Object;
 var split = uncurryThis(''.split);
@@ -7508,7 +7513,7 @@ module.exports = store.inspectSource;
 "use strict";
 
 var NATIVE_WEAK_MAP = __webpack_require__(8622);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isObject = __webpack_require__(34);
 var createNonEnumerableProperty = __webpack_require__(6699);
 var hasOwn = __webpack_require__(9297);
@@ -7517,8 +7522,8 @@ var sharedKey = __webpack_require__(6119);
 var hiddenKeys = __webpack_require__(421);
 
 var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-var TypeError = global.TypeError;
-var WeakMap = global.WeakMap;
+var TypeError = globalThis.TypeError;
+var WeakMap = globalThis.WeakMap;
 var set, get, has;
 
 var enforce = function (it) {
@@ -8121,17 +8126,17 @@ module.exports = function (key) {
 "use strict";
 
 var IS_PURE = __webpack_require__(6395);
-var globalThis = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var defineGlobalProperty = __webpack_require__(9433);
 
 var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.37.1',
+  version: '3.38.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.37.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.38.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -8158,11 +8163,11 @@ module.exports = function (key, value) {
 "use strict";
 
 /* eslint-disable es/no-symbol -- required for testing */
-var V8_VERSION = __webpack_require__(7388);
+var V8_VERSION = __webpack_require__(9519);
 var fails = __webpack_require__(9039);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 
-var $String = global.String;
+var $String = globalThis.String;
 
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
@@ -8434,10 +8439,10 @@ module.exports = DESCRIPTORS && fails(function () {
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var isCallable = __webpack_require__(4901);
 
-var WeakMap = global.WeakMap;
+var WeakMap = globalThis.WeakMap;
 
 module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
@@ -8449,14 +8454,14 @@ module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
 "use strict";
 
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var shared = __webpack_require__(5745);
 var hasOwn = __webpack_require__(9297);
 var uid = __webpack_require__(3392);
 var NATIVE_SYMBOL = __webpack_require__(4495);
 var USE_SYMBOL_AS_UID = __webpack_require__(7040);
 
-var Symbol = global.Symbol;
+var Symbol = globalThis.Symbol;
 var WellKnownSymbolsStore = shared('wks');
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol['for'] || Symbol : Symbol && Symbol.withoutSetter || uid;
 
@@ -8477,7 +8482,7 @@ module.exports = function (name) {
 "use strict";
 
 var $ = __webpack_require__(6518);
-var global = __webpack_require__(4475);
+var globalThis = __webpack_require__(4576);
 var getBuiltIn = __webpack_require__(7751);
 var createPropertyDescriptor = __webpack_require__(6980);
 var defineProperty = (__webpack_require__(4913).f);
@@ -8513,7 +8518,7 @@ var ERROR_HAS_STACK = 'stack' in new Error(DOM_EXCEPTION);
 var DOM_EXCEPTION_HAS_STACK = 'stack' in new NativeDOMException(1, 2);
 
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-var descriptor = NativeDOMException && DESCRIPTORS && Object.getOwnPropertyDescriptor(global, DOM_EXCEPTION);
+var descriptor = NativeDOMException && DESCRIPTORS && Object.getOwnPropertyDescriptor(globalThis, DOM_EXCEPTION);
 
 // Bun ~ 0.1.1 DOMException have incorrect descriptor and we can't redefine it
 // https://github.com/Jarred-Sumner/bun/issues/399
@@ -11502,9 +11507,8 @@ event_emitter_default()(Locations.prototype);
 class Container {
   /**
    * Constructor
-   * @param {Document} [containerDocument] xml document
    */
-  constructor(containerDocument) {
+  constructor() {
     /**
      * @member {string} directory Package directory
      * @memberof Container
@@ -11529,14 +11533,22 @@ class Container {
      * @readonly
      */
     this.mediaType = "";
-    if (containerDocument) {
-      this.parse(containerDocument);
-    }
+  }
+
+  /**
+   * Clear parts
+   */
+  clear() {
+    this.directory = "";
+    this.fullPath = "";
+    this.encoding = "";
+    this.mediaType = "";
   }
 
   /**
    * Parse the Container XML
    * @param {Document} containerDocument
+   * @returns {Promise<Container>}
    */
   parse(containerDocument) {
     if (!containerDocument) {
@@ -11554,6 +11566,9 @@ class Container {
     this.directory = utils_path.prototype.dirname(this.fullPath);
     this.encoding = containerDocument.characterSet;
     this.mediaType = rootfile.getAttribute("media-type");
+    return new Promise(resolve => {
+      resolve(this);
+    });
   }
 
   /**
@@ -11684,6 +11699,15 @@ class Manifest extends Map {
   }
 
   /**
+   * Clear manifest
+   */
+  clear() {
+    super.clear();
+    this.navPath = null;
+    this.coverPath = null;
+  }
+
+  /**
    * Parse the manifest node
    * @param {Node} node manifest
    * @returns {Promise<Manifest>}
@@ -11786,7 +11810,15 @@ class Spine extends Map {
      * @memberof Spine
      * @readonly
      */
-    this.nodeIndex = undefined;
+    this.nodeIndex = 0;
+  }
+
+  /**
+   * Clear spine items
+   */
+  clear() {
+    super.clear();
+    this.nodeIndex = 0;
   }
 
   /**
@@ -11896,11 +11928,23 @@ class Packaging {
   }
 
   /**
+   * Clear packaging parts
+   */
+  clear() {
+    this.metadata.clear();
+    this.manifest.clear();
+    this.spine.clear();
+    this.direction = null;
+    this.version = null;
+    this.uniqueIdentifier = null;
+  }
+
+  /**
    * Parse OPF XML
    * @param {Document} packageXml OPF XML
-   * @return {Promise<any>}
+   * @return {Promise<Packaging>}
    */
-  parse(packageXml) {
+  async parse(packageXml) {
     if (!packageXml) {
       throw new Error("Package File Not Found");
     }
@@ -11926,7 +11970,9 @@ class Packaging {
     if (typeof this.uniqueIdentifier === "undefined") {
       this.uniqueIdentifier = this.findUniqueIdentifier(packageXml);
     }
-    return Promise.all(tasks);
+    return Promise.all(tasks).then(() => {
+      return this;
+    });
   }
 
   /**
@@ -11981,9 +12027,9 @@ class Packaging {
   /**
    * Load package from JSON
    * @param {object} data Serialized JSON object data
-   * @return {Promise<any>}
+   * @return {Promise<Packaging>}
    */
-  load(data) {
+  async load(data) {
     const tasks = [];
     tasks.push(this.metadata.load(data.metadata));
     tasks.push(this.manifest.load(data.manifest));
@@ -11991,7 +12037,9 @@ class Packaging {
     this.direction = data.direction;
     this.version = data.version;
     this.uniqueIdentifier = this.metadata.get("identifier");
-    return Promise.all(tasks);
+    return Promise.all(tasks).then(() => {
+      return this;
+    });
   }
 
   /**
@@ -12686,6 +12734,10 @@ const replaceBase = (doc, section) => {
   const absolute = url.indexOf("://") > -1;
   if (!absolute) {
     url = doc.documentURI;
+    const uri = new URL(url);
+    if (uri.searchParams.size) {
+      url = [...uri.searchParams.values()][0];
+    }
   }
   base.setAttribute("href", url);
 };
@@ -12977,76 +13029,96 @@ const lookup = filename => {
 
 
 
+const resources_URL = window.URL || window.webkitURL || window.mozURL;
 
 /**
- * Handle Package Resources
+ * Assets container for URL replacements
+ * @extends {Map}
  */
-class Resources {
+class Resources extends Map {
   /**
    * Constructor
-   * @param {Manifest} manifest
-   * @param {object} options
-   * @param {Archive} [options.archive]
-   * @param {Function} options.request
-   * @param {Function} options.resolve
-   * @param {string} [options.replacements]
+   * @param {Function} request
+   * @param {Function} resolve
+   * @param {string} [replacements=null]
    */
-  constructor(manifest, {
-    archive,
-    request,
-    resolve,
-    replacements
-  }) {
-    this.settings = {
-      replacements: replacements
-    };
-    this.archive = archive;
+  constructor(request, resolve, replacements) {
+    super();
+    this.archive = undefined;
+    this.storage = undefined;
     this.request = request;
     this.resolve = resolve;
-    this.process(manifest);
+    this.replacements = replacements || null;
   }
 
   /**
-   * Process resources
-   * @param {Manifest} manifest
+   * Clear replacement URLs
+   * @override
    */
-  process(manifest) {
-    this.css = [];
-    this.html = [];
-    this.assets = [];
-    this.urls = [];
-    this.replacementUrls = [];
-    manifest.forEach((item, key) => {
-      if (item.type === "application/xhtml+xml" || item.type === "text/html") {
-        this.html.push(item);
+  clear() {
+    if (this.replacements === "blobUrl") {
+      this.forEach((value, key) => {
+        resources_URL.revokeObjectURL(value);
+      });
+    }
+    super.clear();
+  }
+
+  /**
+   * Create a new CSS file with the replaced URLs
+   * @param {string} href the original css file
+   * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
+   */
+  async createCss(href) {
+    let path = new utils_path(href);
+    if (path.isAbsolute(path.toString())) {
+      return new Promise(resolve => {
+        resolve(href);
+      });
+    }
+    const uri = this.resolve(href); // absolute path
+
+    let response;
+    if (this.archive) {
+      response = this.archive.getText(uri);
+    } else {
+      response = this.request(uri, "text");
+    }
+    if (!response) {
+      // file not found, don't replace
+      return new Promise(resolve => {
+        resolve(href);
+      });
+    }
+    return response.then(text => {
+      let url;
+      if (this.replacements === "base64") {
+        url = createBase64Url(text, "text/css");
       } else {
-        if (item.type === "text/css") {
-          this.css.push(item);
-        }
-        this.assets.push(item);
-        this.urls.push(item.href);
+        url = createBlobUrl(text, "text/css");
       }
+      return url;
     });
   }
 
   /**
    * Create a url to a resource
-   * @param {string} uri
+   * @param {string} href
    * @return {Promise<string>} Promise resolves with url string
    */
-  async createUrl(uri) {
+  async createUrl(href) {
+    const uri = this.resolve(href); // absolute path
     const url = new utils_url(uri);
     const mimeType = mime.lookup(url.filename);
-    const base64 = this.settings.replacements === "base64";
+    const base64 = this.replacements === "base64";
+    const type = base64 ? "base64" : "blob";
     if (this.archive) {
-      return this.archive.createUrl(uri, {
-        base64: base64
+      return this.archive.request(uri, type).then(data => {
+        return base64 ? data : resources_URL.createObjectURL(data);
       });
     } else if (base64) {
       return this.request(uri, "blob").then(blob => {
         return blob2base64(blob);
-      }).then(blob => {
-        return createBase64Url(blob, mimeType);
       });
     } else {
       return this.request(uri, "blob").then(blob => {
@@ -13056,139 +13128,35 @@ class Resources {
   }
 
   /**
-   * Create blob urls for all the assets
-   * @return {Promise<string[]>} returns replacement urls
+   * Revoke URL for a resource item
+   * @param {string} url 
    */
-  async replacements() {
-    if (this.settings.replacements === null) {
-      return new Promise(resolve => {
-        resolve(this.urls);
-      });
-    }
-    return Promise.all(this.replaceUrls()).then(urls => {
-      this.replacementUrls = urls.filter(url => {
-        return typeof url === "string";
-      });
-      return urls;
-    });
-  }
-
-  /**
-   * Replace URLs
-   * @param {string} absoluteUri 
-   * @returns {Array<Promise<string[]>>} replacements
-   * @private
-   */
-  replaceUrls() {
-    return this.urls.map(async url => {
-      const absolute = this.resolve(url);
-      return this.createUrl(absolute).catch(err => {
-        console.error(err);
-        return null;
-      });
-    });
-  }
-
-  /**
-   * Replace URLs in CSS resources
-   * @return {Promise<string[]>}
-   */
-  replaceCss() {
-    const replaced = [];
-    this.css.forEach(item => {
-      const replacement = this.createCssFile(item.href).then(url => {
-        // switch the url in the replacementUrls
-        const index = this.urls.indexOf(item.href);
-        if (index > -1) {
-          this.replacementUrls[index] = url;
-        }
-      });
-      replaced.push(replacement);
-    });
-    return Promise.all(replaced);
-  }
-
-  /**
-   * Create a new CSS file with the replaced URLs
-   * @param {string} href the original css file
-   * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
-   * @private
-   */
-  createCssFile(href) {
-    let path = new utils_path(href);
-    if (path.isAbsolute(path.toString())) {
-      return new Promise(resolve => {
-        resolve();
-      });
-    }
-    const absoluteUri = this.resolve(href);
-
-    // Get the text of the css file from the archive
-    let textResponse;
-    if (this.archive) {
-      textResponse = this.archive.getText(absoluteUri);
-    } else {
-      textResponse = this.request(absoluteUri, "text");
-    }
-    if (!textResponse) {
-      // file not found, don't replace
-      return new Promise(resolve => {
-        resolve();
-      });
-    }
-
-    // Get asset links relative to css file
-    const urls = this.relativeTo(absoluteUri);
-    return textResponse.then(text => {
-      // Replacements in the css text
-      text = substitute(text, urls, this.replacementUrls);
-      let newUrl;
-      if (this.settings.replacements === "base64") {
-        newUrl = createBase64Url(text, "text/css");
-      } else {
-        newUrl = createBlobUrl(text, "text/css");
+  revokeUrl(url) {
+    if (this.replacements === "blobUrl") {
+      const blobUrl = this.get(url);
+      if (blobUrl) {
+        resources_URL.revokeObjectURL(blobUrl);
       }
-      return newUrl;
-    }, err => {
-      console.error(err);
-      // handle response errors
-      return new Promise(resolve => {
-        resolve();
-      });
-    });
+    }
   }
 
   /**
-   * Resolve all resources URLs relative to an absolute URL
-   * @param {string} absoluteUri to be resolved to
-   * @return {string[]} array with relative Urls
+   * Replace url to blobUrl or base64
+   * @param {object} item manifest item
+   * @returns {Promise<string>}
+   * @private
    */
-  relativeTo(absoluteUri) {
-    // Get Urls relative to current sections
-    return this.urls.map(href => {
-      const resolved = this.resolve(href);
-      const path = new utils_path(absoluteUri);
-      return path.relative(path.directory, resolved);
-    });
-  }
-
-  /**
-   * Get a URL for a resource
-   * @param {string} path
-   * @return {Promise<string>}
-   */
-  get(path) {
-    const index = this.urls.indexOf(path);
-    if (index === -1) {
-      return new Promise((resolve, reject) => {
-        resolve(null);
-      });
-    } else if (this.replacementUrls.length) {
-      return new Promise((resolve, reject) => {
-        resolve(this.replacementUrls[index]);
+  async replace(item) {
+    if (item.type === "text/css") {
+      return this.createCss(item.href).then(url => {
+        this.set(item.href, url);
+        return url;
       });
     } else {
-      return this.createUrl(path);
+      return this.createUrl(item.href).then(url => {
+        this.set(item.href, url);
+        return url;
+      });
     }
   }
 
@@ -13196,29 +13164,52 @@ class Resources {
    * Substitute urls in content, with replacements,
    * relative to a url if provided
    * @param {string} content
-   * @param {string} [url] url to resolve to
-   * @return {string} content with urls substituted
+   * @param {Section} section
    */
-  substitute(content, url) {
-    let relUrls;
-    if (url && this.settings.replacements === null) {
-      relUrls = this.relativeTo(url);
-    } else {
-      relUrls = this.urls;
+  substitute(content, section) {
+    section.output = substitute(content, [...this.keys()], [...this.values()]);
+  }
+
+  /**
+   * Unpack resources from manifest
+   * @param {Manifest} manifest
+   * @param {Archive} archive
+   * @param {Storage} storage
+   * @returns {Promise<Resources>}
+   */
+  async unpack(manifest, archive, storage) {
+    this.archive = archive;
+    this.storage = storage;
+    if (this.replacements === null) {
+      this.replacements = archive || storage.name ? "blobUrl" : null;
     }
-    return substitute(content, relUrls, this.replacementUrls);
+    const tasks = [];
+    manifest.forEach((item, key) => {
+      if (item.type === "application/xhtml+xml" || item.type === "text/html") {
+        if (storage.name && !archive) {
+          storage.put(this.resolve(item.href));
+        }
+      } else if (this.replacements) {
+        tasks.push(this.replace(item));
+      } else {
+        this.set(item.href, null);
+      }
+    });
+    return Promise.all(tasks).then(() => {
+      return this;
+    });
   }
 
   /**
    * destroy
    */
   destroy() {
-    this.settings = undefined;
-    this.replacementUrls = undefined;
-    this.html = undefined;
-    this.assets = undefined;
-    this.css = undefined;
-    this.urls = undefined;
+    this.clear();
+    this.archive = undefined;
+    this.storage = undefined;
+    this.request = undefined;
+    this.resolve = undefined;
+    this.replacements = undefined;
   }
 }
 /* harmony default export */ const resources = (Resources);
@@ -19860,26 +19851,23 @@ class Rendition {
    * Remove and Clean Up the Rendition
    */
   destroy() {
-    // Clear the queue
-    // this.q.clear();
-    // this.q = undefined;
-
+    this.q.clear();
+    this.q = undefined;
     this.manager && this.manager.destroy();
     this.book = undefined;
-
-    // this.views = null;
-    // this.hooks.display.clear();
-    // this.hooks.serialize.clear();
-    // this.hooks.content.clear();
-    // this.hooks.layout.clear();
-    // this.hooks.render.clear();
-    // this.hooks.show.clear();
-    // this.hooks = {};
-    // this.themes.destroy();
-    // this.themes = undefined;
-    // this.epubcfi = undefined;
-    // this.starting = undefined;
-    // this.started = undefined;
+    this.views = null;
+    this.hooks.display.clear();
+    this.hooks.content.clear();
+    this.hooks.layout.clear();
+    this.hooks.render.clear();
+    this.hooks.show.clear();
+    this.hooks.unloaded.clear();
+    this.hooks = undefined;
+    this.themes.destroy();
+    this.themes = undefined;
+    this.epubcfi = undefined;
+    this.starting = undefined;
+    this.started = undefined;
   }
 
   /**
@@ -20177,106 +20165,63 @@ const request = (url, type, withCredentials = false, headers = []) => {
   return def.promise;
 };
 /* harmony default export */ const utils_request = (request);
-// EXTERNAL MODULE: external "JSZip"
-var external_JSZip_ = __webpack_require__(6838);
-var external_JSZip_default = /*#__PURE__*/__webpack_require__.n(external_JSZip_);
-;// CONCATENATED MODULE: ./src/archive.js
-
-
-
+;// CONCATENATED MODULE: ./src/input.js
 
 
 
 
 /**
- * Handles Unzipping a requesting files from an Epub Archive
+ * Base class for Archive and Storage
  */
-class Archive {
+class Input {
+  /**
+   * Constructor
+   */
   constructor() {
-    this.zip = undefined;
-    this.urlCache = {};
-    this.checkRequirements();
+    /**
+     * @member {object} instance
+     * @memberof Input
+     * @readonly
+     */
+    this.instance = null;
   }
 
   /**
-   * Checks to see if JSZip exists in global namspace,
-   * Requires JSZip if it isn't there
-   * @private
-   */
-  checkRequirements() {
-    if ((external_JSZip_default())) {
-      this.zip = new (external_JSZip_default())();
-    } else {
-      throw new Error("JSZip lib not loaded");
-    }
-  }
-
-  /**
-   * Open an archive
-   * @param {binary} input
-   * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-   * @return {Promise<any>} zipfile
-   */
-  open(input, isBase64) {
-    return this.zip.loadAsync(input, {
-      base64: isBase64
-    });
-  }
-
-  /**
-   * Load and Open an archive
-   * @param {string} zipUrl
-   * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
-   * @return {Promise<any>} zipfile
-   */
-  async openUrl(zipUrl, isBase64) {
-    return utils_request(zipUrl, "binary").then(data => {
-      return this.zip.loadAsync(data, {
-        base64: isBase64
-      });
-    });
-  }
-
-  /**
-   * Request a url from the archive
-   * @param {string} url  a url to request from the archive
+   * Request a URL from entries
+   * @param {string} url a URL to request
    * @param {string} [type] specify the type of the returned result
-   * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
+   * @returns {Promise<Blob|string|JSON|Document|XMLDocument>}
    */
-  request(url, type) {
-    const deferred = new defer();
-    const path = new utils_path(url);
-
-    // If type isn't set, determine it from the file extension
-    if (!type) {
-      type = path.extension;
-    }
+  async request(url, type) {
+    type = type || new utils_path(url).extension;
     let response;
-    if (type == "blob") {
+    if (type === "blob" || type === "binary") {
       response = this.getBlob(url);
+    } else if (type === "base64") {
+      response = this.getBase64(url);
     } else {
       response = this.getText(url);
     }
-    if (response) {
-      response.then(r => {
+    return response.then(r => {
+      const deferred = new defer();
+      if (r) {
         const result = this.handleResponse(r, type);
         deferred.resolve(result);
-      });
-    } else {
-      deferred.reject({
-        message: "File not found in the epub: " + url,
-        stack: new Error().stack
-      });
-    }
-    return deferred.promise;
+      } else {
+        deferred.reject({
+          message: "File not found in: " + url,
+          stack: new Error().stack
+        });
+      }
+      return deferred.promise;
+    });
   }
 
   /**
    * Handle the response from request
    * @param {any} response
    * @param {string} [type]
-   * @return {any} the parsed result
-   * @private
+   * @returns {any} the parsed result
    */
   handleResponse(response, type) {
     let r;
@@ -20295,116 +20240,172 @@ class Archive {
   }
 
   /**
-   * Get a Blob from Archive by Url
+   * Get a Blob from entries by URL
    * @param {string} url
    * @param {string} [mimeType]
-   * @return {Blob}
+   * @returns {Promise<Blob|null>}
+   * @abstract
    */
-  getBlob(url, mimeType) {
-    const encodedUri = url.substring(1); // Remove first slash
-    const decodededUri = window.decodeURIComponent(encodedUri);
-    const entry = this.zip.file(decodededUri);
-    if (entry) {
-      mimeType = mimeType || mime.lookup(entry.name);
-      return entry.async("uint8array").then(uint8array => {
-        return new Blob([uint8array], {
-          type: mimeType
-        });
-      });
-    }
-  }
+  async getBlob(url, mimeType) {}
 
   /**
-   * Get Text from Archive by Url
-   * @param {string} url
-   * @return {string}
-   */
-  getText(url) {
-    const encodedUri = url.substring(1); // Remove first slash
-    const decodededUri = window.decodeURIComponent(encodedUri);
-    const entry = this.zip.file(decodededUri);
-    if (entry) {
-      return entry.async("string").then(text => {
-        return text;
-      });
-    }
-  }
-
-  /**
-   * Get a base64 encoded result from Archive by Url
+   * Get a Text from entries by URL
    * @param {string} url
    * @param {string} [mimeType]
-   * @return {string} base64 encoded
+   * @returns {Promise<string|null>}
+   * @abstract
    */
-  getBase64(url, mimeType) {
-    const encodedUri = url.substring(1); // Remove first slash
-    const decodededUri = window.decodeURIComponent(encodedUri);
-    const entry = this.zip.file(decodededUri);
-    if (entry) {
-      mimeType = mimeType || mime.lookup(entry.name);
-      return entry.async("base64").then(data => {
-        return "data:" + mimeType + ";base64," + data;
-      });
-    }
-  }
+  async getText(url, mimeType) {}
 
   /**
-   * Create a Url from an unarchived item
+   * Get a base64 encoded result from entries by URL
    * @param {string} url
-   * @param {object} [options] 
-   * @param {object} [options.base64] use base64 encoding or blob url
-   * @return {Promise<string>} url promise with Url string
+   * @param {string} [mimeType]
+   * @returns {Promise<string|null>} base64 encoded
+   * @abstract
    */
-  createUrl(url, options) {
-    const deferred = new defer();
-    const _URL = window.URL || window.webkitURL || window.mozURL;
-    const base64 = options && options.base64;
-    if (url in this.urlCache) {
-      deferred.resolve(this.urlCache[url]);
-      return deferred.promise;
-    }
-    let response;
-    if (base64 && (response = this.getBase64(url))) {
-      response.then(tempUrl => {
-        this.urlCache[url] = tempUrl;
-        deferred.resolve(tempUrl);
-      });
-    } else if (response = this.getBlob(url)) {
-      response.then(blob => {
-        const tempUrl = _URL.createObjectURL(blob);
-        this.urlCache[url] = tempUrl;
-        deferred.resolve(tempUrl);
-      });
-    }
-    if (typeof response === "undefined") {
-      deferred.reject({
-        message: "File not found in the epub: " + url,
-        stack: new Error().stack
-      });
-    }
-    return deferred.promise;
-  }
-
-  /**
-   * Revoke Temp Url for a archive item
-   * @param {string} url url of the item in the archive
-   */
-  revokeUrl(url) {
-    const _URL = window.URL || window.webkitURL || window.mozURL;
-    const fromCache = this.urlCache[url];
-    if (fromCache) _URL.revokeObjectURL(fromCache);
-  }
+  async getBase64(url, mimeType) {}
 
   /**
    * destroy
    */
   destroy() {
-    const _URL = window.URL || window.webkitURL || window.mozURL;
-    for (const fromCache in this.urlCache) {
-      _URL.revokeObjectURL(fromCache);
+    this.instance = undefined;
+  }
+}
+/* harmony default export */ const input = (Input);
+// EXTERNAL MODULE: external "JSZip"
+var external_JSZip_ = __webpack_require__(6838);
+var external_JSZip_default = /*#__PURE__*/__webpack_require__.n(external_JSZip_);
+;// CONCATENATED MODULE: ./src/archive.js
+
+
+
+
+
+/**
+ * Handles Unzipping a requesting files from an Epub Archive
+ * @extends {Input}
+ */
+class Archive extends input {
+  constructor() {
+    super();
+    this.createInstance();
+  }
+
+  /**
+   * Create JSZip instance
+   */
+  createInstance() {
+    if ((external_JSZip_default())) {
+      this.instance = new (external_JSZip_default())();
+    } else {
+      throw new Error("JSZip lib not loaded");
     }
-    this.zip = undefined;
-    this.urlCache = {};
+  }
+
+  /**
+   * Open an archive
+   * @param {string|ArrayBuffer} input
+   * @param {string} [encoding] tells JSZip if the input data is base64 encoded
+   * @returns {Promise<any>} zipfile
+   */
+  open(input, encoding) {
+    if (encoding === "base64") {
+      const data = input.split(",");
+      input = data.length === 2 ? data[1] : input;
+    }
+    return this.instance.loadAsync(input, {
+      base64: encoding === "base64"
+    });
+  }
+
+  /**
+   * Load and Open an archive
+   * @param {string} zipUrl
+   * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
+   * @returns {Promise<any>} zipfile
+   */
+  async openUrl(zipUrl, isBase64) {
+    return utils_request(zipUrl, "binary").then(data => {
+      return this.instance.loadAsync(data, {
+        base64: isBase64
+      });
+    });
+  }
+
+  /**
+   * Get entry from Archive
+   * @param {string} url 
+   * @returns {object} entry
+   * @private
+   */
+  get(url) {
+    const name = window.decodeURIComponent(url.substring(1));
+    return this.instance.file(name);
+  }
+
+  /**
+   * Get a Blob from Archive by URL
+   * @param {string} url
+   * @param {string} [mimeType]
+   * @returns {Promise<Blob|null>}
+   * @override
+   */
+  async getBlob(url, mimeType) {
+    const entry = this.get(url);
+    if (entry) {
+      const type = mimeType || mime.lookup(entry.name);
+      return entry.async("uint8array").then(data => {
+        return new Blob([data], {
+          type
+        });
+      });
+    } else {
+      return new Promise(resolve => {
+        resolve(null);
+      });
+    }
+  }
+
+  /**
+   * Get Text from Archive by URL
+   * @param {string} url
+   * @returns {Promise<string|null>}
+   * @override
+   */
+  async getText(url) {
+    const entry = this.get(url);
+    if (entry) {
+      return entry.async("string").then(text => {
+        return text;
+      });
+    } else {
+      return new Promise(resolve => {
+        resolve(null);
+      });
+    }
+  }
+
+  /**
+   * Get a base64 encoded result from Archive by URL
+   * @param {string} url
+   * @param {string} [mimeType]
+   * @returns {Promise<string|null>} base64 encoded
+   * @override
+   */
+  async getBase64(url, mimeType) {
+    const entry = this.get(url);
+    if (entry) {
+      const type = mimeType || mime.lookup(entry.name);
+      return entry.async("base64").then(data => {
+        return "data:" + type + ";base64," + data;
+      });
+    } else {
+      return new Promise(resolve => {
+        resolve(null);
+      });
+    }
   }
 }
 /* harmony default export */ const archive = (Archive);
@@ -20418,60 +20419,48 @@ var external_localforage_default = /*#__PURE__*/__webpack_require__.n(external_l
 
 
 
-const storage_URL = window.URL || window.webkitURL || window.mozURL;
 
 /**
  * Handles saving and requesting files from local storage
+ * @extends {Input}
  */
-class Storage {
+class Storage extends input {
   /**
    * Constructor
    * @param {string} name This should be the name of the application for modals
-   * @param {Function} request
-   * @param {Function} resolve
    */
-  constructor(name, request, resolve) {
+  constructor(name) {
+    super();
+    /**
+     * @member {string} name
+     * @memberof Storage
+     * @readonly
+     */
     this.name = name;
-    this.request = request;
-    this.resolve = resolve;
-    /**
-     * @member {LocalForage} instance
-     * @memberof Storage
-     * @readonly
-     */
-    this.instance = undefined;
-    /**
-     * @member {object} urlCache
-     * @memberof Storage
-     * @readonly
-     */
-    this.urlCache = {};
     /**
      * @member {boolean} online Current status
      * @memberof Storage
      * @readonly
      */
-    this.online = true;
-    this.checkRequirements();
-    this.appendListeners();
+    this.online = window.navigator.onLine;
   }
 
   /**
-   * Checks to see if LocalForage exists in global namspace
-   * @private
+   * Create LocalForage instance
    */
-  checkRequirements() {
+  createInstance() {
     if ((external_localforage_default())) {
       this.instance = external_localforage_default().createInstance({
         name: this.name
       });
+      this.appendListeners();
     } else {
       throw new TypeError("LocalForage lib not loaded");
     }
   }
 
   /**
-   * Append online and offline event listeners
+   * Append event listeners
    * @private
    */
   appendListeners() {
@@ -20480,7 +20469,7 @@ class Storage {
   }
 
   /**
-   * Remove online and offline event listeners
+   * Remove event listeners
    * @private
    */
   removeListeners() {
@@ -20503,53 +20492,43 @@ class Storage {
   }
 
   /**
-   * Add all of a book manifest to the storage
-   * @param {Manifest} manifest  book manifest
-   * @param {boolean} [force=false] force resaving manifest
-   * @return {Promise<object>} store objects
+   * Get entry from Storage
+   * @param {string|number} input key
+   * @returns {Promise<any>}
+   * @example storage.get(0).then(data => ...)
+   * @example storage.get('https://example.com/to/book.epub').then(data => ...)
    */
-  add(manifest, force = false) {
-    const items = manifest.values().toArray();
-    const mapped = items.map(async item => {
-      const {
-        href
-      } = item;
-      const url = this.resolve(href);
-      const encodedUrl = window.encodeURIComponent(url);
-      return await this.instance.getItem(encodedUrl).then(item => {
-        if (!item || force) {
-          return this.request(url, "binary").then(data => {
-            return this.instance.setItem(encodedUrl, data);
-          });
-        } else {
-          return item;
-        }
+  async get(input) {
+    const key = this.getKey(input);
+    return this.instance.getItem(key);
+  }
+
+  /**
+   * Set data into Storage
+   * @param {string|number} input
+   * @param {ArrayBuffer} data
+   * @return {Promise<ArrayBuffer|null>}
+   */
+  async set(input, data) {
+    const key = this.getKey(input);
+    return this.instance.setItem(key, data);
+  }
+
+  /**
+   * Put data into Storage
+   * @param {string} url 
+   * @returns {Promise<ArrayBuffer>}
+   */
+  async put(url) {
+    return this.get(url).then(data => {
+      return data || utils_request(url, "binary").then(result => {
+        return this.set(url, result);
       });
     });
-    return Promise.all(mapped);
   }
 
   /**
-   * Put binary data from a url to storage
-   * @param {string} url  a url to request from storage
-   * @param {boolean} [withCredentials]
-   * @param {string[]} [headers]
-   * @return {Promise<Blob>}
-   */
-  async put(url, withCredentials, headers) {
-    const encodedUrl = window.encodeURIComponent(url);
-    return await this.instance.getItem(encodedUrl).then(result => {
-      if (!result) {
-        return this.request(url, "binary", withCredentials, headers).then(data => {
-          return this.instance.setItem(encodedUrl, data);
-        });
-      }
-      return result;
-    });
-  }
-
-  /**
-   * Dispatch request by url
+   * Dispatch a request by URL
    * @param {string} url a url to request from storage
    * @param {string} [type] specify the type of the returned result
    * @param {boolean} [withCredentials]
@@ -20558,199 +20537,106 @@ class Storage {
    */
   async dispatch(url, type, withCredentials, headers) {
     if (this.online) {
-      // From network
-      return this.request(url, type, withCredentials, headers).then(async data => {
-        // save to store if not present
-        await this.put(url);
-        return data;
+      //-- From network
+      const tasks = [];
+      tasks.push(utils_request(url, type, withCredentials, headers));
+      tasks.push(this.put(url));
+      return Promise.all(tasks).then(result => {
+        return result[0] || null;
       });
     } else {
-      // From storage
-      return this.retrieve(url, type);
+      //-- From storage
+      return this.request(url, type);
     }
   }
 
   /**
-   * Request a url from storage
-   * @param {string} url a url to request from storage
-   * @param {string} [type] specify the type of the returned result
-   * @return {Promise<Blob|string|JSON|Document|XMLDocument>}
-   */
-  async retrieve(url, type) {
-    const path = new utils_path(url);
-
-    // If type isn't set, determine it from the file extension
-    if (!type) {
-      type = path.extension;
-    }
-    let response;
-    if (type === "blob") {
-      response = this.getBlob(url);
-    } else {
-      response = this.getText(url);
-    }
-    return response.then(r => {
-      const deferred = new defer();
-      if (r) {
-        const result = this.handleResponse(r, type);
-        deferred.resolve(result);
-      } else {
-        deferred.reject({
-          message: "File not found in storage: " + url,
-          stack: new Error().stack
-        });
-      }
-      return deferred.promise;
-    });
-  }
-
-  /**
-   * Handle the response from request
-   * @param {any} response
-   * @param {string} [type]
-   * @return {any} the parsed result
+   * Get entry key from input
+   * @param {string|number} input 
+   * @returns {string} key
    * @private
    */
-  handleResponse(response, type) {
-    let r;
-    if (isXml(type)) {
-      r = parse(response, "text/xml");
-    } else if (type === "xhtml") {
-      r = parse(response, "application/xhtml+xml");
-    } else if (type === "html" || type === "htm") {
-      r = parse(response, "text/html");
-    } else if (type === "json") {
-      r = JSON.parse(response);
+  getKey(input) {
+    let key;
+    if (typeof input === "string") {
+      key = input;
     } else {
-      r = response;
+      key = `book-${input}`;
     }
-    return r;
+    return key;
   }
 
   /**
-   * Get a Blob from Storage by Url
+   * Get a Blob from Storage by URL
    * @param {string} url
    * @param {string} [mimeType]
-   * @return {Blob}
+   * @returns {Promise<Blob|null>}
+   * @override
    */
-  getBlob(url, mimeType) {
-    const encodedUrl = window.encodeURIComponent(url);
-    mimeType = mimeType || mime.lookup(url);
-    return this.instance.getItem(encodedUrl).then(uint8array => {
-      if (!uint8array) return;
-      return new Blob([uint8array], {
-        type: mimeType
+  async getBlob(url, mimeType) {
+    return this.get(url).then(data => {
+      if (!data) return null;
+      const type = mimeType || mime.lookup(url);
+      return new Blob([data], {
+        type
       });
     });
   }
 
   /**
-   * Get Text from Storage by Url
+   * Get a Text from Storage by URL
    * @param {string} url
    * @param {string} [mimeType]
-   * @return {string}
+   * @returns {Promise<string|null>}
+   * @override
    */
-  getText(url, mimeType) {
-    const encodedUrl = window.encodeURIComponent(url);
-    mimeType = mimeType || mime.lookup(url);
-    return this.instance.getItem(encodedUrl).then(function (uint8array) {
-      if (!uint8array) return;
-      const deferred = new defer();
+  async getText(url, mimeType) {
+    return this.get(url).then(data => {
+      if (!data) return null;
+      const def = new defer();
       const reader = new FileReader();
-      const blob = new Blob([uint8array], {
-        type: mimeType
+      const type = mimeType || mime.lookup(url);
+      const blob = new Blob([data], {
+        type
       });
       reader.onloadend = () => {
-        deferred.resolve(reader.result);
+        def.resolve(reader.result);
       };
-      reader.readAsText(blob, mimeType);
-      return deferred.promise;
+      reader.readAsText(blob, type);
+      return def.promise;
     });
   }
 
   /**
-   * Get a base64 encoded result from Storage by Url
+   * Get a base64 encoded result from Storage by URL
    * @param {string} url
    * @param {string} [mimeType]
-   * @return {string} base64 encoded
+   * @returns {Promise<string|null>} base64 encoded
+   * @override
    */
-  getBase64(url, mimeType) {
-    let encodedUrl = window.encodeURIComponent(url);
-    mimeType = mimeType || mime.lookup(url);
-    return this.instance.getItem(encodedUrl).then(uint8array => {
-      if (!uint8array) return;
-      const deferred = new defer();
+  async getBase64(url, mimeType) {
+    return this.get(url).then(data => {
+      if (!data) return null;
+      const def = new defer();
       const reader = new FileReader();
-      const blob = new Blob([uint8array], {
-        type: mimeType
+      const type = mimeType || mime.lookup(url);
+      const blob = new Blob([data], {
+        type
       });
       reader.onloadend = () => {
-        deferred.resolve(reader.result);
+        def.resolve(reader.result);
       };
-      reader.readAsDataURL(blob, mimeType);
-      return deferred.promise;
+      reader.readAsDataURL(blob, type);
+      return def.promise;
     });
-  }
-
-  /**
-   * Create a Url from a stored item
-   * @param {string} url
-   * @param {object} [options.base64] use base64 encoding or blob url
-   * @return {Promise} url promise with Url string
-   */
-  createUrl(url, options) {
-    const deferred = new defer();
-    if (url in this.urlCache) {
-      deferred.resolve(this.urlCache[url]);
-      return deferred.promise;
-    }
-    let response;
-    if (options && options.base64) {
-      response = this.getBase64(url);
-      if (response) {
-        response.then(tempUrl => {
-          this.urlCache[url] = tempUrl;
-          deferred.resolve(tempUrl);
-        });
-      }
-    } else {
-      response = this.getBlob(url);
-      if (response) {
-        response.then(blob => {
-          const tempUrl = storage_URL.createObjectURL(blob);
-          this.urlCache[url] = tempUrl;
-          deferred.resolve(tempUrl);
-        });
-      }
-    }
-    if (!response) {
-      deferred.reject({
-        message: "File not found in storage: " + url,
-        stack: new Error().stack
-      });
-    }
-    return deferred.promise;
-  }
-
-  /**
-   * Revoke Temp Url for a archive item
-   * @param {string} url url of the item in the store
-   */
-  revokeUrl(url) {
-    const fromCache = this.urlCache[url];
-    if (fromCache) {
-      storage_URL.revokeObjectURL(fromCache);
-    }
   }
 
   /**
    * destroy
+   * @override
    */
   destroy() {
-    for (const fromCache in this.urlCache) {
-      storage_URL.revokeObjectURL(fromCache);
-    }
-    this.urlCache = {};
+    super.destroy();
     this.removeListeners();
   }
 }
@@ -21101,6 +20987,7 @@ class Section {
 
 /**
  * Sections class
+ * @extends {Array}
  */
 class Sections extends Array {
   constructor() {
@@ -21111,7 +20998,7 @@ class Sections extends Array {
      * @member {object} hooks
      * @property {Hook} content
      * @property {Hook} serialize
-     * @memberof Spine
+     * @memberof Sections
      * @readonly
      */
     this.hooks = {
@@ -21124,9 +21011,24 @@ class Sections extends Array {
     this.hooks.content.register(replaceCanonical);
     /**
      * @member {boolean} loaded
-     * @memberof Spine
+     * @memberof Sections
      * @readonly
      */
+    this.loaded = false;
+    this.points = {};
+  }
+
+  /**
+   * Clear sections
+   */
+  clear() {
+    this.forEach(i => i.destroy());
+    this.splice(0);
+    this.hooks.serialize.clear();
+    this.hooks.content.clear();
+    this.spineByHref = {};
+    this.spineById = {};
+    this.points = {};
     this.loaded = false;
   }
 
@@ -21168,32 +21070,18 @@ class Sections extends Array {
 
   /**
    * Find the first Section in the Spine
-   * @return {Section} first section
+   * @return {Section|null} first section
    */
   first() {
-    let index = 0;
-    do {
-      const next = this.get(index);
-      if (next && next.linear) {
-        return next;
-      }
-      index += 1;
-    } while (index < this.length);
+    return this.points.first || null;
   }
 
   /**
    * Find the last Section in the Spine
-   * @return {Section} last section
+   * @return {Section|null} last section
    */
   last() {
-    let index = this.length - 1;
-    do {
-      const prev = this.get(index);
-      if (prev && prev.linear) {
-        return prev;
-      }
-      index -= 1;
-    } while (index >= 0);
+    return this.points.last || null;
   }
 
   /**
@@ -21252,10 +21140,12 @@ class Sections extends Array {
    * @param {Packaging} packaging
    * @param {Function} resolve URL resolve
    * @param {Function} canonical Resolve canonical url
+   * @returns {Promise<Sections>}
    */
   unpack(packaging, resolve, canonical) {
     const manifest = packaging.manifest;
     const spine = packaging.spine;
+    const len = packaging.spine.size;
     spine.forEach((item, key) => {
       const manifestItem = manifest.get(key);
       item.cfiBase = src_epubcfi.prototype.generateChapterComponent(spine.nodeIndex, item.index, item.id);
@@ -21299,22 +21189,28 @@ class Sections extends Array {
         };
       }
       const section = new src_section(item, this.hooks);
+      if (section.linear && !this.points.first) {
+        this.points["first"] = section;
+      } else if (section.index === len - 1) {
+        this.points["last"] = section;
+      }
       this.append(section);
     });
     this.loaded = true;
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
   }
 
   /**
    * destroy
    */
   destroy() {
-    this.forEach(i => i.destroy());
-    this.splice(0);
+    this.clear();
+    this.hooks = undefined;
     this.spineByHref = undefined;
     this.spineById = undefined;
-    this.hooks.serialize.clear();
-    this.hooks.content.clear();
-    this.hooks = undefined;
+    this.points = undefined;
     this.loaded = false;
   }
 }
@@ -21351,7 +21247,7 @@ const INPUT_TYPE = {
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
  * @class
- * @param {string} [uri]
+ * @param {string|ArrayBuffer} input
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
  * @param {Function} [options.request.method=null] a request function to use instead of the default
@@ -21360,20 +21256,15 @@ const INPUT_TYPE = {
  * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
  * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
  * @param {Function} [options.canonical] optional function to determine canonical urls for a path
- * @param {string} [options.openAs] optional string to determine the input type
  * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
- * @example new Book("/path/to/book/")
- * @example new Book("/path/to/book/", { replacements: "blobUrl" })
- * @example new Book("/path/to/book.epub")
- * @example new Book("/path/to/book.epub", { replacements: "base64" })
+ * @example new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
  */
 class Book {
-  constructor(uri, options) {
-    // Allow passing just options to the Book
-    if (typeof options === "undefined" && typeof uri !== "string" && uri instanceof Blob === false && uri instanceof ArrayBuffer === false) {
-      options = uri;
-      uri = undefined;
+  constructor(input, options) {
+    if (typeof options === "undefined" && typeof input !== "string" && input instanceof Blob === false && input instanceof ArrayBuffer === false) {
+      options = input;
+      input = undefined;
     }
     this.settings = extend({
       request: {
@@ -21384,77 +21275,14 @@ class Book {
       encoding: undefined,
       replacements: null,
       canonical: undefined,
-      openAs: undefined,
       store: undefined
     }, options || {});
-    this.opening = new defer(); // Promises
-    /**
-     * @member {Promise<any>} opened returns after the book is loaded
-     * @memberof Book
-     * @readonly
-     */
-    this.opened = this.opening.promise;
-    /**
-     * @member {boolean} isOpen
-     * @memberof Book
-     * @readonly
-     */
-    this.isOpen = false;
-    this.loading = {
-      cover: new defer(),
-      navigation: new defer(),
-      packaging: new defer(),
-      resources: new defer()
-    };
-    this.loaded = {
-      cover: this.loading.cover.promise,
-      navigation: this.loading.navigation.promise,
-      packaging: this.loading.packaging.promise,
-      resources: this.loading.resources.promise
-    };
-    /**
-     * @member {Promise<any>} ready returns after the book is loaded and parsed
-     * @memberof Book
-     * @readonly
-     */
-    this.ready = Promise.all([this.loaded.cover, this.loaded.navigation, this.loaded.packaging, this.loaded.resources]);
-    /**
-     * Queue for methods used before opening
-     * @member {boolean} isRendered
-     * @memberof Book
-     * @readonly
-     */
-    this.isRendered = false;
     /**
      * @member {Function} request
      * @memberof Book
      * @readonly
      */
     this.request = this.settings.request.method || utils_request;
-    /**
-     * @member {Navigation} navigation
-     * @memberof Book
-     * @readonly
-     */
-    this.navigation = undefined;
-    /**
-     * @member {Url} url
-     * @memberof Book
-     * @readonly
-     */
-    this.url = undefined;
-    /**
-     * @member {Path} path
-     * @memberof Book
-     * @readonly
-     */
-    this.path = undefined;
-    /**
-     * @member {boolean} archived
-     * @memberof Book
-     * @readonly
-     */
-    this.archived = false;
     /**
      * @member {Archive} archive
      * @memberof Book
@@ -21466,13 +21294,7 @@ class Book {
      * @memberof Book
      * @readonly
      */
-    this.storage = undefined;
-    /**
-     * @member {Resources} resources
-     * @memberof Book
-     * @readonly
-     */
-    this.resources = undefined;
+    this.storage = new storage(this.settings.store);
     /**
      * @member {Rendition} rendition
      * @memberof Book
@@ -21484,13 +21306,19 @@ class Book {
      * @memberof Book
      * @readonly
      */
-    this.container = undefined;
+    this.container = new container();
     /**
      * @member {Packaging} packaging
      * @memberof Book
      * @readonly
      */
     this.packaging = new packaging();
+    /**
+     * @member {Resources} resources
+     * @memberof Book
+     * @readonly
+     */
+    this.resources = new resources(this.request.bind(this), this.resolve.bind(this), this.settings.replacements);
     /**
      * @member {Sections} sections
      * @memberof Book
@@ -21503,13 +21331,23 @@ class Book {
      * @readonly
      */
     this.locations = new locations(this.sections, this.load.bind(this));
-
-    // this.toc = undefined;
+    /**
+     * @member {Navigation} navigation
+     * @memberof Book
+     * @readonly
+     */
+    this.navigation = new navigation();
+    /**
+     * @member {Url} url
+     * @memberof Book
+     * @readonly
+     */
+    this.url = undefined;
     if (this.settings.store) {
-      this.store(this.settings.store);
+      this.storage.createInstance();
     }
-    if (uri) {
-      this.open(uri, this.settings.openAs).catch(error => {
+    if (input) {
+      this.open(input).catch(error => {
         /**
          * @event openFailed
          * @param {object} error
@@ -21521,20 +21359,100 @@ class Book {
   }
 
   /**
+   * Init Promises
+   * @private
+   */
+  init() {
+    /**
+     * @member {boolean} archived
+     * @memberof Book
+     * @readonly
+     */
+    this.archived = false;
+    /**
+     * @member {string} cover
+     * @memberof Book
+     * @readonly
+     */
+    this.cover = null;
+    /**
+     * @member {Path} path
+     * @memberof Book
+     * @readonly
+     */
+    this.path = undefined;
+    /**
+     * @member {boolean} isOpen
+     * @memberof Book
+     * @readonly
+     */
+    this.isOpen = false;
+    this.opening = new defer();
+    /**
+     * @member {Promise<Book>} opened returns after the book is loaded
+     * @memberof Book
+     * @readonly
+     */
+    this.opened = this.opening.promise;
+    this.loading = {
+      packaging: new defer(),
+      resources: new defer(),
+      sections: new defer(),
+      navigation: new defer(),
+      cover: new defer()
+    };
+    /**
+     * Sequential loading of tasks
+     * @member {object} loaded
+     * @property {Promise<Packaging>} packaging
+     * @property {Promise<Resources>} resources
+     * @property {Promise<Sections>} sections
+     * @property {Promise<Navigation>} navigation
+     * @property {Promise<string>} cover
+     * @memberof Book
+     * @readonly
+     */
+    this.loaded = {
+      packaging: this.loading.packaging.promise,
+      resources: this.loading.resources.promise,
+      sections: this.loading.sections.promise,
+      navigation: this.loading.navigation.promise,
+      cover: this.loading.cover.promise
+    };
+  }
+
+  /**
+   * Clear parts
+   */
+  clear() {
+    this.container.clear();
+    this.packaging.clear();
+    this.resources.clear();
+    this.sections.clear();
+    this.navigation.clear();
+    this.locations.clear();
+  }
+
+  /**
    * Open a epub or url
    * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
-   * @param {string} [what='binary', 'base64', 'epub', 'opf', 'json', 'directory'] force opening as a certain type
-   * @returns {Promise<any>} of when the book has been loaded
+   * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"`
+   * @returns {Promise<Book>} of when the book has been loaded
    * @example book.open("/path/to/book/")
    * @example book.open("/path/to/book/OPS/package.opf")
    * @example book.open("/path/to/book.epub")
    * @example book.open("https://example.com/book/")
    * @example book.open("https://example.com/book/OPS/package.opf")
    * @example book.open("https://example.com/book.epub")
+   * @example book.open([arraybuffer], "binary")
    */
-  open(input, what) {
+  async open(input, openAs) {
+    this.init();
+    const type = openAs || this.determineType(input);
+    if (this.settings.store) {
+      this.store(input);
+    }
     let opening;
-    const type = what || this.determineType(input);
     if (type === INPUT_TYPE.BINARY) {
       this.archived = true;
       this.url = new utils_url("/", "");
@@ -21547,58 +21465,62 @@ class Book {
       this.archived = true;
       this.url = new utils_url("/", "");
       opening = this.request(input, "binary", this.settings.request.withCredentials, this.settings.request.headers).then(this.openEpub.bind(this));
-    } else if (type == INPUT_TYPE.OPF) {
+    } else if (type === INPUT_TYPE.OPF) {
       this.url = new utils_url(input);
-      opening = this.openPackaging(this.url.path.toString());
-    } else if (type == INPUT_TYPE.MANIFEST) {
+      const uri = this.url.path.toString();
+      opening = this.openPackaging(uri);
+    } else if (type === INPUT_TYPE.MANIFEST) {
       this.url = new utils_url(input);
-      opening = this.openManifest(this.url.path.toString());
-    } else {
+      const uri = this.url.path.toString();
+      opening = this.openManifest(uri);
+    } else if (type === INPUT_TYPE.DIRECTORY) {
       this.url = new utils_url(input);
-      opening = this.openContainer(CONTAINER_PATH).then(this.openPackaging.bind(this));
+      opening = this.openDirectory();
     }
     return opening;
   }
 
   /**
    * Open an archived epub
-   * @param {binary} data
-   * @param {string} [encoding]
+   * @param {string|ArrayBuffer} input
+   * @param {string} [encoding] input type: `"base64"`
    * @returns {Promise<any>}
    * @private
    */
-  async openEpub(data, encoding) {
-    encoding = encoding || this.settings.encoding;
-    return this.unarchive(data, encoding).then(() => {
+  async openEpub(input, encoding) {
+    const type = encoding || this.settings.encoding;
+    return this.unarchive(input, type).then(() => {
       return this.openContainer(CONTAINER_PATH);
-    }).then(packagePath => {
-      return this.openPackaging(packagePath);
+    }).then(url => {
+      return this.openPackaging(url);
     });
   }
 
   /**
    * Open the epub container
    * @param {string} url
-   * @returns {Promise<any>}
+   * @returns {Promise<string>}
    * @private
    */
   async openContainer(url) {
     return this.load(url).then(xml => {
-      this.container = new container(xml);
-      return this.resolve(this.container.fullPath);
+      return this.container.parse(xml);
+    }).then(container => {
+      return this.resolve(container.fullPath);
     });
   }
 
   /**
-   * Open the Open Packaging Format Xml
+   * Open the package.opf
    * @param {string} url
    * @returns {Promise<any>}
    * @private
    */
   async openPackaging(url) {
     this.path = new utils_path(url);
-    return this.load(url).then(async xml => {
-      await this.packaging.parse(xml);
+    return this.load(url).then(xml => {
+      return this.packaging.parse(xml);
+    }).then(() => {
       return this.unpack();
     });
   }
@@ -21611,23 +21533,36 @@ class Book {
    */
   async openManifest(url) {
     this.path = new utils_path(url);
-    return this.load(url).then(async json => {
-      await this.packaging.load(json);
+    return this.load(url).then(json => {
+      return this.packaging.load(json);
+    }).then(() => {
       return this.unpack();
+    });
+  }
+
+  /**
+   * Open book from directory
+   * @returns {Promise<any>}
+   * @private
+   */
+  async openDirectory() {
+    return this.openContainer(CONTAINER_PATH).then(url => {
+      return this.openPackaging(url);
     });
   }
 
   /**
    * Load a resource from the Book
    * @param {string} path path to the resource to load
+   * @param {string} [type=null] 
    * @returns {Promise<any>} returns a promise with the requested resource
    */
-  load(path) {
+  load(path, type = null) {
     const resolved = this.resolve(path);
     if (this.archived) {
       return this.archive.request(resolved);
     } else {
-      return this.request(resolved, null, this.settings.request.withCredentials, this.settings.request.headers);
+      return this.request(resolved, type, this.settings.request.withCredentials, this.settings.request.headers);
     }
   }
 
@@ -21703,52 +21638,50 @@ class Book {
 
   /**
    * Unpack the contents of the book packaging
+   * @returns {Promise<Book>}
    * @private
    */
   async unpack() {
-    this.sections.unpack(this.packaging, this.resolve.bind(this), this.canonical.bind(this));
-    this.resources = new resources(this.packaging.manifest, {
-      archive: this.archive,
-      request: this.request.bind(this),
-      resolve: this.resolve.bind(this),
-      replacements: this.get_replacements_cfg()
+    this.loading.packaging.resolve(this.packaging);
+    this.resources.unpack(this.packaging.manifest, this.archive, this.storage).then(resources => {
+      this.loading.resources.resolve(resources);
+    });
+    this.sections.unpack(this.packaging, this.resolve.bind(this), this.canonical.bind(this)).then(sections => {
+      this.loading.sections.resolve(sections);
     });
     this.loadNavigation().then(navigation => {
       this.loading.navigation.resolve(navigation);
     });
+    if (this.resources.replacements) {
+      this.sections.hooks.serialize.register(this.resources.substitute.bind(this.resources));
+    }
     if (this.packaging.manifest.coverPath) {
       this.cover = this.resolve(this.packaging.manifest.coverPath);
     }
-    //-- resolve promises
     this.loading.cover.resolve(this.cover);
-    this.loading.packaging.resolve(this.packaging);
-    this.loading.resources.resolve(this.resources);
-    this.isOpen = true;
-    if (this.archived || this.settings.replacements && this.settings.replacements !== null) {
-      this.replacements().then(() => {
-        this.opening.resolve(this);
-      }).catch(err => console.error(err.message));
-    } else {
+    const tasks = [...Object.values(this.loaded)];
+    return Promise.all(tasks).then(() => {
+      this.isOpen = true;
       this.opening.resolve(this);
-    }
+      return this.opened;
+    });
   }
 
   /**
-   * Load Navigation and PageList from package
+   * Load navigation
    * @returns {Promise<Navigation>}
    * @private
    */
   async loadNavigation() {
     const navPath = this.packaging.manifest.navPath;
     if (navPath) {
-      return this.load(navPath).then(async target => {
-        this.navigation = new navigation();
-        await this.navigation.parse(target);
+      return this.load(navPath).then(target => {
+        return this.navigation.parse(target);
+      }).then(() => {
         return this.navigation;
       });
     } else {
-      return new Promise((resolve, reject) => {
-        this.navigation = new navigation();
+      return new Promise(resolve => {
         resolve(this.navigation);
       });
     }
@@ -21805,8 +21738,8 @@ class Book {
 
   /**
    * Unarchive a zipped epub
-   * @param {binary} input epub data
-   * @param {string} [encoding]
+   * @param {string|ArrayBuffer} input url string or arraybuffer data
+   * @param {string} [encoding] input type: `"base64"`
    * @returns {Promise<any>}
    * @private
    */
@@ -21816,48 +21749,15 @@ class Book {
   }
 
   /**
-   * Storage the epubs contents
-   * @param {string} input Storage name for epub data
-   * @returns {Storage}
+   * Storage configure
+   * @param {string|ArrayBuffer} input
    * @private
    */
   store(input) {
-    // Create new Storage
-    this.storage = new storage(input, this.request.bind(this), this.resolve.bind(this));
-    // Replace request method to go through store
-    this.request = this.storage.dispatch.bind(this.storage);
-    this.opened.then(() => {
-      if (this.archived) {
-        this.storage.request = this.archive.request.bind(this.archive);
-      }
-      // Substitute hook
-      const substituteResources = (output, section) => {
-        section.output = this.resources.substitute(output, section.url);
-      };
-
-      // Use "blobUrl" or "base64" for replacements
-      this.resources.settings.replacements = this.get_replacements_cfg();
-
-      // Create replacement urls
-      this.resources.replacements().then(() => {
-        return this.resources.replaceCss();
-      });
-      let originalUrl = this.url; // Save original url
-
-      this.storage.on("online", () => {
-        // Restore original url
-        this.url = originalUrl;
-        // Remove hook
-        this.sections.hooks.serialize.deregister(substituteResources);
-      });
-      this.storage.on("offline", () => {
-        // Remove url to use relative resolving for hrefs
-        this.url = new utils_url("/", "");
-        // Add hook to replace resources in contents
-        this.sections.hooks.serialize.register(substituteResources);
-      });
-    });
-    return this.storage;
+    if (typeof input === "string") {
+      //-- replace request method to go through store
+      this.request = this.storage.dispatch.bind(this.storage);
+    }
   }
 
   /**
@@ -21866,44 +21766,11 @@ class Book {
    */
   async coverUrl() {
     return this.loaded.cover.then(() => {
-      if (!this.cover) {
-        return null;
+      if (this.archived && this.cover) {
+        return this.resources.createUrl(this.cover);
       }
-      if (this.archived) {
-        return this.archive.createUrl(this.cover);
-      } else {
-        return this.cover;
-      }
+      return this.cover;
     });
-  }
-
-  /**
-   * Load replacement urls
-   * @returns {Promise<string[]>} completed loading urls
-   * @private
-   */
-  async replacements() {
-    this.sections.hooks.serialize.register((output, section) => {
-      section.output = this.resources.substitute(output, section.url);
-    });
-    return this.resources.replacements().then(() => {
-      return this.resources.replaceCss();
-    });
-  }
-
-  /**
-   * Get replacements setting
-   * @returns {string}
-   * @private
-   */
-  get_replacements_cfg() {
-    let replacements = this.settings.replacements;
-    if (replacements === null) {
-      replacements = this.archived ? "blobUrl" : "base64";
-    } else if (replacements === "base64") {
-      replacements = this.archived ? "base64" : null;
-    }
-    return replacements;
   }
 
   /**
@@ -21940,12 +21807,11 @@ class Book {
    * Destroy the Book and all associated objects
    */
   destroy() {
+    this.isOpen = false;
     this.opened = undefined;
+    this.opening = undefined;
     this.loading = undefined;
     this.loaded = undefined;
-    this.ready = undefined;
-    this.isOpen = false;
-    this.isRendered = false;
     this.archive && this.archive.destroy();
     this.locations && this.locations.destroy();
     this.resources && this.resources.destroy();
@@ -21962,6 +21828,7 @@ class Book {
     this.navigation = undefined;
     this.url = undefined;
     this.path = undefined;
+    this.cover = undefined;
     this.archived = false;
   }
 }
@@ -21979,14 +21846,18 @@ event_emitter_default()(Book.prototype);
 
 
 /**
- * Creates a new Book
- * @param {string|ArrayBuffer} url URL, Path or ArrayBuffer
- * @param {object} options to pass to the book
+ * Create a new Book instance
+ * @param {string|ArrayBuffer} inpit URL, Path or ArrayBuffer
+ * @param {object} [options] to pass to the book
  * @returns {Book} a new Book object
- * @example ePub("/path/to/book.epub", {})
+ * @example ePub()
+ * @example ePub("/path/to/book/")
+ * @example ePub("/path/to/book/", { replacements: "blobUrl", store: "epub-js" })
+ * @example ePub("/path/to/book.epub")
+ * @example ePub("https://example.com/to/book.epub")
  */
-function ePub(url, options) {
-  return new book(url, options);
+function ePub(inpit, options) {
+  return new book(inpit, options);
 }
 ePub.VERSION = EPUBJS_VERSION;
 if (typeof __webpack_require__.g !== "undefined") {
@@ -21995,7 +21866,7 @@ if (typeof __webpack_require__.g !== "undefined") {
 ePub.Book = book;
 ePub.Rendition = rendition;
 ePub.Contents = contents;
-ePub.CFI = src_epubcfi;
+ePub.EpubCFI = src_epubcfi;
 ePub.utils = core_namespaceObject;
 /* harmony default export */ const epub = (ePub);
 })();
