@@ -1,28 +1,24 @@
-import * as LocalForage from "localforage";
-import Resources from "./resources";
+import Input from "./input";
 
-export default class Storage {
+export default class Storage extends Input {
 
-    constructor(name: string, request: Function, resolve: Function);
+    constructor(name: string);
 
-    instance: LocalForage;
-    urlCache: object;
+    name?: string;
     online: boolean;
 
-    add(resources: Resources, force?: boolean): Promise<object[]>;
-    put(url: string, withCredentials?: boolean, headers?: object): Promise<Blob>;
-    dispatch(url: string, type?: string, withCredentials?: boolean, headers?: object): Promise<Blob | string | JSON | Document | XMLDocument>;
-    retrieve(url: string, type?: string): Promise<Blob | string | JSON | Document | XMLDocument>;
-    getBlob(url: string, mimeType?: string): Promise<Blob>;
-    getText(url: string): Promise<string>;
-    getBase64(url: string, mimeType?: string): Promise<string>;
-    createUrl(url: string, options: { base64: boolean }): Promise<string>;
-    revokeUrl(url: string): void;
+    createInstance(): void;
+    get(input: string | number): Promise<any>;
+    set(input: string | number, data: ArrayBuffer): Promise<ArrayBuffer | null>;
+    put(url: string): Promise<ArrayBuffer>;
+    dispatch(url: string, type?: string, withCredentials?: boolean, headers?: object[]): Promise<Blob | string | JSON | Document | XMLDocument>;
+    getBlob(url: string, mimeType?: string): Promise<Blob | null>;
+    getText(url: string, mimeType?: string): Promise<string | null>;
+    getBase64(url: string, mimeType?: string): Promise<string | null>;
     destroy(): void;
 
+    private getKey(input: string | number): string;
     private appendListeners(): void;
     private removeListeners(): void;
-    private checkRequirements(): void;
-    private handleResponse(response: any, type?: string): Blob | string | JSON | Document | XMLDocument;
     private status(event: Event): void;
 }

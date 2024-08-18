@@ -1,24 +1,21 @@
 import Archive from "./archive";
+import Storage from "./storage";
+import Section from "./section";
 import Manifest from "./manifest";
 
-export default class Resources {
+export default class Resources extends Map {
 
-    constructor(manifest: Manifest, options: {
-        archive?: Archive,
-        resolve: Function,
-        request: Function,
-        replacements?: string
-    });
+    constructor(request: Function, resolve: Function, replacements?: string);
 
-    get(path: string): Promise<string>;
-    process(manifest: Manifest): void;
+    archive?: Archive;
+    storage: Storage;
+
+    clear(): void;
+    createCss(uri: string): Promise<string>;
     createUrl(uri: string): Promise<string>;
-    replacements(): Promise<string[]>;
-    relativeTo(absolute: string): string[];
-    replaceCss(): Promise<string[]>;
-    substitute(content: string, url?: string): string;
+    revokeUrl(url: string): void;
+    replace(item: object): Promise<string>;
+    substitute(content: string, section: Section): void;
+    unpack(manifest: Manifest, archive: Archive, storage: Storage): Promise<Resources>;
     destroy(): void;
-
-    private replaceUrls(): Array<Promise<string[]>>;
-    private createCssFile(href: string): Promise<string>;
 }

@@ -69,7 +69,6 @@
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         layout.onchange = (e) => {
 
             rendition.updateLayout({
@@ -146,14 +145,11 @@
                     break;
             }
         }
-        book.ready.then(() => {
+        rendition.display().then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-        })
-        rendition.on("displayed", (section) => {
-
-            console.log(rendition)
         })
         rendition.on("layout", (props, changed) => {
 

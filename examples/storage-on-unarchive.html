@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Storage - Example</title>
+    <title>EPUB.JS: Storage on unarchive - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
-    <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
@@ -21,8 +20,17 @@
     <script>
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("https://intity.github.io/epub-js/assets/alice.epub", {
+        const book = ePub("https://intity.github.io/epub-js/assets/alice/", {
+            replacements: "base64",
             store: "epub-js"
+        })
+        book.storage.on("online", () => {
+
+            console.log(book.storage)
+        })
+        book.storage.on("offline", () => {
+
+            console.log(book.storage)
         })
         const rendition = book.renderTo("viewer", {
             width: "100%",
@@ -55,18 +63,10 @@
                     break
             }
         }
-        rendition.display(5).then(() => {
+        rendition.display().then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-        })
-        book.storage.on("online", () => {
-
-            console.log(book.storage)
-        })
-        book.storage.on("offline", () => {
-
-            console.log(book.storage)
         })
         rendition.on("relocated", (location) => {
 

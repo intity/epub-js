@@ -648,26 +648,25 @@ class Rendition {
 	 */
 	destroy() {
 
-		// Clear the queue
-		// this.q.clear();
-		// this.q = undefined;
+		this.q.clear();
+		this.q = undefined;
 
 		this.manager && this.manager.destroy();
 		this.book = undefined;
 
-		// this.views = null;
-		// this.hooks.display.clear();
-		// this.hooks.serialize.clear();
-		// this.hooks.content.clear();
-		// this.hooks.layout.clear();
-		// this.hooks.render.clear();
-		// this.hooks.show.clear();
-		// this.hooks = {};
-		// this.themes.destroy();
-		// this.themes = undefined;
-		// this.epubcfi = undefined;
-		// this.starting = undefined;
-		// this.started = undefined;
+		this.views = null;
+		this.hooks.display.clear();
+		this.hooks.content.clear();
+		this.hooks.layout.clear();
+		this.hooks.render.clear();
+		this.hooks.show.clear();
+		this.hooks.unloaded.clear();
+		this.hooks = undefined;
+		this.themes.destroy();
+		this.themes = undefined;
+		this.epubcfi = undefined;
+		this.starting = undefined;
+		this.started = undefined;
 	}
 
 	/**

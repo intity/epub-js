@@ -23,7 +23,10 @@
             width: "100%",
             height: "100%"
         })
-        rendition.display()
+        rendition.display().then(() => {
+
+            console.log(book)
+        })
         rendition.on("displayed", (section) => {
 
             if ("ontouchstart" in window) {

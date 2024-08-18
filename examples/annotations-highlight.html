@@ -29,7 +29,6 @@
             height: "100%",
             spread: "none"
         })
-        rendition.display(6)
         prev.onclick = (e) => {
             rendition.prev()
             e.preventDefault()
@@ -54,11 +53,11 @@
                     break
             }
         }
-        rendition.on("displayed", (section) => {
+        rendition.display(6).then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-            console.log(rendition)
         })
         rendition.on("selected", (cfiRange, contents) => {
 

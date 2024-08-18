@@ -30,7 +30,7 @@ const INPUT_TYPE = {
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
  * @class
- * @param {string} [uri]
+ * @param {string|ArrayBuffer} input
  * @param {object} [options]
  * @param {object} [options.request] object options to xhr request
  * @param {Function} [options.request.method=null] a request function to use instead of the default
@@ -39,25 +39,22 @@ const INPUT_TYPE = {
  * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
  * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
  * @param {Function} [options.canonical] optional function to determine canonical urls for a path
- * @param {string} [options.openAs] optional string to determine the input type
  * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
  * @returns {Book}
- * @example new Book("/path/to/book/")
- * @example new Book("/path/to/book/", { replacements: "blobUrl" })
- * @example new Book("/path/to/book.epub")
- * @example new Book("/path/to/book.epub", { replacements: "base64" })
+ * @example new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
  */
 class Book {
-	constructor(uri, options) {
-		// Allow passing just options to the Book
-		if (typeof (options) === "undefined" &&
-			typeof (uri) !== "string" &&
-			uri instanceof Blob === false &&
-			uri instanceof ArrayBuffer === false) {
-			options = uri;
-			uri = undefined;
-		}
 
+	constructor(input, options) {
+
+		if (typeof (options) === "undefined" &&
+			typeof (input) !== "string" &&
+			input instanceof Blob === false &&
+			input instanceof ArrayBuffer === false) {
+			options = input;
+			input = undefined;
+		}
+		
 		this.settings = extend({
 			request: {
 				method: null,
@@ -67,85 +64,14 @@ class Book {
 			encoding: undefined,
 			replacements: null,
 			canonical: undefined,
-			openAs: undefined,
 			store: undefined
 		}, options || {});
-
-		this.opening = new Defer(); // Promises
-		/**
-		 * @member {Promise<any>} opened returns after the book is loaded
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.opened = this.opening.promise;
-		/**
-		 * @member {boolean} isOpen
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.isOpen = false;
-
-		this.loading = {
-			cover: new Defer(),
-			navigation: new Defer(),
-			packaging: new Defer(),
-			resources: new Defer()
-		};
-
-		this.loaded = {
-			cover: this.loading.cover.promise,
-			navigation: this.loading.navigation.promise,
-			packaging: this.loading.packaging.promise,
-			resources: this.loading.resources.promise
-		};
-		/**
-		 * @member {Promise<any>} ready returns after the book is loaded and parsed
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.ready = Promise.all([
-			this.loaded.cover,
-			this.loaded.navigation,
-			this.loaded.packaging,
-			this.loaded.resources
-		]);
-		/**
-		 * Queue for methods used before opening
-		 * @member {boolean} isRendered
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.isRendered = false;
 		/**
 		 * @member {Function} request
 		 * @memberof Book
 		 * @readonly
 		 */
 		this.request = this.settings.request.method || request;
-		/**
-		 * @member {Navigation} navigation
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.navigation = undefined;
-		/**
-		 * @member {Url} url
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.url = undefined;
-		/**
-		 * @member {Path} path
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.path = undefined;
-		/**
-		 * @member {boolean} archived
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.archived = false;
 		/**
 		 * @member {Archive} archive
 		 * @memberof Book
@@ -157,13 +83,7 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.storage = undefined;
-		/**
-		 * @member {Resources} resources
-		 * @memberof Book
-		 * @readonly
-		 */
-		this.resources = undefined;
+		this.storage = new Storage(this.settings.store);
 		/**
 		 * @member {Rendition} rendition
 		 * @memberof Book
@@ -175,13 +95,23 @@ class Book {
 		 * @memberof Book
 		 * @readonly
 		 */
-		this.container = undefined;
+		this.container = new Container();
 		/**
 		 * @member {Packaging} packaging
 		 * @memberof Book
 		 * @readonly
 		 */
 		this.packaging = new Packaging();
+		/**
+		 * @member {Resources} resources
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.resources = new Resources(
+			this.request.bind(this),
+			this.resolve.bind(this),
+			this.settings.replacements
+		);
 		/**
 		 * @member {Sections} sections
 		 * @memberof Book
@@ -197,14 +127,25 @@ class Book {
 			this.sections,
 			this.load.bind(this)
 		);
+		/**
+		 * @member {Navigation} navigation
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.navigation = new Navigation();
+		/**
+		 * @member {Url} url
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.url = undefined;
 
-		// this.toc = undefined;
 		if (this.settings.store) {
-			this.store(this.settings.store);
+			this.storage.createInstance();
 		}
 
-		if (uri) {
-			this.open(uri, this.settings.openAs).catch((error) => {
+		if (input) {
+			this.open(input).catch((error) => {
 				/**
 				 * @event openFailed
 				 * @param {object} error
@@ -216,22 +157,104 @@ class Book {
 	}
 
 	/**
+	 * Init Promises
+	 * @private
+	 */
+	init() {
+		/**
+		 * @member {boolean} archived
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.archived = false;
+		/**
+		 * @member {string} cover
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.cover = null;
+		/**
+		 * @member {Path} path
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.path = undefined;
+		/**
+		 * @member {boolean} isOpen
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.isOpen = false;
+		this.opening = new Defer();
+		/**
+		 * @member {Promise<Book>} opened returns after the book is loaded
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.opened = this.opening.promise;
+		this.loading = {
+			packaging: new Defer(),
+			resources: new Defer(),
+			sections: new Defer(),
+			navigation: new Defer(),
+			cover: new Defer(),
+		};
+		/**
+		 * Sequential loading of tasks
+		 * @member {object} loaded
+		 * @property {Promise<Packaging>} packaging
+		 * @property {Promise<Resources>} resources
+		 * @property {Promise<Sections>} sections
+		 * @property {Promise<Navigation>} navigation
+		 * @property {Promise<string>} cover
+		 * @memberof Book
+		 * @readonly
+		 */
+		this.loaded = {
+			packaging: this.loading.packaging.promise,
+			resources: this.loading.resources.promise,
+			sections: this.loading.sections.promise,
+			navigation: this.loading.navigation.promise,
+			cover: this.loading.cover.promise
+		};
+	}
+
+	/**
+	 * Clear parts
+	 */
+	clear() {
+
+		this.container.clear();
+		this.packaging.clear();
+		this.resources.clear();
+		this.sections.clear();
+		this.navigation.clear();
+		this.locations.clear();
+	}
+
+	/**
 	 * Open a epub or url
 	 * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
-	 * @param {string} [what='binary', 'base64', 'epub', 'opf', 'json', 'directory'] force opening as a certain type
-	 * @returns {Promise<any>} of when the book has been loaded
+	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"`
+	 * @returns {Promise<Book>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
 	 * @example book.open("/path/to/book/OPS/package.opf")
 	 * @example book.open("/path/to/book.epub")
 	 * @example book.open("https://example.com/book/")
 	 * @example book.open("https://example.com/book/OPS/package.opf")
 	 * @example book.open("https://example.com/book.epub")
+	 * @example book.open([arraybuffer], "binary")
 	 */
-	open(input, what) {
+	async open(input, openAs) {
+
+		this.init();
+		const type = openAs || this.determineType(input);
+
+		if (this.settings.store) {
+			this.store(input);
+		}
 
 		let opening;
-		const type = what || this.determineType(input);
-
 		if (type === INPUT_TYPE.BINARY) {
 			this.archived = true;
 			this.url = new Url("/", "");
@@ -247,16 +270,17 @@ class Book {
 				this.settings.request.withCredentials,
 				this.settings.request.headers
 			).then(this.openEpub.bind(this));
-		} else if (type == INPUT_TYPE.OPF) {
+		} else if (type === INPUT_TYPE.OPF) {
 			this.url = new Url(input);
-			opening = this.openPackaging(this.url.path.toString());
-		} else if (type == INPUT_TYPE.MANIFEST) {
+			const uri = this.url.path.toString();
+			opening = this.openPackaging(uri);
+		} else if (type === INPUT_TYPE.MANIFEST) {
 			this.url = new Url(input);
-			opening = this.openManifest(this.url.path.toString());
-		} else {
+			const uri = this.url.path.toString();
+			opening = this.openManifest(uri);
+		} else if (type === INPUT_TYPE.DIRECTORY) {
 			this.url = new Url(input);
-			opening = this.openContainer(CONTAINER_PATH)
-				.then(this.openPackaging.bind(this));
+			opening = this.openDirectory();
 		}
 
 		return opening;
@@ -264,38 +288,39 @@ class Book {
 
 	/**
 	 * Open an archived epub
-	 * @param {binary} data
-	 * @param {string} [encoding]
+	 * @param {string|ArrayBuffer} input
+	 * @param {string} [encoding] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openEpub(data, encoding) {
+	async openEpub(input, encoding) {
 
-		encoding = encoding || this.settings.encoding;
+		const type = encoding || this.settings.encoding;
 
-		return this.unarchive(data, encoding).then(() => {
+		return this.unarchive(input, type).then(() => {
 			return this.openContainer(CONTAINER_PATH);
-		}).then((packagePath) => {
-			return this.openPackaging(packagePath);
+		}).then((url) => {
+			return this.openPackaging(url);
 		});
 	}
 
 	/**
 	 * Open the epub container
 	 * @param {string} url
-	 * @returns {Promise<any>}
+	 * @returns {Promise<string>}
 	 * @private
 	 */
 	async openContainer(url) {
-
+		
 		return this.load(url).then((xml) => {
-			this.container = new Container(xml);
-			return this.resolve(this.container.fullPath);
+			return this.container.parse(xml);
+		}).then((container) => {
+			return this.resolve(container.fullPath);
 		});
 	}
 
 	/**
-	 * Open the Open Packaging Format Xml
+	 * Open the package.opf
 	 * @param {string} url
 	 * @returns {Promise<any>}
 	 * @private
@@ -303,8 +328,9 @@ class Book {
 	async openPackaging(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then(async (xml) => {
-			await this.packaging.parse(xml);
+		return this.load(url).then((xml) => {
+			return this.packaging.parse(xml);
+		}).then(() => {
 			return this.unpack();
 		});
 	}
@@ -318,25 +344,39 @@ class Book {
 	async openManifest(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then(async (json) => {
-			await this.packaging.load(json);
+		return this.load(url).then((json) => {
+			return this.packaging.load(json);
+		}).then(() => {
 			return this.unpack();
+		});
+	}
+
+	/**
+	 * Open book from directory
+	 * @returns {Promise<any>}
+	 * @private
+	 */
+	async openDirectory() {
+
+		return this.openContainer(CONTAINER_PATH).then((url) => {
+			return this.openPackaging(url);
 		});
 	}
 
 	/**
 	 * Load a resource from the Book
 	 * @param {string} path path to the resource to load
+	 * @param {string} [type=null] 
 	 * @returns {Promise<any>} returns a promise with the requested resource
 	 */
-	load(path) {
+	load(path, type = null) {
 
 		const resolved = this.resolve(path);
 
 		if (this.archived) {
 			return this.archive.request(resolved);
 		} else {
-			return this.request(resolved, null,
+			return this.request(resolved, type,
 				this.settings.request.withCredentials,
 				this.settings.request.headers);
 		}
@@ -430,50 +470,52 @@ class Book {
 
 	/**
 	 * Unpack the contents of the book packaging
+	 * @returns {Promise<Book>}
 	 * @private
 	 */
 	async unpack() {
 
+		this.loading.packaging.resolve(this.packaging);
+		this.resources.unpack(
+			this.packaging.manifest,
+			this.archive,
+			this.storage
+		).then((resources) => {
+			this.loading.resources.resolve(resources);
+		});
 		this.sections.unpack(
 			this.packaging,
 			this.resolve.bind(this),
 			this.canonical.bind(this)
-		);
-
-		this.resources = new Resources(this.packaging.manifest, {
-			archive: this.archive,
-			request: this.request.bind(this),
-			resolve: this.resolve.bind(this),
-			replacements: this.get_replacements_cfg()
+		).then((sections) => {
+			this.loading.sections.resolve(sections);
 		});
-
 		this.loadNavigation().then((navigation) => {
 			this.loading.navigation.resolve(navigation);
 		});
 
+		if (this.resources.replacements) {
+			this.sections.hooks.serialize.register(
+				this.resources.substitute.bind(this.resources)
+			);
+		}
+
 		if (this.packaging.manifest.coverPath) {
 			this.cover = this.resolve(this.packaging.manifest.coverPath);
 		}
-		//-- resolve promises
+
 		this.loading.cover.resolve(this.cover);
-		this.loading.packaging.resolve(this.packaging);
-		this.loading.resources.resolve(this.resources);
+		const tasks = [...Object.values(this.loaded)];
 
-		this.isOpen = true;
-
-		if (this.archived ||
-			this.settings.replacements &&
-			this.settings.replacements !== null) {
-			this.replacements().then(() => {
-				this.opening.resolve(this);
-			}).catch((err) => console.error(err.message));
-		} else {
-			this.opening.resolve(this);
-		}
+		return Promise.all(tasks).then(() => {
+			this.isOpen = true;
+			this.opening.resolve(this)
+			return this.opened;
+		});
 	}
 
 	/**
-	 * Load Navigation and PageList from package
+	 * Load navigation
 	 * @returns {Promise<Navigation>}
 	 * @private
 	 */
@@ -482,14 +524,13 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath).then(async (target) => {
-				this.navigation = new Navigation();
-				await this.navigation.parse(target);
+			return this.load(navPath).then((target) => {
+				return this.navigation.parse(target);
+			}).then(() => {
 				return this.navigation;
 			});
 		} else {
-			return new Promise((resolve, reject) => {
-				this.navigation = new Navigation();
+			return new Promise((resolve) => {
 				resolve(this.navigation);
 			});
 		}
@@ -550,8 +591,8 @@ class Book {
 
 	/**
 	 * Unarchive a zipped epub
-	 * @param {binary} input epub data
-	 * @param {string} [encoding]
+	 * @param {string|ArrayBuffer} input url string or arraybuffer data
+	 * @param {string} [encoding] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
@@ -562,57 +603,16 @@ class Book {
 	}
 
 	/**
-	 * Storage the epubs contents
-	 * @param {string} input Storage name for epub data
-	 * @returns {Storage}
+	 * Storage configure
+	 * @param {string|ArrayBuffer} input
 	 * @private
 	 */
 	store(input) {
-
-		// Create new Storage
-		this.storage = new Storage(input,
-			this.request.bind(this),
-			this.resolve.bind(this)
-		);
-		// Replace request method to go through store
-		this.request = this.storage.dispatch.bind(this.storage);
-
-		this.opened.then(() => {
-
-			if (this.archived) {
-				this.storage.request = this.archive.request.bind(this.archive);
-			}
-			// Substitute hook
-			const substituteResources = (output, section) => {
-				section.output = this.resources.substitute(output, section.url);
-			};
-
-			// Use "blobUrl" or "base64" for replacements
-			this.resources.settings.replacements = this.get_replacements_cfg();
-
-			// Create replacement urls
-			this.resources.replacements().then(() => {
-				return this.resources.replaceCss();
-			});
-
-			let originalUrl = this.url; // Save original url
-
-			this.storage.on("online", () => {
-				// Restore original url
-				this.url = originalUrl;
-				// Remove hook
-				this.sections.hooks.serialize.deregister(substituteResources);
-			});
-
-			this.storage.on("offline", () => {
-				// Remove url to use relative resolving for hrefs
-				this.url = new Url("/", "");
-				// Add hook to replace resources in contents
-				this.sections.hooks.serialize.register(substituteResources);
-			});
-		});
-
-		return this.storage;
+		
+		if (typeof input === "string") {
+			//-- replace request method to go through store
+			this.request = this.storage.dispatch.bind(this.storage);
+		}
 	}
 
 	/**
@@ -622,49 +622,11 @@ class Book {
 	async coverUrl() {
 
 		return this.loaded.cover.then(() => {
-
-			if (!this.cover) {
-				return null;
+			if (this.archived && this.cover) {
+				return this.resources.createUrl(this.cover);
 			}
-
-			if (this.archived) {
-				return this.archive.createUrl(this.cover);
-			} else {
-				return this.cover;
-			}
+			return this.cover;
 		});
-	}
-
-	/**
-	 * Load replacement urls
-	 * @returns {Promise<string[]>} completed loading urls
-	 * @private
-	 */
-	async replacements() {
-
-		this.sections.hooks.serialize.register((output, section) => {
-			section.output = this.resources.substitute(output, section.url);
-		});
-
-		return this.resources.replacements().then(() => {
-			return this.resources.replaceCss();
-		});
-	}
-
-	/**
-	 * Get replacements setting
-	 * @returns {string}
-	 * @private
-	 */
-	get_replacements_cfg() {
-
-		let replacements = this.settings.replacements;
-		if (replacements === null) {
-			replacements = this.archived ? "blobUrl" : "base64";
-		} else if (replacements === "base64") {
-			replacements = this.archived ? "base64" : null;
-		}
-		return replacements;
 	}
 
 	/**
@@ -706,13 +668,11 @@ class Book {
 	 */
 	destroy() {
 
+		this.isOpen = false;
 		this.opened = undefined;
+		this.opening = undefined;
 		this.loading = undefined;
 		this.loaded = undefined;
-		this.ready = undefined;
-
-		this.isOpen = false;
-		this.isRendered = false;
 
 		this.archive && this.archive.destroy();
 		this.locations && this.locations.destroy();
@@ -732,6 +692,7 @@ class Book {
 		this.navigation = undefined;
 		this.url = undefined;
 		this.path = undefined;
+		this.cover = undefined;
 		this.archived = false;
 	}
 }

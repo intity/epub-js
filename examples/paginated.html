@@ -35,11 +35,26 @@
         const next = document.getElementById("next")
         put("init", 0, false)
         const book = ePub("../assets/alice/")
+        book.loaded.packaging.then((packaging) => {
+
+            put("book.loaded.packaging")
+        })
+        book.loaded.resources.then((resources) => {
+
+            put("book.loaded.resources")
+        })
+        book.loaded.sections.then((sections) => {
+
+            put("book.loaded.sections")
+        })
+        book.loaded.navigation.then((navigation) => {
+
+            put("book.loaded.navigation")
+        })
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         prev.onclick = (e) => {
 
             put("book.rendition.relocated", 0)
@@ -79,11 +94,10 @@
                 spread: e.target.value
             })
         }
-        book.ready.then(() => {
+        rendition.display().then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-            put("book.ready")
         })
         rendition.on("started", () => {
 

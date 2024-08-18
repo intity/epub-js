@@ -26,7 +26,6 @@
             fullsize: true,
             allowScriptedContent: true
         })
-        rendition.display("chapter_001.xhtml")
         next.onclick = (e) => {
 
             rendition.next()
@@ -42,6 +41,7 @@
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
         }
+        rendition.display("chapter_001.xhtml")
         rendition.on("rendered", (view) => {
 
             console.log(view.contents)

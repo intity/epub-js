@@ -4,10 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Open from File - Example</title>
+    <title>EPUB.JS: Open from File with storage - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/jszip.min.js"></script>
+    <script src="../dist/localforage.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
 
@@ -27,7 +28,7 @@
         const divider = document.getElementById("divider")
         const next = document.getElementById("next")
         const prev = document.getElementById("prev")
-        const book = ePub()
+        const book = ePub({ store: "epub-js" })
         let rendition;
         prev.onclick = (e) => {
 
@@ -68,6 +69,8 @@
             book.open(data, "binary").then(() => {
 
                 console.log(book)
+                rendition.on("keyup", keybinding)
+                document.onkeyup = keybinding
             })
             rendition = book.renderTo("viewer", {
                 width: "100%",
@@ -82,9 +85,10 @@
         }
         const onload = (e) => {
 
-            init(e.target.result)
-            rendition.on("keyup", keybinding)
-            document.onkeyup = keybinding
+            book.storage.set(0, e.target.result).then((data) => {
+
+                init(data)
+            })
         }
         openbook.onchange = (e) => {
 
@@ -95,6 +99,10 @@
                 reader.readAsArrayBuffer(file)
             }
         }
+        book.storage.get(0).then((data) => {
+
+            if (data) init(data)
+        })
     </script>
 </body>
 

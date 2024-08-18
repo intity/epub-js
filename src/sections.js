@@ -9,6 +9,7 @@ import {
 
 /**
  * Sections class
+ * @extends {Array}
  */
 class Sections extends Array {
 
@@ -21,7 +22,7 @@ class Sections extends Array {
          * @member {object} hooks
          * @property {Hook} content
          * @property {Hook} serialize
-         * @memberof Spine
+         * @memberof Sections
          * @readonly
          */
         this.hooks = {
@@ -34,9 +35,25 @@ class Sections extends Array {
         this.hooks.content.register(replaceCanonical);
         /**
          * @member {boolean} loaded
-         * @memberof Spine
+         * @memberof Sections
          * @readonly
          */
+        this.loaded = false;
+        this.points = {};
+    }
+
+    /**
+     * Clear sections
+     */
+    clear() {
+
+        this.forEach((i) => i.destroy());
+        this.splice(0);
+        this.hooks.serialize.clear();
+        this.hooks.content.clear();
+        this.spineByHref = {};
+        this.spineById = {};
+        this.points = {};
         this.loaded = false;
     }
 
@@ -81,36 +98,20 @@ class Sections extends Array {
 
     /**
      * Find the first Section in the Spine
-     * @return {Section} first section
+     * @return {Section|null} first section
      */
     first() {
 
-        let index = 0;
-
-        do {
-            const next = this.get(index);
-            if (next && next.linear) {
-                return next;
-            }
-            index += 1;
-        } while (index < this.length);
+        return this.points.first || null;
     }
 
     /**
      * Find the last Section in the Spine
-     * @return {Section} last section
+     * @return {Section|null} last section
      */
     last() {
 
-        let index = this.length - 1;
-
-        do {
-            const prev = this.get(index);
-            if (prev && prev.linear) {
-                return prev;
-            }
-            index -= 1;
-        } while (index >= 0);
+        return this.points.last || null;
     }
 
     /**
@@ -175,11 +176,13 @@ class Sections extends Array {
      * @param {Packaging} packaging
      * @param {Function} resolve URL resolve
      * @param {Function} canonical Resolve canonical url
+     * @returns {Promise<Sections>}
      */
     unpack(packaging, resolve, canonical) {
 
         const manifest = packaging.manifest;
         const spine = packaging.spine;
+        const len = packaging.spine.size;
         spine.forEach((item, key) => {
 
             const manifestItem = manifest.get(key);
@@ -236,10 +239,18 @@ class Sections extends Array {
             }
 
             const section = new Section(item, this.hooks);
+            if (section.linear && !this.points.first) {
+                this.points["first"] = section;
+            } else if (section.index === (len - 1)) {
+                this.points["last"] = section;
+            }
             this.append(section);
         });
 
         this.loaded = true;
+        return new Promise((resolve, reject) => {
+            resolve(this);
+        });
     }
 
     /**
@@ -247,16 +258,11 @@ class Sections extends Array {
      */
     destroy() {
 
-        this.forEach((i) => i.destroy());
-        this.splice(0);
-
+        this.clear();
+        this.hooks = undefined;
         this.spineByHref = undefined;
         this.spineById = undefined;
-
-        this.hooks.serialize.clear();
-        this.hooks.content.clear();
-        this.hooks = undefined;
-
+        this.points = undefined;
         this.loaded = false;
     }
 }

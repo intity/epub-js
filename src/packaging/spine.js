@@ -15,7 +15,16 @@ class Spine extends Map {
 		 * @memberof Spine
 		 * @readonly
 		 */
-		this.nodeIndex = undefined;
+		this.nodeIndex = 0;
+	}
+
+	/**
+	 * Clear spine items
+	 */
+	clear() {
+
+		super.clear();
+		this.nodeIndex = 0;
 	}
 
 	/**

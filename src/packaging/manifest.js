@@ -24,6 +24,16 @@ class Manifest extends Map {
     }
 
     /**
+     * Clear manifest
+     */
+    clear() {
+
+        super.clear();
+        this.navPath = null;
+        this.coverPath = null;
+    }
+
+    /**
      * Parse the manifest node
      * @param {Node} node manifest
      * @returns {Promise<Manifest>}

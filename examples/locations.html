@@ -29,12 +29,54 @@
 		const range = document.getElementById("range")
 		const prev = document.getElementById("prev")
 		const next = document.getElementById("next")
-		const book = ePub("../assets/alice/")
+		const book = ePub()
+		let stored, timeStamp
+		book.open("../assets/alice/").then(() => {
+			// Load in stored locations from json or local storage
+			const key = book.key() + "-locations"
+			stored = localStorage.getItem(key)
+			if (stored) {
+				timeStamp = Date.now()
+				return book.locations.load(stored)
+			} else {
+				timeStamp = Date.now()
+				// Or generate the locations on the fly
+				// Can pass an option number of chars to break sections by
+				// default is 150 chars
+				// test: [break:549,items:101] (sections:2-12,pages:37)
+				//  2:[0]
+				//  3:[1-4-8-12]
+				//  4:[14-18-21-24]
+				//  5:[25-28-31-34-35]
+				//  6:[36-41-44-48]
+				//  7:[50-53-56-60]
+				//  8:[61-65-69]
+				//  9:[71-74-76]
+				// 10:[77-81-84-88]
+				// 11:[89-92]
+				// 12:[95-98-100]
+				return book.locations.generate(549)
+			}
+		}).then((locations) => {
+
+			// Save out the generated locations to JSON
+			localStorage.setItem(book.key() + '-locations', book.locations.save())
+			console.log("locations.length: " + locations.size)
+			if (stored) {
+				console.log(`locations.load: ${Date.now() - timeStamp} ms`)
+			} else {
+				console.log(`locations.generate: ${Date.now() - timeStamp} ms`)
+			}
+			console.log(book)
+		})
+		book.locations.on("changed", (current, changed) => {
+
+			console.log(current, changed)
+		})
 		const rendition = book.renderTo("viewer", {
 			width: "100%",
 			height: "100%"
 		})
-		rendition.display()
 		let percentage
 		range.onchange = (e) => {
 
@@ -78,51 +120,10 @@
 					break;
 			}
 		}
-		let stored, timeStamp
-		book.ready.then(() => {
-			// Load in stored locations from json or local storage
-			const key = book.key() + '-locations'
-			stored = localStorage.getItem(key)
-			if (stored) {
-				timeStamp = Date.now()
-				return book.locations.load(stored)
-			} else {
-				timeStamp = Date.now()
-				// Or generate the locations on the fly
-				// Can pass an option number of chars to break sections by
-				// default is 150 chars
-				// test: [break:549,items:101] (sections:2-12,pages:37)
-				//  2:[0]
-				//  3:[1-4-8-12]
-				//  4:[14-18-21-24]
-				//  5:[25-28-31-34-35]
-				//  6:[36-41-44-48]
-				//  7:[50-53-56-60]
-				//  8:[61-65-69]
-				//  9:[71-74-76]
-				// 10:[77-81-84-88]
-				// 11:[89-92]
-				// 12:[95-98-100]
-				return book.locations.generate(549)
-			}
-		}).then((locations) => {
-
-			// Save out the generated locations to JSON
-			localStorage.setItem(book.key() + '-locations', book.locations.save())
-			console.log("locations.length: " + locations.size)
-			if (stored) {
-				console.log(`locations.load: ${Date.now() - timeStamp} ms`)
-			} else {
-				console.log(`locations.generate: ${Date.now() - timeStamp} ms`)
-			}
-			console.log(book)
+		rendition.display().then(() => {
 
 			document.onkeyup = keybinding
 			rendition.on("keyup", keybinding)
-		})
-		book.locations.on("changed", (current, changed) => {
-
-			console.log(current, changed)
 		})
 		rendition.on("relocated", (location) => {
 

@@ -7,7 +7,7 @@
     <title>EPUB.JS: Open book from external server - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="../dist/jszip.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
 
@@ -21,18 +21,17 @@
     </div>
     <script>
         const url = new URL(window.location)
-        const path = url.searchParams.get("bookPath") || "../assets/alice/"
+        const uri = url.searchParams.get("bookPath") || "../assets/alice/"
         const content = document.getElementById("content")
         const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const time = Date.now()
-        const book = ePub(path)
+        const book = ePub(uri)
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         prev.onclick = (e) => {
 
             rendition.prev()
@@ -65,8 +64,9 @@
                     break
             }
         }
-        book.ready.then(() => {
+        rendition.display().then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
         })
@@ -78,7 +78,6 @@
         rendition.on("displayed", (section) => {
 
             console.log(`displayed: ${Date.now() - time} ms`)
-            console.log(rendition)
         })
         rendition.on("displayerror", (err) => {
             
