@@ -108,8 +108,21 @@
                             color).</p>
                     </li>
                 </ol>
-                <h2>Other means of rendering</h2>
+                <h2>Opening a book from a local file</h2>
                 <ol start="11">
+                    <li><a href="input.html">Open book from File</a>
+                        <p>Allows you to select an epub file from your local computer that gets rendered in the browser.
+                        </p>
+                    </li>
+                    <li><a href="input-with-storage.html">Open book from File with Storage</a>
+                        <p>This example is similar to example (11), but using the Storage interface.</p>
+                        <p>Note: The "book-0" key is constant for any open book. If the user reloads the page, the book
+                            will be loaded from the browser storage using the already known key. However, if the user
+                            opens another book, the data in the storage will be overwritten.</p>
+                    </li>
+                </ol>
+                <h2>Other means of rendering</h2>
+                <ol start="13">
                     <li><a href="contents.html">Contents</a>
                         <p>This example demonstrates the <code>innerText</code> rendering from range, which was obtained
                             from EpubCFI format string.</p>
@@ -124,25 +137,10 @@
                     </li>
                 </ol>
                 <h2>Other examples</h2>
-                <ol start="13">
+                <ol start="15">
                     <li><a href="archived.html">Archived</a>
                         <p>Display ebook from an XXXX.epub file rather than an unzipped folder. This may be
                             substantially slower for large ebooks.</p>
-                    </li>
-                    <li><a href="input.html">Open book from File</a>
-                        <p>Allows you to select an epub file from your local computer that gets rendered in the browser.
-                        </p>
-                    </li>
-                    <li><a href="input-bookpath.html">Open book from external server</a>
-                        <p>Use the <code>bookPath</code> search parameter to override the path from the external server.
-                        </p>
-                        <p>Input examples (add to the end of the URL):</p>
-                        <ul style="list-style: none;">
-                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/</code></li>
-                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/OPS/package.opf</code></li>
-                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/moby-dick.epub</code></li>
-                        </ul>
-                        <p>By default, the relative path to the Alice book located on the local server is used.</p>
                     </li>
                     <li><a href="hooks.html">Hooks</a>
                         <p>This example shows how to insert external javascript and external css files into a book after
@@ -166,10 +164,26 @@
                             iframe
                             and run them after the book is rendered.</p>
                     </li>
+                    <li><a href="open-book-from-searchoptions.html">Open book from search options</a>
+                        <p>Use the <code>bookPath</code> search option to override the path from the remote server.
+                        </p>
+                        <p>Input examples (add to the end of the URL):</p>
+                        <ul style="list-style: none;">
+                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/</code></li>
+                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/OPS/package.opf</code></li>
+                            <li><code>?bookPath=https://s3.amazonaws.com/moby-dick/moby-dick.epub</code></li>
+                        </ul>
+                        <p>By default, the relative path to the Alice book located on the local server is used.</p>
+                    </li>
                     <li><a href="storage.html">Storage</a>
                         <p>This example demonstrates a storage feature to keep the book rendering running when
                             disconnected from the internet.
                         </p>
+                    </li>
+                    <li><a href="storage-when-unarchive.html">Storage when unarchive</a>
+                        <p>This example is similar to example (18). However, in this case, the book is opened from a
+                            directory. In addition, we set the "replacements" option to "base64" for performance
+                            comparison.</p>
                     </li>
                     <li><a href="themes.html">Themes</a>
                         <p>This example demonstrates the features to register and configure custom themes for a book.
