@@ -24,12 +24,19 @@
             replacements: "base64",
             store: "epub-js"
         })
+        book.storage.on("online", () => {
+
+            console.log(book.storage)
+        })
+        book.storage.on("offline", () => {
+
+            console.log(book.storage)
+        })
         const rendition = book.renderTo("viewer", {
             width: "100%",
             height: "100%",
             spread: "none"
         })
-        rendition.display()
         prev.onclick = (e) => {
 
             rendition.prev()
@@ -56,18 +63,10 @@
                     break
             }
         }
-        book.ready.then(() => {
+        rendition.display().then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
-        })
-        book.storage.on("online", () => {
-
-            console.log(book.storage)
-        })
-        book.storage.on("offline", () => {
-
-            console.log(book.storage)
         })
         rendition.on("relocated", (location) => {
 
