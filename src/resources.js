@@ -1,12 +1,10 @@
 import { substitute } from "./utils/replacements";
 import {
-	createBase64Url,
-	createBlobUrl,
-	blob2base64
+	blob2base64,
+	createBlobUrl
 } from "./utils/core";
 import Url from "./utils/url";
 import mime from "./utils/mime";
-import Path from "./utils/path";
 
 const _URL = window.URL || window.webkitURL || window.mozURL;
 
@@ -46,60 +44,19 @@ class Resources extends Map {
 	}
 
 	/**
-	 * Create a new CSS file with the replaced URLs
-	 * @param {string} href the original css file
-	 * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
-	 */
-	async createCss(href) {
-
-		let path = new Path(href);
-		if (path.isAbsolute(path.toString())) {
-			return new Promise((resolve) => {
-				resolve(href);
-			});
-		}
-
-		const uri = this.resolve(href); // absolute path
-
-		let response;
-		if (this.archive) {
-			response = this.archive.getText(uri);
-		} else {
-			response = this.request(uri, "text");
-		}
-
-		if (!response) {
-			// file not found, don't replace
-			return new Promise((resolve) => {
-				resolve(href);
-			});
-		}
-
-		return response.then((text) => {
-			let url;
-			if (this.replacements === "base64") {
-				url = createBase64Url(text, "text/css");
-			} else {
-				url = createBlobUrl(text, "text/css");
-			}
-			return url;
-		});
-	}
-
-	/**
 	 * Create a url to a resource
 	 * @param {string} href
+	 * @param {string} [mimeType]
 	 * @return {Promise<string>} Promise resolves with url string
 	 */
-	async createUrl(href) {
+	async createUrl(href, mimeType) {
 
 		const uri = this.resolve(href); // absolute path
 		const url = new Url(uri);
-		const mimeType = mime.lookup(url.filename);
 		const base64 = this.replacements === "base64";
-		const type = base64 ? "base64" : "blob";
 
 		if (this.archive) {
+			const type = base64 ? "base64" : "blob";
 			return this.archive.request(uri, type).then((data) => {
 				return base64 ? data : _URL.createObjectURL(data);
 			});
@@ -109,7 +66,8 @@ class Resources extends Map {
 			});
 		} else {
 			return this.request(uri, "blob").then((blob) => {
-				return createBlobUrl(blob, mimeType);
+				const type = mimeType || mime.lookup(url.filename);
+				return createBlobUrl(blob, type);
 			});
 		}
 	}
@@ -125,27 +83,6 @@ class Resources extends Map {
 			if (blobUrl) {
 				_URL.revokeObjectURL(blobUrl);
 			}
-		}
-	}
-
-	/**
-	 * Replace url to blobUrl or base64
-	 * @param {object} item manifest item
-	 * @returns {Promise<string>}
-	 * @private
-	 */
-	async replace(item) {
-
-		if (item.type === "text/css") {
-			return this.createCss(item.href).then((url) => {
-				this.set(item.href, url);
-				return url;
-			});
-		} else {
-			return this.createUrl(item.href).then((url) => {
-				this.set(item.href, url);
-				return url;
-			});
 		}
 	}
 
@@ -189,7 +126,11 @@ class Resources extends Map {
 					storage.put(this.resolve(item.href));
 				}
 			} else if (this.replacements) {
-				tasks.push(this.replace(item));
+				const task = this.createUrl(item.href, item.type).then((url) => {
+					this.set(item.href, url);
+					return url;
+				});
+				tasks.push(task);
 			} else {
 				this.set(item.href, null);
 			}
