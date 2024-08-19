@@ -26,7 +26,7 @@ export const replaceBase = (doc, section) => {
 	const absolute = (url.indexOf("://") > -1);
 
 	if (!absolute) {
-		url = doc.documentURI;
+		url = location.origin + section.url;
 		const uri = new URL(url);
 		if (uri.searchParams.size) {
 			url = [...uri.searchParams.values()][0];
@@ -83,9 +83,9 @@ export const replaceMeta = (doc, section) => {
 
 /**
  * replaceLinks
- * TODO: move me to Contents
- * @param {Element} contents 
- * @param {method} fn 
+ * @param {Node} contents 
+ * @param {function} fn 
+ * @todo move me to Contents
  */
 export const replaceLinks = (contents, fn) => {
 
@@ -105,18 +105,18 @@ export const replaceLinks = (contents, fn) => {
 		if (href.indexOf("://") > -1) { // is absolute
 			link.setAttribute("target", "_blank");
 		} else {
-			let linkUrl;
+			let uri;
 			try {
-				linkUrl = new Url(href, location);
+				uri = new Url(href, location);
 			} catch (err) {
 				console.error(err);
 			}
 			link.onclick = (e) => {
 
-				if (linkUrl && linkUrl.hash) {
-					fn(linkUrl.path.path + linkUrl.hash);
-				} else if (linkUrl) {
-					fn(linkUrl.path.path);
+				if (uri && uri.hash) {
+					fn(uri.path.path + uri.hash);
+				} else if (uri) {
+					fn(uri.path.path);
 				} else {
 					fn(href);
 				}
@@ -133,8 +133,8 @@ export const replaceLinks = (contents, fn) => {
 /**
  * substitute
  * @param {string} content 
- * @param {Array} urls 
- * @param {Array} replacements 
+ * @param {string[]} urls 
+ * @param {string[]} replacements 
  */
 export const substitute = (content, urls, replacements) => {
 
