@@ -20,38 +20,33 @@ class Queue {
 
     /**
      * Add an item to the queue
-     * @return {Promise}
+     * @param {any} task
+     * @param {any[]} [args]
+     * @return {Promise<any>}
      */
-    enqueue() {
-
-        const task = [].shift.call(arguments);
-
-        if (!task) {
-            throw new Error("No Task Provided");
-        }
+    enqueue(task, ...args) {
 
         let queued;
         if (typeof task === "function") {
             const deferred = new Defer();
             const promise = deferred.promise;
             queued = {
-                task: task,
-                args: arguments,
-                //context: context,
-                deferred: deferred,
-                promise: promise
+                task,
+                args,
+                deferred,
+                promise
             };
         } else {
             // Task is a promise
             queued = {
-                "promise": task
+                promise: task
             };
         }
 
         this._q.push(queued);
 
         // Wait to start queue flush
-        if (this.paused == false && !this.running) {
+        if (this.paused === false && !this.running) {
             // setTimeout(this.flush.bind(this), 0);
             // this.tick.call(window, this.run.bind(this));
             this.run();
@@ -62,7 +57,7 @@ class Queue {
 
     /**
      * Run one item
-     * @return {Promise}
+     * @return {Promise<any>}
      */
     dequeue() {
 
@@ -72,17 +67,16 @@ class Queue {
             const task = inwait.task;
             if (task) {
                 const result = task.apply(this.context, inwait.args);
-
                 if (result && typeof result["then"] === "function") {
                     // Task is a function that returns a promise
-                    return result.then(() => {
-                        inwait.deferred.resolve.apply(this.context, arguments);
-                    }, () => {
-                        inwait.deferred.reject.apply(this.context, arguments);
+                    return result.then((val) => {
+                        inwait.deferred.resolve(val);
+                    }, (err) => {
+                        inwait.deferred.reject(err);
                     });
                 } else {
                     // Task resolves immediately
-                    inwait.deferred.resolve.apply(this.context, result);
+                    inwait.deferred.resolve(result);
                     return inwait.promise;
                 }
             } else if (inwait.promise) {
@@ -108,13 +102,13 @@ class Queue {
 
     /**
      * Run all tasks sequentially, at convince
-     * @return {Promise}
+     * @return {Promise<any>}
      */
     run() {
 
-        if (!this.running) {
+        if (this.running === false) {
             this.running = true;
-            this.defered = new Defer();
+            this.deferred = new Defer();
         }
 
         this.tick.call(window, () => {
@@ -124,42 +118,23 @@ class Queue {
                     this.run();
                 });
             } else {
-                this.defered.resolve();
-                this.running = undefined;
+                this.deferred.resolve();
+                this.running = false;
             }
         });
 
-        // Unpause
-        if (this.paused == true) {
+        if (this.paused) {
             this.paused = false;
         }
 
-        return this.defered.promise;
-    }
-
-    /**
-     * Flush all, as quickly as possible
-     * @return {Promise}
-     */
-    flush() {
-
-        if (this.running) {
-            return this.running;
-        }
-
-        if (this._q.length) {
-            this.running = this.dequeue().then(() => {
-                this.running = undefined;
-                return this.flush();
-            });
-            return this.running;
-        }
+        return this.deferred.promise;
     }
 
     /**
      * Clear all items in wait
      */
     clear() {
+
         this._q = [];
     }
 
@@ -168,6 +143,7 @@ class Queue {
      * @return {number} tasks
      */
     length() {
+
         return this._q.length;
     }
 
@@ -175,6 +151,7 @@ class Queue {
      * Pause a running queue
      */
     pause() {
+
         this.paused = true;
     }
 
