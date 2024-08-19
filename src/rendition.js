@@ -5,7 +5,6 @@ import Layout from "./layout";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
-import Path from "./utils/path";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";
@@ -160,7 +159,7 @@ class Rendition {
 		this.started = this.starting.promise;
 
 		// Block the queue until rendering is started
-		this.q.enqueue(this.start);
+		this.q.enqueue(this.start.bind(this));
 	}
 
 	/**
@@ -288,14 +287,17 @@ class Rendition {
 	 * @example rendition.display("#chapter_001")
 	 * @example rendition.display("chapter_001.xhtml")
 	 * @example rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
-	 * @return {Promise<any>}
+	 * @return {Promise<Section>}
 	 */
 	display(target) {
 
 		if (this.displaying) {
 			this.displaying.resolve();
 		}
-		return this.q.enqueue(this._display, target);
+		return this.q.enqueue(
+			this._display.bind(this),
+			target
+		).then(this.reportLocation.bind(this));
 	}
 
 	/**
@@ -306,9 +308,7 @@ class Rendition {
 	 */
 	_display(target) {
 
-		if (!this.book) return;
 		const displaying = new Defer();
-		const displayed = displaying.promise;
 		this.displaying = displaying;
 
 		// Check if this is a book percentage
@@ -320,7 +320,7 @@ class Rendition {
 
 		if (!section) {
 			displaying.reject(new Error("No Section Found"));
-			return displayed;
+			return displaying.promise;
 		}
 
 		this.manager.display(section, target).then(() => {
@@ -334,7 +334,6 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAYED, section);
-			this.reportLocation();
 		}, (err) => {
 			/**
 			 * Emit that has been an error displaying
@@ -345,7 +344,7 @@ class Rendition {
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
 		});
 
-		return displayed;
+		return displaying.promise;
 	}
 
 	/**
@@ -546,16 +545,17 @@ class Rendition {
 
 		const animate = () => {
 			const location = this.manager.currentLocation();
-			if (location && location.then && typeof location.then === "function") {
+			if (!location) return;
+			if (typeof location["then"] === "function") {
 				location.then((result) => report(result));
-			} else if (location) {
+			} else {
 				report(location);
 			}
 		}
 
 		return this.q.enqueue(() => {
-			requestAnimationFrame(animate.bind(this))
-		})
+			requestAnimationFrame(animate);
+		});
 	}
 
 	/**
@@ -824,7 +824,7 @@ class Rendition {
 
 		if (contents) {
 			contents.on(EVENTS.CONTENTS.LINK_CLICKED, (href) => {
-				const path = new Path(href);
+				const path = this.book.path;
 				const relative = path.relative(path.directory, href);
 				this.display(relative);
 			});
