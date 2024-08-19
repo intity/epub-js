@@ -26,8 +26,8 @@ class Sections extends Array {
          * @readonly
          */
         this.hooks = {
-            content: new Hook(),
-            serialize: new Hook()
+            content: new Hook(this),
+            serialize: new Hook(this)
         };
         // Register replacements
         this.hooks.content.register(replaceBase);
@@ -51,6 +51,9 @@ class Sections extends Array {
         this.splice(0);
         this.hooks.serialize.clear();
         this.hooks.content.clear();
+        this.hooks.content.register(replaceBase);
+        this.hooks.content.register(replaceMeta);
+        this.hooks.content.register(replaceCanonical);
         this.spineByHref = {};
         this.spineById = {};
         this.points = {};
