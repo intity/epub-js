@@ -9,8 +9,7 @@ Assets container for URL replacements
 * [Resources](#Resources) ⇐ <code>Map</code>
     * [new Resources(request, resolve, [replacements])](#new_Resources_new)
     * [.clear()](#Resources+clear)
-    * [.createCss(href)](#Resources+createCss) ⇒ <code>Promise.&lt;string&gt;</code>
-    * [.createUrl(href)](#Resources+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
+    * [.createUrl(href, [mimeType])](#Resources+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
     * [.revokeUrl(url)](#Resources+revokeUrl)
     * [.substitute(content, section)](#Resources+substitute)
     * [.unpack(manifest, archive, storage)](#Resources+unpack) ⇒ [<code>Promise.&lt;Resources&gt;</code>](#Resources)
@@ -34,21 +33,9 @@ Constructor
 Clear replacement URLs
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-<a name="Resources+createCss"></a>
-
-## resources.createCss(href) ⇒ <code>Promise.&lt;string&gt;</code>
-Create a new CSS file with the replaced URLs
-
-**Kind**: instance method of [<code>Resources</code>](#Resources)  
-**Returns**: <code>Promise.&lt;string&gt;</code> - returns a BlobUrl to the new CSS file or a data url  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| href | <code>string</code> | the original css file |
-
 <a name="Resources+createUrl"></a>
 
-## resources.createUrl(href) ⇒ <code>Promise.&lt;string&gt;</code>
+## resources.createUrl(href, [mimeType]) ⇒ <code>Promise.&lt;string&gt;</code>
 Create a url to a resource
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
@@ -57,6 +44,7 @@ Create a url to a resource
 | Param | Type |
 | --- | --- |
 | href | <code>string</code> | 
+| [mimeType] | <code>string</code> | 
 
 <a name="Resources+revokeUrl"></a>
 

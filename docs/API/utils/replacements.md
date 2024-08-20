@@ -49,14 +49,17 @@ replaceMeta
 
 ## replacements.replaceLinks
 replaceLinks
-TODO: move me to Contents
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
+**Todo**
+
+- [ ] move me to Contents
+
 
 | Param | Type |
 | --- | --- |
-| contents | <code>Element</code> | 
-| fn | <code>method</code> | 
+| contents | <code>Node</code> | 
+| fn | <code>function</code> | 
 
 <a name="module_replacements.substitute"></a>
 
@@ -68,6 +71,6 @@ substitute
 | Param | Type |
 | --- | --- |
 | content | <code>string</code> | 
-| urls | <code>Array</code> | 
-| replacements | <code>Array</code> | 
+| urls | <code>Array.&lt;string&gt;</code> | 
+| replacements | <code>Array.&lt;string&gt;</code> | 
 

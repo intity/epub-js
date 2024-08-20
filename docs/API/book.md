@@ -7,7 +7,7 @@ parsing and manipulation of its contents.
 **Kind**: global class  
 
 * [Book](#Book)
-    * [new Book(input, [options])](#new_Book_new)
+    * [new Book([input], [options])](#new_Book_new)
     * _instance_
         * [.clear()](#Book+clear)
         * [.open(input, [openAs])](#Book+open) ⇒ [<code>Promise.&lt;Book&gt;</code>](#Book)
@@ -43,24 +43,34 @@ parsing and manipulation of its contents.
 
 <a name="new_Book_new"></a>
 
-## new Book(input, [options])
+## new Book([input], [options])
+Constructor
+
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| input | <code>string</code> \| <code>ArrayBuffer</code> |  |  |
+| [input] | <code>string</code> \| <code>ArrayBuffer</code> |  | Url, Path or ArrayBuffer |
 | [options] | <code>object</code> |  |  |
 | [options.request] | <code>object</code> |  | object options to xhr request |
-| [options.request.method] | <code>function</code> | <code></code> | a request function to use instead of the default |
+| [options.request.method] | <code>function</code> |  | a request function to use instead of the default |
 | [options.request.withCredentials] | <code>boolean</code> | <code>false</code> | send the xhr request withCredentials |
 | [options.request.headers] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | send the xhr request headers |
 | [options.encoding] | <code>string</code> | <code>&quot;&#x27;binary&#x27;&quot;</code> | optional to pass `"binary"` or `"base64"` for archived Epubs |
 | [options.replacements] | <code>string</code> | <code>null</code> | use `"base64"` or `"blobUrl"` for replacing assets |
 | [options.canonical] | <code>function</code> |  | optional function to determine canonical urls for a path |
-| [options.store] | <code>string</code> | <code>false</code> | cache the contents in local storage, value should be the name of the reader |
+| [options.store] | <code>string</code> | <code>null</code> | cache the contents in local storage, value should be the name of the reader |
 
 **Example**  
 ```js
-new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
+new Book()
+```
+**Example**  
+```js
+new Book("/path/to/book/" { store: "epub-js" })
+```
+**Example**  
+```js
+new Book({ replacements: "base64", store: "epub-js" })
 ```
 <a name="Book+clear"></a>
 
@@ -339,8 +349,8 @@ Sequential loading of tasks
 | --- | --- |
 | packaging | <code>Promise.&lt;Packaging&gt;</code> | 
 | resources | <code>Promise.&lt;Resources&gt;</code> | 
-| sections | <code>Promise.&lt;Sections&gt;</code> | 
 | navigation | <code>Promise.&lt;Navigation&gt;</code> | 
+| sections | <code>Promise.&lt;Sections&gt;</code> | 
 | cover | <code>Promise.&lt;string&gt;</code> | 
 
 <a name="Book.event_openFailed"></a>
