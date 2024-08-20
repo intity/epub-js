@@ -114,19 +114,19 @@ class Resources extends Map {
 		this.storage = storage;
 
 		if (this.replacements === null) {
-			this.replacements = archive || storage.name ? "blobUrl" : null;
+			this.replacements = (archive || storage.name) ? "blobUrl" : null;
 		}
 
 		const tasks = [];
 
 		manifest.forEach((item, key) => {
-			if (item.type === "application/xhtml+xml" ||
-				item.type === "text/html") {
+			if (item["media-type"] === "application/xhtml+xml" ||
+				item["media-type"] === "text/html") {
 				if (storage.name && !archive) {
-					storage.put(this.resolve(item.href));
+					tasks.push(storage.put(this.resolve(item.href)));
 				}
 			} else if (this.replacements) {
-				const task = this.createUrl(item.href, item.type).then((url) => {
+				const task = this.createUrl(item.href, item["media-type"]).then((url) => {
 					this.set(item.href, url);
 					return url;
 				});

@@ -46,14 +46,14 @@ class Manifest extends Map {
         items.forEach((item) => {
             const props = item.getAttribute("properties") || "";
             const entry = {
-                id: item.getAttribute("id"),
-                href: item.getAttribute("href") || "",
-                type: item.getAttribute("media-type") || "",
-                overlay: item.getAttribute("media-overlay") || "",
-                properties: props.length ? props.split(" ") : []
+                "id": item.getAttribute("id"),
+                "href": item.getAttribute("href") || "",
+                "media-type": item.getAttribute("media-type") || "",
+                "media-overlay": item.getAttribute("media-overlay") || "",
+                "properties": props.length ? props.split(" ") : []
             };
             this.set(entry.id, entry);
-            if (this.navPath === null && (props === "nav" || entry.type === "application/x-dtbncx+xml")) {
+            if (this.navPath === null && (props === "nav" || entry["media-type"] === "application/x-dtbncx+xml")) {
                 this.navPath = entry.href;
             }
             if (this.coverPath === null && props === "cover-image") {
@@ -65,7 +65,7 @@ class Manifest extends Map {
             this.coverPath = this.findCoverPath(node);
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             resolve(this);
         });
     }
@@ -111,7 +111,7 @@ class Manifest extends Map {
             this.set(item.id, item);
         });
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             resolve(this);
         });
     }
