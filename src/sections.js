@@ -9,15 +9,13 @@ import {
 
 /**
  * Sections class
- * @extends {Array}
+ * @extends {Map}
  */
-class Sections extends Array {
+class Sections extends Map {
 
     constructor() {
 
         super();
-        this.spineByHref = {};
-        this.spineById = {};
         /**
          * @member {object} hooks
          * @property {Hook} content
@@ -33,13 +31,9 @@ class Sections extends Array {
         this.hooks.content.register(replaceBase);
         this.hooks.content.register(replaceMeta);
         this.hooks.content.register(replaceCanonical);
-        /**
-         * @member {boolean} loaded
-         * @memberof Sections
-         * @readonly
-         */
-        this.loaded = false;
         this.points = {};
+        this.nav = undefined;
+        this.pkg = undefined;
     }
 
     /**
@@ -48,16 +42,13 @@ class Sections extends Array {
     clear() {
 
         this.forEach((i) => i.destroy());
-        this.splice(0);
         this.hooks.serialize.clear();
         this.hooks.content.clear();
         this.hooks.content.register(replaceBase);
         this.hooks.content.register(replaceMeta);
         this.hooks.content.register(replaceCanonical);
-        this.spineByHref = {};
-        this.spineById = {};
         this.points = {};
-        this.loaded = false;
+        super.clear();
     }
 
     /**
@@ -69,34 +60,34 @@ class Sections extends Array {
      * @example sections.get("#chapter_001");
      * @example sections.get("chapter_001.xhtml");
      * @example sections.get("epubcfi(/6/8!/4/2/16/1:0)")
+     * @override
      */
     get(target) {
 
-        let index = 0;
-
+        let result;
         if (typeof target === "undefined") {
-            while (index < this.length) {
-                let next = this[index];
-                if (next && next.linear) {
-                    break;
-                }
-                index += 1;
-            }
+            result = this.first();
         } else if (typeof target === "number" && isNaN(target) === false) {
-            index = target;
+            result = [...this.values()][target];
         } else if (typeof target === "string") {
             if (EpubCFI.prototype.isCfiString(target)) {
                 const cfi = new EpubCFI(target);
-                index = cfi.spinePos;
+                const pos = cfi.spinePos;
+                result = [...this.values()][pos];
             } else if (target.indexOf("#") === 0) {
-                index = this.spineById[target.substring(1)];
+                if (result = this.pkg.spine.get(target.substring(1))) {
+                    result = [...this.values()][result.index];
+                }
             } else {
-                target = target.split("#")[0]; // Remove fragments
-                index = this.spineByHref[target] || this.spineByHref[encodeURI(target)];
+                if (result = this.nav.toc.get(target)) {
+                    result = super.get(result.bind);
+                } else {
+                    target = target.split("#")[0]; // Remove fragments
+                    result = super.get(target);
+                }
             }
         }
-
-        return this[index] || null;
+        return result || null;
     }
 
     /**
@@ -118,100 +109,55 @@ class Sections extends Array {
     }
 
     /**
-     * Append a Section to the Spine
-     * @param {Section} section
-     * @returns {number} index
-     * @private
-     */
-    append(section) {
-
-        const index = this.length;
-        section.index = index;
-        this.push(section);
-
-        // Encode and Decode href lookups
-        // see pr for details: https://github.com/futurepress/epub.js/pull/358
-        this.spineByHref[decodeURI(section.href)] = index;
-        this.spineByHref[encodeURI(section.href)] = index;
-        this.spineByHref[section.href] = index;
-        this.spineById[section.idref] = index;
-
-        return index;
-    }
-
-    /**
-     * Prepend a Section to the Spine (unused)
-     * @param {Section} section
-     * @returns {number}
-     * @private
-     */
-    prepend(section) {
-
-        this.spineByHref[section.href] = 0;
-        this.spineById[section.idref] = 0;
-
-        // Re-index
-        this.forEach((item, index) => {
-            item.index = index;
-        });
-
-        return 0;
-    }
-
-    /**
-     * Remove a Section from the Spine (unused)
-     * @param {Section} section
-     * @private
-     */
-    remove(section) {
-
-        const index = this.indexOf(section);
-
-        if (index > -1) {
-            delete this.spineByHref[section.href];
-            delete this.spineById[section.idref];
-            return this.splice(index, 1);
-        }
-    }
-
-    /**
      * Unpack items from a opf into spine items
      * @param {Packaging} packaging
+     * @param {Navigation} navigation 
      * @param {Function} resolve URL resolve
      * @param {Function} canonical Resolve canonical url
      * @returns {Promise<Sections>}
      */
-    unpack(packaging, resolve, canonical) {
+    unpack(packaging, navigation, resolve, canonical) {
 
+        this.pkg = packaging;
+        this.nav = navigation;
         const manifest = packaging.manifest;
         const spine = packaging.spine;
+        const toc = navigation.toc;
         const len = packaging.spine.size;
-        spine.forEach((item, key) => {
+        spine.forEach((itemref, key) => {
 
-            const manifestItem = manifest.get(key);
+            const item = manifest.get(key);
+            const data = {};
 
-            item.cfiBase = EpubCFI.prototype.generateChapterComponent(
+            data.cfiBase = EpubCFI.prototype.generateChapterComponent(
                 spine.nodeIndex,
-                item.index,
-                item.id
+                itemref.index,
+                itemref.id
             );
 
-            if (manifestItem) {
-                item.href = manifestItem.href;
-                item.url = resolve(item.href, true);
-                item.canonical = canonical(item.href);
+            if (item) {
+                const link = toc.get(item.href);
+                data.bind = link ? link.bind : item.href;
+                data.href = item.href;
+                data.url = resolve(item.href, true);
+                data.canonical = canonical(item.href);
+                data.properties = [];
 
-                if (manifestItem.properties.length) {
-                    item.properties.push.apply(
-                        item.properties,
-                        manifestItem.properties
+                if (item.properties.length) {
+                    data.properties.push.apply(
+                        data.properties,
+                        item.properties
                     );
                 }
             }
 
-            if (item.linear === "yes") {
-                item.prev = () => {
-                    let prevIndex = item.index;
+            data.idref = itemref.idref;
+            data.index = itemref.index;
+            data.linear = itemref.linear;
+
+            if (data.linear === "yes") {
+                data.prev = () => {
+                    let prevIndex = data.index;
                     while (prevIndex > 0) {
                         let prev = this.get(prevIndex - 1);
                         if (prev && prev.linear) {
@@ -221,9 +167,9 @@ class Sections extends Array {
                     }
                     return null;
                 };
-                item.next = () => {
-                    let nextIndex = item.index;
-                    while (nextIndex < this.length - 1) {
+                data.next = () => {
+                    let nextIndex = data.index;
+                    while (nextIndex < this.size - 1) {
                         let next = this.get(nextIndex + 1);
                         if (next && next.linear) {
                             return next;
@@ -233,25 +179,26 @@ class Sections extends Array {
                     return null;
                 };
             } else {
-                item.prev = () => {
+                data.prev = () => {
                     return null;
                 }
-                item.next = () => {
+                data.next = () => {
                     return null;
                 }
             }
 
-            const section = new Section(item, this.hooks);
+            const section = new Section(data, this.hooks);
+
             if (section.linear && !this.points.first) {
                 this.points["first"] = section;
             } else if (section.index === (len - 1)) {
                 this.points["last"] = section;
             }
-            this.append(section);
+
+            this.set(data.bind, section);
         });
 
-        this.loaded = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             resolve(this);
         });
     }
@@ -263,10 +210,9 @@ class Sections extends Array {
 
         this.clear();
         this.hooks = undefined;
-        this.spineByHref = undefined;
-        this.spineById = undefined;
         this.points = undefined;
-        this.loaded = false;
+        this.nav = undefined;
+        this.pkg = undefined;
     }
 }
 

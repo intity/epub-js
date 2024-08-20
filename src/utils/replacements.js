@@ -3,7 +3,6 @@
  */
 
 import { qs } from "./core";
-import Url from "./url";
 
 /**
  * replaceBase
@@ -26,11 +25,8 @@ export const replaceBase = (doc, section) => {
 	const absolute = (url.indexOf("://") > -1);
 
 	if (!absolute) {
-		url = location.origin + section.url;
-		const uri = new URL(url);
-		if (uri.searchParams.size) {
-			url = [...uri.searchParams.values()][0];
-		}
+		const uri = new URL(url, doc.baseURI);
+		url = uri.href;
 	}
 
 	base.setAttribute("href", url);
@@ -93,8 +89,6 @@ export const replaceLinks = (contents, fn) => {
 
 	if (!links.length) return;
 
-	const base = qs(contents.ownerDocument, "base");
-	const location = base ? base.getAttribute("href") : undefined;
 	const replaceLink = (link) => {
 
 		const href = link.getAttribute("href");
@@ -105,21 +99,8 @@ export const replaceLinks = (contents, fn) => {
 		if (href.indexOf("://") > -1) { // is absolute
 			link.setAttribute("target", "_blank");
 		} else {
-			let uri;
-			try {
-				uri = new Url(href, location);
-			} catch (err) {
-				console.error(err);
-			}
 			link.onclick = (e) => {
-
-				if (uri && uri.hash) {
-					fn(uri.path.path + uri.hash);
-				} else if (uri) {
-					fn(uri.path.path);
-				} else {
-					fn(href);
-				}
+				fn(href);
 				return false;
 			};
 		}

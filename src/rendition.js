@@ -824,9 +824,7 @@ class Rendition {
 
 		if (contents) {
 			contents.on(EVENTS.CONTENTS.LINK_CLICKED, (href) => {
-				const path = this.book.path;
-				const relative = path.relative(path.directory, href);
-				this.display(relative);
+				this.display(href);
 			});
 		}
 	}

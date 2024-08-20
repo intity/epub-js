@@ -49,7 +49,7 @@ class Spine extends Map {
 		});
 		this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
             resolve(this);
         });
 	}
@@ -72,7 +72,7 @@ class Spine extends Map {
 		});
 		this.nodeIndex = 0;
 
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
             resolve(this);
         });
 	}

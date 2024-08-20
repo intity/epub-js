@@ -197,8 +197,8 @@ class Book {
 		this.loading = {
 			packaging: new Defer(),
 			resources: new Defer(),
-			sections: new Defer(),
 			navigation: new Defer(),
+			sections: new Defer(),
 			cover: new Defer(),
 		};
 		/**
@@ -206,8 +206,8 @@ class Book {
 		 * @member {object} loaded
 		 * @property {Promise<Packaging>} packaging
 		 * @property {Promise<Resources>} resources
-		 * @property {Promise<Sections>} sections
 		 * @property {Promise<Navigation>} navigation
+		 * @property {Promise<Sections>} sections
 		 * @property {Promise<string>} cover
 		 * @memberof Book
 		 * @readonly
@@ -215,8 +215,8 @@ class Book {
 		this.loaded = {
 			packaging: this.loading.packaging.promise,
 			resources: this.loading.resources.promise,
-			sections: this.loading.sections.promise,
 			navigation: this.loading.navigation.promise,
+			sections: this.loading.sections.promise,
 			cover: this.loading.cover.promise
 		};
 	}
@@ -229,8 +229,8 @@ class Book {
 		this.container.clear();
 		this.packaging.clear();
 		this.resources.clear();
-		this.sections.clear();
 		this.navigation.clear();
+		this.sections.clear();
 		this.locations.clear();
 	}
 
@@ -333,6 +333,8 @@ class Book {
 		return this.load(url).then((xml) => {
 			return this.packaging.parse(xml);
 		}).then(() => {
+			return this.loadNavigation();
+		}).then(() => {
 			return this.unpack();
 		});
 	}
@@ -348,6 +350,8 @@ class Book {
 		this.path = new Path(url);
 		return this.load(url).then((json) => {
 			return this.packaging.load(json);
+		}).then(() => {
+			return this.loadNavigation();
 		}).then(() => {
 			return this.unpack();
 		});
@@ -478,6 +482,7 @@ class Book {
 	async unpack() {
 
 		this.loading.packaging.resolve(this.packaging);
+		this.loading.navigation.resolve(this.navigation);
 		this.resources.unpack(
 			this.packaging.manifest,
 			this.archive,
@@ -487,13 +492,11 @@ class Book {
 		});
 		this.sections.unpack(
 			this.packaging,
+			this.navigation,
 			this.resolve.bind(this),
 			this.canonical.bind(this)
 		).then((sections) => {
 			this.loading.sections.resolve(sections);
-		});
-		this.loadNavigation().then((navigation) => {
-			this.loading.navigation.resolve(navigation);
 		});
 
 		if (this.resources.replacements) {
@@ -528,8 +531,6 @@ class Book {
 		if (navPath) {
 			return this.load(navPath).then((target) => {
 				return this.navigation.parse(target);
-			}).then(() => {
-				return this.navigation;
 			});
 		} else {
 			return new Promise((resolve) => {
