@@ -8133,10 +8133,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.38.0',
+  version: '3.38.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.38.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.38.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -10881,34 +10881,31 @@ class Queue {
 
   /**
    * Add an item to the queue
-   * @return {Promise}
+   * @param {any} task
+   * @param {any[]} [args]
+   * @return {Promise<any>}
    */
-  enqueue() {
-    const task = [].shift.call(arguments);
-    if (!task) {
-      throw new Error("No Task Provided");
-    }
+  enqueue(task, ...args) {
     let queued;
     if (typeof task === "function") {
       const deferred = new defer();
       const promise = deferred.promise;
       queued = {
-        task: task,
-        args: arguments,
-        //context: context,
-        deferred: deferred,
-        promise: promise
+        task,
+        args,
+        deferred,
+        promise
       };
     } else {
       // Task is a promise
       queued = {
-        "promise": task
+        promise: task
       };
     }
     this._q.push(queued);
 
     // Wait to start queue flush
-    if (this.paused == false && !this.running) {
+    if (this.paused === false && !this.running) {
       // setTimeout(this.flush.bind(this), 0);
       // this.tick.call(window, this.run.bind(this));
       this.run();
@@ -10918,7 +10915,7 @@ class Queue {
 
   /**
    * Run one item
-   * @return {Promise}
+   * @return {Promise<any>}
    */
   dequeue() {
     let inwait;
@@ -10929,14 +10926,14 @@ class Queue {
         const result = task.apply(this.context, inwait.args);
         if (result && typeof result["then"] === "function") {
           // Task is a function that returns a promise
-          return result.then(() => {
-            inwait.deferred.resolve.apply(this.context, arguments);
-          }, () => {
-            inwait.deferred.reject.apply(this.context, arguments);
+          return result.then(val => {
+            inwait.deferred.resolve(val);
+          }, err => {
+            inwait.deferred.reject(err);
           });
         } else {
           // Task resolves immediately
-          inwait.deferred.resolve.apply(this.context, result);
+          inwait.deferred.resolve(result);
           return inwait.promise;
         }
       } else if (inwait.promise) {
@@ -10961,12 +10958,12 @@ class Queue {
 
   /**
    * Run all tasks sequentially, at convince
-   * @return {Promise}
+   * @return {Promise<any>}
    */
   run() {
-    if (!this.running) {
+    if (this.running === false) {
       this.running = true;
-      this.defered = new defer();
+      this.deferred = new defer();
     }
     this.tick.call(window, () => {
       if (this._q.length) {
@@ -10974,33 +10971,14 @@ class Queue {
           this.run();
         });
       } else {
-        this.defered.resolve();
-        this.running = undefined;
+        this.deferred.resolve();
+        this.running = false;
       }
     });
-
-    // Unpause
-    if (this.paused == true) {
+    if (this.paused) {
       this.paused = false;
     }
-    return this.defered.promise;
-  }
-
-  /**
-   * Flush all, as quickly as possible
-   * @return {Promise}
-   */
-  flush() {
-    if (this.running) {
-      return this.running;
-    }
-    if (this._q.length) {
-      this.running = this.dequeue().then(() => {
-        this.running = undefined;
-        return this.flush();
-      });
-      return this.running;
-    }
+    return this.deferred.promise;
   }
 
   /**
@@ -11719,14 +11697,14 @@ class Manifest extends Map {
     items.forEach(item => {
       const props = item.getAttribute("properties") || "";
       const entry = {
-        id: item.getAttribute("id"),
-        href: item.getAttribute("href") || "",
-        type: item.getAttribute("media-type") || "",
-        overlay: item.getAttribute("media-overlay") || "",
-        properties: props.length ? props.split(" ") : []
+        "id": item.getAttribute("id"),
+        "href": item.getAttribute("href") || "",
+        "media-type": item.getAttribute("media-type") || "",
+        "media-overlay": item.getAttribute("media-overlay") || "",
+        "properties": props.length ? props.split(" ") : []
       };
       this.set(entry.id, entry);
-      if (this.navPath === null && (props === "nav" || entry.type === "application/x-dtbncx+xml")) {
+      if (this.navPath === null && (props === "nav" || entry["media-type"] === "application/x-dtbncx+xml")) {
         this.navPath = entry.href;
       }
       if (this.coverPath === null && props === "cover-image") {
@@ -11736,7 +11714,7 @@ class Manifest extends Map {
     if (this.coverPath === null) {
       this.coverPath = this.findCoverPath(node);
     }
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -11779,7 +11757,7 @@ class Manifest extends Map {
       }
       this.set(item.id, item);
     });
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -11840,7 +11818,7 @@ class Spine extends Map {
       });
     });
     this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -11861,7 +11839,7 @@ class Spine extends Map {
       });
     });
     this.nodeIndex = 0;
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -12450,7 +12428,9 @@ class Toc extends Array {
    * @example toc.get("chapter_001.xhtml")
    */
   get(target) {
-    return this.links.get(target);
+    const arr = target.split("/");
+    const key = arr.length ? arr[arr.length - 1] : target;
+    return this.links.get(target) || this.links.get(key);
   }
 
   /**
@@ -12466,7 +12446,7 @@ class Toc extends Array {
     } else if (target.nodeName === "navMap") {
       this.parseNcx(target);
     }
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -12475,9 +12455,10 @@ class Toc extends Array {
    * Parse toc from a Epub >= 3.0 Nav
    * @param {Node} nav
    * @param {object[]} [toc=null]
+   * @param {string} [parentId=null] 
    * @private
    */
-  parseNav(nav, toc = null) {
+  parseNav(nav, toc = null, parentId = null) {
     const navList = filterChildren(nav, "ol", true);
     if (!navList) return;
     if (!navList.children) return;
@@ -12488,30 +12469,33 @@ class Toc extends Array {
       if (child.nodeName !== "li") continue;
       const item = this.navItem(child, navList);
       if (item) {
+        item.parentId = parentId;
         items.push(item);
-        this.parseNav(child, item.subitems); // recursive call
+        this.parseNav(child, item.subitems, item.id); // recursive call
       }
     }
   }
 
   /**
    * Create a navItem
-   * @param {Node} item
-   * @param {Node} parent 
+   * @param {Node} node
    * @return {object|null} navItem
    * @private
    */
-  navItem(item, parent) {
-    const link = qs(item, "a") || qs(item, "span");
+  navItem(node) {
+    const link = qs(node, "a") || qs(node, "span");
     if (!link) return null;
     const href = link.getAttribute("href");
-    const id = item.getAttribute("id") || href;
+    const harr = href.split("#");
+    const hash = harr.length === 2 ? harr[1] : "";
+    const id = node.getAttribute("id") || hash || href;
     const label = link.textContent || "";
     const entry = {
       id,
       href,
+      bind: harr[0],
       label,
-      parent,
+      parentId: null,
       subitems: []
     };
     this.links.set(href, entry);
@@ -12523,39 +12507,43 @@ class Toc extends Array {
    * @link https://www.w3.org/TR/epub/#sec-opf2-ncx
    * @param {Node} node navMap
    * @param {object[]} [toc=null]
+   * @param {string} [parentId=null] 
    * @private
    */
-  parseNcx(node, toc = null) {
+  parseNcx(node, toc = null, parentId = null) {
     if (!node.children) return;
     const len = node.children.length;
     const items = toc || this;
     for (let i = 0; i < len; ++i) {
       const child = node.children[i];
       if (child.nodeName !== "navPoint") continue;
-      const item = this.ncxItem(child, node);
+      const item = this.ncxItem(child);
+      item.parentId = parentId;
       items.push(item);
-      this.parseNcx(child, item.subitems); // recursive call
+      this.parseNcx(child, item.subitems, item.id); // recursive call
     }
   }
 
   /**
    * Create a ncxItem
-   * @param {Node} item navPoint
-   * @param {Node} parent 
+   * @param {Node} node navPoint
    * @return {object} ncxItem
    * @private
    */
-  ncxItem(item, parent) {
-    const content = qs(item, "content");
-    const navLabel = qs(item, "navLabel");
+  ncxItem(node) {
+    const content = qs(node, "content");
+    const navLabel = qs(node, "navLabel");
     const href = content.getAttribute("src");
-    const id = item.getAttribute("id") || href;
+    const harr = href.split("#");
+    const hash = harr.length === 2 ? harr[1] : "";
+    const id = node.getAttribute("id") || hash || href;
     const label = navLabel.textContent || "";
     const entry = {
       id,
       href,
+      bind: harr[0],
       label,
-      parent,
+      parentId: null,
       subitems: []
     };
     this.links.set(href, entry);
@@ -12565,16 +12553,24 @@ class Toc extends Array {
   /**
    * Load navigation items from JSON
    * @param {object[]} items Serialized JSON items
+   * @param {number} [level=0] 
+   * @param {string} [parentId=null] 
    * @private
    */
-  load(items, level = 0) {
+  load(items, level = 0, parentId = null) {
     level += 1;
     items.forEach(item => {
+      const href = item.href;
+      const harr = href.split("#");
+      const hash = harr.length === 2 ? harr[1] : "";
+      item.id = item.id || hash || href;
+      item.bind = harr[0];
+      item.parentId = parentId;
       if (level === 1) {
         this.push(item);
       }
-      this.links.set(item.href, item);
-      this.load(item.subitems, level); // recursive call
+      this.links.set(href, item);
+      this.load(item.subitems, level, item.id); // recursive call
     });
   }
 
@@ -12647,9 +12643,9 @@ class Navigation {
   /**
    * Parse navigation
    * @param {Document|object} target navigation html OR xhtml OR ncx OR json
-   * @returns {Promise<any>}
+   * @returns {Promise<Navigation>}
    */
-  parse(target) {
+  async parse(target) {
     const tasks = [];
     if (target.nodeType === Node.DOCUMENT_NODE) {
       let items, ncx;
@@ -12685,7 +12681,9 @@ class Navigation {
       tasks.push(this.pageList.parse(target["page-list"] || []));
       tasks.push(this.toc.parse(target["toc"] || []));
     }
-    return Promise.all(tasks);
+    return Promise.all(tasks).then(() => {
+      return this;
+    });
   }
 
   /**
@@ -12700,6 +12698,7 @@ class Navigation {
    * destroy
    */
   destroy() {
+    this.clear();
     this.landmarks.destroy();
     this.landmarks = undefined;
     this.pageList.destroy();
@@ -12713,7 +12712,6 @@ class Navigation {
 /**
  * @module replacements
  */
-
 
 
 
@@ -12733,11 +12731,8 @@ const replaceBase = (doc, section) => {
   let url = section.url;
   const absolute = url.indexOf("://") > -1;
   if (!absolute) {
-    url = doc.documentURI;
-    const uri = new URL(url);
-    if (uri.searchParams.size) {
-      url = [...uri.searchParams.values()][0];
-    }
+    const uri = new URL(url, doc.baseURI);
+    url = uri.href;
   }
   base.setAttribute("href", url);
 };
@@ -12783,15 +12778,13 @@ const replaceMeta = (doc, section) => {
 
 /**
  * replaceLinks
- * TODO: move me to Contents
- * @param {Element} contents 
- * @param {method} fn 
+ * @param {Node} contents 
+ * @param {function} fn 
+ * @todo move me to Contents
  */
 const replaceLinks = (contents, fn) => {
   const links = contents.querySelectorAll("a[href]");
   if (!links.length) return;
-  const base = qs(contents.ownerDocument, "base");
-  const location = base ? base.getAttribute("href") : undefined;
   const replaceLink = link => {
     const href = link.getAttribute("href");
     if (href.indexOf("mailto:") === 0) {
@@ -12801,20 +12794,8 @@ const replaceLinks = (contents, fn) => {
       // is absolute
       link.setAttribute("target", "_blank");
     } else {
-      let linkUrl;
-      try {
-        linkUrl = new utils_url(href, location);
-      } catch (err) {
-        console.error(err);
-      }
       link.onclick = e => {
-        if (linkUrl && linkUrl.hash) {
-          fn(linkUrl.path.path + linkUrl.hash);
-        } else if (linkUrl) {
-          fn(linkUrl.path.path);
-        } else {
-          fn(href);
-        }
+        fn(href);
         return false;
       };
     }
@@ -12827,8 +12808,8 @@ const replaceLinks = (contents, fn) => {
 /**
  * substitute
  * @param {string} content 
- * @param {Array} urls 
- * @param {Array} replacements 
+ * @param {string[]} urls 
+ * @param {string[]} replacements 
  */
 const substitute = (content, urls, replacements) => {
   urls.forEach((url, i) => {
@@ -13028,7 +13009,6 @@ const lookup = filename => {
 
 
 
-
 const resources_URL = window.URL || window.webkitURL || window.mozURL;
 
 /**
@@ -13065,54 +13045,17 @@ class Resources extends Map {
   }
 
   /**
-   * Create a new CSS file with the replaced URLs
-   * @param {string} href the original css file
-   * @return {Promise<string>} returns a BlobUrl to the new CSS file or a data url
-   */
-  async createCss(href) {
-    let path = new utils_path(href);
-    if (path.isAbsolute(path.toString())) {
-      return new Promise(resolve => {
-        resolve(href);
-      });
-    }
-    const uri = this.resolve(href); // absolute path
-
-    let response;
-    if (this.archive) {
-      response = this.archive.getText(uri);
-    } else {
-      response = this.request(uri, "text");
-    }
-    if (!response) {
-      // file not found, don't replace
-      return new Promise(resolve => {
-        resolve(href);
-      });
-    }
-    return response.then(text => {
-      let url;
-      if (this.replacements === "base64") {
-        url = createBase64Url(text, "text/css");
-      } else {
-        url = createBlobUrl(text, "text/css");
-      }
-      return url;
-    });
-  }
-
-  /**
    * Create a url to a resource
    * @param {string} href
+   * @param {string} [mimeType]
    * @return {Promise<string>} Promise resolves with url string
    */
-  async createUrl(href) {
+  async createUrl(href, mimeType) {
     const uri = this.resolve(href); // absolute path
     const url = new utils_url(uri);
-    const mimeType = mime.lookup(url.filename);
     const base64 = this.replacements === "base64";
-    const type = base64 ? "base64" : "blob";
     if (this.archive) {
+      const type = base64 ? "base64" : "blob";
       return this.archive.request(uri, type).then(data => {
         return base64 ? data : resources_URL.createObjectURL(data);
       });
@@ -13122,7 +13065,8 @@ class Resources extends Map {
       });
     } else {
       return this.request(uri, "blob").then(blob => {
-        return createBlobUrl(blob, mimeType);
+        const type = mimeType || mime.lookup(url.filename);
+        return createBlobUrl(blob, type);
       });
     }
   }
@@ -13137,26 +13081,6 @@ class Resources extends Map {
       if (blobUrl) {
         resources_URL.revokeObjectURL(blobUrl);
       }
-    }
-  }
-
-  /**
-   * Replace url to blobUrl or base64
-   * @param {object} item manifest item
-   * @returns {Promise<string>}
-   * @private
-   */
-  async replace(item) {
-    if (item.type === "text/css") {
-      return this.createCss(item.href).then(url => {
-        this.set(item.href, url);
-        return url;
-      });
-    } else {
-      return this.createUrl(item.href).then(url => {
-        this.set(item.href, url);
-        return url;
-      });
     }
   }
 
@@ -13185,12 +13109,16 @@ class Resources extends Map {
     }
     const tasks = [];
     manifest.forEach((item, key) => {
-      if (item.type === "application/xhtml+xml" || item.type === "text/html") {
+      if (item["media-type"] === "application/xhtml+xml" || item["media-type"] === "text/html") {
         if (storage.name && !archive) {
-          storage.put(this.resolve(item.href));
+          tasks.push(storage.put(this.resolve(item.href)));
         }
       } else if (this.replacements) {
-        tasks.push(this.replace(item));
+        const task = this.createUrl(item.href, item["media-type"]).then(url => {
+          this.set(item.href, url);
+          return url;
+        });
+        tasks.push(task);
       } else {
         this.set(item.href, null);
       }
@@ -19263,7 +19191,6 @@ class ContinuousViewManager extends managers_default {
 
 
 
-
 // Default View Managers
 
 
@@ -19408,7 +19335,7 @@ class Rendition {
     this.started = this.starting.promise;
 
     // Block the queue until rendering is started
-    this.q.enqueue(this.start);
+    this.q.enqueue(this.start.bind(this));
   }
 
   /**
@@ -19529,13 +19456,13 @@ class Rendition {
    * @example rendition.display("#chapter_001")
    * @example rendition.display("chapter_001.xhtml")
    * @example rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
-   * @return {Promise<any>}
+   * @return {Promise<Section>}
    */
   display(target) {
     if (this.displaying) {
       this.displaying.resolve();
     }
-    return this.q.enqueue(this._display, target);
+    return this.q.enqueue(this._display.bind(this), target).then(this.reportLocation.bind(this));
   }
 
   /**
@@ -19545,9 +19472,7 @@ class Rendition {
    * @private
    */
   _display(target) {
-    if (!this.book) return;
     const displaying = new defer();
-    const displayed = displaying.promise;
     this.displaying = displaying;
 
     // Check if this is a book percentage
@@ -19557,7 +19482,7 @@ class Rendition {
     const section = this.book.sections.get(target);
     if (!section) {
       displaying.reject(new Error("No Section Found"));
-      return displayed;
+      return displaying.promise;
     }
     this.manager.display(section, target).then(() => {
       displaying.resolve(section);
@@ -19569,7 +19494,6 @@ class Rendition {
        * @memberof Rendition
        */
       this.emit(EVENTS.RENDITION.DISPLAYED, section);
-      this.reportLocation();
     }, err => {
       /**
        * Emit that has been an error displaying
@@ -19579,7 +19503,7 @@ class Rendition {
        */
       this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
     });
-    return displayed;
+    return displaying.promise;
   }
 
   /**
@@ -19763,14 +19687,15 @@ class Rendition {
     };
     const animate = () => {
       const location = this.manager.currentLocation();
-      if (location && location.then && typeof location.then === "function") {
+      if (!location) return;
+      if (typeof location["then"] === "function") {
         location.then(result => report(result));
-      } else if (location) {
+      } else {
         report(location);
       }
     };
     return this.q.enqueue(() => {
-      requestAnimationFrame(animate.bind(this));
+      requestAnimationFrame(animate);
     });
   }
 
@@ -20014,9 +19939,7 @@ class Rendition {
   handleLinks(contents) {
     if (contents) {
       contents.on(EVENTS.CONTENTS.LINK_CLICKED, href => {
-        const path = new utils_path(href);
-        const relative = path.relative(path.directory, href);
-        this.display(relative);
+        this.display(href);
       });
     }
   }
@@ -20987,13 +20910,11 @@ class Section {
 
 /**
  * Sections class
- * @extends {Array}
+ * @extends {Map}
  */
-class Sections extends Array {
+class Sections extends Map {
   constructor() {
     super();
-    this.spineByHref = {};
-    this.spineById = {};
     /**
      * @member {object} hooks
      * @property {Hook} content
@@ -21002,20 +20923,16 @@ class Sections extends Array {
      * @readonly
      */
     this.hooks = {
-      content: new hook(),
-      serialize: new hook()
+      content: new hook(this),
+      serialize: new hook(this)
     };
     // Register replacements
     this.hooks.content.register(replaceBase);
     this.hooks.content.register(replaceMeta);
     this.hooks.content.register(replaceCanonical);
-    /**
-     * @member {boolean} loaded
-     * @memberof Sections
-     * @readonly
-     */
-    this.loaded = false;
     this.points = {};
+    this.nav = undefined;
+    this.pkg = undefined;
   }
 
   /**
@@ -21023,13 +20940,13 @@ class Sections extends Array {
    */
   clear() {
     this.forEach(i => i.destroy());
-    this.splice(0);
     this.hooks.serialize.clear();
     this.hooks.content.clear();
-    this.spineByHref = {};
-    this.spineById = {};
+    this.hooks.content.register(replaceBase);
+    this.hooks.content.register(replaceMeta);
+    this.hooks.content.register(replaceCanonical);
     this.points = {};
-    this.loaded = false;
+    super.clear();
   }
 
   /**
@@ -21041,31 +20958,33 @@ class Sections extends Array {
    * @example sections.get("#chapter_001");
    * @example sections.get("chapter_001.xhtml");
    * @example sections.get("epubcfi(/6/8!/4/2/16/1:0)")
+   * @override
    */
   get(target) {
-    let index = 0;
+    let result;
     if (typeof target === "undefined") {
-      while (index < this.length) {
-        let next = this[index];
-        if (next && next.linear) {
-          break;
-        }
-        index += 1;
-      }
+      result = this.first();
     } else if (typeof target === "number" && isNaN(target) === false) {
-      index = target;
+      result = [...this.values()][target];
     } else if (typeof target === "string") {
       if (src_epubcfi.prototype.isCfiString(target)) {
         const cfi = new src_epubcfi(target);
-        index = cfi.spinePos;
+        const pos = cfi.spinePos;
+        result = [...this.values()][pos];
       } else if (target.indexOf("#") === 0) {
-        index = this.spineById[target.substring(1)];
+        if (result = this.pkg.spine.get(target.substring(1))) {
+          result = [...this.values()][result.index];
+        }
       } else {
-        target = target.split("#")[0]; // Remove fragments
-        index = this.spineByHref[target] || this.spineByHref[encodeURI(target)];
+        if (result = this.nav.toc.get(target)) {
+          result = super.get(result.bind);
+        } else {
+          target = target.split("#")[0]; // Remove fragments
+          result = super.get(target);
+        }
       }
     }
-    return this[index] || null;
+    return result || null;
   }
 
   /**
@@ -21085,81 +21004,41 @@ class Sections extends Array {
   }
 
   /**
-   * Append a Section to the Spine
-   * @param {Section} section
-   * @returns {number} index
-   * @private
-   */
-  append(section) {
-    const index = this.length;
-    section.index = index;
-    this.push(section);
-
-    // Encode and Decode href lookups
-    // see pr for details: https://github.com/futurepress/epub.js/pull/358
-    this.spineByHref[decodeURI(section.href)] = index;
-    this.spineByHref[encodeURI(section.href)] = index;
-    this.spineByHref[section.href] = index;
-    this.spineById[section.idref] = index;
-    return index;
-  }
-
-  /**
-   * Prepend a Section to the Spine (unused)
-   * @param {Section} section
-   * @returns {number}
-   * @private
-   */
-  prepend(section) {
-    this.spineByHref[section.href] = 0;
-    this.spineById[section.idref] = 0;
-
-    // Re-index
-    this.forEach((item, index) => {
-      item.index = index;
-    });
-    return 0;
-  }
-
-  /**
-   * Remove a Section from the Spine (unused)
-   * @param {Section} section
-   * @private
-   */
-  remove(section) {
-    const index = this.indexOf(section);
-    if (index > -1) {
-      delete this.spineByHref[section.href];
-      delete this.spineById[section.idref];
-      return this.splice(index, 1);
-    }
-  }
-
-  /**
    * Unpack items from a opf into spine items
    * @param {Packaging} packaging
+   * @param {Navigation} navigation 
    * @param {Function} resolve URL resolve
    * @param {Function} canonical Resolve canonical url
    * @returns {Promise<Sections>}
    */
-  unpack(packaging, resolve, canonical) {
+  unpack(packaging, navigation, resolve, canonical) {
+    this.pkg = packaging;
+    this.nav = navigation;
     const manifest = packaging.manifest;
     const spine = packaging.spine;
+    const toc = navigation.toc;
     const len = packaging.spine.size;
-    spine.forEach((item, key) => {
-      const manifestItem = manifest.get(key);
-      item.cfiBase = src_epubcfi.prototype.generateChapterComponent(spine.nodeIndex, item.index, item.id);
-      if (manifestItem) {
-        item.href = manifestItem.href;
-        item.url = resolve(item.href, true);
-        item.canonical = canonical(item.href);
-        if (manifestItem.properties.length) {
-          item.properties.push.apply(item.properties, manifestItem.properties);
+    spine.forEach((itemref, key) => {
+      const item = manifest.get(key);
+      const data = {};
+      data.cfiBase = src_epubcfi.prototype.generateChapterComponent(spine.nodeIndex, itemref.index, itemref.id);
+      if (item) {
+        const link = toc.get(item.href);
+        data.bind = link ? link.bind : item.href;
+        data.href = item.href;
+        data.url = resolve(item.href, true);
+        data.canonical = canonical(item.href);
+        data.properties = [];
+        if (item.properties.length) {
+          data.properties.push.apply(data.properties, item.properties);
         }
       }
-      if (item.linear === "yes") {
-        item.prev = () => {
-          let prevIndex = item.index;
+      data.idref = itemref.idref;
+      data.index = itemref.index;
+      data.linear = itemref.linear;
+      if (data.linear === "yes") {
+        data.prev = () => {
+          let prevIndex = data.index;
           while (prevIndex > 0) {
             let prev = this.get(prevIndex - 1);
             if (prev && prev.linear) {
@@ -21169,9 +21048,9 @@ class Sections extends Array {
           }
           return null;
         };
-        item.next = () => {
-          let nextIndex = item.index;
-          while (nextIndex < this.length - 1) {
+        data.next = () => {
+          let nextIndex = data.index;
+          while (nextIndex < this.size - 1) {
             let next = this.get(nextIndex + 1);
             if (next && next.linear) {
               return next;
@@ -21181,23 +21060,22 @@ class Sections extends Array {
           return null;
         };
       } else {
-        item.prev = () => {
+        data.prev = () => {
           return null;
         };
-        item.next = () => {
+        data.next = () => {
           return null;
         };
       }
-      const section = new src_section(item, this.hooks);
+      const section = new src_section(data, this.hooks);
       if (section.linear && !this.points.first) {
         this.points["first"] = section;
       } else if (section.index === len - 1) {
         this.points["last"] = section;
       }
-      this.append(section);
+      this.set(data.bind, section);
     });
-    this.loaded = true;
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       resolve(this);
     });
   }
@@ -21208,10 +21086,9 @@ class Sections extends Array {
   destroy() {
     this.clear();
     this.hooks = undefined;
-    this.spineByHref = undefined;
-    this.spineById = undefined;
     this.points = undefined;
-    this.loaded = false;
+    this.nav = undefined;
+    this.pkg = undefined;
   }
 }
 /* harmony default export */ const sections = (Sections);
@@ -21246,36 +21123,39 @@ const INPUT_TYPE = {
 /**
  * An Epub representation with methods for the loading, 
  * parsing and manipulation of its contents.
- * @class
- * @param {string|ArrayBuffer} input
- * @param {object} [options]
- * @param {object} [options.request] object options to xhr request
- * @param {Function} [options.request.method=null] a request function to use instead of the default
- * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
- * @param {string[]} [options.request.headers=[]] send the xhr request headers
- * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
- * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
- * @param {Function} [options.canonical] optional function to determine canonical urls for a path
- * @param {string} [options.store=false] cache the contents in local storage, value should be the name of the reader
- * @returns {Book}
- * @example new Book("/path/to/book/" { replacements: "blobUrl", store: "epub-js" })
  */
 class Book {
+  /**
+   * Constructor
+   * @param {string|ArrayBuffer} [input] Url, Path or ArrayBuffer
+   * @param {object} [options]
+   * @param {object} [options.request] object options to xhr request
+   * @param {Function} [options.request.method] a request function to use instead of the default
+   * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
+   * @param {string[]} [options.request.headers=[]] send the xhr request headers
+   * @param {string} [options.encoding='binary'] optional to pass `"binary"` or `"base64"` for archived Epubs
+   * @param {string} [options.replacements=null] use `"base64"` or `"blobUrl"` for replacing assets
+   * @param {Function} [options.canonical] optional function to determine canonical urls for a path
+   * @param {string} [options.store=null] cache the contents in local storage, value should be the name of the reader
+   * @example new Book()
+   * @example new Book("/path/to/book/" { store: "epub-js" })
+   * @example new Book({ replacements: "base64", store: "epub-js" })
+   */
   constructor(input, options) {
     if (typeof options === "undefined" && typeof input !== "string" && input instanceof Blob === false && input instanceof ArrayBuffer === false) {
       options = input;
       input = undefined;
     }
     this.settings = extend({
+      canonical: undefined,
+      encoding: undefined,
+      replacements: null,
       request: {
-        method: null,
+        method: undefined,
         withCredentials: false,
         headers: []
       },
-      encoding: undefined,
-      replacements: null,
-      canonical: undefined,
-      store: undefined
+      store: null
     }, options || {});
     /**
      * @member {Function} request
@@ -21397,8 +21277,8 @@ class Book {
     this.loading = {
       packaging: new defer(),
       resources: new defer(),
-      sections: new defer(),
       navigation: new defer(),
+      sections: new defer(),
       cover: new defer()
     };
     /**
@@ -21406,8 +21286,8 @@ class Book {
      * @member {object} loaded
      * @property {Promise<Packaging>} packaging
      * @property {Promise<Resources>} resources
-     * @property {Promise<Sections>} sections
      * @property {Promise<Navigation>} navigation
+     * @property {Promise<Sections>} sections
      * @property {Promise<string>} cover
      * @memberof Book
      * @readonly
@@ -21415,8 +21295,8 @@ class Book {
     this.loaded = {
       packaging: this.loading.packaging.promise,
       resources: this.loading.resources.promise,
-      sections: this.loading.sections.promise,
       navigation: this.loading.navigation.promise,
+      sections: this.loading.sections.promise,
       cover: this.loading.cover.promise
     };
   }
@@ -21428,8 +21308,8 @@ class Book {
     this.container.clear();
     this.packaging.clear();
     this.resources.clear();
-    this.sections.clear();
     this.navigation.clear();
+    this.sections.clear();
     this.locations.clear();
   }
 
@@ -21521,6 +21401,8 @@ class Book {
     return this.load(url).then(xml => {
       return this.packaging.parse(xml);
     }).then(() => {
+      return this.loadNavigation();
+    }).then(() => {
       return this.unpack();
     });
   }
@@ -21535,6 +21417,8 @@ class Book {
     this.path = new utils_path(url);
     return this.load(url).then(json => {
       return this.packaging.load(json);
+    }).then(() => {
+      return this.loadNavigation();
     }).then(() => {
       return this.unpack();
     });
@@ -21643,14 +21527,12 @@ class Book {
    */
   async unpack() {
     this.loading.packaging.resolve(this.packaging);
+    this.loading.navigation.resolve(this.navigation);
     this.resources.unpack(this.packaging.manifest, this.archive, this.storage).then(resources => {
       this.loading.resources.resolve(resources);
     });
-    this.sections.unpack(this.packaging, this.resolve.bind(this), this.canonical.bind(this)).then(sections => {
+    this.sections.unpack(this.packaging, this.navigation, this.resolve.bind(this), this.canonical.bind(this)).then(sections => {
       this.loading.sections.resolve(sections);
-    });
-    this.loadNavigation().then(navigation => {
-      this.loading.navigation.resolve(navigation);
     });
     if (this.resources.replacements) {
       this.sections.hooks.serialize.register(this.resources.substitute.bind(this.resources));
@@ -21677,8 +21559,6 @@ class Book {
     if (navPath) {
       return this.load(navPath).then(target => {
         return this.navigation.parse(target);
-      }).then(() => {
-        return this.navigation;
       });
     } else {
       return new Promise(resolve => {
