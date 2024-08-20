@@ -4,38 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Storage on unarchive - Example</title>
+    <title>EPUB.JS: Open book from search options - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
-    <script src="../dist/localforage.min.js"></script>
+    <script src="../dist/jszip.min.js"></script>
     <script src="../dist/epub.js"></script>
 </head>
 
 <body>
     <div id="content">
-        <div id="viewer" class="paginated"></div>
+        <div id="viewer" class="paginated">
+            <div id="divider"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
+        const url = new URL(window.location)
+        const uri = url.searchParams.get("bookPath") || "../assets/alice/"
+        const content = document.getElementById("content")
+        const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        const book = ePub("https://intity.github.io/epub-js/assets/alice/", {
-            replacements: "base64",
-            store: "epub-js"
-        })
-        book.storage.on("online", () => {
-
-            console.log(book.storage)
-        })
-        book.storage.on("offline", () => {
-
-            console.log(book.storage)
-        })
+        const time = Date.now()
+        const book = ePub(uri)
         const rendition = book.renderTo("viewer", {
             width: "100%",
-            height: "100%",
-            spread: "none"
+            height: "100%"
         })
         prev.onclick = (e) => {
 
@@ -47,31 +42,46 @@
             rendition.next()
             e.preventDefault()
         }
-        const update = (loc) => {
+        const update = (location) => {
 
+            const dir = rendition.layout.direction
+            const div = rendition.layout.divisor
+            const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
+            divider.style.display = div === 1 ? "none" : "block"
+            content.dir = dir
         }
         const keybinding = (e) => {
 
+            const dir = rendition.layout.direction
             switch (e.key) {
                 case "ArrowLeft":
-                    rendition.prev()
+                    dir === "ltr" ? rendition.prev() : rendition.next()
                     break
                 case "ArrowRight":
-                    rendition.next()
+                    dir === "ltr" ? rendition.next() : rendition.prev()
                     break
             }
         }
         rendition.display().then(() => {
 
+            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
         })
         rendition.on("relocated", (location) => {
 
             update(location)
-            console.log(book)
+            console.log(location)
+        })
+        rendition.on("displayed", (section) => {
+
+            console.log(`displayed: ${Date.now() - time} ms`)
+        })
+        rendition.on("displayerror", (err) => {
+            
+            console.log(err)
         })
     </script>
 </body>

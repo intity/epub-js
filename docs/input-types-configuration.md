@@ -157,4 +157,4 @@ const book = ePub("/path/to/book/", {
 })
 ```
 
-Full example: [Storage on unarchive](../examples/storage-on-unarchive.html)
+Full example: [Storage when unarchive](../examples/storage-when-unarchive.html)

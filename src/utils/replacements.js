@@ -3,7 +3,6 @@
  */
 
 import { qs } from "./core";
-import Url from "./url";
 
 /**
  * replaceBase
@@ -26,11 +25,8 @@ export const replaceBase = (doc, section) => {
 	const absolute = (url.indexOf("://") > -1);
 
 	if (!absolute) {
-		url = doc.documentURI;
-		const uri = new URL(url);
-		if (uri.searchParams.size) {
-			url = [...uri.searchParams.values()][0];
-		}
+		const uri = new URL(url, doc.baseURI);
+		url = uri.href;
 	}
 
 	base.setAttribute("href", url);
@@ -83,9 +79,9 @@ export const replaceMeta = (doc, section) => {
 
 /**
  * replaceLinks
- * TODO: move me to Contents
- * @param {Element} contents 
- * @param {method} fn 
+ * @param {Node} contents 
+ * @param {function} fn 
+ * @todo move me to Contents
  */
 export const replaceLinks = (contents, fn) => {
 
@@ -93,8 +89,6 @@ export const replaceLinks = (contents, fn) => {
 
 	if (!links.length) return;
 
-	const base = qs(contents.ownerDocument, "base");
-	const location = base ? base.getAttribute("href") : undefined;
 	const replaceLink = (link) => {
 
 		const href = link.getAttribute("href");
@@ -105,21 +99,8 @@ export const replaceLinks = (contents, fn) => {
 		if (href.indexOf("://") > -1) { // is absolute
 			link.setAttribute("target", "_blank");
 		} else {
-			let linkUrl;
-			try {
-				linkUrl = new Url(href, location);
-			} catch (err) {
-				console.error(err);
-			}
 			link.onclick = (e) => {
-
-				if (linkUrl && linkUrl.hash) {
-					fn(linkUrl.path.path + linkUrl.hash);
-				} else if (linkUrl) {
-					fn(linkUrl.path.path);
-				} else {
-					fn(href);
-				}
+				fn(href);
 				return false;
 			};
 		}
@@ -133,8 +114,8 @@ export const replaceLinks = (contents, fn) => {
 /**
  * substitute
  * @param {string} content 
- * @param {Array} urls 
- * @param {Array} replacements 
+ * @param {string[]} urls 
+ * @param {string[]} replacements 
  */
 export const substitute = (content, urls, replacements) => {
 

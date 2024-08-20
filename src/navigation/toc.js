@@ -31,7 +31,10 @@ class Toc extends Array {
      */
     get(target) {
 
-        return this.links.get(target);
+        const arr = target.split("/");
+        const key = arr.length ? arr[arr.length - 1] : target;
+
+        return this.links.get(target) || this.links.get(key);
     }
 
     /**
@@ -49,7 +52,7 @@ class Toc extends Array {
             this.parseNcx(target);
         }
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             resolve(this);
         });
     }
@@ -58,9 +61,10 @@ class Toc extends Array {
      * Parse toc from a Epub >= 3.0 Nav
      * @param {Node} nav
      * @param {object[]} [toc=null]
+     * @param {string} [parentId=null] 
      * @private
      */
-    parseNav(nav, toc = null) {
+    parseNav(nav, toc = null, parentId = null) {
 
         const navList = filterChildren(nav, "ol", true);
 
@@ -76,33 +80,36 @@ class Toc extends Array {
                 continue;
             const item = this.navItem(child, navList);
             if (item) {
+                item.parentId = parentId;
                 items.push(item);
-                this.parseNav(child, item.subitems); // recursive call
+                this.parseNav(child, item.subitems, item.id); // recursive call
             }
         }
     }
 
     /**
      * Create a navItem
-     * @param {Node} item
-     * @param {Node} parent 
+     * @param {Node} node
      * @return {object|null} navItem
      * @private
      */
-    navItem(item, parent) {
+    navItem(node) {
 
-        const link = qs(item, "a") || qs(item, "span");
+        const link = qs(node, "a") || qs(node, "span");
 
         if (!link) return null;
 
         const href = link.getAttribute("href");
-        const id = item.getAttribute("id") || href;
+        const harr = href.split("#");
+        const hash = harr.length === 2 ? harr[1] : "";
+        const id = node.getAttribute("id") || hash || href;
         const label = link.textContent || "";
         const entry = {
             id,
             href,
+            bind: harr[0],
             label,
-            parent,
+            parentId: null,
             subitems: []
         };
         this.links.set(href, entry);
@@ -114,9 +121,10 @@ class Toc extends Array {
      * @link https://www.w3.org/TR/epub/#sec-opf2-ncx
      * @param {Node} node navMap
      * @param {object[]} [toc=null]
+     * @param {string} [parentId=null] 
      * @private
      */
-    parseNcx(node, toc = null) {
+    parseNcx(node, toc = null, parentId = null) {
 
         if (!node.children) return;
 
@@ -127,31 +135,34 @@ class Toc extends Array {
             const child = node.children[i];
             if (child.nodeName !== "navPoint")
                 continue;
-            const item = this.ncxItem(child, node);
+            const item = this.ncxItem(child);
+            item.parentId = parentId;
             items.push(item);
-            this.parseNcx(child, item.subitems); // recursive call
+            this.parseNcx(child, item.subitems, item.id); // recursive call
         }
     }
 
     /**
      * Create a ncxItem
-     * @param {Node} item navPoint
-     * @param {Node} parent 
+     * @param {Node} node navPoint
      * @return {object} ncxItem
      * @private
      */
-    ncxItem(item, parent) {
+    ncxItem(node) {
 
-        const content = qs(item, "content");
-        const navLabel = qs(item, "navLabel");
+        const content = qs(node, "content");
+        const navLabel = qs(node, "navLabel");
         const href = content.getAttribute("src");
-        const id = item.getAttribute("id") || href;
+        const harr = href.split("#");
+        const hash = harr.length === 2 ? harr[1] : "";
+        const id = node.getAttribute("id") || hash || href;
         const label = navLabel.textContent || "";
         const entry = {
             id,
             href,
+            bind: harr[0],
             label,
-            parent,
+            parentId: null,
             subitems: []
         };
         this.links.set(href, entry);
@@ -161,17 +172,25 @@ class Toc extends Array {
     /**
      * Load navigation items from JSON
      * @param {object[]} items Serialized JSON items
+     * @param {number} [level=0] 
+     * @param {string} [parentId=null] 
      * @private
      */
-    load(items, level = 0) {
-        
+    load(items, level = 0, parentId = null) {
+
         level += 1;
         items.forEach((item) => {
+            const href = item.href;
+            const harr = href.split("#");
+            const hash = harr.length === 2 ? harr[1] : "";
+            item.id = item.id || hash || href;
+            item.bind = harr[0];
+            item.parentId = parentId;
             if (level === 1) {
                 this.push(item);
             }
-            this.links.set(item.href, item);
-            this.load(item.subitems, level); // recursive call
+            this.links.set(href, item);
+            this.load(item.subitems, level, item.id); // recursive call
         });
     }
 

@@ -48,9 +48,9 @@ class Navigation {
 	/**
 	 * Parse navigation
 	 * @param {Document|object} target navigation html OR xhtml OR ncx OR json
-	 * @returns {Promise<any>}
+	 * @returns {Promise<Navigation>}
 	 */
-	parse(target) {
+	async parse(target) {
 
 		const tasks = [];
 
@@ -89,7 +89,9 @@ class Navigation {
 			tasks.push(this.toc.parse(target["toc"] || []));
 		}
 
-		return Promise.all(tasks);
+		return Promise.all(tasks).then(() => {
+			return this;
+		});
 	}
 
 	/**
@@ -106,6 +108,7 @@ class Navigation {
 	 */
 	destroy() {
 
+		this.clear();
 		this.landmarks.destroy();
 		this.landmarks = undefined;
 		this.pageList.destroy();
