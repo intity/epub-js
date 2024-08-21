@@ -155,17 +155,6 @@ class Sections extends Map {
             data.linear = itemref.linear;
 
             if (data.linear === "yes") {
-                data.prev = () => {
-                    let prevIndex = data.index;
-                    while (prevIndex > 0) {
-                        let prev = this.get(prevIndex - 1);
-                        if (prev && prev.linear) {
-                            return prev;
-                        }
-                        prevIndex -= 1;
-                    }
-                    return null;
-                };
                 data.next = () => {
                     let nextIndex = data.index;
                     while (nextIndex < this.size - 1) {
@@ -174,6 +163,17 @@ class Sections extends Map {
                             return next;
                         }
                         nextIndex += 1;
+                    }
+                    return null;
+                };
+                data.prev = () => {
+                    let prevIndex = data.index;
+                    while (prevIndex > 0) {
+                        let prev = this.get(prevIndex - 1);
+                        if (prev && prev.linear) {
+                            return prev;
+                        }
+                        prevIndex -= 1;
                     }
                     return null;
                 };
@@ -187,13 +187,20 @@ class Sections extends Map {
             }
 
             const section = new Section(data, this.hooks);
-
-            if (section.linear && !this.points.first) {
-                this.points["first"] = section;
-            }
-
             this.set(data.bind, section);
         });
+
+        if (this.size) {
+            let nextIndex = 0;
+            while (nextIndex < this.size) {
+                let next = this.get(nextIndex);
+                if (next && next.linear) {
+                    this.points["first"] = next;
+                    break;
+                }
+                nextIndex += 1;
+            }
+        }
 
         if (this.size) {
             let prevIndex = this.size;
