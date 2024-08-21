@@ -191,12 +191,22 @@ class Sections extends Map {
 
             if (section.linear && !this.points.first) {
                 this.points["first"] = section;
-            } else if (section.index === (len - 1)) {
-                this.points["last"] = section;
             }
 
             this.set(data.bind, section);
         });
+
+        if (this.size) {
+            let prevIndex = this.size;
+            while (prevIndex > 0) {
+                let prev = this.get(prevIndex - 1);
+                if (prev && prev.linear) {
+                    this.points["last"] = prev;
+                    break;
+                }
+                prevIndex -= 1;
+            }
+        }
 
         return new Promise((resolve) => {
             resolve(this);
