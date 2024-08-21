@@ -123,7 +123,6 @@ class Sections extends Map {
         const manifest = packaging.manifest;
         const spine = packaging.spine;
         const toc = navigation.toc;
-        const len = packaging.spine.size;
         spine.forEach((itemref, key) => {
 
             const item = manifest.get(key);
