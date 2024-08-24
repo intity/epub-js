@@ -388,8 +388,8 @@ class DefaultViewManager {
 		this.clear(); // Hide all current views
 
 		let forceRight = false;
-		if (this.layout.name === "pre-paginated" && 
-			this.layout.divisor === 2 && 
+		if (this.layout.name === "pre-paginated" &&
+			this.layout.divisor === 2 &&
 			section.properties.includes("page-spread-right")) {
 			forceRight = true;
 		}
@@ -531,7 +531,7 @@ class DefaultViewManager {
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
 			this.afterDisplayed(view);
 		});
-		
+
 		view.on(EVENTS.VIEWS.RESIZED, (bounds) => {
 			this.counter(bounds);
 			this.afterResized(view);
@@ -631,8 +631,8 @@ class DefaultViewManager {
 			this.updateLayout();
 
 			let forceRight = false;
-			if (this.layout.name === "pre-paginated" && 
-				this.layout.divisor === 2 && 
+			if (this.layout.name === "pre-paginated" &&
+				this.layout.divisor === 2 &&
 				section.properties.includes("page-spread-right")) {
 				forceRight = true;
 			}
@@ -726,8 +726,8 @@ class DefaultViewManager {
 			this.updateLayout();
 
 			let forceRight = false;
-			if (this.layout.name === "pre-paginated" && 
-				this.layout.divisor === 2 && 
+			if (this.layout.name === "pre-paginated" &&
+				this.layout.divisor === 2 &&
 				typeof section.prev() !== "object") {
 				forceRight = true;
 			}
@@ -812,7 +812,7 @@ class DefaultViewManager {
 		if (this.settings.fullsize) {
 			offset = this.settings.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
-		
+
 		const container = this.container.getBoundingClientRect();
 		const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
 		const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
@@ -825,40 +825,40 @@ class DefaultViewManager {
 			let startPos;
 			let endPos;
 			let stopPos;
-			let totalPages;
+			let total;
 
 			if (this.settings.axis === AXIS_V) {
 				startPos = offset + container.top - position.top + used;
 				endPos = startPos + pageHeight - used;
 				stopPos = pageHeight;
-				totalPages = this.layout.count(view.height, pageHeight).pages;
+				total = this.layout.count(view.height, pageHeight).pages;
 			} else {
 				startPos = offset + container.left - position.left + used;
 				endPos = startPos + pageWidth - used;
 				stopPos = pageWidth;
-				totalPages = this.layout.count(view.width, pageWidth).pages;
+				total = this.layout.count(view.width, pageWidth).pages;
 			}
 
-			let currPage = Math.ceil(startPos / stopPos);
+			let startPage = Math.ceil(startPos / stopPos);
 			let endPage = Math.ceil(endPos / stopPos);
 
 			// Reverse page counts for horizontal rtl
-			if (this.settings.axis === AXIS_H && 
+			if (this.settings.axis === AXIS_H &&
 				this.layout.direction === "rtl") {
-				const tmp = currPage;
-				currPage = totalPages - endPage;
-				endPage = totalPages - tmp;
+				const tmp = startPage;
+				startPage = total - endPage;
+				endPage = total - tmp;
 			}
 
 			const pages = [];
-			for (let i = currPage; i <= endPage; i++) {
-				pages.push(i + 1);
+			for (let i = startPage; i < endPage; i++) {
+				pages.push({ index: i });
 			}
 
 			const mapping = this.mapping.page(
-				view.contents, 
-				view.section.cfiBase, 
-				startPos, 
+				view.contents,
+				view.section.cfiBase,
+				startPos,
 				endPos
 			);
 
@@ -867,7 +867,7 @@ class DefaultViewManager {
 				href,
 				index,
 				pages,
-				totalPages,
+				total,
 				mapping
 			}
 		});
@@ -886,7 +886,7 @@ class DefaultViewManager {
 		if (this.settings.fullsize) {
 			left = window.scrollX;
 		}
-		
+
 		const container = this.container.getBoundingClientRect();
 		const views = this.visible();
 		const sections = views.map((view) => {
@@ -923,32 +923,32 @@ class DefaultViewManager {
 				endPage = endPage + 1;
 			}
 
-			const totalPages = this.layout.count(view.width).pages;
+			const total = this.layout.count(view.width).pages;
 			// Reverse page counts for rtl
 			if (this.layout.direction === "rtl") {
 				const tmp = startPage;
-				startPage = totalPages - endPage;
-				endPage = totalPages - tmp;
+				startPage = total - endPage;
+				endPage = total - tmp;
 			}
 
 			const pages = [];
-			for (let i = startPage; i <= endPage; i++) {
-				pages.push(i + 1);
+			for (let i = startPage; i < endPage; i++) {
+				pages.push({ index: i });
 			}
 
 			const mapping = this.mapping.page(
-				view.contents, 
-				view.section.cfiBase, 
-				startPos, 
+				view.contents,
+				view.section.cfiBase,
+				startPos,
 				endPos
 			);
-			
+
 			return {
 				axis: this.settings.axis,
 				href,
 				index,
 				pages,
-				totalPages,
+				total,
 				mapping
 			}
 		});
