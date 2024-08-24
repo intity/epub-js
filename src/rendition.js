@@ -297,10 +297,7 @@ class Rendition {
 		if (this.displaying) {
 			this.displaying.resolve();
 		}
-		return this.q.enqueue(
-			this._display.bind(this),
-			target
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this._display.bind(this), target);
 	}
 
 	/**
@@ -345,7 +342,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
-		});
+		}).then(this.reportLocation.bind(this));
 
 		return displaying.promise;
 	}
