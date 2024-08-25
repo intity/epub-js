@@ -661,7 +661,6 @@ class Rendition {
 		this.manager && this.manager.destroy();
 		this.book = undefined;
 
-		this.views = null;
 		this.hooks.display.clear();
 		this.hooks.content.clear();
 		this.hooks.layout.clear();
