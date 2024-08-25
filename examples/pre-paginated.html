@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPUB.JS: Pre-paginated - Example</title>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <link rel="stylesheet" type="text/css" href="examples.css">
+    <script src="../dist/epub.js"></script>
+</head>
+
+<body>
+    <div id="content" class="doc">
+        <div id="viewer" class="scrolled-doc"></div>
+        <a id="prev" href="#prev" class="arrow"></a>
+        <a id="next" href="#next" class="arrow"></a>
+    </div>
+    <script>
+        const prev = document.getElementById("prev")
+        const next = document.getElementById("next")
+        const book = ePub("../assets/alice/")
+        const rendition = book.renderTo("viewer", {
+            width: "100%",
+            layout: "pre-paginated",
+            spread: "none",
+            flow: "scrolled-doc"
+        })
+        next.onclick = (e) => {
+
+            rendition.next()
+            e.preventDefault()
+        }
+        prev.onclick = (e) => {
+
+            rendition.prev();
+            e.preventDefault();
+        }
+        const update = (location) => {
+
+            const loc = location || rendition.currentLocation()
+            prev.style.display = loc.atStart ? "none" : "block"
+            next.style.display = loc.atEnd ? "none" : "block"
+        }
+        const keybinding = (e) => {
+
+            switch (e.key) {
+                case "ArrowLeft":
+                    rendition.prev()
+                    break;
+                case "ArrowRight":
+                    rendition.next()
+                    break;
+            }
+        }
+        rendition.display().then((section) => {
+
+            document.onkeyup = keybinding
+            rendition.on("keyup", keybinding)
+        })
+        rendition.on("relocated", (location) => {
+
+            update(location)
+            console.log(book)
+        })
+    </script>
+</body>
+
+</html>
