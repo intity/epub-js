@@ -204,9 +204,6 @@ class Rendition {
 
 		this.layout = new Layout(props);
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-			if (changed.name) {
-				this.manager.clear();
-			}
 			/**
 			 * Emit of updated the Layout state
 			 * @event layout
