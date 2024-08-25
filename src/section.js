@@ -102,7 +102,6 @@ class Section {
 	load(request) {
 
 		const loading = new Defer();
-		const loaded = loading.promise;
 
 		if (this.contents) {
 			loading.resolve(this.contents);
@@ -118,19 +117,19 @@ class Section {
 			});
 		}
 
-		return loaded;
+		return loading.promise;
 	}
 
 	/**
 	 * Render the contents of a section
+	 * @todo better way to return this from hooks?
 	 * @param {Function} request a request method to use for loading
 	 * @return {Promise<string>} output a serialized XML Document
 	 */
 	render(request) {
 
 		const rendering = new Defer();
-		const rendered = rendering.promise;
-		this.output; // TODO: better way to return this from hooks?
+
 		this.load(request).then((contents) => {
 			const serializer = new XMLSerializer();
 			this.output = serializer.serializeToString(contents);
@@ -143,7 +142,7 @@ class Section {
 			rendering.reject(error);
 		});
 
-		return rendered;
+		return rendering.promise;
 	}
 
 	/**
@@ -210,7 +209,7 @@ class Section {
 	 */
 	search(query, maxSeqEle = 5) {
 
-		if (typeof (document.createTreeWalker) == "undefined") {
+		if (typeof (document.createTreeWalker) === "undefined") {
 			return this.find(query);
 		}
 		const matches = [];
@@ -273,35 +272,6 @@ class Section {
 			search(nodeList);
 		}
 		return matches;
-	}
-
-	/**
-	* Reconciles the current chapters layout properties with
-	* the global layout properties.
-	* @param {object} globalLayout The global layout settings object, chapter properties string
-	* @return {object} layoutProperties object with layout properties
-	*/
-	reconcileLayoutSettings(globalLayout) {
-		//-- Get the global defaults
-		const settings = {
-			layout: globalLayout.layout,
-			spread: globalLayout.spread,
-			orientation: globalLayout.orientation
-		};
-
-		//-- Get the chapter's display type
-		this.properties.forEach(prop => {
-			const rendition = prop.replace("rendition:", "");
-			const split = rendition.indexOf("-");
-
-			if (split !== -1) {
-				const property = rendition.slice(0, split);
-				const value = rendition.slice(split + 1);
-				settings[property] = value;
-			}
-		});
-
-		return settings;
 	}
 
 	/**
