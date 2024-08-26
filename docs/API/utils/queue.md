@@ -7,11 +7,10 @@ Queue for handling tasks one at a time
 
 * [Queue](#Queue)
     * [new Queue(context)](#new_Queue_new)
-    * [.enqueue()](#Queue+enqueue) ⇒ <code>Promise</code>
-    * [.dequeue()](#Queue+dequeue) ⇒ <code>Promise</code>
+    * [.enqueue(task, [...args])](#Queue+enqueue) ⇒ <code>Promise.&lt;any&gt;</code>
+    * [.dequeue()](#Queue+dequeue) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.dump()](#Queue+dump)
-    * [.run()](#Queue+run) ⇒ <code>Promise</code>
-    * [.flush()](#Queue+flush) ⇒ <code>Promise</code>
+    * [.run()](#Queue+run) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.clear()](#Queue+clear)
     * [.length()](#Queue+length) ⇒ <code>number</code>
     * [.pause()](#Queue+pause)
@@ -29,13 +28,19 @@ Constructor
 
 <a name="Queue+enqueue"></a>
 
-## queue.enqueue() ⇒ <code>Promise</code>
+## queue.enqueue(task, [...args]) ⇒ <code>Promise.&lt;any&gt;</code>
 Add an item to the queue
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
+
+| Param | Type |
+| --- | --- |
+| task | <code>any</code> | 
+| [...args] | <code>Array.&lt;any&gt;</code> | 
+
 <a name="Queue+dequeue"></a>
 
-## queue.dequeue() ⇒ <code>Promise</code>
+## queue.dequeue() ⇒ <code>Promise.&lt;any&gt;</code>
 Run one item
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
@@ -47,14 +52,8 @@ Run All Immediately
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+run"></a>
 
-## queue.run() ⇒ <code>Promise</code>
+## queue.run() ⇒ <code>Promise.&lt;any&gt;</code>
 Run all tasks sequentially, at convince
-
-**Kind**: instance method of [<code>Queue</code>](#Queue)  
-<a name="Queue+flush"></a>
-
-## queue.flush() ⇒ <code>Promise</code>
-Flush all, as quickly as possible
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+clear"></a>

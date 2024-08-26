@@ -12,23 +12,30 @@
     - [Annotation](API/annotation.md)
     - [constants](API/utils/constants.md) `from ./utils/constants`
         - EVENTS
+- [Archive](API/archive.md) `from ./archive`
+    - [Input](API/input.md)
+    - JSZip
+    - [mime](API/utils/mime.md) `from ./utils/mime`
+    - [request](API/utils/request.md) `from ./utils/request`
 - [Book](API/book.md) `from ./book`
     - [Archive](API/archive.md)
     - [constants](API/utils/constants.md) `from ./utils/constants`
         - EPUBJS_VERSION
         - EVENTS
+    - [core](API/utils/core.md) `from ./utils/core`
+        - extend
     - [Container](API/container.md)
+    - [Defer](API/utils/defer.md)
+    - [EpubCFI](API/epubcfi.md)
     - [Locations](API/locations.md)
-        - [Location](API/location.md)
     - [Navigation](API/navigation.md)
     - [Packaging](API/packaging.md)
-    - [Pagelist](API/pagelist.md)
     - [Path](API/utils/path.md)
     - [Rendition](API/rendition.md)
     - [Resources](API/resources.md)
     - [request](API/utils/request.md) `from ./utils/request`
     - [Sections](API/sections.md)
-    - [Store](API/store.md)
+    - [Storage](API/storage.md)
     - [Url](API/utils/url.md)
 - [Contents](API/contents.md) `from ./contentss`
     - [constants](API/utils/constants.md) `from ./utils/constants`
@@ -44,6 +51,12 @@
     - [Mapping](API/mapping.md)
     - [replacements](API/utils/replacements.md) `from ./utils/replacements`
         - replaceLinks
+- [Input](API/input.md)
+    - [core](API/utils/core.md) `from ./utils/core`
+        - isXml
+        - parse
+    - [Defer](API/utils/defer.md)
+    - [Path](API/utils/path.md)
 - [EpubCFI](API/epubcfi.md) `from ./epubcfi`
     - [core](API/utils/core.md) `from ./utils/core`
         - extend
@@ -190,6 +203,12 @@
     - [core](API/utils/core.md) `from ../utils/core`
         - indexOfNode
         - qsa
+- [Storage](API/storage.md) `from ./storage`
+    - [Defer](API/utils/defer.md)
+    - [Input](API/input.md)
+    - localforage
+    - [mime](API/utils/mime.md) `from ./utils/mime`
+    - [request](API/utils/request.md) `from ./utils/request`
 - [Themes](API/themes.md) `from ./themes`
     - [Url](API/utils/url.md)
 - [Toc](API/navigation/toc.md) `from ./navigation/toc`

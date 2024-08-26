@@ -1,22 +1,21 @@
 <a name="Sections"></a>
 
-# Sections ⇐ <code>Array</code>
+# Sections ⇐ <code>Map</code>
 Sections class
 
 **Kind**: global class  
-**Extends**: <code>Array</code>  
+**Extends**: <code>Map</code>  
 
-* [Sections](#Sections) ⇐ <code>Array</code>
+* [Sections](#Sections) ⇐ <code>Map</code>
     * _instance_
         * [.clear()](#Sections+clear)
         * [.get([target])](#Sections+get) ⇒ <code>Section</code> \| <code>null</code>
         * [.first()](#Sections+first) ⇒ <code>Section</code> \| <code>null</code>
         * [.last()](#Sections+last) ⇒ <code>Section</code> \| <code>null</code>
-        * [.unpack(packaging, resolve, canonical)](#Sections+unpack) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
+        * [.unpack(packaging, navigation, resolve, canonical)](#Sections+unpack) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
         * [.destroy()](#Sections+destroy)
     * _static_
         * [.hooks](#Sections.hooks) : <code>object</code>
-        * [.loaded](#Sections.loaded) : <code>boolean</code>
 
 <a name="Sections+clear"></a>
 
@@ -72,7 +71,7 @@ Find the last Section in the Spine
 **Returns**: <code>Section</code> \| <code>null</code> - last section  
 <a name="Sections+unpack"></a>
 
-## sections.unpack(packaging, resolve, canonical) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
+## sections.unpack(packaging, navigation, resolve, canonical) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
 Unpack items from a opf into spine items
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
@@ -80,6 +79,7 @@ Unpack items from a opf into spine items
 | Param | Type | Description |
 | --- | --- | --- |
 | packaging | <code>Packaging</code> |  |
+| navigation | <code>Navigation</code> |  |
 | resolve | <code>function</code> | URL resolve |
 | canonical | <code>function</code> | Resolve canonical url |
 
@@ -101,8 +101,3 @@ destroy
 | content | <code>Hook</code> | 
 | serialize | <code>Hook</code> | 
 
-<a name="Sections.loaded"></a>
-
-## Sections.loaded : <code>boolean</code>
-**Kind**: static property of [<code>Sections</code>](#Sections)  
-**Read only**: true  

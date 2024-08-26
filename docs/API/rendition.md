@@ -14,7 +14,7 @@ the section content.
         * [.requireManager(manager)](#Rendition+requireManager) ⇒ <code>any</code>
         * [.start()](#Rendition+start)
         * [.attachTo(element)](#Rendition+attachTo) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.display([target])](#Rendition+display) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.display([target])](#Rendition+display) ⇒ <code>Promise.&lt;Section&gt;</code>
         * [.moveTo(offset)](#Rendition+moveTo)
         * [.resize([width], [height], [epubcfi])](#Rendition+resize)
         * [.clear()](#Rendition+clear)
@@ -114,7 +114,7 @@ Container must be attached before rendering can begin
 
 <a name="Rendition+display"></a>
 
-## rendition.display([target]) ⇒ <code>Promise.&lt;any&gt;</code>
+## rendition.display([target]) ⇒ <code>Promise.&lt;Section&gt;</code>
 Display a point in the book
 The request will be added to the rendering Queue,
 so it will wait until book is opened, rendering started

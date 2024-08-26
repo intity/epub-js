@@ -4,7 +4,7 @@ import Book from "../src/book"
 describe("Rendition", () => {
     let book, rendition
     before(async () => {
-        book = new Book("/assets/linear-algebra/")
+        book = new Book("/assets/handbook/")
         await book.opened
         rendition = book.renderTo(document.body, {
             width: "100%",
@@ -14,42 +14,42 @@ describe("Rendition", () => {
     describe("#display()", () => {
         it("should be displayed by default", () => {
             rendition.display().then((section) => {
-                assert.equal(section.index, 1)
-                assert.equal(section.idref, "c2")
-                assert.equal(section.href, "xhtml/copyright.xhtml")
-                assert.equal(section.url, "/assets/linear-algebra/EPUB/xhtml/copyright.xhtml")
+                assert.equal(section.index, 0)
+                assert.equal(section.idref, "s0")
+                assert.equal(section.href, "xhtml/nav.xhtml")
+                assert.equal(section.url, "/assets/handbook/EPUB/xhtml/nav.xhtml")
             })
         })
         it("should be displayed by index", () => {
-            rendition.display(8).then((section) => {
-                assert.equal(section.index, 8)
-                assert.equal(section.idref, "c9")
-                assert.equal(section.href, "xhtml/fcla-xml-2.30li9.xhtml")
-                assert.equal(section.url, "/assets/linear-algebra/EPUB/xhtml/fcla-xml-2.30li9.xhtml")
+            rendition.display(3).then((section) => {
+                assert.equal(section.index, 3)
+                assert.equal(section.idref, "s2")
+                assert.equal(section.href, "xhtml/mathml.xhtml")
+                assert.equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml")
             })
         })
         it("should be displayed by idref", () => {
-            rendition.display("#c9").then((section) => {
-                assert.equal(section.index, 8)
-                assert.equal(section.idref, "c9")
-                assert.equal(section.href, "xhtml/fcla-xml-2.30li9.xhtml")
-                assert.equal(section.url, "/assets/linear-algebra/EPUB/xhtml/fcla-xml-2.30li9.xhtml")
+            rendition.display("#s2").then((section) => {
+                assert.equal(section.index, 3)
+                assert.equal(section.idref, "s2")
+                assert.equal(section.href, "xhtml/mathml.xhtml")
+                assert.equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml")
             })
         })
         it("should be displayed by href", () => {
-            rendition.display("xhtml/fcla-xml-2.30li9.xhtml").then((section) => {
-                assert.equal(section.index, 8)
-                assert.equal(section.idref, "c9")
-                assert.equal(section.href, "xhtml/fcla-xml-2.30li9.xhtml")
-                assert.equal(section.url, "/assets/linear-algebra/EPUB/xhtml/fcla-xml-2.30li9.xhtml")
+            rendition.display("xhtml/mathml.xhtml").then((section) => {
+                assert.equal(section.index, 3)
+                assert.equal(section.idref, "s2")
+                assert.equal(section.href, "xhtml/mathml.xhtml")
+                assert.equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml")
             })
         })
         it("should be displayed by EpubCFI", () => {
-            rendition.display("epubcfi(/6/18!/4[x10-9000]/2/2/1:0)").then((section) => {
-                assert.equal(section.index, 8)
-                assert.equal(section.idref, "c9")
-                assert.equal(section.href, "xhtml/fcla-xml-2.30li9.xhtml")
-                assert.equal(section.url, "/assets/linear-algebra/EPUB/xhtml/fcla-xml-2.30li9.xhtml")
+            rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)").then((section) => {
+                assert.equal(section.index, 3)
+                assert.equal(section.idref, "s2")
+                assert.equal(section.href, "xhtml/mathml.xhtml")
+                assert.equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml")
             })
         })
     })

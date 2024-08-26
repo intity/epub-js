@@ -83,6 +83,18 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.rendered = false;
+		/**
+		 * @member {string} scrollType
+		 * @memberof DefaultViewManager
+		 * @readonly
+		 */
+		this.scrollType = undefined;
+		/**
+		 * @member {string} writingMode
+		 * @memberof DefaultViewManager
+		 * @readonly
+		 */
+		this.writingMode = this.settings.writingMode;
 		this.q = new Queue(this);
 	}
 
@@ -90,8 +102,8 @@ class DefaultViewManager {
 	 * render
 	 * @param {Element} element 
 	 * @param {object} size 
-	 * @param {number} size.width
-	 * @param {number} size.height
+	 * @param {string|number} size.width
+	 * @param {string|number} size.height
 	 */
 	render(element, size) {
 
@@ -105,7 +117,7 @@ class DefaultViewManager {
 			this.settings.fullsize = true;
 		}
 
-		this.settings.rtlScrollType = scrollType();
+		this.scrollType = scrollType();
 		/**
 		 * @member {Stage} stage
 		 * @memberof DefaultViewManager
@@ -202,6 +214,8 @@ class DefaultViewManager {
 		this.removeEventListeners();
 		this.stage.destroy();
 		this.rendered = false;
+		this.scrollType = undefined;
+		this.writingMode = undefined;
 	}
 
 	/**
@@ -325,37 +339,14 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * handleNextPrePaginated
-	 * @param {boolean} forceRight 
-	 * @param {Section} section 
-	 * @param {Function} action callback function
-	 * @returns {any}
-	 * @private
-	 */
-	handleNextPrePaginated(forceRight, section, action) {
-
-		if (this.layout.name === "pre-paginated" && this.layout.divisor > 1) {
-			if (forceRight || section.index === 0) {
-				// First page (cover) should stand alone for pre-paginated books
-				return;
-			}
-			const next = section.next();
-			if (next && !next.properties.includes("page-spread-left")) {
-				return action.call(this, next);
-			}
-		}
-	}
-
-	/**
 	 * display
 	 * @param {Section} section 
 	 * @param {string|number} [target] 
-	 * @returns {Promise<any>} displaying promise
+	 * @returns {Promise<view|null>} displaying promise
 	 */
 	display(section, target) {
 
 		const displaying = new Defer();
-		const displayed = displaying.promise;
 
 		// Check if moving to target is needed
 		if (target === section.href || isNumber(target)) {
@@ -382,14 +373,14 @@ class DefaultViewManager {
 			}
 
 			displaying.resolve();
-			return displayed;
+			return displaying.promise;
 		}
 
 		this.clear(); // Hide all current views
 
 		let forceRight = false;
-		if (this.layout.name === "pre-paginated" && 
-			this.layout.divisor === 2 && 
+		if (this.layout.name === "pre-paginated" &&
+			this.layout.divisor === 2 &&
 			section.properties.includes("page-spread-right")) {
 			forceRight = true;
 		}
@@ -401,16 +392,15 @@ class DefaultViewManager {
 				const offset = view.locationOf(target);
 				this.moveTo(offset, view.width);
 			}
+			return view;
 		}, (err) => {
 			displaying.reject(err);
-		}).then(() => {
-			return this.handleNextPrePaginated(forceRight, section, this.add);
-		}).then(() => {
+		}).then((view) => {
 			this.views.show();
-			displaying.resolve();
+			displaying.resolve(view);
 		});
 
-		return displayed;
+		return displaying.promise;
 	}
 
 	/**
@@ -531,7 +521,7 @@ class DefaultViewManager {
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
 			this.afterDisplayed(view);
 		});
-		
+
 		view.on(EVENTS.VIEWS.RESIZED, (bounds) => {
 			this.counter(bounds);
 			this.afterResized(view);
@@ -566,19 +556,21 @@ class DefaultViewManager {
 
 	/**
 	 * next
-	 * @returns {Promise<any>}
+	 * @returns {Promise<view|null>} next view
 	 */
 	next() {
 
 		let left, section;
+		const def = new Defer();
 		const dir = this.layout.direction;
+		const hvx = this.paginated && this.settings.axis === AXIS_H;
 
 		if (this.views.length === 0) {
-			return null;
-		} else if (this.paginated && this.settings.axis === AXIS_H && dir === "ltr") {
+			def.resolve(null);
+			return def.promise;
+		} else if (hvx && dir === "ltr") {
 
 			this.scrollLeft = this.container.scrollLeft;
-
 			left = this.container.scrollLeft + this.container.offsetWidth + this.layout.delta;
 
 			if (left <= this.container.scrollWidth) {
@@ -586,11 +578,11 @@ class DefaultViewManager {
 			} else {
 				section = this.views.last().section.next();
 			}
-		} else if (this.paginated && this.settings.axis === AXIS_H && dir === "rtl") {
+		} else if (hvx && dir === "rtl") {
 
 			this.scrollLeft = this.container.scrollLeft;
 
-			if (this.settings.rtlScrollType === "default") {
+			if (this.scrollType === "default") {
 				left = this.container.scrollLeft;
 
 				if (left > 0) {
@@ -607,7 +599,6 @@ class DefaultViewManager {
 					section = this.views.last().section.next();
 				}
 			}
-
 		} else if (this.paginated && this.settings.axis === AXIS_V) {
 
 			this.scrollTop = this.container.scrollTop;
@@ -618,7 +609,6 @@ class DefaultViewManager {
 			} else {
 				section = this.views.last().section.next();
 			}
-
 		} else {
 			section = this.views.last().section.next();
 		}
@@ -631,47 +621,48 @@ class DefaultViewManager {
 			this.updateLayout();
 
 			let forceRight = false;
-			if (this.layout.name === "pre-paginated" && 
-				this.layout.divisor === 2 && 
+			if (this.layout.name === "pre-paginated" &&
+				this.layout.divisor === 2 &&
 				section.properties.includes("page-spread-right")) {
 				forceRight = true;
 			}
 
-			return this.append(section, forceRight).then(() => {
-
-				return this.handleNextPrePaginated(forceRight, section, this.append);
-			}, (err) => {
-				return err;
-			}).then(() => {
+			this.append(section, forceRight).then((view) => {
 
 				// Reset position to start for scrolled-doc vertical-rl in default mode
-				if (!this.paginated &&
-					this.settings.axis === AXIS_H &&
-					this.layout.direction === "rtl" &&
-					this.settings.rtlScrollType === "default") {
-
+				if (!hvx && dir === "rtl" &&
+					this.scrollType === "default") {
 					this.scrollTo(this.container.scrollWidth, 0, true);
 				}
 				this.views.show();
+				def.resolve(view);
+			}, (err) => {
+				def.reject(err);
 			});
+		} else {
+			def.resolve(null);
 		}
+
+		return def.promise;
 	}
 
 	/**
 	 * prev
-	 * @returns {Promise<any>}
+	 * @returns {Promise<view|null>}
 	 */
 	prev() {
 
 		let left, section;
+		const def = new Defer();
 		const dir = this.layout.direction;
+		const hvx = this.paginated && this.settings.axis === AXIS_H;
 
 		if (this.views.length === 0) {
-			return null;
-		} else if (this.paginated && this.settings.axis === AXIS_H && dir === "ltr") {
+			def.resolve(null);
+			return def.promise;
+		} else if (hvx && dir === "ltr") {
 
 			this.scrollLeft = this.container.scrollLeft;
-
 			left = this.container.scrollLeft;
 
 			if (left > 0) {
@@ -679,12 +670,11 @@ class DefaultViewManager {
 			} else {
 				section = this.views.first().section.prev();
 			}
-
-		} else if (this.paginated && this.settings.axis === AXIS_H && dir === "rtl") {
+		} else if (hvx && dir === "rtl") {
 
 			this.scrollLeft = this.container.scrollLeft;
 
-			if (this.settings.rtlScrollType === "default") {
+			if (this.scrollType === "default") {
 				left = this.container.scrollLeft + this.container.offsetWidth;
 
 				if (left < this.container.scrollWidth) {
@@ -702,7 +692,6 @@ class DefaultViewManager {
 					section = this.views.first().section.prev();
 				}
 			}
-
 		} else if (this.paginated && this.settings.axis === AXIS_V) {
 
 			this.scrollTop = this.container.scrollTop;
@@ -713,7 +702,6 @@ class DefaultViewManager {
 			} else {
 				section = this.views.first().section.prev();
 			}
-
 		} else {
 			section = this.views.first().section.prev();
 		}
@@ -726,26 +714,17 @@ class DefaultViewManager {
 			this.updateLayout();
 
 			let forceRight = false;
-			if (this.layout.name === "pre-paginated" && 
-				this.layout.divisor === 2 && 
+			if (this.layout.name === "pre-paginated" &&
+				this.layout.divisor === 2 &&
 				typeof section.prev() !== "object") {
 				forceRight = true;
 			}
 
-			return this.prepend(section, forceRight).then(() => {
+			this.prepend(section, forceRight).then((view) => {
 
-				if (this.layout.name === "pre-paginated" && this.layout.divisor > 1) {
-					const left = section.prev();
-					if (left) {
-						return this.prepend(left);
-					}
-				}
-			}, (err) => {
-				return err;
-			}).then(() => {
-				if (this.paginated && this.settings.axis === AXIS_H) {
-					if (this.layout.direction === "rtl") {
-						if (this.settings.rtlScrollType === "default") {
+				if (hvx) {
+					if (dir === "rtl") {
+						if (this.scrollType === "default") {
 							this.scrollTo(0, 0, true);
 						}
 						else {
@@ -756,13 +735,20 @@ class DefaultViewManager {
 					}
 				}
 				this.views.show();
+				def.resolve(view);
+			}, (err) => {
+				def.reject(err);
 			});
+		} else {
+			def.resolve(null);
 		}
+
+		return def.promise;
 	}
 
 	/**
 	 * Get current visible view
-	 * @returns {*} view
+	 * @returns {view|null} view
 	 */
 	current() {
 
@@ -812,7 +798,7 @@ class DefaultViewManager {
 		if (this.settings.fullsize) {
 			offset = this.settings.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
-		
+
 		const container = this.container.getBoundingClientRect();
 		const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
 		const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
@@ -825,40 +811,40 @@ class DefaultViewManager {
 			let startPos;
 			let endPos;
 			let stopPos;
-			let totalPages;
+			let total;
 
 			if (this.settings.axis === AXIS_V) {
 				startPos = offset + container.top - position.top + used;
 				endPos = startPos + pageHeight - used;
 				stopPos = pageHeight;
-				totalPages = this.layout.count(view.height, pageHeight).pages;
+				total = this.layout.count(view.height, pageHeight).pages;
 			} else {
 				startPos = offset + container.left - position.left + used;
 				endPos = startPos + pageWidth - used;
 				stopPos = pageWidth;
-				totalPages = this.layout.count(view.width, pageWidth).pages;
+				total = this.layout.count(view.width, pageWidth).pages;
 			}
 
-			let currPage = Math.ceil(startPos / stopPos);
+			let startPage = Math.ceil(startPos / stopPos);
 			let endPage = Math.ceil(endPos / stopPos);
 
 			// Reverse page counts for horizontal rtl
-			if (this.settings.axis === AXIS_H && 
+			if (this.settings.axis === AXIS_H &&
 				this.layout.direction === "rtl") {
-				const tmp = currPage;
-				currPage = totalPages - endPage;
-				endPage = totalPages - tmp;
+				const tmp = startPage;
+				startPage = total - endPage;
+				endPage = total - tmp;
 			}
 
 			const pages = [];
-			for (let i = currPage; i <= endPage; i++) {
-				pages.push(i + 1);
+			for (let i = startPage; i < endPage; i++) {
+				pages.push({ index: i });
 			}
 
 			const mapping = this.mapping.page(
-				view.contents, 
-				view.section.cfiBase, 
-				startPos, 
+				view.contents,
+				view.section.cfiBase,
+				startPos,
 				endPos
 			);
 
@@ -867,7 +853,7 @@ class DefaultViewManager {
 				href,
 				index,
 				pages,
-				totalPages,
+				total,
 				mapping
 			}
 		});
@@ -886,7 +872,7 @@ class DefaultViewManager {
 		if (this.settings.fullsize) {
 			left = window.scrollX;
 		}
-		
+
 		const container = this.container.getBoundingClientRect();
 		const views = this.visible();
 		const sections = views.map((view) => {
@@ -923,32 +909,32 @@ class DefaultViewManager {
 				endPage = endPage + 1;
 			}
 
-			const totalPages = this.layout.count(view.width).pages;
+			const total = this.layout.count(view.width).pages;
 			// Reverse page counts for rtl
 			if (this.layout.direction === "rtl") {
 				const tmp = startPage;
-				startPage = totalPages - endPage;
-				endPage = totalPages - tmp;
+				startPage = total - endPage;
+				endPage = total - tmp;
 			}
 
 			const pages = [];
-			for (let i = startPage; i <= endPage; i++) {
-				pages.push(i + 1);
+			for (let i = startPage; i < endPage; i++) {
+				pages.push({ index: i });
 			}
 
 			const mapping = this.mapping.page(
-				view.contents, 
-				view.section.cfiBase, 
-				startPos, 
+				view.contents,
+				view.section.cfiBase,
+				startPos,
 				endPos
 			);
-			
+
 			return {
 				axis: this.settings.axis,
 				href,
 				index,
 				pages,
-				totalPages,
+				total,
 				mapping
 			}
 		});
@@ -1130,11 +1116,6 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.mapping = new Mapping(this.layout, this.settings.axis);
-
-		if (this.views.length > 0 &&
-			this.layout.name === "pre-paginated") {
-			this.display(this.views.first().section);
-		}
 	}
 
 	/**

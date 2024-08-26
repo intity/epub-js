@@ -294,10 +294,7 @@ class Rendition {
 		if (this.displaying) {
 			this.displaying.resolve();
 		}
-		return this.q.enqueue(
-			this._display.bind(this),
-			target
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this._display.bind(this), target);
 	}
 
 	/**
@@ -342,7 +339,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
-		});
+		}).then(this.reportLocation.bind(this));
 
 		return displaying.promise;
 	}
@@ -588,56 +585,66 @@ class Rendition {
 		const start = location[0];
 		const end = location[location.length - 1];
 		const located = {
+			atStart: false,
+			atEnd: false,
 			start: {
+				cfi: start.mapping.start,
 				href: start.href,
 				index: start.index,
-				cfi: start.mapping.start,
 				displayed: {
-					page: start.pages[0] || 1,
-					total: start.totalPages
+					page: start.pages[0],
+					total: start.total
 				}
 			},
 			end: {
+				cfi: end.mapping.end,
 				href: end.href,
 				index: end.index,
-				cfi: end.mapping.end,
 				displayed: {
-					page: end.pages[end.pages.length - 1] || 1,
-					total: end.totalPages
+					page: end.pages[end.pages.length - 1],
+					total: end.total
 				}
 			}
 		}
 
-		const locationStart = this.book.locations.locationFromCfi(start.mapping.start);
-		const locationEnd = this.book.locations.locationFromCfi(end.mapping.end);
+		const locations = this.book.locations;
+		if (locations.size) {
+			const locationStart = locations.locationFromCfi(start.mapping.start);
+			const locationEnd = locations.locationFromCfi(end.mapping.end);
 
-		if (locationStart !== null) {
-			located.start.location = locationStart;
-			located.start.percentage = this.book.locations.percentageFromLocation(locationStart);
-		}
-		if (locationEnd !== null) {
-			located.end.location = locationEnd;
-			located.end.percentage = this.book.locations.percentageFromLocation(locationEnd);
-		}
-
-		const pageStart = this.book.navigation.pageList.pageFromCfi(start.mapping.start);
-		const pageEnd = this.book.navigation.pageList.pageFromCfi(end.mapping.end);
-
-		if (pageStart != -1) {
-			located.start.page = pageStart;
-		}
-		if (pageEnd != -1) {
-			located.end.page = pageEnd;
+			if (locationStart !== -1) {
+				located.start.location = locationStart;
+				located.start.percentage = locations.percentageFromLocation(locationStart);
+			}
+			if (locationEnd !== -1) {
+				located.end.location = locationEnd;
+				located.end.percentage = locations.percentageFromLocation(locationEnd);
+			}
 		}
 
-		if (end.index === this.book.sections.last().index &&
-			located.end.displayed.page >= located.end.displayed.total) {
-			located.atEnd = true;
+		const pageList = this.book.navigation.pageList;
+		if (pageList.length) {
+			const pageStart = pageList.pageFromCfi(start.mapping.start);
+			const pageEnd = pageList.pageFromCfi(end.mapping.end);
+
+			if (pageStart !== -1) {
+				located.start.page = pageStart;
+			}
+			if (pageEnd !== -1) {
+				located.end.page = pageEnd;
+			}
 		}
 
-		if (start.index === this.book.sections.first().index &&
-			located.start.displayed.page === 1) {
+		const startPage = located.start.displayed.page;
+		if (this.book.sections.first().index === start.index &&
+			startPage.index === 0) {
 			located.atStart = true;
+		}
+
+		const endPage = located.end.displayed.page;
+		if (this.book.sections.last().index === end.index &&
+			endPage.index === located.end.displayed.total - 1) {
+			located.atEnd = true;
 		}
 
 		return located;
@@ -654,7 +661,6 @@ class Rendition {
 		this.manager && this.manager.destroy();
 		this.book = undefined;
 
-		this.views = null;
 		this.hooks.display.clear();
 		this.hooks.content.clear();
 		this.hooks.layout.clear();

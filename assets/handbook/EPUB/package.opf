@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="pub-id">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <!-- required -->
+        <dc:title id="title">epub-js library</dc:title>
+        <dc:identifier id="pub-id">urn:uuid:8910d318-ad40-495e-8f31-e2af48cebdec</dc:identifier>
+        <dc:language>en</dc:language>
+        <!-- optional -->
+        <!-- <dc:contributor></dc:contributor> -->
+        <dc:creator>epub-js community</dc:creator>
+        <!-- <dc:coverage></dc:coverage> -->
+        <dc:date>2024-08-21T00:00:00Z</dc:date>
+        <dc:description>epub.js library handbook</dc:description>
+        <!-- <dc:format></dc:format> -->
+        <!-- <dc:publisher></dc:publisher> -->
+        <!-- <dc:relation></dc:relation> -->
+        <dc:rights>cc-by, epub-js community</dc:rights>
+        <dc:source>https://github.com/intity/epub-js</dc:source>
+        <!-- <dc:subject></dc:subject> -->
+        <!-- <dc:type></dc:type> -->
+        <meta property="dcterms:modified">2024-08-21T00:00:00Z</meta>
+    </metadata>
+    <manifest>
+        <item id="r0" href="css/epub.css" media-type="text/css"/>
+        <item id="s0" media-type="application/xhtml+xml" href="xhtml/nav.xhtml" properties="nav"/>
+        <item id="s1" media-type="application/xhtml+xml" href="xhtml/introduction.xhtml"/>
+        <item id="s2" media-type="application/xhtml+xml" href="xhtml/mathml.xhtml" properties="mathml"/>
+    </manifest>
+    <spine>
+        <itemref idref="s0" linear="yes"/>
+        <itemref idref="s1" linear="yes"/>
+        <itemref idref="s2" linear="yes"/>
+    </spine>
+</package>

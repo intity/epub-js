@@ -123,7 +123,6 @@ class Sections extends Map {
         const manifest = packaging.manifest;
         const spine = packaging.spine;
         const toc = navigation.toc;
-        const len = packaging.spine.size;
         spine.forEach((itemref, key) => {
 
             const item = manifest.get(key);
@@ -156,17 +155,6 @@ class Sections extends Map {
             data.linear = itemref.linear;
 
             if (data.linear === "yes") {
-                data.prev = () => {
-                    let prevIndex = data.index;
-                    while (prevIndex > 0) {
-                        let prev = this.get(prevIndex - 1);
-                        if (prev && prev.linear) {
-                            return prev;
-                        }
-                        prevIndex -= 1;
-                    }
-                    return null;
-                };
                 data.next = () => {
                     let nextIndex = data.index;
                     while (nextIndex < this.size - 1) {
@@ -175,6 +163,17 @@ class Sections extends Map {
                             return next;
                         }
                         nextIndex += 1;
+                    }
+                    return null;
+                };
+                data.prev = () => {
+                    let prevIndex = data.index;
+                    while (prevIndex > 0) {
+                        let prev = this.get(prevIndex - 1);
+                        if (prev && prev.linear) {
+                            return prev;
+                        }
+                        prevIndex -= 1;
                     }
                     return null;
                 };
@@ -188,15 +187,32 @@ class Sections extends Map {
             }
 
             const section = new Section(data, this.hooks);
-
-            if (section.linear && !this.points.first) {
-                this.points["first"] = section;
-            } else if (section.index === (len - 1)) {
-                this.points["last"] = section;
-            }
-
             this.set(data.bind, section);
         });
+
+        if (this.size) {
+            let nextIndex = 0;
+            while (nextIndex < this.size) {
+                let next = this.get(nextIndex);
+                if (next && next.linear) {
+                    this.points["first"] = next;
+                    break;
+                }
+                nextIndex += 1;
+            }
+        }
+
+        if (this.size) {
+            let prevIndex = this.size;
+            while (prevIndex > 0) {
+                let prev = this.get(prevIndex - 1);
+                if (prev && prev.linear) {
+                    this.points["last"] = prev;
+                    break;
+                }
+                prevIndex -= 1;
+            }
+        }
 
         return new Promise((resolve) => {
             resolve(this);

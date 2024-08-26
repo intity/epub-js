@@ -10,7 +10,7 @@ Navigation Parser
     * [new Navigation()](#new_Navigation_new)
     * _instance_
         * [.clear()](#Navigation+clear)
-        * [.parse(target)](#Navigation+parse) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.parse(target)](#Navigation+parse) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
         * [.forEach(...args)](#Navigation+forEach)
         * [.destroy()](#Navigation+destroy)
     * _static_
@@ -31,7 +31,7 @@ Clear all navigation parts
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation+parse"></a>
 
-## navigation.parse(target) ⇒ <code>Promise.&lt;any&gt;</code>
+## navigation.parse(target) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
 Parse navigation
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
