@@ -1,0 +1,22 @@
+body {
+    background-color: rgb(255,253,249);
+    font-family: arial, verdana, sans-serif;
+    color:black;
+}
+
+math {
+    math-style: normal;
+}
+
+table {
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+td {
+    padding: 10px;
+    vertical-align: top;
+}
