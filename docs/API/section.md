@@ -13,7 +13,6 @@ In most books this is equivalent to a Chapter
         * [.render(request)](#Section+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.find(query)](#Section+find) ⇒ <code>Array.&lt;object&gt;</code>
         * [.search(query, [maxSeqEle])](#Section+search) ⇒ <code>Array.&lt;object&gt;</code>
-        * [.reconcileLayoutSettings(globalLayout)](#Section+reconcileLayoutSettings) ⇒ <code>object</code>
         * [.cfiFromRange(range)](#Section+cfiFromRange) ⇒ <code>string</code>
         * [.cfiFromElement(el)](#Section+cfiFromElement) ⇒ <code>string</code>
         * [.unload()](#Section+unload)
@@ -63,6 +62,10 @@ Render the contents of a section
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
 **Returns**: <code>Promise.&lt;string&gt;</code> - output a serialized XML Document  
+**Todo**
+
+- [ ] better way to return this from hooks?
+
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -94,19 +97,6 @@ If the document.createTreeWalker api is missed(eg: IE8), use
 | --- | --- | --- | --- |
 | query | <code>string</code> |  | The query string to search |
 | [maxSeqEle] | <code>number</code> | <code>5</code> | The maximum number of Element that are combined for search, default value is 5. |
-
-<a name="Section+reconcileLayoutSettings"></a>
-
-## section.reconcileLayoutSettings(globalLayout) ⇒ <code>object</code>
-Reconciles the current chapters layout properties with
-the global layout properties.
-
-**Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>object</code> - layoutProperties object with layout properties  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| globalLayout | <code>object</code> | The global layout settings object, chapter properties string |
 
 <a name="Section+cfiFromRange"></a>
 

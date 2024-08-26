@@ -11,11 +11,11 @@ Default View Manager
         * [.render(element, size)](#DefaultViewManager+render)
         * [.destroy()](#DefaultViewManager+destroy)
         * [.resize([width], [height], [epubcfi])](#DefaultViewManager+resize)
-        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
         * [.add(section, [forceRight])](#DefaultViewManager+add) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.current()](#DefaultViewManager+current) ⇒ <code>\*</code>
+        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+        * [.current()](#DefaultViewManager+current) ⇒ <code>view</code> \| <code>null</code>
         * [.clear()](#DefaultViewManager+clear)
         * [.currentLocation()](#DefaultViewManager+currentLocation) ⇒ <code>Array.&lt;object&gt;</code>
         * [.visible()](#DefaultViewManager+visible) ⇒ <code>Array.&lt;object&gt;</code>
@@ -29,6 +29,8 @@ Default View Manager
         * [.paginated](#DefaultViewManager.paginated) : <code>boolean</code>
         * [.location](#DefaultViewManager.location) : <code>Array.&lt;object&gt;</code>
         * [.rendered](#DefaultViewManager.rendered) : <code>boolean</code>
+        * [.scrollType](#DefaultViewManager.scrollType) : <code>string</code>
+        * [.writingMode](#DefaultViewManager.writingMode) : <code>string</code>
         * [.stage](#DefaultViewManager.stage) : <code>Stage</code>
         * [.container](#DefaultViewManager.container) : <code>Element</code>
         * [.views](#DefaultViewManager.views) : <code>Views</code>
@@ -62,8 +64,8 @@ render
 | --- | --- |
 | element | <code>Element</code> | 
 | size | <code>object</code> | 
-| size.width | <code>number</code> | 
-| size.height | <code>number</code> | 
+| size.width | <code>string</code> \| <code>number</code> | 
+| size.height | <code>string</code> \| <code>number</code> | 
 
 <a name="DefaultViewManager+destroy"></a>
 
@@ -86,11 +88,11 @@ resize
 
 <a name="DefaultViewManager+display"></a>
 
-## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;any&gt;</code>
+## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
 display
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - displaying promise  
 
 | Param | Type |
 | --- | --- |
@@ -111,23 +113,24 @@ append
 
 <a name="DefaultViewManager+next"></a>
 
-## defaultViewManager.next() ⇒ <code>Promise.&lt;any&gt;</code>
+## defaultViewManager.next() ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
 next
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - next view  
 <a name="DefaultViewManager+prev"></a>
 
-## defaultViewManager.prev() ⇒ <code>Promise.&lt;any&gt;</code>
+## defaultViewManager.prev() ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
 prev
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+current"></a>
 
-## defaultViewManager.current() ⇒ <code>\*</code>
+## defaultViewManager.current() ⇒ <code>view</code> \| <code>null</code>
 Get current visible view
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>\*</code> - view  
+**Returns**: <code>view</code> \| <code>null</code> - view  
 <a name="DefaultViewManager+clear"></a>
 
 ## defaultViewManager.clear()
@@ -198,6 +201,16 @@ Manager name
 <a name="DefaultViewManager.rendered"></a>
 
 ## DefaultViewManager.rendered : <code>boolean</code>
+**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+**Read only**: true  
+<a name="DefaultViewManager.scrollType"></a>
+
+## DefaultViewManager.scrollType : <code>string</code>
+**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+**Read only**: true  
+<a name="DefaultViewManager.writingMode"></a>
+
+## DefaultViewManager.writingMode : <code>string</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
 <a name="DefaultViewManager.stage"></a>

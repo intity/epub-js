@@ -11,15 +11,15 @@ IframeView class
         * [.create()](#IframeView+create) ⇒ <code>Element</code>
         * [.render(request)](#IframeView+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.reset()](#IframeView+reset)
+        * [.setAxis([value])](#IframeView+setAxis)
+        * [.setWritingMode(mode)](#IframeView+setWritingMode)
         * [.size([width], [height])](#IframeView+size)
         * [.lock(what, width, height)](#IframeView+lock)
         * [.expand()](#IframeView+expand)
         * [.reframe(width, height)](#IframeView+reframe)
         * [.load(contents)](#IframeView+load) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.onLoad(event, defer)](#IframeView+onLoad)
-        * [.setAxis(value)](#IframeView+setAxis)
-        * [.setWritingMode(mode)](#IframeView+setWritingMode)
-        * [.display(request)](#IframeView+display) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.display(request)](#IframeView+display) ⇒ <code>Promise.&lt;view&gt;</code>
         * [.show()](#IframeView+show)
         * [.hide()](#IframeView+hide)
         * [.offset()](#IframeView+offset) ⇒ <code>Object</code>
@@ -35,13 +35,14 @@ IframeView class
         * [.settings](#IframeView.settings) : <code>object</code>
         * [.id](#IframeView.id) : <code>string</code>
         * [.section](#IframeView.section) : <code>Section</code>
+        * [.axis](#IframeView.axis) : <code>string</code>
         * [.contents](#IframeView.contents) : <code>Contents</code>
         * [.epubcfi](#IframeView.epubcfi) : <code>EpubCFI</code>
         * [.layout](#IframeView.layout) : <code>Layout</code>
         * [.marks](#IframeView.marks) : <code>Marks</code>
         * [.method](#IframeView.method) : <code>string</code>
         * ["loaderror" (err)](#IframeView.event_loaderror)
-        * ["rendered" (section)](#IframeView.event_rendered)
+        * ["rendered" (view)](#IframeView.event_rendered)
         * ["resized" (size)](#IframeView.event_resized)
         * ["displayed"](#IframeView.event_displayed)
         * ["shown" (view)](#IframeView.event_shown)
@@ -92,6 +93,28 @@ render
 reset
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
+<a name="IframeView+setAxis"></a>
+
+## iframeView.setAxis([value])
+Set axis
+
+**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
+
+| Param | Type |
+| --- | --- |
+| [value] | <code>string</code> | 
+
+<a name="IframeView+setWritingMode"></a>
+
+## iframeView.setWritingMode(mode)
+Set writing mode
+
+**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
+
+| Param | Type |
+| --- | --- |
+| mode | <code>string</code> | 
+
 <a name="IframeView+size"></a>
 
 ## iframeView.size([width], [height])
@@ -162,35 +185,13 @@ onLoad
 | event | <code>Event</code> | 
 | defer | <code>Defer</code> | 
 
-<a name="IframeView+setAxis"></a>
-
-## iframeView.setAxis(value)
-Set axis
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| value | <code>string</code> | 
-
-<a name="IframeView+setWritingMode"></a>
-
-## iframeView.setWritingMode(mode)
-Set writing mode
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| mode | <code>string</code> | 
-
 <a name="IframeView+display"></a>
 
-## iframeView.display(request) ⇒ <code>Promise.&lt;any&gt;</code>
+## iframeView.display(request) ⇒ <code>Promise.&lt;view&gt;</code>
 display
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - displayed promise  
+**Returns**: <code>Promise.&lt;view&gt;</code> - displayed promise  
 
 | Param | Type |
 | --- | --- |
@@ -315,6 +316,11 @@ destroy
 ## IframeView.section : <code>Section</code>
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
+<a name="IframeView.axis"></a>
+
+## IframeView.axis : <code>string</code>
+**Kind**: static property of [<code>IframeView</code>](#IframeView)  
+**Read only**: true  
 <a name="IframeView.contents"></a>
 
 ## IframeView.contents : <code>Contents</code>
@@ -351,16 +357,16 @@ Load method
 
 | Param | Type |
 | --- | --- |
-| err | <code>\*</code> | 
+| err | <code>object</code> | 
 
 <a name="IframeView.event_rendered"></a>
 
-## "rendered" (section)
+## "rendered" (view)
 **Kind**: event emitted by [<code>IframeView</code>](#IframeView)  
 
 | Param | Type |
 | --- | --- |
-| section | <code>Section</code> | 
+| view | [<code>IframeView</code>](#IframeView) | 
 
 <a name="IframeView.event_resized"></a>
 
