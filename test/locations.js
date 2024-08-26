@@ -31,65 +31,54 @@ describe("Locations", () => {
 	})
 	describe("#generate()", () => {
 		it("should generate locations", async () => {
-			await book.locations.generate(549).then((locations) => {
-				assert.equal(locations.size, 101)
-			})
+			await book.locations.generate(549)
+			assert.equal(book.locations.size, 101)
 		})
 	})
 	describe("#set()", () => {
-		it("should set current location by EpubCFI", () => {
+		it("should set current location by EpubCFI", async () => {
 			const locs = book.locations
 			const curr = book.locations.current
-			rendition.display(3).then(() => { // section:3
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 1)
-				assert.equal(curr.percentage, 0.01)
-			})
-			rendition.display(4).then(() => { // section:4
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 14)
-				assert.equal(curr.percentage, 0.14)
-			})
-			rendition.display(5).then(() => { // section:5
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 25)
-				assert.equal(curr.percentage, 0.25)
-			})
-			rendition.display(6).then(() => { // section:6
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 36)
-				assert.equal(curr.percentage, 0.36)
-			})
-			rendition.display(7).then(() => { // section:7
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 50)
-				assert.equal(curr.percentage, 0.50)
-			})
-			rendition.display(8).then(() => { // section:8
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 61)
-				assert.equal(curr.percentage, 0.61)
-			})
-			rendition.display(9).then(() => { // section:9
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 71)
-				assert.equal(curr.percentage, 0.71)
-			})
-			rendition.display(10).then(() => { // section:10
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 77)
-				assert.equal(curr.percentage, 0.77)
-			})
-			rendition.display(11).then(() => { // section:11
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 89)
-				assert.equal(curr.percentage, 0.89)
-			})
-			rendition.display(12).then(() => { // section:12
-				locs.set({ cfi: rendition.currentLocation().start.cfi })
-				assert.equal(curr.index, 95)
-				assert.equal(curr.percentage, 0.95)
-			})
+			await rendition.display(3) // section:3
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 1)
+			assert.equal(curr.percentage, 0.01)
+			await rendition.display(4) // section:4
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 14)
+			assert.equal(curr.percentage, 0.14)
+			await rendition.display(5) // section:5
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 25)
+			assert.equal(curr.percentage, 0.25)
+			await rendition.display(6) // section:6
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 36)
+			assert.equal(curr.percentage, 0.36)
+			await rendition.display(7) // section:7
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 50)
+			assert.equal(curr.percentage, 0.50)
+			await rendition.display(8) // section:8
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 61)
+			assert.equal(curr.percentage, 0.61)
+			await rendition.display(9) // section:9
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 71)
+			assert.equal(curr.percentage, 0.71)
+			await rendition.display(10) // section:10
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 77)
+			assert.equal(curr.percentage, 0.77)
+			await rendition.display(11) // section:11
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 89)
+			assert.equal(curr.percentage, 0.89)
+			await rendition.display(12) // section:12
+			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			assert.equal(curr.index, 95)
+			assert.equal(curr.percentage, 0.95)
 		})
 		it("should set current location by index", () => {
 			const locs = book.locations
