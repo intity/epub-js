@@ -207,8 +207,8 @@ class Locations extends Map {
 	 */
 	treeWalker(root, func) {
 
-		const task = document.createTreeWalker(
-			root, NodeFilter.SHOW_TEXT, null, false);
+		const what = NodeFilter.SHOW_TEXT;
+		const task = document.createTreeWalker(root, what);
 		const tasks = [];
 		while (task.nextNode()) {
 			tasks.push(func(task.currentNode));
