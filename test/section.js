@@ -43,7 +43,7 @@ describe("Section", () => {
         })
         it("should render section #010", async () => {
             await section2.render(book.request)
-            assert.equal(typeof section1.output === "string", true)
+            assert.equal(typeof section2.output === "string", true)
         })
     })
     describe("#find()", () => {
