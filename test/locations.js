@@ -1,32 +1,38 @@
 import assert from "assert"
 import Book from "../src/book"
 import Locations from "../src/locations"
-import * as core from "../src/utils/core"
-import chapter from "../assets/locations.xhtml"
 
 describe("Locations", () => {
-	let book, rendition
+	let book, rendition, sections = {}
 	before(async () => {
 		book = new Book("/assets/alice/")
 		rendition = book.renderTo(document.body, {
 			width: "100%",
 			height: "100%"
 		})
+		const set = (index, section) => {
+			sections[index] = {
+				cfi: rendition.currentLocation().start.cfi,
+				sec: section
+			}
+		}
 		await book.opened
-		await rendition.display()
+		const tasks = []
+		for (let i = 2; i < 13; ++i) {
+			tasks.push(rendition.display(i).then((s) => set(i, s)))
+		}
+		return Promise.all(tasks)
 	})
 	describe("#parse()", () => {
-		it("should parse locations from a document", () => {
-			const doc = core.parse(chapter, "application/xhtml+xml")
-			const elm = doc.documentElement
-			const lcs = new Locations().parse(elm, "/6/4[chap01ref]", 100)
-			assert.equal(lcs.size, 15)
-		})
-		it("should parse locations from xmldom", () => {
-			const doc = core.parse(chapter, "application/xhtml+xml", true)
-			const elm = doc.documentElement
-			const lcs = new Locations().parse(elm, "/6/4[chap01ref]", 100)
-			assert.equal(lcs.size, 15)
+		it("should parse locations from a document", async () => {
+			const sec = sections[2].sec
+			const lcs = new Locations()
+			await lcs.parse(sec.contents, sec.cfiBase, 549)
+			const loc = [...lcs.values()][0]
+			assert.equal(lcs.size, 1)
+			assert.equal(loc.cfi, "epubcfi(/6/6!/4/2,/4[pgepubid00001]/1:0,/14/4/2/1:33)")
+			assert.equal(loc.index, 0)
+			assert.equal(loc.percentage, 0)
 		})
 	})
 	describe("#generate()", () => {
@@ -39,44 +45,34 @@ describe("Locations", () => {
 		it("should set current location by EpubCFI", async () => {
 			const locs = book.locations
 			const curr = book.locations.current
-			await rendition.display(3) // section:3
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[3].cfi })
 			assert.equal(curr.index, 1)
 			assert.equal(curr.percentage, 0.01)
-			await rendition.display(4) // section:4
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[4].cfi })
 			assert.equal(curr.index, 14)
 			assert.equal(curr.percentage, 0.14)
-			await rendition.display(5) // section:5
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[5].cfi })
 			assert.equal(curr.index, 25)
 			assert.equal(curr.percentage, 0.25)
-			await rendition.display(6) // section:6
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[6].cfi })
 			assert.equal(curr.index, 36)
 			assert.equal(curr.percentage, 0.36)
-			await rendition.display(7) // section:7
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[7].cfi })
 			assert.equal(curr.index, 50)
 			assert.equal(curr.percentage, 0.50)
-			await rendition.display(8) // section:8
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[8].cfi })
 			assert.equal(curr.index, 61)
 			assert.equal(curr.percentage, 0.61)
-			await rendition.display(9) // section:9
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[9].cfi })
 			assert.equal(curr.index, 71)
 			assert.equal(curr.percentage, 0.71)
-			await rendition.display(10) // section:10
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[10].cfi })
 			assert.equal(curr.index, 77)
 			assert.equal(curr.percentage, 0.77)
-			await rendition.display(11) // section:11
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[11].cfi })
 			assert.equal(curr.index, 89)
 			assert.equal(curr.percentage, 0.89)
-			await rendition.display(12) // section:12
-			locs.set({ cfi: rendition.currentLocation().start.cfi })
+			locs.set({ cfi: sections[12].cfi })
 			assert.equal(curr.index, 95)
 			assert.equal(curr.percentage, 0.95)
 		})
