@@ -104,46 +104,6 @@ class Contents {
 	}
 
 	/**
-	 * Get or Set width of the contents
-	 * @param {number} [w]
-	 * @returns {number} width
-	 */
-	contentWidth(w) {
-
-		const content = this.content || this.document.body;
-
-		if (w && isNumber(w)) {
-			w = w + "px";
-		}
-
-		if (w) {
-			content.style.width = w;
-		}
-
-		return parseInt(this.window.getComputedStyle(content)["width"]);
-	}
-
-	/**
-	 * Get or Set height of the contents
-	 * @param {number} [h]
-	 * @returns {number} height
-	 */
-	contentHeight(h) {
-
-		const content = this.content;
-
-		if (h && isNumber(h)) {
-			h = h + "px";
-		}
-
-		if (h) {
-			content.style.height = h;
-		}
-
-		return parseInt(this.window.getComputedStyle(content)["height"]);
-	}
-
-	/**
 	 * Get size of the text using Range
 	 * @returns {{ width: number, height: number }}
 	 */

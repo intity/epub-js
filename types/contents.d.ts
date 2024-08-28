@@ -34,8 +34,6 @@ export default class Contents {
     cfiFromNode(node: Node, ignoreClass?: string): string;
     cfiFromRange(range: Range, ignoreClass?: string): string;
     columns(width: number, height: number, columnWidth: number, gap: number, dir: string): void;
-    contentHeight(h: number): number;
-    contentWidth(w: number): number;
     css(property: string, value: string, priority?: boolean): string;
     destroy(): void;
     direction(dir?: string): void;
