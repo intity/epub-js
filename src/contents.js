@@ -2,7 +2,7 @@ import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Mapping from "./mapping";
 import { replaceLinks } from "./utils/replacements";
-import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";
+import { EVENTS, DOM_EVENTS } from "./utils/constants";
 import { isNumber, prefixed, borders, defaults } from "./utils/core";
 
 const hasNavigator = typeof (navigator) !== "undefined";
@@ -60,16 +60,7 @@ class Contents {
 		this.active = true;
 		this.window = this.document.defaultView;
 
-		this.epubReadingSystem("epub.js", EPUBJS_VERSION);
 		this.listeners();
-	}
-
-	/**
-	 * Get DOM events that are listened for and passed along
-	 */
-	static get listenedEvents() {
-
-		return DOM_EVENTS;
 	}
 
 	/**
@@ -772,8 +763,6 @@ class Contents {
 
 		const viewport = { scale: 1.0, scalable: "no" };
 
-		this.setLayoutStyle("scrolling");
-
 		if (width >= 0) {
 			this.width(width);
 			viewport.width = width;
@@ -811,7 +800,6 @@ class Contents {
 		const writingMode = this.writingMode();
 		const axis = (writingMode.indexOf(AXIS_V) === 0) ? AXIS_V : AXIS_H;
 
-		this.setLayoutStyle("paginated");
 		this.direction(dir);
 		this.width(width);
 		this.height(height);
@@ -866,7 +854,7 @@ class Contents {
 
 		const scaleStr = "scale(" + scale + ")";
 		let translateStr = "";
-		// this.css("position", "absolute"));
+
 		this.css("transform-origin", "top left");
 
 		if (offsetX >= 0 || offsetY >= 0) {
@@ -890,15 +878,6 @@ class Contents {
 		const heightScale = height / viewportHeight;
 		const scale = widthScale < heightScale ? widthScale : heightScale;
 
-		// the translate does not work as intended, elements can end up unaligned
-		// var offsetY = (height - (viewportHeight * scale)) / 2;
-		// var offsetX = 0;
-		// if (this.section.index % 2 === 1) {
-		// 	offsetX = width - (viewportWidth * scale);
-		// }
-
-		this.setLayoutStyle("paginated");
-
 		// scale needs width and height to be set
 		this.width(viewportWidth);
 		this.height(viewportHeight);
@@ -906,7 +885,6 @@ class Contents {
 
 		// Scale to the correct size
 		this.scaler(scale, 0, 0);
-		// this.scaler(scale, offsetX > 0 ? offsetX : 0, offsetY);
 
 		// background images are not scaled by transform
 		this.css("background-size", viewportWidth * scale + "px " + viewportHeight * scale + "px");
@@ -958,52 +936,6 @@ class Contents {
 		}
 
 		return this.window.getComputedStyle(this.documentElement)[WRITING_MODE] || "";
-	}
-
-	/**
-	 * Set the layout style of the content
-	 * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
-	 * @private
-	 */
-	setLayoutStyle(value = "paginated") {
-
-		this.layoutStyle = value;
-		navigator.epubReadingSystem.layoutStyle = value;
-		return value;
-	}
-
-	/**
-	 * Add the epubReadingSystem object to the navigator
-	 * @param {string} name
-	 * @param {string} version
-	 * @private
-	 */
-	epubReadingSystem(name, version) {
-
-		navigator.epubReadingSystem = {
-			name: name,
-			version: version,
-			layoutStyle: "paginated",
-			hasFeature: feature => {
-				switch (feature) {
-					case "dom-manipulation":
-						return true;
-					case "layout-changes":
-						return true;
-					case "touch-events":
-						return true;
-					case "mouse-events":
-						return true;
-					case "keyboard-events":
-						return true;
-					case "spine-scripting":
-						return false;
-					default:
-						return false;
-				}
-			}
-		};
-		return navigator.epubReadingSystem;
 	}
 
 	//-- events --//

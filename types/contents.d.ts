@@ -21,8 +21,6 @@ export default class Contents {
     epubcfi: EpubCFI;
     window: Window;
 
-    static listenedEvents: string[];
-
     appendClass(className: string): void;
     removeClass(className: string): void;
     appendScript(src: string, key: string): Promise<Node>;
@@ -80,6 +78,4 @@ export default class Contents {
     private triggerEvent(e: Event): void;
     //-- helper methods
     private getStylesheetNode(key: string): Node;
-    private epubReadingSystem(name: string, version: string): object;
-    private setLayoutStyle(value?: string): string;
 }
