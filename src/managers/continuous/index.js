@@ -131,37 +131,6 @@ class ContinuousViewManager extends DefaultViewManager {
 	}
 
 	/**
-	 * add
-	 * @param {Section} section 
-	 * @returns {Promise}
-	 * @override
-	 */
-	add(section) {
-
-		const view = this.createView(section);
-
-		view.on(EVENTS.VIEWS.DISPLAYED, () => {
-			this.afterDisplayed(view);
-		});
-
-		view.on(EVENTS.VIEWS.RESIZED, (bounds) => {
-			this.afterResized(view);
-		});
-
-		view.on(EVENTS.VIEWS.AXIS, (axis) => {
-			this.updateAxis(axis);
-		});
-
-		view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
-			this.updateWritingMode(mode);
-		});
-
-		this.views.append(view);
-
-		return view.display(this.request);
-	}
-
-	/**
 	 * Append view
 	 * @param {Section} section 
 	 * @returns {*} view
