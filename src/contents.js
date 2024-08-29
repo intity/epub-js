@@ -495,8 +495,8 @@ class Contents {
 					reject(new Error(`Failed to load source: ${src}`));
 				};
 				this.document.head.appendChild(node);
+				this.styles.set(id, node);
 			}
-			this.styles.set(id, node);
 		});
 	}
 
