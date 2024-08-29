@@ -26,11 +26,9 @@ export default class Contents {
     appendScript(src: string, key: string): Promise<Node>;
     removeScript(key: string): boolean;
     clearScripts(): void;
-    appendStylesheet(src: string, key: string): Promise<boolean>;
+    appendStylesheet(key: string, input: string | object): Promise<Node>;
     removeStylesheet(key: string): boolean;
     clearStylesheets(): void;
-    appendStylesheetRules(rules: object, key: string): Promise<boolean>;
-    appendSerializedCSS(css: string, key: string): Promise<boolean>;
     cfiFromNode(node: Node, ignoreClass?: string): string;
     cfiFromRange(range: Range, ignoreClass?: string): string;
     columns(width: number, height: number, columnWidth: number, gap: number, dir: string): void;
@@ -75,5 +73,6 @@ export default class Contents {
     private selectionHandler(e: Event): void;
     private triggerEvent(e: Event): void;
     //-- helper methods
-    private getStylesheetNode(key: string): Node;
+    private createLink(key: string, src: string): Promise<Node>;
+    private createStyle(key: string, rules: object): Promise<Node>;
 }
