@@ -410,7 +410,7 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * addEventListeners
 	 * @override
 	 */
-	addEventListeners() {
+	appendEventListeners() {
 
 		window.onpagehide = (e) => {
 			this.ignore = true;

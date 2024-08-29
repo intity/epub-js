@@ -155,23 +155,19 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.stageSize = this.stage.size();
-
-		// Function to handle a resize event.
-		// Will only attach if width and height are both fixed.
-		this.stage.onResize(this.onResized.bind(this));
-		this.stage.onOrientationChange(this.onOrientationChange.bind(this));
 		this.rendered = true;
 		this.updateLayout();
-
-		// Add Event Listeners
-		this.addEventListeners();
+		//-- events
+		this.stage.onResize(this.onResized.bind(this));
+		this.stage.onOrientationChange(this.onOrientationChange.bind(this));
+		this.appendEventListeners();
 	}
 
 	/**
-	 * addEventListeners
+	 * appendEventListeners
 	 * @private
 	 */
-	addEventListeners() {
+	appendEventListeners() {
 
 		window.onpagehide = (e) => this.destroy();
 
