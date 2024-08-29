@@ -1,6 +1,7 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Mapping from "./mapping";
+import Defer from "./utils/defer";
 import { replaceLinks } from "./utils/replacements";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";
 import { isNumber, prefixed, borders, defaults } from "./utils/core";
@@ -445,59 +446,42 @@ class Contents {
 	}
 
 	/**
-	 * Get injected stylesheet node
+	 * Append a stylesheet link to the document head
+	 * @param {string} src url
 	 * @param {string} key 
-	 * @returns {Node}
-	 * @private
+	 * @returns {Promise<string>}
+	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
+	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
 	 */
-	getStylesheetNode(key) {
+	appendStylesheet(src, key) {
 
-		if (!this.document) return null;
+		const def = new Defer();
+
+		if (!this.document) {
+			def.reject(new Error("Document cannot be null"));
+			return def.promise;
+		}
 
 		const id = `epubjs-injected-css-${key}`;
 		let node = this.styles.get(id);
 		if (typeof node === "undefined") {
-			node = this.document.createElement("style");
-			node.id = id;
+			node = this.document.createElement("link");
+			node.rel = "stylesheet";
+			node.type = "text/css";
+			node.href = src;
+			node.onload = () => {
+				def.resolve(key);
+			};
+			node.onerror = () => {
+				def.reject(new Error(`Failed to load source: ${src}`));
+			};
 			this.document.head.appendChild(node);
+			this.styles.set(id, node);
+		} else {
+			def.resolve(key);
 		}
-		return node;
-	}
 
-	/**
-	 * Append a stylesheet link to the document head
-	 * @param {string} src url
-	 * @param {string} key 
-	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
-	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
-	 * @returns {Promise<Node>}
-	 */
-	appendStylesheet(src, key) {
-
-		return new Promise((resolve, reject) => {
-
-			if (!this.document) {
-				reject(new Error("Document cannot be null"));
-				return;
-			}
-
-			const id = `epubjs-injected-css-${key}`;
-			let node = this.styles.get(id);
-			if (typeof node === "undefined") {
-				node = this.document.createElement("link");
-				node.rel = "stylesheet";
-				node.type = "text/css";
-				node.href = src;
-				node.onload = () => {
-					resolve(node);
-				};
-				node.onerror = () => {
-					reject(new Error(`Failed to load source: ${src}`));
-				};
-				this.document.head.appendChild(node);
-				this.styles.set(id, node);
-			}
-		});
+		return def.promise;
 	}
 
 	/**
@@ -535,25 +519,38 @@ class Contents {
 	 * @link https://github.com/desirable-objects/json-to-css
 	 * @param {object} rules
 	 * @param {string} key
+	 * @returns {Promise<string>}
 	 * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
 	 * @description If the key is the same, the CSS will be replaced instead of inserted
 	 */
 	appendStylesheetRules(rules, key) {
 
-		if (!this.document) return;
+		const def = new Defer();
 
-		const node = this.getStylesheetNode(key);
+		if (!this.document) {
+			def.reject(new Error("Document cannot be null"));
+			return def.promise;
+		}
 
-		Object.keys(rules).forEach((selector) => {
-			const value = rules[selector];
-			const index = node.sheet.cssRules.length;
-			const items = Object.keys(value).map((k) => {
-				return `${k}:${value[k]}`;
-			}).join(";");
-			node.sheet.insertRule(`${selector}{${items}}`, index);
-		});
+		const id = `epubjs-injected-css-${key}`;
+		let node = this.styles.get(id);
+		if (typeof node === "undefined") {
+			node = this.document.createElement("style");
+			node.id = id;
+			this.document.head.appendChild(node);
+			Object.keys(rules).forEach((selector) => {
+				const value = rules[selector];
+				const index = node.sheet.cssRules.length;
+				const items = Object.keys(value).map((k) => {
+					return `${k}:${value[k]}`;
+				}).join(";");
+				node.sheet.insertRule(`${selector}{${items}}`, index);
+			});
+			this.styles.set(id, node);
+		}
 
-		this.styles.set(node.id, node);
+		def.resolve(key);
+		return def.promise;
 	}
 
 	/**
