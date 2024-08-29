@@ -30,7 +30,7 @@ class Contents {
 		this.document = doc;
 		this.documentElement = this.document.documentElement;
 		/**
-		 * @member {object} content document.body by current location
+		 * @member {Element} content document.body by current location
 		 * @memberof Contents
 		 * @readonly
 		 */
@@ -446,14 +446,78 @@ class Contents {
 	}
 
 	/**
-	 * Append a stylesheet link to the document head
-	 * @param {string} src url
+	 * Create stylesheet link
 	 * @param {string} key 
-	 * @returns {Promise<string>}
-	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
-	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
+	 * @param {string} src 
+	 * @returns {Promise<Node>}
+	 * @private
 	 */
-	appendStylesheet(src, key) {
+	createLink(key, src) {
+
+		return new Promise((resolve, reject) => {
+			const id = `epubjs-injected-css-${key}`;
+			let node = this.styles.get(id);
+			if (node) {
+				resolve(node);
+			} else {
+				node = this.document.createElement("link");
+				node.rel = "stylesheet";
+				node.type = "text/css";
+				node.href = src;
+				node.onload = () => {
+					resolve(node);
+				};
+				node.onerror = () => {
+					reject(new Error(`Failed to load source: ${src}`));
+				};
+				this.document.head.appendChild(node);
+				this.styles.set(id, node);
+			}
+		});
+	}
+
+	/**
+	 * Create stylesheet rules
+	 * @param {string} key 
+	 * @param {object} rules 
+	 * @returns {Promise<Node>}
+	 * @private
+	 */
+	createStyle(key, rules) {
+
+		return new Promise((resolve) => {
+			const id = `epubjs-injected-css-${key}`;
+			let node = this.styles.get(id);
+			if (node) {
+				resolve(node);
+			} else {
+				node = this.document.createElement("style");
+				node.id = id;
+				this.document.head.appendChild(node);
+				Object.keys(rules).forEach((selector) => {
+					const value = rules[selector];
+					const index = node.sheet.cssRules.length;
+					const items = Object.keys(value).map((k) => {
+						return `${k}:${value[k]}`;
+					}).join(";");
+					node.sheet.insertRule(`${selector}{${items}}`, index);
+				});
+				this.styles.set(id, node);
+				resolve(node);
+			}
+		});
+	}
+
+	/**
+	 * Append a stylesheet link/rules to the document head
+	 * @param {string} key
+	 * @param {string|object} input url or rules 
+	 * @returns {Promise<Node>}
+	 * @example appendStylesheet("common", "/pach/to/stylesheet.css")
+	 * @example appendStylesheet("common", "https://example.com/to/stylesheet.css")
+	 * @example appendStylesheet("common", { h1: { "font-size": "1.5em" }})
+	 */
+	appendStylesheet(key, input) {
 
 		const def = new Defer();
 
@@ -462,23 +526,14 @@ class Contents {
 			return def.promise;
 		}
 
-		const id = `epubjs-injected-css-${key}`;
-		let node = this.styles.get(id);
-		if (typeof node === "undefined") {
-			node = this.document.createElement("link");
-			node.rel = "stylesheet";
-			node.type = "text/css";
-			node.href = src;
-			node.onload = () => {
-				def.resolve(key);
-			};
-			node.onerror = () => {
-				def.reject(new Error(`Failed to load source: ${src}`));
-			};
-			this.document.head.appendChild(node);
-			this.styles.set(id, node);
+		if (typeof input === "string") {
+			this.createLink(key, input).then((node) => {
+				def.resolve(node);
+			});
 		} else {
-			def.resolve(key);
+			this.createStyle(key, input).then((node) => {
+				def.resolve(node);
+			});
 		}
 
 		return def.promise;
@@ -512,45 +567,6 @@ class Contents {
 			this.document.head.removeChild(node);
 		});
 		this.styles.clear();
-	}
-
-	/**
-	 * Append stylesheet rules to a generate stylesheet
-	 * @link https://github.com/desirable-objects/json-to-css
-	 * @param {object} rules
-	 * @param {string} key
-	 * @returns {Promise<string>}
-	 * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
-	 * @description If the key is the same, the CSS will be replaced instead of inserted
-	 */
-	appendStylesheetRules(rules, key) {
-
-		const def = new Defer();
-
-		if (!this.document) {
-			def.reject(new Error("Document cannot be null"));
-			return def.promise;
-		}
-
-		const id = `epubjs-injected-css-${key}`;
-		let node = this.styles.get(id);
-		if (typeof node === "undefined") {
-			node = this.document.createElement("style");
-			node.id = id;
-			this.document.head.appendChild(node);
-			Object.keys(rules).forEach((selector) => {
-				const value = rules[selector];
-				const index = node.sheet.cssRules.length;
-				const items = Object.keys(value).map((k) => {
-					return `${k}:${value[k]}`;
-				}).join(";");
-				node.sheet.insertRule(`${selector}{${items}}`, index);
-			});
-			this.styles.set(id, node);
-		}
-
-		def.resolve(key);
-		return def.promise;
 	}
 
 	/**
