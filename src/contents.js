@@ -303,7 +303,7 @@ class Contents {
 			if (viewport === null) {
 				viewport = this.document.createElement("meta");
 				viewport.setAttribute("name", "viewport");
-				this.document.querySelector("head").appendChild(viewport);
+				this.document.head.appendChild(viewport);
 			}
 
 			viewport.setAttribute("content", newContent.join(", "));
@@ -528,22 +528,6 @@ class Contents {
 			this.document.head.removeChild(node);
 		});
 		this.styles.clear();
-	}
-
-	/**
-	 * Append serialized stylesheet
-	 * @param {string} css
-	 * @param {string} key
-	 * @example appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
-	 * @description If the key is the same, the CSS will be replaced instead of inserted
-	 */
-	appendSerializedCSS(css, key) {
-
-		if (!this.document) return;
-
-		const node = this.getStylesheetNode(key);
-		node.innerHTML = css;
-		this.styles.set(node.id, node);
 	}
 
 	/**
