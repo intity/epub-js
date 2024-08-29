@@ -539,8 +539,9 @@ class IframeView {
 
 		const displayed = new Defer();
 
-		if (this.displayed === false) {
-
+		if (this.displayed) {
+			displayed.resolve(this);
+		} else {
 			this.render(request).then(() => {
 				/**
 				 * @event displayed
@@ -550,11 +551,8 @@ class IframeView {
 				this.displayed = true;
 				displayed.resolve(this);
 			}, (err) => {
-				displayed.reject(err, this);
+				displayed.reject(err);
 			});
-
-		} else {
-			displayed.resolve(this);
 		}
 
 		return displayed.promise;
