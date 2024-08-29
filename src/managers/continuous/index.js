@@ -106,14 +106,11 @@ class ContinuousViewManager extends DefaultViewManager {
 	moveTo(offset) {
 
 		let distX = 0, distY = 0;
-		//let offsetX = 0, offsetY = 0; // unused
 
 		if (this.paginated) {
 			distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
-			//offsetX = distX + this.settings.offsetDelta;
 		} else {
 			distY = offset.top;
-			//offsetY = offset.top + this.settings.offsetDelta;
 		}
 
 		if (distX > 0 || distY > 0) {
@@ -226,8 +223,6 @@ class ContinuousViewManager extends DefaultViewManager {
 				}
 			} else {
 				this.q.enqueue(view.destroy.bind(view));
-				// console.log("hidden " + view.section.index, view.displayed);
-
 				clearTimeout(this.trimTimeout);
 				this.trimTimeout = setTimeout(() => {
 					this.q.enqueue(this.trim.bind(this));
