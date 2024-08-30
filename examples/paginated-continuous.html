@@ -4,37 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Continuous paginated - Example</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="continuous swipe pagination example for mobile devices">
+    <title>EPUB.JS: Continuous swipe pagination - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
+    <script>
+        window.onload = (e) => {
+            const swipe = "ontouchstart" in window
+            const book = ePub("../assets/alice/")
+            const rendition = book.renderTo(document.body, {
+                manager: swipe ? "continuous" : "default",
+                flow: "paginated",
+                snap: swipe ? {} : null,
+                width: "100%",
+                height: "100%",
+                spread: "none"
+            })
+            rendition.display()
+            rendition.on("attached", () => {
+
+                console.log(book)
+            })
+            rendition.on("rendered", (view) => {
+
+                console.log(view)
+            })
+        }
+    </script>
 </head>
 
-<body>
-    <div id="content" class="mobile" dir="ltr">
-        <div id="viewer" class="paginated"></div>
-    </div>
-    <script>
-        const swipe = "ontouchstart" in window
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
-            manager: swipe ? "continuous" : "default",
-            flow: "paginated",
-            snap: swipe ? {} : null,
-            width: "100%",
-            height: "100%",
-            spread: "none"
-        })
-        rendition.display()
-        rendition.on("attached", () => {
-
-            console.log(book)
-        })
-        rendition.on("rendered", (view) => {
-
-            console.log(view)
-        })
-    </script>
+<body id="viewer" class="paginated">
 </body>
 
 </html>
