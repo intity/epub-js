@@ -1,6 +1,5 @@
 import EventEmitter from "event-emitter";
 import Mapping from "../../mapping";
-import Viewport from "../helpers/viewport";
 import Views from "../helpers/views";
 import Queue from "../../utils/queue";
 import IframeView from "../views/iframe";
@@ -20,14 +19,13 @@ class DefaultViewManager {
 	/**
 	 * Constructor
 	 * @param {Book} book 
-	 * @param {Layout} layout 
 	 * @param {object} [options]
 	 * @param {string} [options.axis]
 	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
 	 */
-	constructor(book, layout, options) {
+	constructor(book, options) {
 		/**
 		 * @member {string} name Manager name
 		 * @memberof DefaultViewManager
@@ -35,12 +33,7 @@ class DefaultViewManager {
 		 */
 		this.name = "default";
 		this.load = book.load.bind(book);
-		/**
-		 * @member {Layout} layout
-		 * @memberof DefaultViewManager
-		 * @readonly
-		 */
-		this.layout = layout;
+		this.layout = book.rendition.layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			if (changed.flow) {
 				this.fullsize = changed.flow === "scrolled-doc";
@@ -87,22 +80,12 @@ class DefaultViewManager {
 		this.scrollLeft = 0;
 		this.scrollType = null;
 		/**
-		 * @member {Viewport} viewport
-		 * @memberof DefaultViewManager
-		 * @property {string} axis
-		 * @property {boolean} hidden
-		 * @readonly
-		 */
-		this.viewport = new Viewport(this.layout, {
-			axis: this.settings.axis,
-			hidden: this.settings.hidden
-		});
-		/**
 		 * @member {Views} views 
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
 		this.views = [];
+		this.viewport = book.rendition.viewport;
 		/**
 		 * @member {string} writingMode
 		 * @memberof DefaultViewManager

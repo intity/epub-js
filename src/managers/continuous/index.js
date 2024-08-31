@@ -19,9 +19,9 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
 	 */
-	constructor(book, layout, options) {
+	constructor(book, options) {
 
-		super(book, layout, options);
+		super(book, options);
 		/**
 		 * @member {string} name
 		 * @memberof ContinuousViewManager

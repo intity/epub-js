@@ -5,6 +5,7 @@ import Layout from "./layout";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
+import Viewport from "./managers/helpers/viewport";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";
@@ -19,8 +20,10 @@ import ContinuousViewManager from "./managers/continuous/index";
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {string|number} [options.width]
- * @param {string|number} [options.height]
+ * @param {string} [options.axis] viewport axis
+ * @param {string} [options.hidden=false] viewport hidden
+ * @param {string|number} [options.width] viewport width
+ * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
  * @param {string|Function|object} [options.manager='default'] string values: default / continuous
  * @param {string|Function} [options.view='iframe']
@@ -43,11 +46,13 @@ class Rendition {
 		 * @readonly
 		 */
 		this.settings = extend({
+			axis: null,
 			width: null,
 			height: null,
 			manager: "default",
 			view: "iframe",
 			flow: null,
+			hidden: false,
 			method: "write", // the 'baseUrl' value is set from the 'book.settings.replacements' property
 			layout: null,
 			spread: null,
@@ -110,11 +115,7 @@ class Rendition {
 		 * @readonly
 		 */
 		this.themes = new Themes(this);
-
 		this.epubcfi = new EpubCFI();
-
-		this.q = new Queue(this);
-
 		/**
 		 * A Rendered Location Range
 		 * @typedef location
@@ -142,10 +143,6 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.location = undefined;
-
-		// Hold queue until book is opened
-		this.q.enqueue(this.book.opened);
-
 		this.starting = new Defer();
 		/**
 		 * returns after the rendition has started
@@ -153,7 +150,9 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.started = this.starting.promise;
-
+		this.q = new Queue(this);
+		// Hold queue until book is opened
+		this.q.enqueue(this.book.opened);
 		// Block the queue until rendering is started
 		this.q.enqueue(this.start.bind(this));
 	}
@@ -197,7 +196,11 @@ class Rendition {
 		// Parse metadata to get layout props
 		const props = this.determineLayoutProperties();
 		this.settings.layout = props.name;
-
+		/**
+		 * @member {Layout} layout
+		 * @memberof Rendition
+		 * @readonly
+		 */
 		this.layout = new Layout(props);
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			/**
@@ -208,6 +211,17 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.LAYOUT, props, changed);
+		});
+		/**
+		 * @member {Viewport} viewport
+		 * @memberof Rendition
+		 * @property {string} axis
+		 * @property {boolean} hidden
+		 * @readonly
+		 */
+		this.viewport = new Viewport(this.layout, {
+			axis: this.settings.axis,
+			hidden: this.settings.hidden
 		});
 
 		if (this.manager === undefined) {
@@ -220,7 +234,7 @@ class Rendition {
 				allowPopups: this.settings.allowPopups,
 				allowScriptedContent: this.settings.allowScriptedContent
 			};
-			this.manager = new manager(this.book, this.layout, options);
+			this.manager = new manager(this.book, options);
 		}
 
 		// Listen for displayed views
