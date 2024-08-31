@@ -57,10 +57,10 @@ class Snap {
 
 		this.manager = manager;
 		this.layout = this.manager.layout;
-		this.fullsize = this.manager.settings.fullsize;
+		this.fullsize = this.manager.fullsize;
 
 		if (this.fullsize) {
-			this.element = this.manager.stage.element;
+			this.element = this.manager.stage.target;
 			this.scroller = window;
 			this.disableScroll();
 		} else {
