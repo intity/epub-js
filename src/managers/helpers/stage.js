@@ -168,7 +168,7 @@ class Stage {
 	 */
 	onResize(func) {
 
-		this.resizeFunc = func;
+		this.resizeFunc = throttle(func, 50);
 		window.addEventListener(
 			"resize",
 			this.resizeFunc,
