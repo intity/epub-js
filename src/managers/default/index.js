@@ -1,6 +1,6 @@
 import EventEmitter from "event-emitter";
 import Mapping from "../../mapping";
-import Stage from "../helpers/stage";
+import Viewport from "../helpers/viewport";
 import Views from "../helpers/views";
 import Queue from "../../utils/queue";
 import IframeView from "../views/iframe";
@@ -87,13 +87,13 @@ class DefaultViewManager {
 		this.scrollLeft = 0;
 		this.scrollType = null;
 		/**
-		 * @member {Stage} stage
+		 * @member {Viewport} viewport
 		 * @memberof DefaultViewManager
 		 * @property {string} axis
 		 * @property {boolean} hidden
 		 * @readonly
 		 */
-		this.stage = new Stage(this.layout, {
+		this.viewport = new Viewport(this.layout, {
 			axis: this.settings.axis,
 			hidden: this.settings.hidden
 		});
@@ -122,13 +122,13 @@ class DefaultViewManager {
 	render(element, size) {
 
 		this.scrollType = scrollType();
-		this.stage.attachTo(element, size);
-		this.views = new Views(this.stage.container);
+		this.viewport.attachTo(element, size);
+		this.views = new Views(this.viewport.container);
 		this.rendered = true;
 		this.updateLayout();
 		//-- events
-		this.stage.onResize(this.onResized.bind(this));
-		this.stage.onOrientationChange(this.onOrientationChange.bind(this));
+		this.viewport.onResize(this.onResized.bind(this));
+		this.viewport.onOrientationChange(this.onOrientationChange.bind(this));
 		this.appendEventListeners();
 		window.onpagehide = this.destroy.bind(this);
 	}
@@ -212,7 +212,7 @@ class DefaultViewManager {
 		if (this.fullsize) {
 			container = window;
 		} else {
-			container = this.stage.container;
+			container = this.viewport.container;
 		}
 		container.addEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
@@ -238,7 +238,7 @@ class DefaultViewManager {
 		if (this.fullsize) {
 			container = window;
 		} else {
-			container = this.stage.container;
+			container = this.viewport.container;
 		}
 		container.removeEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
@@ -287,8 +287,8 @@ class DefaultViewManager {
 		this.clear();
 		this.updateLayout(width, height);
 		this.emit(EVENTS.MANAGERS.RESIZED, {
-			width: this.stage.width,
-			height: this.stage.height
+			width: this.viewport.width,
+			height: this.viewport.height
 		}, epubcfi);
 	}
 
@@ -362,7 +362,7 @@ class DefaultViewManager {
 	moveTo(offset, width) {
 
 		let distX = 0, distY;
-		const vpc = this.stage.container;
+		const vpc = this.viewport.container;
 
 		if (this.paginated) {
 			distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
@@ -482,7 +482,7 @@ class DefaultViewManager {
 		const def = new Defer();
 		const dir = this.layout.direction;
 		const hvx = this.paginated && this.settings.axis === AXIS_H;
-		const vpc = this.stage.container;
+		const vpc = this.viewport.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
@@ -575,7 +575,7 @@ class DefaultViewManager {
 		const def = new Defer();
 		const dir = this.layout.direction;
 		const hvx = this.paginated && this.settings.axis === AXIS_H;
-		const vpc = this.stage.container;
+		const vpc = this.viewport.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
@@ -719,7 +719,7 @@ class DefaultViewManager {
 			offset = this.settings.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
 
-		const container = this.stage.container.getBoundingClientRect();
+		const container = this.viewport.container.getBoundingClientRect();
 		const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
 		const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
 		const views = this.visible();
@@ -793,7 +793,7 @@ class DefaultViewManager {
 			left = window.scrollX;
 		}
 
-		const container = this.stage.container.getBoundingClientRect();
+		const container = this.viewport.container.getBoundingClientRect();
 		const views = this.visible();
 		const sections = views.map((view) => {
 
@@ -922,7 +922,7 @@ class DefaultViewManager {
 	scrollBy(x, y, silent) {
 
 		const dir = this.layout.direction === "rtl" ? -1 : 1;
-		const vpc = this.stage.container;
+		const vpc = this.viewport.container;
 
 		if (silent) {
 			this.ignore = true;
@@ -952,8 +952,8 @@ class DefaultViewManager {
 		if (this.fullsize) {
 			window.scrollTo(x, y);
 		} else {
-			this.stage.container.scrollLeft = x;
-			this.stage.container.scrollTop = y;
+			this.viewport.container.scrollLeft = x;
+			this.viewport.container.scrollTop = y;
 		}
 	}
 
@@ -1028,7 +1028,7 @@ class DefaultViewManager {
 	 */
 	bounds() {
 
-		return this.stage.bounds();
+		return this.viewport.bounds();
 	}
 
 	/**
@@ -1043,20 +1043,20 @@ class DefaultViewManager {
 			height = view && view.height;
 		}
 
-		this.stage.size(width, height);
+		this.viewport.size(width, height);
 
 		if (this.paginated) {
 			this.layout.calculate(
-				this.stage.width,
-				this.stage.height,
+				this.viewport.width,
+				this.viewport.height,
 				this.settings.gap
 			);
 			// Set the look ahead offset for what is visible
 			this.settings.offset = this.layout.delta / this.layout.divisor;
 		} else {
 			this.layout.calculate(
-				this.stage.width,
-				this.stage.height
+				this.viewport.width,
+				this.viewport.height
 			);
 		}
 
@@ -1092,7 +1092,7 @@ class DefaultViewManager {
 		}
 
 		this.settings.axis = axis;
-		this.stage.axis(axis);
+		this.viewport.axis(axis);
 
 		if (this.mapping) {
 			this.mapping = new Mapping(this.layout, axis);
@@ -1134,7 +1134,8 @@ class DefaultViewManager {
 		clearTimeout(this.afterScrolled);
 		this.clear();
 		this.removeEventListeners();
-		this.stage.destroy();
+		this.viewport.destroy();
+		this.viewport = undefined;
 		this.rendered = false;
 		this.scrollTop = undefined;
 		this.scrollLeft = undefined;

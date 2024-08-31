@@ -60,11 +60,11 @@ class Snap {
 		this.fullsize = this.manager.fullsize;
 
 		if (this.fullsize) {
-			this.element = this.manager.stage.target;
+			this.element = this.manager.viewport.target;
 			this.scroller = window;
 			this.disableScroll();
 		} else {
-			this.element = this.manager.stage.container;
+			this.element = this.manager.viewport.container;
 			this.scroller = this.element;
 		}
 

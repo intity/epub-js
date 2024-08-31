@@ -172,7 +172,7 @@ class ContinuousViewManager extends DefaultViewManager {
 		const checking = new Defer();
 		const promises = [];
 		const horizontal = this.settings.axis === "horizontal";
-		const container = this.stage.container;
+		const container = this.viewport.container;
 		let delta = this.settings.offset || 0;
 
 		if (offsetLeft && horizontal) {
@@ -271,8 +271,8 @@ class ContinuousViewManager extends DefaultViewManager {
 			this.scrollTop = window.scrollY * dir;
 			this.scrollLeft = window.scrollX * dir;
 		} else {
-			this.scrollTop = this.stage.container.scrollTop;
-			this.scrollLeft = this.stage.container.scrollLeft;
+			this.scrollTop = this.viewport.container.scrollTop;
+			this.scrollLeft = this.viewport.container.scrollLeft;
 		}
 	}
 

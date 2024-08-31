@@ -3,9 +3,9 @@ import { EVENTS } from "../../utils/constants";
 import throttle from "lodash/throttle";
 
 /**
- * Stage
+ * Viewport
  */
-class Stage {
+class Viewport {
 	/**
 	 * Constructor
 	 * @param {Layout} layout 
@@ -16,20 +16,20 @@ class Stage {
 	constructor(layout, options) {
 		/**
 		 * @member {object} settings
-		 * @memberof Stage
+		 * @memberof Viewport
 		 * @readonly
 		 */
 		this.settings = options || {};
 		/**
 		 * @member {string} id
-		 * @memberof Stage
+		 * @memberof Viewport
 		 * @readonly
 		 */
 		this.id = "vp-" + uuid();
 		/**
 		 * viewport container
 		 * @member {Element} container
-		 * @memberof Stage
+		 * @memberof Viewport
 		 * @readonly
 		 */
 		this.container = null;
@@ -44,7 +44,7 @@ class Stage {
 		/**
 		 * viewport element
 		 * @member {Element} target
-		 * @memberof Stage
+		 * @memberof Viewport
 		 * @readonly
 		 */
 		this.target = null;
@@ -383,4 +383,4 @@ class Stage {
 	}
 }
 
-export default Stage;
+export default Viewport;
