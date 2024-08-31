@@ -7,7 +7,8 @@ import IframeView from "../views/iframe";
 import scrollType from "../../utils/scrolltype";
 import Defer from "../../utils/defer";
 import { EVENTS } from "../../utils/constants";
-import { extend, windowBounds, isNumber } from "../../utils/core";
+import { extend, isNumber } from "../../utils/core";
+import debounce from "lodash/debounce";
 
 const AXIS_H = "horizontal";
 const AXIS_V = "vertical";
@@ -33,20 +34,7 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.name = "default";
-		this.request = book.load.bind(book);
-		this.settings = extend({
-			axis: null,
-			view: "iframe",
-			hidden: false,
-			method: null,
-			fullsize: null,
-			ignoreClass: "",
-			writingMode: undefined,
-			allowPopups: false,
-			allowScriptedContent: false,
-			resizeOnOrientationChange: true,
-			forceEvenPages: true
-		}, options || {});
+		this.load = book.load.bind(book);
 		/**
 		 * @member {Layout} layout
 		 * @memberof DefaultViewManager
@@ -55,6 +43,7 @@ class DefaultViewManager {
 		this.layout = layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			if (changed.flow) {
+				this.fullsize = changed.flow === "scrolled-doc";
 				this.paginated = changed.flow === "paginated";
 				if (this.paginated) {
 					this.updateAxis(AXIS_H);
@@ -65,6 +54,17 @@ class DefaultViewManager {
 			this.clear();
 			this.updateLayout();
 		});
+		this.settings = extend({
+			axis: null,
+			view: "iframe",
+			hidden: false,
+			method: null,
+			ignoreClass: "",
+			allowPopups: false,
+			allowScriptedContent: false,
+			forceEvenPages: true
+		}, options || {});
+		this.fullsize = this.layout.flow === "scrolled-doc";
 		/**
 		 * @member {boolean} paginated
 		 * @memberof DefaultViewManager
@@ -83,255 +83,54 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.rendered = false;
+		this.scrollTop = 0;
+		this.scrollLeft = 0;
+		this.scrollType = null;
 		/**
-		 * @member {string} scrollType
+		 * @member {Stage} stage
+		 * @memberof DefaultViewManager
+		 * @property {string} axis
+		 * @property {boolean} hidden
+		 * @readonly
+		 */
+		this.stage = new Stage(this.layout, {
+			axis: this.settings.axis,
+			hidden: this.settings.hidden
+		});
+		/**
+		 * @member {Views} views 
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
-		this.scrollType = undefined;
+		this.views = [];
 		/**
 		 * @member {string} writingMode
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
-		this.writingMode = this.settings.writingMode;
+		this.writingMode = null;
 		this.q = new Queue(this);
 	}
 
 	/**
 	 * render
-	 * @param {Element} element 
+	 * @param {Element|string} element viewport element
 	 * @param {object} size 
 	 * @param {string|number} size.width
 	 * @param {string|number} size.height
 	 */
 	render(element, size) {
 
-		let tag;
-		if (element.tagName) {
-			tag = element.tagName.toLowerCase();
-			tag = tag === "body" || tag === "html";
-		}
-
-		if (this.settings.fullsize === null && tag) {
-			this.settings.fullsize = true;
-		}
-
 		this.scrollType = scrollType();
-		/**
-		 * @member {Stage} stage
-		 * @memberof DefaultViewManager
-		 * @property {string} axis
-		 * @property {string|number} width
-		 * @property {string|number} height
-		 * @property {boolean} hidden
-		 * @property {boolean} fullsize
-		 * @readonly
-		 */
-		this.stage = new Stage(this.layout, {
-			axis: this.settings.axis,
-			width: size.width,
-			height: size.height,
-			hidden: this.settings.hidden,
-			fullsize: this.settings.fullsize
-		});
-		this.stage.attachTo(element);
-		/**
-		 * Stage container
-		 * @member {Element} container div element
-		 * @memberof DefaultViewManager
-		 * @readonly
-		 */
-		this.container = this.stage.getContainer();
-		/**
-		 * @member {Views} views 
-		 * @memberof DefaultViewManager
-		 * @readonly
-		 */
-		this.views = new Views(this.container);
-		/**
-		 * @member {object} stageSize
-		 * @memberof DefaultViewManager
-		 * @readonly
-		 */
-		this.stageSize = this.stage.size();
+		this.stage.attachTo(element, size);
+		this.views = new Views(this.stage.container);
 		this.rendered = true;
 		this.updateLayout();
 		//-- events
 		this.stage.onResize(this.onResized.bind(this));
 		this.stage.onOrientationChange(this.onOrientationChange.bind(this));
 		this.appendEventListeners();
-	}
-
-	/**
-	 * appendEventListeners
-	 * @private
-	 */
-	appendEventListeners() {
-
-		window.onpagehide = (e) => this.destroy();
-
-		let container;
-		if (this.settings.fullsize) {
-			container = window;
-		} else {
-			container = this.container;
-		}
-
-		container.addEventListener("scroll", this.onScroll.bind(this));
-	}
-
-	/**
-	 * removeEventListeners
-	 * @private
-	 */
-	removeEventListeners() {
-
-		let container;
-		if (this.settings.fullsize) {
-			container = window;
-		} else {
-			container = this.container;
-		}
-
-		container.removeEventListener("scroll", this.onScroll.bind(this));
-	}
-
-	/**
-	 * destroy
-	 */
-	destroy() {
-
-		clearTimeout(this.orientationTimeout);
-		clearTimeout(this.resizeTimeout);
-		clearTimeout(this.afterScrolled);
-
-		this.clear();
-		this.removeEventListeners();
-		this.stage.destroy();
-		this.rendered = false;
-		this.scrollType = undefined;
-		this.writingMode = undefined;
-	}
-
-	/**
-	 * onOrientationChange
-	 * @param {Event} e 
-	 * @private
-	 */
-	onOrientationChange(e) {
-
-		let { orientation } = window.screen;
-
-		if (this.settings.resizeOnOrientationChange) {
-			this.resize();
-		}
-
-		// Per ampproject:
-		// In IOS 10.3, the measured size of an element is incorrect if the
-		// element size depends on window size directly and the measurement
-		// happens in window.resize event. Adding a timeout for correct
-		// measurement. See https://github.com/ampproject/amphtml/issues/8479
-		clearTimeout(this.orientationTimeout);
-		this.orientationTimeout = setTimeout(() => {
-			this.orientationTimeout = undefined;
-
-			if (this.settings.resizeOnOrientationChange) {
-				this.resize();
-			}
-
-			this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, orientation);
-		}, 500);
-	}
-
-	/**
-	 * onResized
-	 * @param {Event} e 
-	 * @private
-	 */
-	onResized(e) {
-
-		this.resize();
-	}
-
-	/**
-	 * resize
-	 * @param {number} [width] 
-	 * @param {number} [height] 
-	 * @param {string} [epubcfi] 
-	 */
-	resize(width, height, epubcfi) {
-
-		const stageSize = this.stage.size(width, height);
-
-		// For Safari, wait for orientation to catch up
-		// if the window is a square
-		this.winBounds = windowBounds();
-		if (this.orientationTimeout &&
-			this.winBounds.width === this.winBounds.height) {
-			// reset the stage size for next resize
-			this.stageSize = undefined;
-			return;
-		}
-
-		if (this.stageSize &&
-			this.stageSize.width === stageSize.width &&
-			this.stageSize.height === stageSize.height) {
-			// Size is the same, no need to resize
-			return;
-		}
-
-		this.stageSize = stageSize;
-		this.clear(); // Clear current views
-		this.updateLayout();
-
-		this.emit(EVENTS.MANAGERS.RESIZED, {
-			width: this.stageSize.width,
-			height: this.stageSize.height
-		}, epubcfi);
-	}
-
-	/**
-	 * Require the view from passed string, or as a class function
-	 * @param {string|Function|object} view
-	 * @return {any}
-	 * @private
-	 */
-	requireView(view) {
-
-		let ret;
-
-		// If view is a string, try to load from imported views,
-		if (typeof view == "string" && view === "iframe") {
-			ret = IframeView;
-		} else {
-			// otherwise, assume we were passed a class function
-			ret = view;
-		}
-
-		return ret;
-	}
-
-	/**
-	 * createView
-	 * @param {Section} section 
-	 * @param {boolean} [forceRight]
-	 * @returns {object} View (default: IframeView)
-	 * @private
-	 */
-	createView(section, forceRight) {
-
-		const view = this.requireView(this.settings.view);
-		return new view(this.layout, section, {
-			axis: this.settings.axis,
-			snap: this.settings.snap,
-			method: this.settings.method,
-			allowPopups: this.settings.allowPopups,
-			ignoreClass: this.settings.ignoreClass,
-			allowScriptedContent: this.settings.allowScriptedContent,
-			forceRight: forceRight,
-			forceEvenPages: this.settings.forceEvenPages
-		});
+		window.onpagehide = this.destroy.bind(this);
 	}
 
 	/**
@@ -381,7 +180,7 @@ class DefaultViewManager {
 			forceRight = true;
 		}
 
-		this.add(section, forceRight).then((view) => {
+		this.append(section, forceRight).then((view) => {
 
 			// Move to correct place within the section, if needed
 			if (target) {
@@ -397,6 +196,139 @@ class DefaultViewManager {
 		});
 
 		return displaying.promise;
+	}
+
+	/**
+	 * appendEventListeners
+	 * @private
+	 */
+	appendEventListeners() {
+		
+		if (this.paginated && this.name === "default") {
+			return;
+		}
+		
+		let container;
+		if (this.fullsize) {
+			container = window;
+		} else {
+			container = this.stage.container;
+		}
+		container.addEventListener("scroll", this.onscroll.bind(this));
+		if ("onscrollend" in window) {
+			container.addEventListener(
+				"scrollend",
+				this.onscrollend.bind(this)
+			);
+		}
+		this.scrollend = debounce(this.scrolled.bind(this), 30);
+	}
+
+	/**
+	 * removeEventListeners
+	 * @private
+	 */
+	removeEventListeners() {
+
+		if (this.paginated && this.name === "default") {
+			return;
+		}
+		
+		let container;
+		if (this.fullsize) {
+			container = window;
+		} else {
+			container = this.stage.container;
+		}
+		container.removeEventListener("scroll", this.onscroll.bind(this));
+		if ("onscrollend" in window) {
+			container.removeEventListener(
+				"scrollend",
+				this.onscrollend.bind(this)
+			);
+		}
+		this.scrollend = undefined;
+	}
+
+	/**
+	 * onOrientationChange
+	 * @param {Event} e 
+	 * @private
+	 */
+	onOrientationChange(e) {
+
+		const orientation = e.target.screen.orientation;
+		/**
+		 * @event orientationchange
+		 * @param {object} orientation
+		 * @memberof DefaultViewManager
+		 */
+		this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, orientation);
+	}
+
+	/**
+	 * onResized
+	 * @param {Event} e 
+	 * @private
+	 */
+	onResized(e) {
+
+		this.resize();
+	}
+
+	/**
+	 * resize
+	 * @param {number} [width] 
+	 * @param {number} [height] 
+	 * @param {string} [epubcfi] 
+	 */
+	resize(width, height, epubcfi) {
+
+		this.clear();
+		this.updateLayout(width, height);
+		this.emit(EVENTS.MANAGERS.RESIZED, {
+			width: this.stage.width,
+			height: this.stage.height
+		}, epubcfi);
+	}
+
+	/**
+	 * Require the view from passed string, or as a class function
+	 * @param {string|class} view
+	 * @return {class}
+	 * @private
+	 */
+	requireView(view) {
+
+		let result;
+		if (typeof view == "string" && view === "iframe") {
+			result = IframeView;
+		} else {
+			result = view;
+		}
+		return result;
+	}
+
+	/**
+	 * createView
+	 * @param {Section} section 
+	 * @param {boolean} [forceRight]
+	 * @returns {object} View (default: IframeView)
+	 * @private
+	 */
+	createView(section, forceRight) {
+
+		const view = this.requireView(this.settings.view);
+		return new view(this.layout, section, {
+			axis: this.settings.axis,
+			snap: this.settings.snap,
+			method: this.settings.method,
+			allowPopups: this.settings.allowPopups,
+			ignoreClass: this.settings.ignoreClass,
+			allowScriptedContent: this.settings.allowScriptedContent,
+			forceRight: forceRight,
+			forceEvenPages: this.settings.forceEvenPages
+		});
 	}
 
 	/**
@@ -430,18 +362,19 @@ class DefaultViewManager {
 	moveTo(offset, width) {
 
 		let distX = 0, distY;
+		const vpc = this.stage.container;
 
 		if (this.paginated) {
 			distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
 
-			if (distX + this.layout.delta > this.container.scrollWidth) {
-				distX = this.container.scrollWidth - this.layout.delta;
+			if (distX + this.layout.delta > vpc.scrollWidth) {
+				distX = vpc.scrollWidth - this.layout.delta;
 			}
 
 			distY = Math.floor(offset.top / this.layout.delta) * this.layout.delta;
 
-			if (distY + this.layout.delta > this.container.scrollHeight) {
-				distY = this.container.scrollHeight - this.layout.delta;
+			if (distY + this.layout.delta > vpc.scrollHeight) {
+				distY = vpc.scrollHeight - this.layout.delta;
 			}
 		} else {
 			distY = offset.top;
@@ -465,8 +398,9 @@ class DefaultViewManager {
 	 * @param {Section} section Section object
 	 * @param {boolean} [forceRight] 
 	 * @returns {Promise<any>}
+	 * @private
 	 */
-	add(section, forceRight) {
+	append(section, forceRight) {
 
 		const view = this.createView(section, forceRight);
 
@@ -488,19 +422,7 @@ class DefaultViewManager {
 
 		this.views.append(view);
 
-		return view.display(this.request);
-	}
-
-	/**
-	 * append
-	 * @param {Section} section Section object
-	 * @param {boolean} [forceRight] 
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	append(section, forceRight) {
-
-		return this.add(section, forceRight);
+		return view.display(this.load);
 	}
 
 	/**
@@ -533,7 +455,7 @@ class DefaultViewManager {
 
 		this.views.prepend(view);
 
-		return view.display(this.request);
+		return view.display(this.load);
 	}
 
 	/**
@@ -560,26 +482,27 @@ class DefaultViewManager {
 		const def = new Defer();
 		const dir = this.layout.direction;
 		const hvx = this.paginated && this.settings.axis === AXIS_H;
+		const vpc = this.stage.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
 		} else if (hvx && dir === "ltr") {
 
-			this.scrollLeft = this.container.scrollLeft;
-			left = this.container.scrollLeft + this.container.offsetWidth + this.layout.delta;
+			this.scrollLeft = vpc.scrollLeft;
+			left = vpc.scrollLeft + vpc.offsetWidth + this.layout.delta;
 
-			if (left <= this.container.scrollWidth) {
+			if (left <= vpc.scrollWidth) {
 				this.scrollBy(this.layout.delta, 0, true);
 			} else {
 				section = this.views.last().section.next();
 			}
 		} else if (hvx && dir === "rtl") {
 
-			this.scrollLeft = this.container.scrollLeft;
+			this.scrollLeft = vpc.scrollLeft;
 
 			if (this.scrollType === "default") {
-				left = this.container.scrollLeft;
+				left = vpc.scrollLeft;
 
 				if (left > 0) {
 					this.scrollBy(this.layout.delta, 0, true);
@@ -587,9 +510,9 @@ class DefaultViewManager {
 					section = this.views.last().section.next();
 				}
 			} else {
-				left = this.container.scrollLeft + (this.layout.delta * -1);
+				left = vpc.scrollLeft + (this.layout.delta * -1);
 
-				if (left > this.container.scrollWidth * -1) {
+				if (left > vpc.scrollWidth * -1) {
 					this.scrollBy(this.layout.delta, 0, true);
 				} else {
 					section = this.views.last().section.next();
@@ -597,10 +520,10 @@ class DefaultViewManager {
 			}
 		} else if (this.paginated && this.settings.axis === AXIS_V) {
 
-			this.scrollTop = this.container.scrollTop;
-			const top = this.container.scrollTop + this.container.offsetHeight;
+			this.scrollTop = vpc.scrollTop;
+			const top = vpc.scrollTop + vpc.offsetHeight;
 
-			if (top < this.container.scrollHeight) {
+			if (top < vpc.scrollHeight) {
 				this.scrollBy(0, this.layout.height, true);
 			} else {
 				section = this.views.last().section.next();
@@ -628,7 +551,7 @@ class DefaultViewManager {
 				// Reset position to start for scrolled-doc vertical-rl in default mode
 				if (!hvx && dir === "rtl" &&
 					this.scrollType === "default") {
-					this.scrollTo(this.container.scrollWidth, 0, true);
+					this.scrollTo(vpc.scrollWidth, 0, true);
 				}
 				this.views.show();
 				def.resolve(view);
@@ -652,14 +575,15 @@ class DefaultViewManager {
 		const def = new Defer();
 		const dir = this.layout.direction;
 		const hvx = this.paginated && this.settings.axis === AXIS_H;
+		const vpc = this.stage.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
 		} else if (hvx && dir === "ltr") {
 
-			this.scrollLeft = this.container.scrollLeft;
-			left = this.container.scrollLeft;
+			this.scrollLeft = vpc.scrollLeft;
+			left = vpc.scrollLeft;
 
 			if (left > 0) {
 				this.scrollBy(-this.layout.delta, 0, true);
@@ -668,19 +592,19 @@ class DefaultViewManager {
 			}
 		} else if (hvx && dir === "rtl") {
 
-			this.scrollLeft = this.container.scrollLeft;
+			this.scrollLeft = vpc.scrollLeft;
 
 			if (this.scrollType === "default") {
-				left = this.container.scrollLeft + this.container.offsetWidth;
+				left = vpc.scrollLeft + vpc.offsetWidth;
 
-				if (left < this.container.scrollWidth) {
+				if (left < vpc.scrollWidth) {
 					this.scrollBy(-this.layout.delta, 0, true);
 				} else {
 					section = this.views.first().section.prev();
 				}
 			}
 			else {
-				left = this.container.scrollLeft;
+				left = vpc.scrollLeft;
 
 				if (left < 0) {
 					this.scrollBy(-this.layout.delta, 0, true);
@@ -690,8 +614,8 @@ class DefaultViewManager {
 			}
 		} else if (this.paginated && this.settings.axis === AXIS_V) {
 
-			this.scrollTop = this.container.scrollTop;
-			const top = this.container.scrollTop;
+			this.scrollTop = vpc.scrollTop;
+			const top = vpc.scrollTop;
 
 			if (top > 0) {
 				this.scrollBy(0, -(this.layout.height), true);
@@ -724,10 +648,10 @@ class DefaultViewManager {
 							this.scrollTo(0, 0, true);
 						}
 						else {
-							this.scrollTo((this.container.scrollWidth * -1) + this.layout.delta, 0, true);
+							this.scrollTo((vpc.scrollWidth * -1) + this.layout.delta, 0, true);
 						}
 					} else {
-						this.scrollTo(this.container.scrollWidth - this.layout.delta, 0, true);
+						this.scrollTo(vpc.scrollWidth - this.layout.delta, 0, true);
 					}
 				}
 				this.views.show();
@@ -791,11 +715,11 @@ class DefaultViewManager {
 	scrolledLocation() {
 
 		let offset = 0, used = 0;
-		if (this.settings.fullsize) {
+		if (this.fullsize) {
 			offset = this.settings.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
 
-		const container = this.container.getBoundingClientRect();
+		const container = this.stage.container.getBoundingClientRect();
 		const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
 		const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
 		const views = this.visible();
@@ -865,11 +789,11 @@ class DefaultViewManager {
 	paginatedLocation() {
 
 		let left = 0, used = 0;
-		if (this.settings.fullsize) {
+		if (this.fullsize) {
 			left = window.scrollX;
 		}
 
-		const container = this.container.getBoundingClientRect();
+		const container = this.stage.container.getBoundingClientRect();
 		const views = this.visible();
 		const sections = views.map((view) => {
 
@@ -998,16 +922,17 @@ class DefaultViewManager {
 	scrollBy(x, y, silent) {
 
 		const dir = this.layout.direction === "rtl" ? -1 : 1;
+		const vpc = this.stage.container;
 
 		if (silent) {
 			this.ignore = true;
 		}
 
-		if (this.settings.fullsize) {
+		if (this.fullsize) {
 			window.scrollBy(x * dir, y * dir);
 		} else {
-			if (x) this.container.scrollLeft += x * dir;
-			if (y) this.container.scrollTop += y;
+			if (x) vpc.scrollLeft += x * dir;
+			if (y) vpc.scrollTop += y;
 		}
 	}
 
@@ -1024,50 +949,77 @@ class DefaultViewManager {
 			this.ignore = true;
 		}
 
-		if (this.settings.fullsize) {
+		if (this.fullsize) {
 			window.scrollTo(x, y);
 		} else {
-			this.container.scrollLeft = x;
-			this.container.scrollTop = y;
+			this.stage.container.scrollLeft = x;
+			this.stage.container.scrollTop = y;
 		}
 	}
 
 	/**
-	 * onScroll event handler
+	 * scrolled
+	 * @param {Event} e 
+	 * @description This event handler is used when the browser does not support the onscrollend event.
+	 */
+	scrolled(e) {
+
+		clearTimeout(this.afterScrolled);
+		this.afterScrolled = setTimeout(() => {
+			this.emit(EVENTS.MANAGERS.SCROLLED, {
+				top: this.scrollTop,
+				left: this.scrollLeft
+			});
+		}, 20);
+	}
+
+	/**
+	 * onscroll
+	 * @param {Event} e 
 	 * @private
 	 */
-	onScroll() {
+	onscroll(e) {
 
-		let scrollTop;
-		let scrollLeft;
-
-		if (this.settings.fullsize) {
-			scrollTop = window.scrollY;
-			scrollLeft = window.scrollX;
-		} else {
-			scrollTop = this.container.scrollTop;
-			scrollLeft = this.container.scrollLeft;
+		if (e.target.nodeType === Node.DOCUMENT_NODE) {
+			this.scrollTop = window.scrollY;
+			this.scrollLeft = window.scrollX;
+		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
+			this.scrollTop = e.target.scrollTop;
+			this.scrollLeft = e.target.scrollLeft;
 		}
-
-		this.scrollTop = scrollTop;
-		this.scrollLeft = scrollLeft;
 
 		if (this.ignore) {
 			this.ignore = false;
 		} else {
 			this.emit(EVENTS.MANAGERS.SCROLL, {
-				top: scrollTop,
-				left: scrollLeft
+				top: this.scrollTop,
+				left: this.scrollLeft
 			});
-
-			clearTimeout(this.afterScrolled);
-			this.afterScrolled = setTimeout(() => {
-				this.emit(EVENTS.MANAGERS.SCROLLED, {
-					top: scrollTop,
-					left: scrollLeft
-				});
-			}, 20);
+			if (!("onscrollend" in window)) {
+				this.scrollend(e);
+			}
 		}
+	}
+
+	/**
+	 * onscrollend
+	 * @param {Event} e 
+	 * @private
+	 */
+	onscrollend(e) {
+
+		if (e.target.nodeType === Node.DOCUMENT_NODE) {
+			this.scrollTop = window.scrollY;
+			this.scrollLeft = window.scrollX;
+		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
+			this.scrollTop = e.target.scrollTop;
+			this.scrollLeft = e.target.scrollLeft;
+		}
+		
+		this.emit(EVENTS.MANAGERS.SCROLLED, {
+			top: this.scrollTop,
+			left: this.scrollLeft
+		});
 	}
 
 	/**
@@ -1081,28 +1033,30 @@ class DefaultViewManager {
 
 	/**
 	 * Update Layout
+	 * @param {string|number} [width] 
+	 * @param {string|number} [height] 
 	 */
-	updateLayout() {
+	updateLayout(width, height) {
 
-		let height;
-		if (this.layout.flow === "scrolled-doc") {
+		if (this.fullsize) {
 			const view = this.current();
 			height = view && view.height;
 		}
-		this.stageSize = this.stage.size(null, height);
+
+		this.stage.size(width, height);
 
 		if (this.paginated) {
 			this.layout.calculate(
-				this.stageSize.width,
-				this.stageSize.height,
+				this.stage.width,
+				this.stage.height,
 				this.settings.gap
 			);
 			// Set the look ahead offset for what is visible
 			this.settings.offset = this.layout.delta / this.layout.divisor;
 		} else {
 			this.layout.calculate(
-				this.stageSize.width,
-				this.stageSize.height
+				this.stage.width,
+				this.stage.height
 			);
 		}
 
@@ -1121,7 +1075,7 @@ class DefaultViewManager {
 	 */
 	updateWritingMode(mode) {
 
-		this.writingMode = mode; // unused
+		this.writingMode = mode;
 	}
 
 	/**
@@ -1169,6 +1123,23 @@ class DefaultViewManager {
 	isRendered() {
 
 		return this.rendered;
+	}
+
+	/**
+	 * destroy
+	 */
+	destroy() {
+
+		this.ignore = true;
+		clearTimeout(this.afterScrolled);
+		this.clear();
+		this.removeEventListeners();
+		this.stage.destroy();
+		this.rendered = false;
+		this.scrollTop = undefined;
+		this.scrollLeft = undefined;
+		this.scrollType = undefined;
+		this.writingMode = undefined;
 	}
 }
 

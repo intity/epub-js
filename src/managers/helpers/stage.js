@@ -1,4 +1,4 @@
-import { uuid, isNumber, isElement, windowBounds, extend } from "../../utils/core";
+import { isNumber, windowBounds, uuid } from "../../utils/core";
 import { EVENTS } from "../../utils/constants";
 import throttle from "lodash/throttle";
 
@@ -10,10 +10,8 @@ class Stage {
 	 * Constructor
 	 * @param {Layout} layout 
 	 * @param {object} options
-	 * @param {string} options.axis
-	 * @param {boolean} options.fullsize
-	 * @param {string|number} options.width
-	 * @param {string|number} options.height
+	 * @param {string} options.axis viewport axis
+	 * @param {boolean} options.hidden
 	 */
 	constructor(layout, options) {
 		/**
@@ -27,13 +25,14 @@ class Stage {
 		 * @memberof Stage
 		 * @readonly
 		 */
-		this.id = "epubjs-container-" + uuid();
+		this.id = "vp-" + uuid();
 		/**
+		 * viewport container
 		 * @member {Element} container
 		 * @memberof Stage
 		 * @readonly
 		 */
-		this.container = this.create(this.settings);
+		this.container = null;
 		this.layout = layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			if (changed.flow) {
@@ -42,57 +41,50 @@ class Stage {
 				this.direction(changed.direction);
 			}
 		});
-		this.updateFlow();
-		this.direction();
-		this.axis(options.axis || "vertical");
-
-		if (this.settings.hidden) {
-			this.wrapper = this.wrap(this.container);
-		}
+		/**
+		 * viewport element
+		 * @member {Element} target
+		 * @memberof Stage
+		 * @readonly
+		 */
+		this.target = null;
 	}
 
 	/**
-	 * Creates an element to render to.
-	 * Resizes to passed width and height or to the elements size
-	 * @param {object} options 
+	 * Create viewport-container
+	 * @param {object} size
+	 * @param {string|number} size.width
+	 * @param {string|number} size.height
 	 * @returns {Element} container
+	 * @private
 	 */
-	create(options) {
+	create(size) {
 
-		let width = options.width;
-		let height = options.height;
+		let szw = size.width;
+		let szh = size.height;
 
-		extend(this.settings, options);
-
-		if (options.height && isNumber(options.height)) {
-			height = options.height + "px";
+		if (szw && isNumber(szw)) {
+			szw = szw + "px";
 		}
 
-		if (options.width && isNumber(options.width)) {
-			width = options.width + "px";
+		if (szh && isNumber(szh)) {
+			szh = szh + "px";
 		}
 
-		// Create new container element
 		const container = document.createElement("div");
-		container.id = this.id;
-		container.classList.add("epub-container");
-
-		// Style Element
+		container.classList.add("viewport-container");
 		container.style.wordSpacing = "0";
 		container.style.lineHeight = "0";
 		container.style.verticalAlign = "top";
 		container.style.position = "relative";
 		container.style.display = "flex";
 		container.style.flexWrap = "nowrap";
+		container.style.width = szw || "100%";
+		container.style.height = szh || "100%";
 
-		if (width) {
-			container.style.width = width;
+		if (this.settings.hidden) {
+			this.wrapper = this.wrap(container);
 		}
-
-		if (height) {
-			container.style.height = height;
-		}
-
 		return container;
 	}
 
@@ -113,32 +105,19 @@ class Stage {
 	}
 
 	/**
-	 * getElement
-	 * @param {Element|string} element 
+	 * Attach to viewport element
+	 * @param {Element|string} input 
+	 * @param {object} size 
+	 * @param {string|number} size.width viewport width
+	 * @param {string|number} size.height viewport height
 	 * @returns {Element}
 	 */
-	getElement(element) {
+	attachTo(input, size) {
 
-		let elm;
-		if (isElement(element)) {
-			elm = element;
-		} else if (typeof element === "string") {
-			elm = document.getElementById(element);
-		} else {
-			throw new TypeError("not valid argument type");
-		}
-		return elm;
-	}
-
-	/**
-	 * attachTo
-	 * @param {Element|string} what 
-	 * @returns {Element}
-	 */
-	attachTo(what) {
-
-		const element = this.getElement(what);
+		const element = this.getElement(input);
 		if (!element) return;
+
+		this.container = this.create(size);
 
 		let base;
 		if (this.settings.hidden) {
@@ -148,8 +127,29 @@ class Stage {
 		}
 
 		element.appendChild(base);
-		this.parentElement = element;
+		this.target = element;
+		this.axis(this.settings.axis || "vertical");
+		this.direction();
+		this.updateFlow();
+		return element;
+	}
 
+	/**
+	 * Get viewport element
+	 * @param {Element|string} input 
+	 * @returns {Element}
+	 * @private
+	 */
+	getElement(input) {
+
+		let element;
+		if (typeof input === "string") {
+			element = document.getElementById(input);
+		} else if (input instanceof Element) {
+			element = input;
+		} else {
+			throw new TypeError("Invalid argument type");
+		}
 		return element;
 	}
 
@@ -164,26 +164,30 @@ class Stage {
 
 	/**
 	 * onResize
-	 * @param {*} func 
+	 * @param {function} func 
 	 */
 	onResize(func) {
-		// Only listen to window for resize event if width and height are not fixed.
-		// This applies if it is set to a percent or auto.
-		if (!isNumber(this.settings.width) ||
-			!isNumber(this.settings.height)) {
-			this.resizeFunc = throttle(func, 50);
-			window.addEventListener("resize", this.resizeFunc, false);
-		}
+
+		this.resizeFunc = func;
+		window.addEventListener(
+			"resize",
+			this.resizeFunc,
+			false
+		);
 	}
 
 	/**
 	 * onOrientationChange
-	 * @param {*} func 
+	 * @param {function} func 
 	 */
 	onOrientationChange(func) {
 
 		this.orientationChangeFunc = func;
-		window.addEventListener("orientationchange", this.orientationChangeFunc, false);
+		window.addEventListener(
+			"orientationchange",
+			this.orientationChangeFunc,
+			false
+		);
 	}
 
 	/**
@@ -194,40 +198,27 @@ class Stage {
 	 */
 	size(width, height) {
 
-		let bounds;
-		let _width = width || this.settings.width;
-		let _height = height || this.settings.height;
+		this.width = this.target.clientWidth;
+		this.height = this.target.clientHeight;
 
-		// If width or height are set to false, inherit them from containing element
 		if (!width) {
-			bounds = this.parentElement.getBoundingClientRect();
-
-			if (bounds.width) {
-				width = Math.floor(bounds.width);
-				this.container.style.width = width + "px";
-			}
+			width = this.width;
+			this.container.style.width = width + "px";
+		} else if (isNumber(width)) {
+			this.container.style.width = width + "px";
+			this.width = width;
 		} else {
-			if (isNumber(width)) {
-				this.container.style.width = width + "px";
-			} else {
-				this.container.style.width = width;
-			}
+			this.container.style.width = width;
 		}
 
 		if (!height) {
-			bounds = bounds || this.parentElement.getBoundingClientRect();
-
-			if (bounds.height) {
-				height = bounds.height;
-				this.container.style.height = height + "px";
-			}
-
+			height = this.height;
+			this.container.style.height = height + "px";
+		} else if (isNumber(height)) {
+			this.container.style.height = height + "px";
+			this.height = height;
 		} else {
-			if (isNumber(height)) {
-				this.container.style.height = height + "px";
-			} else {
-				this.container.style.height = height;
-			}
+			this.container.style.height = height;
 		}
 
 		if (!isNumber(width)) {
@@ -238,35 +229,17 @@ class Stage {
 			height = this.container.clientHeight;
 		}
 
-		this.containerStyles = window.getComputedStyle(this.container);
-		this.containerPadding = {
-			left: parseFloat(this.containerStyles["padding-left"]) || 0,
-			right: parseFloat(this.containerStyles["padding-right"]) || 0,
-			top: parseFloat(this.containerStyles["padding-top"]) || 0,
-			bottom: parseFloat(this.containerStyles["padding-bottom"]) || 0
+		const styles = window.getComputedStyle(this.container);
+		const padding = {
+			left: parseFloat(styles["padding-left"]) || 0,
+			right: parseFloat(styles["padding-right"]) || 0,
+			top: parseFloat(styles["padding-top"]) || 0,
+			bottom: parseFloat(styles["padding-bottom"]) || 0
 		};
-
-		// Bounds not set, get them from window
-		let wndBounds = windowBounds();
-		let bodyStyles = window.getComputedStyle(document.body);
-		let bodyPadding = {
-			left: parseFloat(bodyStyles["padding-left"]) || 0,
-			right: parseFloat(bodyStyles["padding-right"]) || 0,
-			top: parseFloat(bodyStyles["padding-top"]) || 0,
-			bottom: parseFloat(bodyStyles["padding-bottom"]) || 0
-		};
-
-		if (!_width) {
-			width = wndBounds.width - bodyPadding.left - bodyPadding.right;
-		}
-
-		if ((this.settings.fullsize && !_height) || !_height) {
-			height = wndBounds.height - bodyPadding.top - bodyPadding.bottom;
-		}
 
 		return {
-			width: width - this.containerPadding.left - this.containerPadding.right,
-			height: height - this.containerPadding.top - this.containerPadding.bottom
+			width: width - padding.left - padding.right,
+			height: height - padding.top - padding.bottom
 		}
 	}
 
@@ -348,14 +321,14 @@ class Stage {
 	 */
 	direction(value) {
 
-		value = value || this.layout.direction;
+		const dir = value || this.layout.direction;
 
 		if (this.container) {
-			this.container.dir = value;
+			this.container.dir = dir;
 		}
 
-		if (this.settings.fullsize) {
-			document.body.style["direction"] = value;
+		if (this.target) {
+			this.target.dir = dir;
 		}
 	}
 
@@ -366,8 +339,8 @@ class Stage {
 	 */
 	updateFlow(value) {
 
-		value = value || this.layout.flow;
-		switch (value) {
+		const flow = value || this.layout.flow;
+		switch (flow) {
 			case "paginated":
 				this.container.style["overflow-y"] = "hidden";
 				this.container.style["overflow-x"] = "hidden";
@@ -391,7 +364,7 @@ class Stage {
 	 */
 	destroy() {
 
-		if (this.parentElement) {
+		if (this.target) {
 
 			let base;
 			if (this.settings.hidden) {
@@ -400,8 +373,8 @@ class Stage {
 				base = this.container;
 			}
 
-			if (this.parentElement.contains(base)) {
-				this.parentElement.removeChild(base);
+			if (this.target.contains(base)) {
+				this.target.removeChild(base);
 			}
 
 			window.removeEventListener("resize", this.resizeFunc);

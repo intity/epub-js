@@ -19,8 +19,8 @@ import ContinuousViewManager from "./managers/continuous/index";
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {number} [options.width]
- * @param {number} [options.height]
+ * @param {string|number} [options.width]
+ * @param {string|number} [options.height]
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
  * @param {string|Function|object} [options.manager='default'] string values: default / continuous
  * @param {string|Function} [options.view='iframe']
@@ -32,10 +32,8 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
- * @param {boolean} [options.fullsize=false]
  * @param {boolean} [options.allowPopups=false] enable opening popup in content
  * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
- * @param {boolean} [options.resizeOnOrientationChange=true] false to disable orientation events
  */
 class Rendition {
 	constructor(book, options) {
@@ -59,10 +57,8 @@ class Rendition {
 			direction: null, // TODO: implement to 'auto' detection
 			ignoreClass: "",
 			stylesheet: null,
-			fullsize: false,
 			allowPopups: false,
 			allowScriptedContent: false,
-			resizeOnOrientationChange: true,
 		}, options || {});
 
 		if (typeof this.settings.manager === "object") {
@@ -220,11 +216,9 @@ class Rendition {
 				snap: this.settings.snap,
 				view: this.settings.view,
 				method: this.settings.method,
-				fullsize: this.settings.fullsize,
 				ignoreClass: this.settings.ignoreClass,
 				allowPopups: this.settings.allowPopups,
-				allowScriptedContent: this.settings.allowScriptedContent,
-				resizeOnOrientationChange: this.settings.resizeOnOrientationChange,
+				allowScriptedContent: this.settings.allowScriptedContent
 			};
 			this.manager = new manager(this.book, this.layout, options);
 		}
@@ -256,7 +250,7 @@ class Rendition {
 	/**
 	 * Call to attach the container to an element in the dom
 	 * Container must be attached before rendering can begin
-	 * @param {Element} element to attach to
+	 * @param {Element|string} element viewport element
 	 * @return {Promise<any>}
 	 */
 	attachTo(element) {
