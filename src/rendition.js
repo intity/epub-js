@@ -21,7 +21,6 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {Book} book
  * @param {object} [options]
  * @param {string} [options.axis] viewport axis
- * @param {string} [options.hidden=false] viewport hidden
  * @param {string|number} [options.width] viewport width
  * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
@@ -35,6 +34,7 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
+ * @param {boolean} [options.hidden=false] viewport hidden
  * @param {boolean} [options.allowPopups=false] enable opening popup in content
  * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
  */
@@ -203,6 +203,11 @@ class Rendition {
 		 */
 		this.layout = new Layout(props);
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
+			if (changed.flow) {
+				this.viewport.set({ flow: changed.flow });
+			} else if (changed.direction) {
+				this.viewport.set({ direction: changed.direction });
+			}
 			/**
 			 * Emit of updated the Layout state
 			 * @event layout
@@ -215,18 +220,16 @@ class Rendition {
 		/**
 		 * @member {Viewport} viewport
 		 * @memberof Rendition
-		 * @property {string} axis
-		 * @property {boolean} hidden
 		 * @readonly
 		 */
-		this.viewport = new Viewport(this.layout, {
-			axis: this.settings.axis,
+		this.viewport = new Viewport({
 			hidden: this.settings.hidden
 		});
 
 		if (this.manager === undefined) {
 			const manager = this.requireManager(this.settings.manager);
 			const options = {
+				axis: this.settings.axis,
 				snap: this.settings.snap,
 				view: this.settings.view,
 				method: this.settings.method,

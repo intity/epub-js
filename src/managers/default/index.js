@@ -105,7 +105,13 @@ class DefaultViewManager {
 	render(element, size) {
 
 		this.scrollType = scrollType();
-		this.viewport.attachTo(element, size);
+		this.viewport.attachTo(element, {
+			axis: this.settings.axis || "vertical",
+			flow: this.layout.flow,
+			direction: this.layout.direction,
+			width: size.width,
+			height: size.height
+		});
 		this.views = new Views(this.viewport.container);
 		this.rendered = true;
 		this.updateLayout();
@@ -1075,7 +1081,7 @@ class DefaultViewManager {
 		}
 
 		this.settings.axis = axis;
-		this.viewport.axis(axis);
+		this.viewport.set({ axis });
 
 		if (this.mapping) {
 			this.mapping = new Mapping(this.layout, axis);

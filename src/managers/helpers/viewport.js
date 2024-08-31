@@ -1,26 +1,27 @@
 import { isNumber, windowBounds, uuid } from "../../utils/core";
-import { EVENTS } from "../../utils/constants";
 import throttle from "lodash/throttle";
 
 /**
- * Viewport
+ * viewport configuration class
  */
 class Viewport {
 	/**
 	 * Constructor
-	 * @param {Layout} layout 
 	 * @param {object} options
-	 * @param {string} options.axis viewport axis
-	 * @param {boolean} options.hidden
+	 * @param {boolean} [options.hidden] viewport hidden
 	 */
-	constructor(layout, options) {
+	constructor(options) {
+
+		this.settings = options || {};
 		/**
-		 * @member {object} settings
+		 * viewport axis
+		 * @member {string} axis
 		 * @memberof Viewport
 		 * @readonly
 		 */
-		this.settings = options || {};
+		this.axis = null;
 		/**
+		 * viewport id
 		 * @member {string} id
 		 * @memberof Viewport
 		 * @readonly
@@ -33,14 +34,6 @@ class Viewport {
 		 * @readonly
 		 */
 		this.container = null;
-		this.layout = layout;
-		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-			if (changed.flow) {
-				this.updateFlow(changed.flow);
-			} else if (changed.direction) {
-				this.direction(changed.direction);
-			}
-		});
 		/**
 		 * viewport element
 		 * @member {Element} target
@@ -48,20 +41,54 @@ class Viewport {
 		 * @readonly
 		 */
 		this.target = null;
+		/**
+		 * viewport width
+		 * @member {number} width
+		 * @memberof Viewport
+		 * @readonly
+		 */
+		this.width = 0;
+		/**
+		 * viewpor height
+		 * @member {number} height
+		 * @memberof Viewport
+		 * @readonly
+		 */
+		this.height = 0;
+	}
+
+	/**
+	 * Set options
+	 * @param {object} options 
+	 */
+	set(options) {
+
+		Object.keys(options).forEach((opt) => {
+			const value = options[opt];
+			if (this[opt] === value || typeof value === "undefined") {
+				delete options[opt];
+			} else if (opt === "axis") {
+				this.updateAxis(value);
+			} else if (opt === "flow") {
+				this.updateFlow(value);
+			} else if (opt === "direction") {
+				this.direction(value);
+			}
+		});
 	}
 
 	/**
 	 * Create viewport-container
-	 * @param {object} size
-	 * @param {string|number} size.width
-	 * @param {string|number} size.height
+	 * @param {object} options 
+	 * @param {string|number} [options.width]
+	 * @param {string|number} [options.height]
 	 * @returns {Element} container
 	 * @private
 	 */
-	create(size) {
+	create(options) {
 
-		let szw = size.width;
-		let szh = size.height;
+		let szw = options.width;
+		let szh = options.height;
 
 		if (szw && isNumber(szw)) {
 			szw = szw + "px";
@@ -106,18 +133,22 @@ class Viewport {
 
 	/**
 	 * Attach to viewport element
-	 * @param {Element|string} input 
-	 * @param {object} size 
-	 * @param {string|number} size.width viewport width
-	 * @param {string|number} size.height viewport height
+	 * @param {Element|string} input viewport element
+	 * @param {object} options
+	 * @param {string} options.axis
+	 * @param {string} options.flow
+	 * @param {string} options.direction
+	 * @param {string|number} options.width viewport width
+	 * @param {string|number} options.height viewport height
+	 * @param {Layout} layout
 	 * @returns {Element}
 	 */
-	attachTo(input, size) {
+	attachTo(input, options) {
 
 		const element = this.getElement(input);
 		if (!element) return;
 
-		this.container = this.create(size);
+		this.container = this.create(options);
 
 		let base;
 		if (this.settings.hidden) {
@@ -128,9 +159,7 @@ class Viewport {
 
 		element.appendChild(base);
 		this.target = element;
-		this.axis(this.settings.axis || "vertical");
-		this.direction();
-		this.updateFlow();
+		this.set(options);
 		return element;
 	}
 
@@ -151,15 +180,6 @@ class Viewport {
 			throw new TypeError("Invalid argument type");
 		}
 		return element;
-	}
-
-	/**
-	 * getContainer
-	 * @returns {Element} container
-	 */
-	getContainer() {
-
-		return this.container;
 	}
 
 	/**
@@ -301,46 +321,43 @@ class Viewport {
 	}
 
 	/**
-	 * Set axis
-	 * @param {string} value values: `"horizontal"` OR `"vertical"`
+	 * Update direction
+	 * @param {string} value `layout.direction` value
+	 * @private
 	 */
-	axis(value) {
+	direction(value) {
+
+		if (this.container) {
+			this.container.dir = value;
+		}
+		if (this.target) {
+			this.target.dir = value;
+		}
+	}
+
+	/**
+	 * Update axis
+	 * @param {string} value values: `"horizontal"` OR `"vertical"`
+	 * @private
+	 */
+	updateAxis(value) {
 
 		if (value === "horizontal") {
 			this.container.style.flexDirection = "row";
 		} else {
 			this.container.style.flexDirection = null;
 		}
-		this.settings.axis = value;
+		this.axis = value;
 	}
 
 	/**
-	 * Update direction
-	 * @param {string} [value] direction
-	 * @private
-	 */
-	direction(value) {
-
-		const dir = value || this.layout.direction;
-
-		if (this.container) {
-			this.container.dir = dir;
-		}
-
-		if (this.target) {
-			this.target.dir = dir;
-		}
-	}
-
-	/**
-	 * Update Flow
+	 * Update flow
 	 * @param {string} [value] `layout.flow` value
 	 * @private
 	 */
 	updateFlow(value) {
 
-		const flow = value || this.layout.flow;
-		switch (flow) {
+		switch (value) {
 			case "paginated":
 				this.container.style["overflow-y"] = "hidden";
 				this.container.style["overflow-x"] = "hidden";
