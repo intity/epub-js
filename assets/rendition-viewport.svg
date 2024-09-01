@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="760"
+   height="600"
+   viewBox="0 0 760 600"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-5-4"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-9" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Triangle-5-4-6"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135-6-9-1" />
+    </marker>
+  </defs>
+  <rect
+     style="fill:#ffffff;stroke:none;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="rect-0"
+     width="760"
+     height="600"
+     x="0"
+     y="0" />
+  <rect
+     style="fill:#f2f2f2;stroke:#666666;stroke-width:1;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="viewport-rect"
+     width="580"
+     height="560"
+     x="20"
+     y="20" />
+  <rect
+     style="fill:#d5d5ff;fill-opacity:1;stroke:#0000ff;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     id="viewport-container-rect"
+     width="500"
+     height="480"
+     x="60"
+     y="60" />
+  <rect
+     style="fill:#afe9c6;stroke:#008000;stroke-width:0.999995;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="view-container-rect-0"
+     width="420"
+     height="200"
+     x="100"
+     y="100" />
+  <rect
+     style="fill:#afe9c6;fill-opacity:1;stroke:#008000;stroke-width:0.999995;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     id="view-container-rect-1"
+     width="420"
+     height="200"
+     x="100"
+     y="300" />
+  <rect
+     style="fill:#ffd5d5;stroke:#ff0000;stroke-width:0.999999;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="view-iframe-rect-0"
+     width="340.00003"
+     height="120"
+     x="140"
+     y="140" />
+  <rect
+     style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="view-contents-rect-0"
+     width="260"
+     height="40"
+     x="180"
+     y="180" />
+  <rect
+     style="fill:#ffd5d5;stroke:#ff0000;stroke-width:0.999998;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="view-iframe-rect-1"
+     width="340"
+     height="120"
+     x="140"
+     y="340" />
+  <rect
+     style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="view-contents-rect-1"
+     width="260"
+     height="40"
+     x="180"
+     y="380" />
+  <rect
+     style="fill:#f2f2f2;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-dasharray:none;paint-order:normal;fill-opacity:1"
+     id="document-rect-0"
+     width="120"
+     height="40"
+     x="620"
+     y="180" />
+  <rect
+     style="fill:#f2f2f2;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
+     id="document-rect-1"
+     width="120"
+     height="40"
+     x="620"
+     y="380" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="45"
+     y="45"
+     id="viewport-text">rendition.viewport.target[div#viewport]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="85"
+     y="85"
+     id="viewport-container-text">viewport.container[div.viewport-container]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="125"
+     y="125"
+     id="view-container-text-0">view.container[div.view-container]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="125"
+     y="325"
+     id="view-container-text-1">view.container[div.view-container]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="165"
+     y="165"
+     id="view-iframe-text-0">view.iframe</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="165"
+     y="365"
+     id="view-iframe-text-1">view.iframe</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="205"
+     y="205"
+     id="view-contents-text-0">view.contents[document]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="205"
+     y="405"
+     id="view-contents-text-1">view.contents[document]</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="635"
+     y="205"
+     id="document-text-0">dc_1.xhtml</text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     x="635"
+     y="405"
+     id="document-text-1">dc_2.xhtml</text>
+  <path
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-dasharray:4,1;marker-end:url(#Triangle-5-4);stroke-dashoffset:0"
+     d="m 440,200 c 175.94993,0 175.94993,0 175.94993,0"
+     id="path1" />
+  <path
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.999995;stroke-linejoin:round;stroke-dasharray:3.99997997,0.99999499;marker-end:url(#Triangle-5-4-6);stroke-dashoffset:0"
+     d="m 440,400 c 175.94993,0 175.94993,0 175.94993,0"
+     id="path1-7" />
+</svg>
