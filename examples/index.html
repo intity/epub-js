@@ -33,42 +33,41 @@
                 </p>
                 <h2>Layout rendering control</h2>
                 <p>Specification section: <a href="https://www.w3.org/TR/epub/#flow">Reflowable layouts</a></p>
-                <p>Metadata property: <code>rendition:flow</code></p>
+                <p><b>Metadata property:</b> <code>rendition:flow</code></p>
                 <ol start="1">
                     <li><a href="paginated.html">Paginated</a>
-                        <p>Metadata value: <code>paginated</code></p>
+                        <p><b>Metadata value:</b> <code>paginated</code></p>
                         <p>Display an ebook two pages at a time. Sections of the ebook are displayed separately so if a
                             section has a single page or an odd number of pages it will display with a blank page on the
                             right.
                         </p>
                     </li>
-                    <li><a href="paginated-continuous.html">Continuous paginated</a>
-                        <p>Metadata value: <code>paginated</code></p>
+                    <li><a href="paginated-continuous.html">Continuous swiping of pages</a>
+                        <p><b>Metadata value:</b> <code>paginated</code></p>
                         <p>This example is for devices that support the touch events API (see <a
                                 href="https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Using_Touch_Events">Using
-                                Touch Events</a>). If
-                            the device does not support this API, then the example (1) is used.</p>
+                                Touch Events</a>).</p>
                         <p>The fundamental difference from example (1) is that the views container can include many
-                            items. This can be represented as a stack of views, in which the previous view, the current
-                            view, and the next view are arranged in a sequential chain of views. Only the current view
+                            items. This can be thought of as a stack of views, with the previous, current, and next
+                            views arranged sequentially. Only the current view
                             is displayed on the screen; the others are always hidden. However, this rendering method
                             requires more computing resources. To navigate through pages, use swipe touch.</p>
                     </li>
                     <li><a href="scrolled.html">Scrolled</a>
-                        <p>Metadata value: <code>scrolled-doc</code></p>
+                        <p><b>Metadata value:</b> <code>scrolled-doc</code></p>
                         <p>In this example, the "flow" option is defined as "scrolled". Each section of the book is
                             displayed within the bounds of the container, with a scrollable hidden area. To navigate
                             between sections, use the left and right arrows, as well as key bindings.
                         </p>
                     </li>
                     <li><a href="scrolled-continuous.html">Continuous scrolling</a>
-                        <p>Metadata value: <code>scrolled-continuous</code></p>
+                        <p><b>Metadata value:</b> <code>scrolled-continuous</code></p>
                         <p>The view is the same as in example (3). However, the rendering method involves a sequential
                             chain of views that are displayed as the hidden area is scrolled. When the current section
                             ends, the next one is loaded and so on until the last section.</p>
                     </li>
                     <li><a href="scrolled-doc.html">Scrolled Doc</a>
-                        <p>Metadata value: <code>scrolled-doc</code></p>
+                        <p><b>Metadata value:</b> <code>scrolled-doc</code></p>
                         <p>Displays each "section" or "chapter" of the ebook in its entirety as a single page of
                             variable height that you can scroll up and down. Includes code to provide left and right
                             navigation links to move to the previous or next section.</p>

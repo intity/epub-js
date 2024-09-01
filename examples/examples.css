@@ -112,6 +112,15 @@ body {
     color: #777;
 }
 
+#viewport {
+    background: white;
+}
+
+#viewport.paginated {
+    width: 100%;
+    height: 100vh;
+}
+
 #viewer {
     padding: 0;
     position: relative;
@@ -383,12 +392,6 @@ svg {
 @media
 only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
 only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
-    #viewer.paginated {
-        width: 100%;
-        height: 100vh;
-        box-shadow: none;
-        border-radius: 0;
-    }
     #content.mobile #page {
         width: 100%;
         margin: 0;
