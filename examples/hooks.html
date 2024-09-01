@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <div id="content" class="doc" dir="ltr">
-        <div id="viewer" class="scrolled-doc"></div>
+    <div id="content" class="ltr doc" dir="ltr">
+        <div id="viewer"></div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
@@ -23,7 +23,6 @@
         const rendition = book.renderTo("viewer", {
             flow: "scrolled-doc",
             width: "100%",
-            fullsize: true,
             allowScriptedContent: true
         })
         next.onclick = (e) => {
@@ -56,8 +55,8 @@
             const src = "https://code.jquery.com/jquery-3.7.1.min.js"
             const css = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
             return Promise.all([
-                contents.appendScript(src, "jquery"),
-                contents.appendStylesheet(css, "jquery")
+                contents.appendScript("jquery", src),
+                contents.appendStylesheet("jquery", css)
             ])
         })
     </script>
