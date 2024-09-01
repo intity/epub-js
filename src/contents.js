@@ -571,13 +571,13 @@ class Contents {
 
 	/**
 	 * Append a script node to the document head
-	 * @param {string} src url
-	 * @param {string} key 
-	 * @example appendScript("/path/to/script.js", "common")
-	 * @example appendScript("https://examples.com/to/script.js", "common")
+	 * @param {string} key
+	 * @param {string} src url 
+	 * @example appendScript("common", "/path/to/script.js")
+	 * @example appendScript("common", "https://examples.com/to/script.js")
 	 * @returns {Promise<Node>} loaded
 	 */
-	appendScript(src, key) {
+	appendScript(key, src) {
 
 		return new Promise((resolve, reject) => {
 
