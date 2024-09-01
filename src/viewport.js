@@ -374,6 +374,7 @@ class Viewport {
 				this.container.style.flexWrap = "wrap";
 				break;
 		}
+		this.target.className = value;
 	}
 
 	/**
