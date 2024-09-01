@@ -5,7 +5,7 @@ import Layout from "./layout";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
-import Viewport from "./rendition/viewport";
+import Viewport from "./viewport";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";

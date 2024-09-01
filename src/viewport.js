@@ -1,4 +1,4 @@
-import { isNumber, windowBounds, uuid } from "../utils/core";
+import { isNumber, windowBounds, uuid } from "./utils/core";
 import throttle from "lodash/throttle";
 
 /**
