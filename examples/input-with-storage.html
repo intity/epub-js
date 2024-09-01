@@ -16,7 +16,7 @@
     <div id="toolbar">
         <input type="file" id="openbook" accept=".epub">
     </div>
-    <div id="content">
+    <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
         </div>
@@ -25,6 +25,7 @@
     </div>
     <script>
         const openbook = document.getElementById("openbook")
+        const content = document.getElementById("content")
         const divider = document.getElementById("divider")
         const next = document.getElementById("next")
         const prev = document.getElementById("prev")
@@ -42,11 +43,14 @@
         }
         const update = (location) => {
 
+            const dir = rendition.layout.direction
             const div = rendition.layout.divisor
             const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
+            content.className = dir
+            content.dir = dir
         }
         const keybinding = (e) => {
 
