@@ -218,27 +218,31 @@ class Viewport {
 	 */
 	size(width, height) {
 
-		this.width = this.target.clientWidth;
-		this.height = this.target.clientHeight;
+		let rect;
+		if (!width || !height) {
+			rect = this.bounds();
+		}
 
 		if (!width) {
-			width = this.width;
+			width = this.width = rect.width;
 			this.container.style.width = width + "px";
 		} else if (isNumber(width)) {
 			this.container.style.width = width + "px";
 			this.width = width;
 		} else {
 			this.container.style.width = width;
+			this.width = this.container.clientWidth;
 		}
 
 		if (!height) {
-			height = this.height;
+			height = this.height = rect.height;
 			this.container.style.height = height + "px";
 		} else if (isNumber(height)) {
 			this.container.style.height = height + "px";
 			this.height = height;
 		} else {
 			this.container.style.height = height;
+			this.height = this.container.clientHeight;
 		}
 
 		if (!isNumber(width)) {
