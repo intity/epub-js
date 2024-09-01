@@ -46,8 +46,8 @@
             </select>
         </div>
     </div>
-    <div id="content" dir="ltr">
-        <div id="viewer" class="paginated">
+    <div id="content" class="ltr" dir="ltr">
+        <div id="viewer">
             <div id="divider"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
@@ -55,7 +55,6 @@
     </div>
     <script>
         const content = document.getElementById("content")
-        const viewer = document.getElementById("viewer")
         const layout = document.getElementById("layout")
         const flow = document.getElementById("flow")
         const spread = document.getElementById("spread")
@@ -136,13 +135,13 @@
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
             content.dir = dir
+            content.className = dir
             if (rendition.layout.flow === "paginated" ||
                 rendition.layout.flow === "scrolled") {
-                content.removeAttribute("class")
+                content.classList.remove("doc");
             } else {
-                content.className = "doc"
+                content.classList.add("doc");
             }
-            viewer.className = rendition.layout.flow
         }
         const keybinding = (e) => {
 
