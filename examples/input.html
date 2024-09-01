@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Open from File - Example</title>
+    <title>EPUB.JS: Open book from File - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/jszip.min.js"></script>
@@ -15,7 +15,7 @@
     <div id="toolbar">
         <input type="file" id="openbook" accept=".epub">
     </div>
-    <div id="content">
+    <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
         </div>
@@ -24,16 +24,19 @@
     </div>
     <script>
         const openbook = document.getElementById("openbook")
+        const content = document.getElementById("content")
         const divider = document.getElementById("divider")
         const next = document.getElementById("next")
         const prev = document.getElementById("prev")
         const book = ePub()
         let rendition;
+        prev.style.display = "none"
         prev.onclick = (e) => {
 
             rendition.prev()
             e.preventDefault()
         }
+        next.style.display = "none"
         next.onclick = (e) => {
 
             rendition.next()
@@ -41,11 +44,14 @@
         }
         const update = (location) => {
 
+            const dir = rendition.layout.direction
             const div = rendition.layout.divisor
             const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
+            content.className = dir
+            content.dir = dir
         }
         const keybinding = (e) => {
 
