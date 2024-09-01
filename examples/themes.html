@@ -38,7 +38,6 @@
             width: "100%",
             height: "100%"
         })
-        rendition.display()
         theme.onchange = (e) => {
 
             let name = e.target.value
@@ -52,7 +51,7 @@
 
             rendition.themes.fontSize(e.target.value + "%")
         }
-        rendition.on("displayed", (section) => {
+        rendition.display().then((section) => {
 
             rendition.themes.select("light")
             rendition.themes.fontSize("100%")
