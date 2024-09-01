@@ -70,19 +70,19 @@ body {
     overflow: auto;
 }
 
-#content:dir(ltr) #prev {
+#content.ltr #prev {
     left: 0;
 }
 
-#content:dir(rtl) #prev {
+#content.rtl #prev {
     right: 0;
 }
 
-#content:dir(ltr) #next {
+#content.ltr #next {
     right: 0;
 }
 
-#content:dir(rtl) #next {
+#content.rtl #next {
     left: 0;
 }
 
