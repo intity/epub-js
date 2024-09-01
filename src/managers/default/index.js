@@ -20,7 +20,7 @@ class DefaultViewManager {
 	 * Constructor
 	 * @param {Book} book 
 	 * @param {object} [options]
-	 * @param {string} [options.axis]
+	 * @param {string} [options.axis=null] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
@@ -106,7 +106,7 @@ class DefaultViewManager {
 
 		this.scrollType = scrollType();
 		this.viewport.attachTo(element, {
-			axis: this.settings.axis || "vertical",
+			axis: this.settings.axis,
 			flow: this.layout.flow,
 			direction: this.layout.direction,
 			width: size.width,
@@ -309,7 +309,7 @@ class DefaultViewManager {
 
 		const view = this.requireView(this.settings.view);
 		return new view(this.layout, section, {
-			axis: this.settings.axis,
+			axis: this.viewport.axis,
 			snap: this.settings.snap,
 			method: this.settings.method,
 			allowPopups: this.settings.allowPopups,
@@ -454,7 +454,7 @@ class DefaultViewManager {
 	 */
 	counter(bounds) {
 
-		if (this.settings.axis === AXIS_V) {
+		if (this.viewport.axis === AXIS_V) {
 			this.scrollBy(0, bounds.heightDelta, true);
 		} else {
 			this.scrollBy(bounds.widthDelta, 0, true);
@@ -470,13 +470,13 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const hvx = this.paginated && this.settings.axis === AXIS_H;
+		const vph = this.viewport.axis === AXIS_H && this.paginated;
 		const vpc = this.viewport.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
-		} else if (hvx && dir === "ltr") {
+		} else if (vph && dir === "ltr") {
 
 			this.scrollLeft = vpc.scrollLeft;
 			left = vpc.scrollLeft + vpc.offsetWidth + this.layout.delta;
@@ -486,7 +486,7 @@ class DefaultViewManager {
 			} else {
 				section = this.views.last().section.next();
 			}
-		} else if (hvx && dir === "rtl") {
+		} else if (vph && dir === "rtl") {
 
 			this.scrollLeft = vpc.scrollLeft;
 
@@ -507,7 +507,7 @@ class DefaultViewManager {
 					section = this.views.last().section.next();
 				}
 			}
-		} else if (this.paginated && this.settings.axis === AXIS_V) {
+		} else if (this.viewport.axis === AXIS_V && this.paginated) {
 
 			this.scrollTop = vpc.scrollTop;
 			const top = vpc.scrollTop + vpc.offsetHeight;
@@ -538,7 +538,7 @@ class DefaultViewManager {
 			this.append(section, forceRight).then((view) => {
 
 				// Reset position to start for scrolled-doc vertical-rl in default mode
-				if (!hvx && dir === "rtl" &&
+				if (!vph && dir === "rtl" &&
 					this.scrollType === "default") {
 					this.scrollTo(vpc.scrollWidth, 0, true);
 				}
@@ -563,13 +563,13 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const hvx = this.paginated && this.settings.axis === AXIS_H;
+		const vph = this.viewport.axis === AXIS_H && this.paginated;
 		const vpc = this.viewport.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
-		} else if (hvx && dir === "ltr") {
+		} else if (vph && dir === "ltr") {
 
 			this.scrollLeft = vpc.scrollLeft;
 			left = vpc.scrollLeft;
@@ -579,7 +579,7 @@ class DefaultViewManager {
 			} else {
 				section = this.views.first().section.prev();
 			}
-		} else if (hvx && dir === "rtl") {
+		} else if (vph && dir === "rtl") {
 
 			this.scrollLeft = vpc.scrollLeft;
 
@@ -601,7 +601,7 @@ class DefaultViewManager {
 					section = this.views.first().section.prev();
 				}
 			}
-		} else if (this.paginated && this.settings.axis === AXIS_V) {
+		} else if (this.viewport.axis === AXIS_V && this.paginated) {
 
 			this.scrollTop = vpc.scrollTop;
 			const top = vpc.scrollTop;
@@ -631,7 +631,7 @@ class DefaultViewManager {
 
 			this.prepend(section, forceRight).then((view) => {
 
-				if (hvx) {
+				if (vph) {
 					if (dir === "rtl") {
 						if (this.scrollType === "default") {
 							this.scrollTo(0, 0, true);
@@ -688,7 +688,7 @@ class DefaultViewManager {
 	currentLocation() {
 
 		this.updateLayout();
-		if (this.paginated && this.settings.axis === AXIS_H) {
+		if (this.viewport.axis === AXIS_H && this.paginated) {
 			this.location = this.paginatedLocation();
 		} else {
 			this.location = this.scrolledLocation();
@@ -705,7 +705,7 @@ class DefaultViewManager {
 
 		let offset = 0, used = 0;
 		if (this.fullsize) {
-			offset = this.settings.axis === AXIS_V ? window.scrollY : window.scrollX;
+			offset = this.viewport.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
 
 		const container = this.viewport.container.getBoundingClientRect();
@@ -722,7 +722,7 @@ class DefaultViewManager {
 			let stopPos;
 			let total;
 
-			if (this.settings.axis === AXIS_V) {
+			if (this.viewport.axis === AXIS_V) {
 				startPos = offset + container.top - position.top + used;
 				endPos = startPos + pageHeight - used;
 				stopPos = pageHeight;
@@ -738,7 +738,7 @@ class DefaultViewManager {
 			let endPage = Math.ceil(endPos / stopPos);
 
 			// Reverse page counts for horizontal rtl
-			if (this.settings.axis === AXIS_H &&
+			if (this.viewport.axis === AXIS_H &&
 				this.layout.direction === "rtl") {
 				const tmp = startPage;
 				startPage = total - endPage;
@@ -758,7 +758,7 @@ class DefaultViewManager {
 			);
 
 			return {
-				axis: this.settings.axis,
+				axis: this.viewport.axis,
 				href,
 				index,
 				pages,
@@ -839,7 +839,7 @@ class DefaultViewManager {
 			);
 
 			return {
-				axis: this.settings.axis,
+				axis: this.viewport.axis,
 				href,
 				index,
 				pages,
@@ -865,13 +865,13 @@ class DefaultViewManager {
 		const position = view.position();
 		const container = rect || this.bounds();
 
-		if (this.settings.axis === AXIS_H &&
+		if (this.viewport.axis === AXIS_H &&
 			position.right > container.left - offsetPrev &&
 			position.left < container.right + offsetNext) {
 
 			return true;
 
-		} else if (this.settings.axis === AXIS_V &&
+		} else if (this.viewport.axis === AXIS_V &&
 			position.bottom > container.top - offsetPrev &&
 			position.top < container.bottom + offsetNext) {
 
@@ -1054,7 +1054,7 @@ class DefaultViewManager {
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
-		this.mapping = new Mapping(this.layout, this.settings.axis);
+		this.mapping = new Mapping(this.layout, this.viewport.axis);
 	}
 
 	/**
@@ -1069,22 +1069,17 @@ class DefaultViewManager {
 
 	/**
 	 * Update axis
-	 * @param {string} axis
-	 * @param {boolean} [forceUpdate=false] force update
+	 * @param {string} value
 	 * @private
 	 */
-	updateAxis(axis, forceUpdate = false) {
+	updateAxis(value) {
 
-		if (axis === this.settings.axis &&
-			forceUpdate === false) {
+		if (this.viewport.axis === value) {
 			return;
 		}
-
-		this.settings.axis = axis;
-		this.viewport.set({ axis });
-
+		this.viewport.set({ axis: value });
 		if (this.mapping) {
-			this.mapping = new Mapping(this.layout, axis);
+			this.mapping = new Mapping(this.layout, value);
 		}
 	}
 

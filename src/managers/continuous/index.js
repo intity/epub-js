@@ -4,6 +4,8 @@ import DefaultViewManager from "../default";
 import Snap from "../helpers/snap";
 import { EVENTS } from "../../utils/constants";
 
+const AXIS_H = "horizontal";
+
 /**
  * Continuous view manager
  * @extends {DefaultViewManager}
@@ -171,38 +173,37 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		const checking = new Defer();
 		const promises = [];
-		const horizontal = this.settings.axis === "horizontal";
-		const container = this.viewport.container;
+		const vph = this.viewport.axis === AXIS_H;
+		const vpc = this.viewport.container;
+		const rtl = this.layout.direction === "rtl";
 		let delta = this.settings.offset || 0;
 
-		if (offsetLeft && horizontal) {
+		if (offsetLeft && vph) {
 			delta = offsetLeft;
 		}
 
-		if (offsetTop && !horizontal) {
+		if (offsetTop && !vph) {
 			delta = offsetTop;
 		}
 
 		const bounds = this.bounds(); // bounds saved this until resize
-		const visibleLength = horizontal ? Math.floor(bounds.width) : bounds.height;
-		const contentLength = horizontal ? container.scrollWidth : container.scrollHeight;
-		const writingMode = (this.writingMode && this.writingMode.indexOf("vertical") === 0) ? "vertical" : "horizontal";
-		const rtl = this.layout.direction === "rtl";
-		let offset = horizontal ? this.scrollLeft : this.scrollTop;
+		const visibleLength = vph ? Math.floor(bounds.width) : bounds.height;
+		const contentLength = vph ? vpc.scrollWidth : vpc.scrollHeight;
+		let offset = vph ? this.scrollLeft : this.scrollTop;
 
 		if (this.fullsize) {
 			// Scroll offset starts at 0 and goes negative
-			if ((horizontal && rtl && this.scrollType === "negative") ||
-				(!horizontal && rtl && this.scrollType === "default")) {
+			if ((vph && rtl && this.scrollType === "negative") ||
+				(!vph && rtl && this.scrollType === "default")) {
 				offset = offset * -1;
 			}
-		} else {
+		} else if (this.writingMode.indexOf(AXIS_H) === 0) {
 			// Scroll offset starts at width of element
-			if (rtl && this.scrollType === "default" && writingMode === "horizontal") {
+			if (rtl && this.scrollType === "default") {
 				offset = contentLength - visibleLength - offset;
 			}
 			// Scroll offset starts at 0 and goes negative
-			if (rtl && this.scrollType === "negative" && writingMode === "horizontal") {
+			if (rtl && this.scrollType === "negative") {
 				offset = offset * -1;
 			}
 		}
@@ -355,7 +356,7 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		if (this.views.length === 0) return;
 		if (this.paginated &&
-			this.settings.axis === "horizontal") {
+			this.viewport.axis === AXIS_H) {
 			this.scrollBy(delta, 0, true);
 		} else {
 			this.scrollBy(0, this.layout.height, true);
@@ -383,7 +384,7 @@ class ContinuousViewManager extends DefaultViewManager {
 		if (this.views.length === 0) return;
 
 		if (this.paginated &&
-			this.settings.axis === "horizontal") {
+			this.viewport.axis === AXIS_H) {
 			this.scrollBy(-delta, 0, true);
 		} else {
 			this.scrollBy(0, -this.layout.height, true);
