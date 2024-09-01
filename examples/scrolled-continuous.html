@@ -8,6 +8,14 @@
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
+    <script>
+        window.onload = (e) => {
+            const content = document.getElementById("content")
+            if ("ontouchstart" in window) {
+                content.className = "mobile"
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -15,7 +23,6 @@
         <div id="viewer" class="scrolled"></div>
     </div>
     <script>
-        const content = document.getElementById("content")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             manager: "continuous",
@@ -26,12 +33,6 @@
         rendition.display().then(() => {
 
             console.log(book)
-        })
-        rendition.on("displayed", (section) => {
-
-            if ("ontouchstart" in window) {
-                content.className = "mobile"
-            }
         })
         rendition.on("relocated", (location) => {
 
