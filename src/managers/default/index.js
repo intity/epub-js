@@ -777,56 +777,20 @@ class DefaultViewManager {
 	 */
 	paginatedLocation() {
 
-		let left = 0, used = 0;
-		if (this.fullsize) {
-			left = window.scrollX;
-		}
-
-		const container = this.viewport.container.getBoundingClientRect();
+		const vpc = this.viewport.container;
+		const rect = vpc.getBoundingClientRect();
+		const left = this.fullsize ? window.scrollX : vpc.scrollLeft;
 		const views = this.visible();
 		const sections = views.map((view) => {
 
 			const { index, href } = view.section;
-			const position = view.position();
-
-			// Find mapping
-			let offset;
-			let startPos;
-			let endPos;
-			let pageWidth;
-
-			if (this.layout.direction === "rtl") {
-				offset = container.right - left;
-				pageWidth = Math.min(Math.abs(offset - position.left), this.layout.width) - used;
-				endPos = position.width - (position.right - offset) - used;
-				startPos = endPos - pageWidth;
-			} else {
-				offset = container.left + left;
-				pageWidth = Math.min(position.right - offset, this.layout.width) - used;
-				startPos = offset - position.left + used;
-				endPos = startPos + pageWidth;
-			}
-
-			used += pageWidth;
-
-			let startPage = Math.floor(startPos / this.layout.pageWidth);
-			let endPage = Math.floor(endPos / this.layout.pageWidth);
-
-			// start page should not be negative
-			if (startPage < 0) {
-				startPage = 0;
-				endPage = endPage + 1;
-			}
-
-			const total = this.layout.count(view.width).pages;
-			// Reverse page counts for rtl
-			if (this.layout.direction === "rtl") {
-				const tmp = startPage;
-				startPage = total - endPage;
-				endPage = total - tmp;
-			}
-
 			const pages = [];
+			const total = this.layout.count(view.width).pages;
+			const startPos = Math.abs(left);
+			const endPos = Math.abs(left) + rect.width;
+			const startPage = Math.floor(startPos / this.layout.pageWidth);
+			const endPage = Math.floor(endPos / this.layout.pageWidth);
+
 			for (let i = startPage; i < endPage; i++) {
 				pages.push({ index: i });
 			}
