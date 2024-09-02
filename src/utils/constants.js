@@ -66,5 +66,9 @@ export const EVENTS = {
         SELECTED: "selected",
         INJECTED: "injected",
         REJECTED: "rejected"
+    },
+    VIEWPORT: {
+        RESIZED: "resized",
+        ORIENTATION_CHANGE: "orientationchange"
     }
 }

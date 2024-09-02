@@ -68,12 +68,12 @@ class Views extends Array {
 		this.destroy(view);
 	}
 
-	resize() {
+	resize(width, height) {
 
 		for (let i = 0; i < this.length; ++i) {
 			const view = this[i];
 			if (view.displayed) {
-				view.size();
+				view.resize(width, height);
 			}
 		}
 	}

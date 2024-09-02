@@ -129,7 +129,6 @@ class ContinuousViewManager extends DefaultViewManager {
 	 */
 	async update(offset) {
 
-		const rect = this.bounds();
 		const views = this.views;
 		const delta = offset || this.settings.offset || 0;
 		const updating = new Defer();
@@ -139,7 +138,7 @@ class ContinuousViewManager extends DefaultViewManager {
 
 			const view = views[i];
 
-			if (this.isVisible(view, delta, delta, rect)) {
+			if (this.isVisible(view, delta, delta)) {
 				if (view.displayed) {
 					view.show();
 				} else {
@@ -186,8 +185,8 @@ class ContinuousViewManager extends DefaultViewManager {
 			delta = offsetTop;
 		}
 
-		const bounds = this.bounds(); // bounds saved this until resize
-		const visibleLength = vph ? Math.floor(bounds.width) : bounds.height;
+		const rect = this.viewport.rect;
+		const visibleLength = vph ? Math.floor(rect.width) : rect.height;
 		const contentLength = vph ? vpc.scrollWidth : vpc.scrollHeight;
 		let offset = vph ? this.scrollLeft : this.scrollTop;
 
@@ -327,12 +326,12 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * @param {Event} e 
 	 * @override
 	 */
-	scrolled(e) {
+	async scrolled(e) {
 
 		this.q.enqueue(() => {
 			return this.check();
 		});
-		this.q.run().then(() => {
+		return this.q.run().then(() => {
 			this.emit(EVENTS.MANAGERS.SCROLLED, {
 				top: this.scrollTop,
 				left: this.scrollLeft
@@ -402,8 +401,6 @@ class ContinuousViewManager extends DefaultViewManager {
 	destroy() {
 
 		super.destroy();
-		clearTimeout(this.scrollTimeout);
-		clearTimeout(this.trimTimeout);
 
 		if (this.snapper) {
 			this.snapper.destroy();

@@ -112,12 +112,19 @@ class DefaultViewManager {
 			width: size.width,
 			height: size.height
 		});
+		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
+			this.resize(rect.width, rect.height);
+		});
+		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
+			/**
+			 * @event orientationchange
+			 * @param {object} target
+			 * @memberof DefaultViewManager
+			 */
+			this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, target);
+		});
 		this.views = new Views(this.viewport.container);
 		this.rendered = true;
-		this.updateLayout();
-		//-- events
-		this.viewport.onResize(this.onResized.bind(this));
-		this.viewport.onOrientationChange(this.onOrientationChange.bind(this));
 		this.appendEventListeners();
 		window.onpagehide = this.destroy.bind(this);
 	}
@@ -196,7 +203,6 @@ class DefaultViewManager {
 		if (this.paginated && this.name === "default") {
 			return;
 		}
-		
 		let container;
 		if (this.fullsize) {
 			container = window;
@@ -240,32 +246,6 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * onOrientationChange
-	 * @param {Event} e 
-	 * @private
-	 */
-	onOrientationChange(e) {
-
-		const orientation = e.target.screen.orientation;
-		/**
-		 * @event orientationchange
-		 * @param {object} orientation
-		 * @memberof DefaultViewManager
-		 */
-		this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, orientation);
-	}
-
-	/**
-	 * onResized
-	 * @param {Event} e 
-	 * @private
-	 */
-	onResized(e) {
-
-		this.resize();
-	}
-
-	/**
 	 * resize
 	 * @param {number} [width] 
 	 * @param {number} [height] 
@@ -273,11 +253,11 @@ class DefaultViewManager {
 	 */
 	resize(width, height, epubcfi) {
 
-		this.clear();
+		this.views.resize(width, height);
 		this.updateLayout(width, height);
 		this.emit(EVENTS.MANAGERS.RESIZED, {
-			width: this.viewport.width,
-			height: this.viewport.height
+			width: width || this.viewport.rect.width,
+			height: height || this.viewport.rect.height
 		}, epubcfi);
 	}
 
@@ -663,7 +643,6 @@ class DefaultViewManager {
 
 		const views = this.visible();
 		if (views.length) {
-			// Current is the last visible view
 			return views[views.length - 1];
 		}
 		return null;
@@ -824,21 +803,18 @@ class DefaultViewManager {
 	 * @returns {boolean}
 	 * @private
 	 */
-	isVisible(view, offsetPrev, offsetNext, rect) {
+	isVisible(view, offsetPrev, offsetNext) {
 
 		const position = view.position();
-		const container = rect || this.bounds();
+		const rect = this.viewport.rect;
 
 		if (this.viewport.axis === AXIS_H &&
-			position.right > container.left - offsetPrev &&
-			position.left < container.right + offsetNext) {
-
+			position.right > rect.left - offsetPrev &&
+			position.left < rect.right + offsetNext) {
 			return true;
-
 		} else if (this.viewport.axis === AXIS_V &&
-			position.bottom > container.top - offsetPrev &&
-			position.top < container.bottom + offsetNext) {
-
+			position.bottom > rect.top - offsetPrev &&
+			position.top < rect.bottom + offsetNext) {
 			return true;
 		}
 
@@ -851,13 +827,12 @@ class DefaultViewManager {
 	 */
 	visible() {
 
-		const container = this.bounds();
 		const views = this.views.displayed();
 		const items = [];
 
 		for (let i = 0, len = views.length; i < len; i++) {
 			const view = views[i];
-			if (this.isVisible(view, 0, 0, container)) {
+			if (this.isVisible(view, 0, 0)) {
 				items.push(view);
 			}
 		}
@@ -976,15 +951,6 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * Get bounds
-	 * @returns {DOMRect}
-	 */
-	bounds() {
-
-		return this.viewport.bounds();
-	}
-
-	/**
 	 * Update Layout
 	 * @param {string|number} [width] 
 	 * @param {string|number} [height] 
@@ -1000,16 +966,15 @@ class DefaultViewManager {
 
 		if (this.paginated) {
 			this.layout.calculate(
-				this.viewport.width,
-				this.viewport.height,
+				this.viewport.rect.width,
+				this.viewport.rect.height,
 				this.settings.gap
 			);
-			// Set the look ahead offset for what is visible
 			this.settings.offset = this.layout.delta / this.layout.divisor;
 		} else {
 			this.layout.calculate(
-				this.viewport.width,
-				this.viewport.height
+				this.viewport.rect.width,
+				this.viewport.rect.height
 			);
 		}
 
@@ -1042,9 +1007,7 @@ class DefaultViewManager {
 			return;
 		}
 		this.viewport.set({ axis: value });
-		if (this.mapping) {
-			this.mapping = new Mapping(this.layout, value);
-		}
+		this.mapping = new Mapping(this.layout, value);
 	}
 
 	/**

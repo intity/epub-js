@@ -192,13 +192,13 @@ class IframeView {
 			this.setWritingMode(writingMode);
 			this.emit(EVENTS.VIEWS.WRITING_MODE, writingMode);
 
-			// apply the layout function to the contents
+			//-- apply the layout function to the contents
 			this.layout.format(this.contents, this.section, this.axis);
-
-			// Listen for events that require an expansion of the iframe
+			//-- listen for events that require an expansion of the iframe
 			this.addListeners();
-
-			// Expand the iframe to the full size of the content
+			//-- size
+			this.size();
+			//-- expand the iframe to the full size of the content
 			this.expand();
 
 			if (this.settings.forceRight) {
@@ -245,6 +245,18 @@ class IframeView {
 	}
 
 	/**
+	 * resize
+	 * @param {number} width 
+	 * @param {number} height 
+	 */
+	resize(width, height) {
+
+		this.layout.set({ width, height });
+		this.size(width, height);
+		this.expand();
+	}
+
+	/**
 	 * Set axis
 	 * @param {string} [value] 
 	 */
@@ -261,7 +273,6 @@ class IframeView {
 		}
 
 		this.axis = value;
-		this.size();
 	}
 
 	/**
@@ -281,8 +292,8 @@ class IframeView {
 	 */
 	size(width, height) {
 
-		width = width || this.layout.width;
-		height = height || this.layout.height;
+		const szw = width || this.layout.width;
+		const szh = height || this.layout.height;
 
 		let what;
 		if (this.layout.name === "pre-paginated") {
@@ -293,7 +304,7 @@ class IframeView {
 			what = "width";
 		}
 
-		this.lock(what, width, height);
+		this.lock(what, szw, szh);
 	}
 
 	/**
@@ -331,10 +342,6 @@ class IframeView {
 					this.lockedHeight = height - elBorders.height - iframeBorders.height;
 				}
 				break;
-		}
-
-		if (this.displayed && this.iframe) {
-			this.expand();
 		}
 	}
 

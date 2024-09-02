@@ -1,5 +1,6 @@
-import { isNumber, windowBounds, uuid } from "./utils/core";
-import throttle from "lodash/throttle";
+import { isNumber, uuid } from "./utils/core";
+import { EVENTS } from "./utils/constants";
+import EventEmitter from "event-emitter";
 
 /**
  * viewport configuration class
@@ -42,19 +43,21 @@ class Viewport {
 		 */
 		this.target = null;
 		/**
-		 * viewport width
-		 * @member {number} width
+		 * viewport rect
+		 * @member {object} rect
 		 * @memberof Viewport
 		 * @readonly
 		 */
-		this.width = 0;
-		/**
-		 * viewpor height
-		 * @member {number} height
-		 * @memberof Viewport
-		 * @readonly
-		 */
-		this.height = 0;
+		this.rect = {
+			bottom: 0,
+			height: 0,
+			left: 0,
+			right: 0,
+			top: 0,
+			width: 0,
+			x: 0,
+			y: 0,
+		};
 	}
 
 	/**
@@ -159,8 +162,36 @@ class Viewport {
 
 		element.appendChild(base);
 		this.target = element;
+		this.appendListeners();
 		this.set(options);
 		return element;
+	}
+
+	/**
+	 * appendListeners
+	 * @private
+	 */
+	appendListeners() {
+		//-- ORIENTATION_CHANGE
+		screen.orientation.addEventListener("change", this.orientation.bind(this));
+		//-- RESIZE
+		this.resizeFunc = new ResizeObserver((e) => {
+			requestAnimationFrame(() => this.resize(e));
+		});
+		this.resizeFunc.observe(this.target);
+	}
+
+	/**
+	 * removeListeners
+	 * @private
+	 */
+	removeListeners() {
+		//-- ORIENTATION_CHANGE
+		screen.orientation.removeEventListener("change", this.orientation.bind(this));
+		//-- RESIZE
+		if (this.resizeFunc) {
+			this.resizeFunc.disconnect();
+		}
 	}
 
 	/**
@@ -183,31 +214,32 @@ class Viewport {
 	}
 
 	/**
-	 * onResize
-	 * @param {function} func 
+	 * orientationchanged
+	 * @param {Event} e 
+	 * @private
 	 */
-	onResize(func) {
+	orientation(e) {
 
-		this.resizeFunc = throttle(func, 50);
-		window.addEventListener(
-			"resize",
-			this.resizeFunc,
-			false
-		);
+		this.emit(EVENTS.VIEWPORT.ORIENTATION_CHANGE, e.target);
 	}
 
 	/**
-	 * onOrientationChange
-	 * @param {function} func 
+	 * resize
+	 * @param {object} entries 
+	 * @private
 	 */
-	onOrientationChange(func) {
+	resize(entries) {
 
-		this.orientationChangeFunc = func;
-		window.addEventListener(
-			"orientationchange",
-			this.orientationChangeFunc,
-			false
-		);
+		let changed = false;
+		const cmp = (rect) => Object.keys(this.rect).forEach(p => {
+			if (!rect) return;
+			if (this.rect[p] !== rect[p] && rect[p] !== void 0) {
+				this.rect[p] = rect[p];
+				changed = true;
+			}
+		});
+		entries.forEach((entry) => cmp(entry.contentRect));
+		changed && this.emit(EVENTS.VIEWPORT.RESIZED, this.rect);
 	}
 
 	/**
@@ -218,71 +250,35 @@ class Viewport {
 	 */
 	size(width, height) {
 
-		let rect;
-		if (!width || !height) {
-			rect = this.bounds();
-		}
+		this.rect.width = this.target.clientWidth;
+		this.rect.height = this.target.clientHeight;
 
 		if (!width) {
-			width = this.width = rect.width;
+			width = this.rect.width;
 			this.container.style.width = width + "px";
 		} else if (isNumber(width)) {
 			this.container.style.width = width + "px";
-			this.width = width;
+			this.rect.width = width;
 		} else {
 			this.container.style.width = width;
-			this.width = this.container.clientWidth;
+			this.rect.width = this.container.clientWidth;
 		}
 
 		if (!height) {
-			height = this.height = rect.height;
+			height = this.rect.height;
 			this.container.style.height = height + "px";
 		} else if (isNumber(height)) {
 			this.container.style.height = height + "px";
-			this.height = height;
+			this.rect.height = height;
 		} else {
 			this.container.style.height = height;
-			this.height = this.container.clientHeight;
+			this.rect.height = this.container.clientHeight;
 		}
-
-		if (!isNumber(width)) {
-			width = this.container.clientWidth;
-		}
-
-		if (!isNumber(height)) {
-			height = this.container.clientHeight;
-		}
-
-		const styles = window.getComputedStyle(this.container);
-		const padding = {
-			left: parseFloat(styles["padding-left"]) || 0,
-			right: parseFloat(styles["padding-right"]) || 0,
-			top: parseFloat(styles["padding-top"]) || 0,
-			bottom: parseFloat(styles["padding-bottom"]) || 0
-		};
 
 		return {
-			width: width - padding.left - padding.right,
-			height: height - padding.top - padding.bottom
-		}
-	}
-
-	/**
-	 * Get bounding client rect
-	 * @returns {DOMRect|object}
-	 */
-	bounds() {
-
-		let box;
-		if (this.container.style.overflow !== "visible") {
-			box = this.container && this.container.getBoundingClientRect();
-		}
-
-		if (!box || !box.width || !box.height) {
-			return windowBounds();
-		} else {
-			return box;
-		}
+			width: this.rect.width,
+			height: this.rect.height
+		};
 	}
 
 	/**
@@ -399,10 +395,11 @@ class Viewport {
 				this.target.removeChild(base);
 			}
 
-			window.removeEventListener("resize", this.resizeFunc);
-			window.removeEventListener("orientationChange", this.orientationChangeFunc);
+			this.removeListeners();
 		}
 	}
 }
+
+EventEmitter(Viewport.prototype);
 
 export default Viewport;
