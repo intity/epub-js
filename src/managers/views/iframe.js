@@ -252,8 +252,6 @@ class IframeView {
 	resize(width, height) {
 
 		this.layout.set({ width, height });
-		this.size(width, height);
-		this.expand();
 	}
 
 	/**
@@ -524,7 +522,8 @@ class IframeView {
 	updateLayout() {
 
 		if (this.contents) {
-			this.layout.format(this.contents);
+			this.layout.format(this.contents, this.section, this.axis);
+			this.size();
 			this.expand();
 		}
 	}
