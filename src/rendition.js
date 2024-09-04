@@ -193,9 +193,7 @@ class Rendition {
 	 */
 	start() {
 
-		// Parse metadata to get layout props
 		const props = this.determineLayoutProperties();
-		this.settings.layout = props.name;
 		/**
 		 * @member {Layout} layout
 		 * @memberof Rendition
@@ -225,8 +223,28 @@ class Rendition {
 		this.viewport = new Viewport({
 			hidden: this.settings.hidden
 		});
+		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
+			this.layout.set(rect);
+			if (!this.location) return;
+			/**
+			 * Emit that the rendition has been resized
+			 * @event resized
+			 * @param {object} rect
+			 * @memberof Rendition
+			 */
+			this.emit(EVENTS.RENDITION.RESIZED, rect);
+			this.display(this.location.start.cfi);
+		});
+		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
+			/**
+			 * @event orientationchange
+			 * @param {object} target
+			 * @memberof Rendition
+			 */
+			this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, target);
+		});
 
-		if (this.manager === undefined) {
+		if (!this.manager) {
 			const manager = this.requireManager(this.settings.manager);
 			const options = {
 				axis: this.settings.axis,
@@ -240,27 +258,16 @@ class Rendition {
 			this.manager = new manager(this.book, options);
 		}
 
-		// Listen for displayed views
 		this.manager.on(EVENTS.MANAGERS.ADDED, this.afterDisplayed.bind(this));
 		this.manager.on(EVENTS.MANAGERS.REMOVED, this.afterRemoved.bind(this));
-
-		// Listen for resizing
 		this.manager.on(EVENTS.MANAGERS.RESIZED, this.onResized.bind(this));
-
-		// Listen for rotation
-		this.manager.on(EVENTS.MANAGERS.ORIENTATION_CHANGE, this.onOrientationChange.bind(this));
-
-		// Listen for scroll changes
 		this.manager.on(EVENTS.MANAGERS.SCROLLED, this.reportLocation.bind(this));
-
 		/**
 		 * Emit that rendering has started
 		 * @event started
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.STARTED);
-
-		// Start processing queue
 		this.starting.resolve();
 	}
 
@@ -284,7 +291,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.ATTACHED);
-		})
+		});
 	}
 
 	/**
@@ -403,42 +410,12 @@ class Rendition {
 
 	/**
 	 * Report resize events and display the last seen location
-	 * @param {object} size 
-	 * @param {number} size.width
-	 * @param {number} size.height
-	 * @param {string} [epubcfi]
+	 * @param {object} view 
 	 * @private
 	 */
-	onResized(size, epubcfi) {
-		/**
-		 * Emit that the rendition has been resized
-		 * @event resized
-		 * @param {object} size
-		 * @param {number} size.width
-		 * @param {number} size.height
-		 * @param {string} [epubcfi]
-		 * @memberof Rendition
-		 */
-		this.emit(EVENTS.RENDITION.RESIZED, size, epubcfi);
+	onResized(view) {
 
-		if (this.location && this.location.start) {
-			this.display(epubcfi || this.location.start.cfi);
-		}
-	}
-
-	/**
-	 * Report orientation events and display the last seen location
-	 * @param {ScreenOrientation} orientation 
-	 * @private
-	 */
-	onOrientationChange(orientation) {
-		/**
-		 * Emit that the rendition has been rotated
-		 * @event orientationchange
-		 * @param {ScreenOrientation} orientation
-		 * @memberof Rendition
-		 */
-		this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, orientation);
+		return this.adjustImages(view.contents);
 	}
 
 	/**
@@ -452,20 +429,16 @@ class Rendition {
 	}
 
 	/**
-	 * Trigger a resize of the views
-	 * @param {number} [width]
-	 * @param {number} [height]
-	 * @param {string} [epubcfi]
+	 * Resize viewport container
+	 * @param {number|string} [width]
+	 * @param {number|string} [height]
+	 * @returns {{ width: number, height: number }}
+	 * @example rendition.resize(800, 600)
+	 * @example rendition.resize("90%", 600)
 	 */
-	resize(width, height, epubcfi) {
+	resize(width, height) {
 
-		if (width) {
-			this.settings.width = width;
-		}
-		if (height) {
-			this.settings.height = height;
-		}
-		this.manager.resize(width, height, epubcfi);
+		return this.viewport.size(width, height);
 	}
 
 	/**
@@ -767,49 +740,44 @@ class Rendition {
 	/**
 	 * Hook to adjust images to fit in columns
 	 * @param {Contents} contents
+	 * @returns {Promise<Node|null>}
 	 * @private
 	 */
 	adjustImages(contents) {
 
 		if (this.layout.name === "pre-paginated") {
 			return new Promise((resolve) => {
-				resolve();
+				resolve(null);
 			});
 		}
 
-		const computed = contents.window.getComputedStyle(contents.content, null);
+		const content = contents.content;
 		const padding = {
-			top: parseFloat(computed.paddingTop),
-			bottom: parseFloat(computed.paddingBottom),
-			left: parseFloat(computed.paddingLeft),
-			right: parseFloat(computed.paddingRight)
-		}
-		const height = (contents.content.offsetHeight - (padding.top + padding.bottom)) * .95;
-		const hPadding = padding.left + padding.right;
-		const maxWidth = (this.layout.columnWidth ? (this.layout.columnWidth - hPadding) + "px" : "100%") + "!important";
+			top: parseFloat(content.style["padding-top"]),
+			bottom: parseFloat(content.style["padding-bottom"]),
+			left: parseFloat(content.style["padding-left"]),
+			right: parseFloat(content.style["padding-right"])
+		};
+		const paddingX = padding.left + padding.right;
+		const paddingY = padding.top + padding.bottom;
+		const width = (this.layout.columnWidth ? (this.layout.columnWidth - paddingX) + "px" : "100%") + " !important";
+		const height = (content.offsetHeight - paddingY) + "px !important";
 
-		contents.appendStylesheet("images", {
+		return contents.appendStylesheet("images", {
 			"img": {
-				"max-width": maxWidth,
-				"max-height": `${height}px !important`,
+				"max-width": width,
+				"max-height": height,
 				"object-fit": "contain",
 				"page-break-inside": "avoid",
 				"break-inside": "avoid",
 				"box-sizing": "border-box"
 			},
 			"svg": {
-				"max-width": maxWidth,
-				"max-height": `${height}px !important`,
+				"max-width": width,
+				"max-height": height,
 				"page-break-inside": "avoid",
 				"break-inside": "avoid"
 			}
-		});
-
-		return new Promise((resolve, reject) => {
-			// Wait to apply
-			setTimeout(() => {
-				resolve();
-			}, 1);
 		});
 	}
 

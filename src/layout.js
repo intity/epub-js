@@ -241,15 +241,13 @@ class Layout {
 	 * @param {Contents} contents
 	 * @param {Section} [section] 
 	 * @param {string} [axis] 
-	 * @return {void|Promise<any>}
 	 */
 	format(contents, section, axis) {
 
-		let formating;
 		if (this.name === "pre-paginated") {
-			formating = contents.fit(this.columnWidth, this.height, section);
+			contents.fit(this.columnWidth, this.height, section);
 		} else if (this.flow === "paginated") {
-			formating = contents.columns(
+			contents.columns(
 				this.width,
 				this.height,
 				this.columnWidth,
@@ -257,12 +255,10 @@ class Layout {
 				this.direction
 			);
 		} else if (axis && axis === "horizontal") {
-			formating = contents.size(null, this.height, this.direction);
+			contents.size(null, this.height, this.direction);
 		} else {
-			formating = contents.size(this.width, null, this.direction);
+			contents.size(this.width, null, this.direction);
 		}
-
-		return formating; // might be a promise in some View Managers
 	}
 
 	/**

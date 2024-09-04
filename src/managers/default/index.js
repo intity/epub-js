@@ -44,8 +44,7 @@ class DefaultViewManager {
 					this.updateAxis(AXIS_V);
 				}
 			}
-			this.clear();
-			this.updateLayout();
+			this.calculate();
 		});
 		this.settings = extend({
 			axis: null,
@@ -111,17 +110,6 @@ class DefaultViewManager {
 			direction: this.layout.direction,
 			width: size.width,
 			height: size.height
-		});
-		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
-			this.resize(rect.width, rect.height);
-		});
-		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
-			/**
-			 * @event orientationchange
-			 * @param {object} target
-			 * @memberof DefaultViewManager
-			 */
-			this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, target);
 		});
 		this.views = new Views(this.viewport.container);
 		this.rendered = true;
@@ -246,22 +234,6 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * resize
-	 * @param {number} [width] 
-	 * @param {number} [height] 
-	 * @param {string} [epubcfi] 
-	 */
-	resize(width, height, epubcfi) {
-
-		this.views.resize(width, height);
-		this.updateLayout(width, height);
-		this.emit(EVENTS.MANAGERS.RESIZED, {
-			width: width || this.viewport.rect.width,
-			height: height || this.viewport.rect.height
-		}, epubcfi);
-	}
-
-	/**
 	 * Require the view from passed string, or as a class function
 	 * @param {string|class} view
 	 * @return {class}
@@ -312,12 +284,12 @@ class DefaultViewManager {
 
 	/**
 	 * afterResized
-	 * @param {*} view 
+	 * @param {object} view 
 	 * @private
 	 */
 	afterResized(view) {
 
-		this.emit(EVENTS.MANAGERS.RESIZE, view.section);
+		this.emit(EVENTS.MANAGERS.RESIZED, view);
 	}
 
 	/**
@@ -377,7 +349,7 @@ class DefaultViewManager {
 			this.afterDisplayed(view);
 		});
 
-		view.on(EVENTS.VIEWS.RESIZED, (bounds) => {
+		view.on(EVENTS.VIEWS.RESIZED, (rect) => {
 			this.afterResized(view);
 		});
 
@@ -409,8 +381,8 @@ class DefaultViewManager {
 			this.afterDisplayed(view);
 		});
 
-		view.on(EVENTS.VIEWS.RESIZED, (bounds) => {
-			this.counter(bounds);
+		view.on(EVENTS.VIEWS.RESIZED, (rect) => {
+			this.counter(rect);
 			this.afterResized(view);
 		});
 
@@ -506,7 +478,7 @@ class DefaultViewManager {
 			// The new section may have a different 
 			// writing-mode from the old section. 
 			// Thus, we need to update layout.
-			this.updateLayout();
+			this.calculate();
 
 			let forceRight = false;
 			if (this.layout.name === "pre-paginated" &&
@@ -600,7 +572,7 @@ class DefaultViewManager {
 			// The new section may have a different 
 			// writing-mode from the old section. 
 			// Thus, we need to update layout.
-			this.updateLayout();
+			this.calculate();
 
 			let forceRight = false;
 			if (this.layout.name === "pre-paginated" &&
@@ -666,7 +638,6 @@ class DefaultViewManager {
 	 */
 	currentLocation() {
 
-		this.updateLayout();
 		if (this.viewport.axis === AXIS_H && this.paginated) {
 			this.location = this.paginatedLocation();
 		} else {
@@ -687,9 +658,9 @@ class DefaultViewManager {
 			offset = this.viewport.axis === AXIS_V ? window.scrollY : window.scrollX;
 		}
 
-		const container = this.viewport.container.getBoundingClientRect();
-		const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
-		const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
+		const rect = this.viewport.rect;
+		const pageHeight = rect.height < window.innerHeight ? rect.height : window.innerHeight;
+		const pageWidth = rect.width < window.innerWidth ? rect.width : window.innerWidth;
 		const views = this.visible();
 		const sections = views.map((view) => {
 
@@ -702,12 +673,12 @@ class DefaultViewManager {
 			let total;
 
 			if (this.viewport.axis === AXIS_V) {
-				startPos = offset + container.top - position.top + used;
+				startPos = offset + rect.top - position.top + used;
 				endPos = startPos + pageHeight - used;
 				stopPos = pageHeight;
 				total = this.layout.count(view.height, pageHeight).pages;
 			} else {
-				startPos = offset + container.left - position.left + used;
+				startPos = offset + rect.left - position.left + used;
 				endPos = startPos + pageWidth - used;
 				stopPos = pageWidth;
 				total = this.layout.count(view.width, pageWidth).pages;
@@ -757,7 +728,7 @@ class DefaultViewManager {
 	paginatedLocation() {
 
 		const vpc = this.viewport.container;
-		const rect = vpc.getBoundingClientRect();
+		const rect = this.viewport.rect;
 		const left = this.fullsize ? window.scrollX : vpc.scrollLeft;
 		const views = this.visible();
 		const sections = views.map((view) => {
@@ -951,18 +922,10 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * Update Layout
-	 * @param {string|number} [width] 
-	 * @param {string|number} [height] 
+	 * calculate
+	 * @private
 	 */
-	updateLayout(width, height) {
-
-		if (this.fullsize) {
-			const view = this.current();
-			height = view && view.height;
-		}
-
-		this.viewport.size(width, height);
+	calculate() {
 
 		if (this.paginated) {
 			this.layout.calculate(

@@ -83,8 +83,11 @@ class IframeView {
 		 * @readonly
 		 */
 		this.layout = layout;
-		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-			this.updateLayout();
+		this.layout.on(EVENTS.LAYOUT.UPDATED, (props) => {
+			if (!this.contents) return;
+			this.layout.format(this.contents, this.section, this.axis);
+			this.size(props.width, props.height);
+			this.expand();
 		});
 		/**
 		 * @member {Marks} marks
@@ -242,16 +245,6 @@ class IframeView {
 			this.contentHeight = undefined; // unused
 		}
 		this.needsReframe = true;
-	}
-
-	/**
-	 * resize
-	 * @param {number} width 
-	 * @param {number} height 
-	 */
-	resize(width, height) {
-
-		this.layout.set({ width, height });
 	}
 
 	/**
@@ -494,38 +487,7 @@ class IframeView {
 			this.document.querySelector("head").appendChild(link);
 		}
 
-		this.contents.on(EVENTS.CONTENTS.EXPAND, () => {
-			if (this.displayed && this.iframe) {
-				this.expand();
-				if (this.contents) {
-					this.layout.format(this.contents);
-				}
-			}
-		});
-
-		this.contents.on(EVENTS.CONTENTS.RESIZE, (rect) => {
-			if (this.displayed && this.iframe) {
-				this.expand();
-				if (this.contents) {
-					this.layout.format(this.contents);
-				}
-			}
-		});
-
 		defer.resolve(this.contents);
-	}
-
-	/**
-	 * Update Layout
-	 * @private
-	 */
-	updateLayout() {
-
-		if (this.contents) {
-			this.layout.format(this.contents, this.section, this.axis);
-			this.size();
-			this.expand();
-		}
 	}
 
 	addListeners() {

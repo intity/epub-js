@@ -489,22 +489,21 @@ class Contents {
 			const id = `epubjs-injected-css-${key}`;
 			let node = this.styles.get(id);
 			if (node) {
-				resolve(node);
-			} else {
-				node = this.document.createElement("style");
-				node.id = id;
-				this.document.head.appendChild(node);
-				Object.keys(rules).forEach((selector) => {
-					const value = rules[selector];
-					const index = node.sheet.cssRules.length;
-					const items = Object.keys(value).map((k) => {
-						return `${k}:${value[k]}`;
-					}).join(";");
-					node.sheet.insertRule(`${selector}{${items}}`, index);
-				});
-				this.styles.set(id, node);
-				resolve(node);
+				this.document.head.removeChild(node);
 			}
+			node = this.document.createElement("style");
+			node.id = id;
+			this.document.head.appendChild(node);
+			Object.keys(rules).forEach((selector) => {
+				const value = rules[selector];
+				const index = node.sheet.cssRules.length;
+				const items = Object.keys(value).map((k) => {
+					return `${k}:${value[k]}`;
+				}).join(";");
+				node.sheet.insertRule(`${selector}{${items}}`, index);
+			});
+			this.styles.set(id, node);
+			resolve(node);
 		});
 	}
 
