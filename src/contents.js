@@ -458,21 +458,20 @@ class Contents {
 			const id = `epubjs-injected-css-${key}`;
 			let node = this.styles.get(id);
 			if (node) {
-				resolve(node);
-			} else {
-				node = this.document.createElement("link");
-				node.rel = "stylesheet";
-				node.type = "text/css";
-				node.href = src;
-				node.onload = () => {
-					resolve(node);
-				};
-				node.onerror = () => {
-					reject(new Error(`Failed to load source: ${src}`));
-				};
-				this.document.head.appendChild(node);
-				this.styles.set(id, node);
+				this.document.head.removeChild(node);
 			}
+			node = this.document.createElement("link");
+			node.rel = "stylesheet";
+			node.type = "text/css";
+			node.href = src;
+			node.onload = () => {
+				resolve(node);
+			};
+			node.onerror = () => {
+				reject(new Error(`Failed to load source: ${src}`));
+			};
+			this.document.head.appendChild(node);
+			this.styles.set(id, node);
 		});
 	}
 
