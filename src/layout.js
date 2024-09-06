@@ -100,15 +100,7 @@ class Layout {
 		 * @readonly
 		 */
 		this.divisor = 1;
-
-		this.set({
-			name: options && options.name,
-			flow: options && options.flow,
-			spread: options && options.spread,
-			direction: options && options.direction,
-			orientation: options && options.orientation,
-			minSpreadWidth: options && options.minSpreadWidth
-		});
+		this.set(options || {});
 	}
 
 	/**
