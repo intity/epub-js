@@ -79,6 +79,16 @@ class Views extends Array {
 		}
 	}
 
+	resize() {
+
+		for (let i = 0; i < this.length; ++i) {
+			const view = this[i];
+			if (view.displayed) {
+				view.resize();
+			}
+		}
+	}
+
 	clear() {
 
 		if (this.length === 0) return;

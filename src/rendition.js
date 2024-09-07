@@ -224,8 +224,15 @@ class Rendition {
 			hidden: this.settings.hidden
 		});
 		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
-			this.layout.set({ width: rect.width, height: rect.height });
-			if (!this.location) return;
+
+			if (this.layout.flow === "paginated") {
+				this.layout.set({ width: rect.width, height: rect.height });
+			} else if (this.layout.axis === "horizontal") {
+				this.layout.set({ height: rect.height });
+			} else if (this.layout.axis === "vertical") {
+				this.layout.set({ width: rect.width });
+			}
+			if (rect.width === 0 || rect.height === 0) return;
 			/**
 			 * Emit that the rendition has been resized
 			 * @event resized
@@ -233,7 +240,12 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.RESIZED, rect);
-			this.display(this.location.start.cfi);
+			this.reportLocation().then(() => {
+				if (this.location &&
+					this.layout.flow === "paginated") {
+					this.display(this.location.start.cfi);
+				}
+			});
 		});
 		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
 			/**
@@ -357,7 +369,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
-		}).then(this.reportLocation.bind(this));
+		});
 
 		return displaying.promise;
 	}
@@ -518,7 +530,7 @@ class Rendition {
 			this.location = located;
 			/**
 			 * @event relocated
-			 * @type {displayedLocation}
+			 * @param {object} location
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.RELOCATED, this.location);

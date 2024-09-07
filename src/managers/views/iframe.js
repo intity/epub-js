@@ -83,12 +83,6 @@ class IframeView {
 		 * @readonly
 		 */
 		this.layout = layout;
-		this.layout.on(EVENTS.LAYOUT.UPDATED, (props) => {
-			if (!this.contents) return;
-			this.contents.format(this.layout, this.section);
-			this.size(props.width, props.height);
-			this.expand();
-		});
 		/**
 		 * @member {Marks} marks
 		 * @memberof IframeView
@@ -229,6 +223,16 @@ class IframeView {
 			this.contentHeight = undefined; // unused
 		}
 		this.needsReframe = true;
+	}
+
+	/**
+	 * resize view
+	 */
+	resize() {
+
+		this.contents.format(this.layout, this.section);
+		this.size();
+		this.expand();
 	}
 
 	/**

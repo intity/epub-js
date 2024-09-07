@@ -43,6 +43,8 @@ class DefaultViewManager {
 				} else {
 					this.updateAxis(AXIS_V);
 				}
+			} else if (changed.width || changed.height) {
+				this.views.resize();
 			}
 			this.calculate();
 		});
@@ -783,7 +785,9 @@ class DefaultViewManager {
 			position.right > rect.left - offsetPrev &&
 			position.left < rect.right + offsetNext) {
 			return true;
-		} else if (this.viewport.axis === AXIS_V &&
+		}
+
+		if (this.viewport.axis === AXIS_V &&
 			position.bottom > rect.top - offsetPrev &&
 			position.top < rect.bottom + offsetNext) {
 			return true;
