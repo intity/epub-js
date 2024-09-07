@@ -85,7 +85,7 @@ class IframeView {
 		this.layout = layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props) => {
 			if (!this.contents) return;
-			this.layout.format(this.contents, this.section, this.axis);
+			this.layout.format(this.contents, this.section);
 			this.size(props.width, props.height);
 			this.expand();
 		});
@@ -196,7 +196,7 @@ class IframeView {
 			this.emit(EVENTS.VIEWS.WRITING_MODE, writingMode);
 
 			//-- apply the layout function to the contents
-			this.layout.format(this.contents, this.section, this.axis);
+			this.layout.format(this.contents, this.section);
 			//-- listen for events that require an expansion of the iframe
 			this.addListeners();
 			//-- size

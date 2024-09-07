@@ -9,6 +9,8 @@ import { isNumber, prefixed, borders, defaults } from "./utils/core";
 const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
+const AXIS_H = "horizontal";
+const AXIS_V = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -719,13 +721,13 @@ class Contents {
 		const dir = layout.direction;
 		const viewport = { scale: 1.0, scalable: "no" };
 
-		if (layout.axis === "vertical") {
+		if (layout.axis === AXIS_V) {
 			this.width(szw);
 			viewport.width = szw;
 			this.css("padding", "0 " + (szw / 12) + "px");
 		}
 
-		if (layout.axis === "horizontal") {
+		if (layout.axis === AXIS_H) {
 			this.height(szh);
 			viewport.height = szh;
 		}
@@ -739,32 +741,27 @@ class Contents {
 
 	/**
 	 * Apply columns to the contents for pagination
-	 * @param {number} width
-	 * @param {number} height
-	 * @param {number} columnWidth
-	 * @param {number} gap
-	 * @param {string} dir
+	 * @param {Layout} layout
 	 */
-	columns(width, height, columnWidth, gap, dir) {
+	columns(layout) {
 
-		const COLUMN_AXIS = prefixed("column-axis");
+		const szw = layout.width;
+		const szh = layout.height;
+		const clw = layout.columnWidth;
+		const gap = layout.gap;
+		const dir = layout.direction;
 		const COLUMN_GAP = prefixed("column-gap");
 		const COLUMN_WIDTH = prefixed("column-width");
 		const COLUMN_FILL = prefixed("column-fill");
-
-		const AXIS_H = "horizontal";
-		const AXIS_V = "vertical";
-		const writingMode = this.writingMode();
-		const axis = (writingMode.indexOf(AXIS_V) === 0) ? AXIS_V : AXIS_H;
+		const mode = this.writingMode();
+		const axis = mode.indexOf(AXIS_V) === 0 ? AXIS_V : AXIS_H;
 
 		this.direction(dir);
-		this.width(width);
-		this.height(height);
-
-		// Deal with Mobile trying to scale to viewport
+		this.width(szw);
+		this.height(szh);
 		this.viewport({
-			width: width,
-			height: height,
+			width: szw,
+			height: szh,
 			scale: 1.0,
 			scalable: "no"
 		});
@@ -773,7 +770,7 @@ class Contents {
 		// Fixes Safari column cut offs, but causes RTL issues
 		// this.css("display", "inline-block");
 
-		this.css("overflow-y", "hidden");
+		this.css("overflow", "hidden");
 		this.css("margin", "0", true);
 
 		if (axis === AXIS_V) {
@@ -781,20 +778,18 @@ class Contents {
 			this.css("padding-bottom", (gap / 2) + "px", true);
 			this.css("padding-left", "20px");
 			this.css("padding-right", "20px");
-			this.css(COLUMN_AXIS, AXIS_V);
 		} else {
 			this.css("padding-top", "20px");
 			this.css("padding-bottom", "20px");
 			this.css("padding-left", (gap / 2) + "px", true);
 			this.css("padding-right", (gap / 2) + "px", true);
-			this.css(COLUMN_AXIS, AXIS_H);
 		}
 
 		this.css("box-sizing", "border-box");
 		this.css("max-width", "inherit");
 		this.css(COLUMN_FILL, "auto");
 		this.css(COLUMN_GAP, gap + "px");
-		this.css(COLUMN_WIDTH, columnWidth + "px");
+		this.css(COLUMN_WIDTH, clw + "px");
 
 		// Fix glyph clipping in WebKit
 		// https://github.com/futurepress/epub.js/issues/983
