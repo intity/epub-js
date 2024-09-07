@@ -30,7 +30,6 @@ class Contents {
 		 */
 		this.epubcfi = new EpubCFI();
 		this.document = doc;
-		this.documentElement = this.document.documentElement;
 		/**
 		 * @member {Element} content document.body by current location
 		 * @memberof Contents
@@ -142,7 +141,7 @@ class Contents {
 	 */
 	scrollWidth() {
 
-		return this.documentElement.scrollWidth;
+		return this.document.documentElement.scrollWidth;
 	}
 
 	/**
@@ -151,7 +150,7 @@ class Contents {
 	 */
 	scrollHeight() {
 
-		return this.documentElement.scrollHeight;
+		return this.document.documentElement.scrollHeight;
 	}
 
 	/**
@@ -160,11 +159,13 @@ class Contents {
 	 */
 	overflow(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflow = overflow;
+			elt.style.overflow = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflow"];
+		return this.window.getComputedStyle(elt)["overflow"];
 	}
 
 	/**
@@ -173,11 +174,13 @@ class Contents {
 	 */
 	overflowX(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflowX = overflow;
+			elt.style.overflowX = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflowX"];
+		return this.window.getComputedStyle(elt)["overflowX"];
 	}
 
 	/**
@@ -186,11 +189,13 @@ class Contents {
 	 */
 	overflowY(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflowY = overflow;
+			elt.style.overflowY = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflowY"];
+		return this.window.getComputedStyle(elt)["overflowY"];
 	}
 
 	/**
@@ -855,9 +860,7 @@ class Contents {
 	 */
 	direction(dir = "ltr") {
 
-		if (this.documentElement) {
-			this.documentElement.dir = dir;
-		}
+		this.document.documentElement.dir = dir;
 	}
 
 	/**
@@ -882,12 +885,9 @@ class Contents {
 	writingMode(mode = "horizontal-tb") {
 
 		const WRITING_MODE = prefixed("writing-mode");
-
-		if (this.documentElement) {
-			this.documentElement.style[WRITING_MODE] = mode;
-		}
-
-		return this.window.getComputedStyle(this.documentElement)[WRITING_MODE] || "";
+		const elt = this.document.documentElement;
+		elt.style[WRITING_MODE] = mode;
+		return this.window.getComputedStyle(elt)[WRITING_MODE] || "";
 	}
 
 	/**
