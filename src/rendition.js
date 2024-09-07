@@ -224,7 +224,7 @@ class Rendition {
 			hidden: this.settings.hidden
 		});
 		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
-			this.layout.set(rect);
+			this.layout.set({ width: rect.width, height: rect.height });
 			if (!this.location) return;
 			/**
 			 * Emit that the rendition has been resized
