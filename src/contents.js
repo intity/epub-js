@@ -61,7 +61,12 @@ class Contents {
 		this.styles = new Map();
 		this.active = true;
 		this.window = this.document.defaultView;
-
+		/**
+		 * @member {string} mode writing-mode
+		 * @memberof Contents
+		 * @readonly
+		 */
+		this.mode = this.writingMode();
 		this.appendListeners();
 	}
 
@@ -758,8 +763,6 @@ class Contents {
 		const COLUMN_GAP = prefixed("column-gap");
 		const COLUMN_WIDTH = prefixed("column-width");
 		const COLUMN_FILL = prefixed("column-fill");
-		const mode = this.writingMode();
-		const axis = mode.indexOf(AXIS_V) === 0 ? AXIS_V : AXIS_H;
 
 		this.direction(dir);
 		this.width(szw);
@@ -778,7 +781,7 @@ class Contents {
 		this.css("overflow", "hidden");
 		this.css("margin", "0", true);
 
-		if (axis === AXIS_V) {
+		if (layout.axis === AXIS_V) {
 			this.css("padding-top", (gap / 2) + "px", true);
 			this.css("padding-bottom", (gap / 2) + "px", true);
 			this.css("padding-left", "20px");
