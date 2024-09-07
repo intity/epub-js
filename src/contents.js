@@ -887,10 +887,12 @@ class Contents {
 	 */
 	writingMode(mode = "horizontal-tb") {
 
+		if (this.mode === mode) return this.mode;
 		const WRITING_MODE = prefixed("writing-mode");
 		const elt = this.document.documentElement;
 		elt.style[WRITING_MODE] = mode;
-		return this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+		this.mode = this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+		return this.mode;
 	}
 
 	/**
