@@ -473,7 +473,6 @@ class IframeView {
 
 		this.window = this.iframe.contentWindow;
 		this.document = this.iframe.contentDocument;
-		this.document.body.style.overflow = "hidden";
 		this.contents = new Contents(this.document, this.document.body, this.section);
 		this.rendering = false;
 

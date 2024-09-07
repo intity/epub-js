@@ -729,6 +729,7 @@ class Contents {
 			viewport.height = height;
 		}
 
+		this.css("overflow", "hidden");
 		this.css("margin", "0");
 		this.css("box-sizing", "border-box");
 		this.viewport(viewport);
