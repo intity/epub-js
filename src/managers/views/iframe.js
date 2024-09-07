@@ -102,6 +102,12 @@ class IframeView {
 		 * @readonly
 		 */
 		this.method = this.settings.method || "write";
+		/**
+		 * @member {string} writingMode
+		 * @memberof IframeView
+		 * @readonly
+		 */
+		this.writingMode = "";
 	}
 
 	/**
@@ -172,33 +178,11 @@ class IframeView {
 		this.section.render(request).then((contents) => {
 			return this.load(contents);
 		}).then((output) => {
-			// find and report the writingMode axis
-			const writingMode = this.contents.writingMode();
-			const hasVertical = writingMode.indexOf(AXIS_V) === 0;
 
-			// Set the axis based on the flow and writing mode
-			let axis;
-			if (this.layout.flow === "scrolled" ||
-				this.layout.flow === "scrolled-doc") {
-				axis = hasVertical ? AXIS_H : AXIS_V;
-			} else {
-				axis = hasVertical ? AXIS_V : AXIS_H;
-			}
-
-			if (hasVertical && this.layout.flow === "paginated") {
-				this.layout.delta = this.layout.height;
-			}
-
-			this.setAxis(axis);
-			this.emit(EVENTS.VIEWS.AXIS, axis);
-
-			this.setWritingMode(writingMode);
-			this.emit(EVENTS.VIEWS.WRITING_MODE, writingMode);
-
+			this.setAxis(this.layout.axis);
+			this.setWritingMode(this.contents.mode);
 			//-- apply the layout function to the contents
 			this.contents.format(this.layout, this.section);
-			//-- listen for events that require an expansion of the iframe
-			this.addListeners();
 			//-- size
 			this.size();
 			//-- expand the iframe to the full size of the content
@@ -249,13 +233,11 @@ class IframeView {
 
 	/**
 	 * Set axis
-	 * @param {string} [value] 
+	 * @param {string} value
 	 */
 	setAxis(value) {
 
-		if (value === null) {
-			value = this.layout.flow === "paginated" ? AXIS_H : AXIS_V;
-		}
+		if (this.axis === value) return;
 
 		if (value === AXIS_H) {
 			this.element.style.flex = "none";
@@ -264,6 +246,7 @@ class IframeView {
 		}
 
 		this.axis = value;
+		this.emit(EVENTS.VIEWS.AXIS, value);
 	}
 
 	/**
@@ -272,7 +255,10 @@ class IframeView {
 	 */
 	setWritingMode(mode) {
 
-		this.writingMode = mode;
+		if (this.writingMode !== mode) {
+			this.writingMode = mode;
+			this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
+		}
 	}
 
 	/**
@@ -487,14 +473,6 @@ class IframeView {
 		}
 
 		defer.resolve(this.contents);
-	}
-
-	addListeners() {
-		//TODO: Add content listeners for expanding
-	}
-
-	removeListeners(layoutFunc) {
-		//TODO: remove content listeners for expanding
 	}
 
 	/**
@@ -797,7 +775,6 @@ class IframeView {
 		if (this.displayed) {
 			this.displayed = false;
 
-			this.removeListeners();
 			this.contents.destroy();
 
 			this.stopExpanding = true;
