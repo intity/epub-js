@@ -710,23 +710,24 @@ class Contents {
 
 	/**
 	 * Size the contents to a given width and height
-	 * @param {number} [width]
-	 * @param {number} [height]
-	 * @param {string} [dir]
+	 * @param {Layout} layout
 	 */
-	size(width, height, dir) {
+	size(layout) {
 
+		const szw = layout.width;
+		const szh = layout.height;
+		const dir = layout.direction;
 		const viewport = { scale: 1.0, scalable: "no" };
 
-		if (width >= 0) {
-			this.width(width);
-			viewport.width = width;
-			this.css("padding", "0 " + (width / 12) + "px");
+		if (layout.axis === "vertical") {
+			this.width(szw);
+			viewport.width = szw;
+			this.css("padding", "0 " + (szw / 12) + "px");
 		}
 
-		if (height >= 0) {
-			this.height(height);
-			viewport.height = height;
+		if (layout.axis === "horizontal") {
+			this.height(szh);
+			viewport.height = szh;
 		}
 
 		this.css("overflow", "hidden");

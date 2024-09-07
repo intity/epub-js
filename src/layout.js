@@ -256,10 +256,8 @@ class Layout {
 				this.gap,
 				this.direction
 			);
-		} else if (axis && axis === "horizontal") {
-			contents.size(null, this.height, this.direction);
 		} else {
-			contents.size(this.width, null, this.direction);
+			contents.size(this);
 		}
 	}
 
