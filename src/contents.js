@@ -161,6 +161,7 @@ class Contents {
 	/**
 	 * Set overflow css style of the contents
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflow(overflow) {
 
@@ -176,6 +177,7 @@ class Contents {
 	/**
 	 * Set overflowX css style of the documentElement
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflowX(overflow) {
 
@@ -191,6 +193,7 @@ class Contents {
 	/**
 	 * Set overflowY css style of the documentElement
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflowY(overflow) {
 
@@ -208,6 +211,7 @@ class Contents {
 	 * @param {string} property
 	 * @param {string} value
 	 * @param {boolean} [priority] set as "important"
+	 * @returns {any}
 	 */
 	css(property, value, priority) {
 
@@ -231,6 +235,7 @@ class Contents {
 	 * @param {string} [options.minimum]
 	 * @param {string} [options.maximum]
 	 * @param {string} [options.scalable]
+	 * @returns {object}
 	 */
 	viewport(options) {
 
@@ -690,7 +695,7 @@ class Contents {
 	 * Get an EpubCFI from a Dom Range
 	 * @param {Range} range
 	 * @param {string} [ignoreClass]
-	 * @returns {EpubCFI} cfi
+	 * @returns {string} EpubCFI
 	 */
 	cfiFromRange(range, ignoreClass) {
 
@@ -701,7 +706,7 @@ class Contents {
 	 * Get an EpubCFI from a Dom node
 	 * @param {Node} node
 	 * @param {string} [ignoreClass]
-	 * @returns {EpubCFI} cfi
+	 * @returns {string} EpubCFI
 	 */
 	cfiFromNode(node, ignoreClass) {
 
@@ -711,8 +716,8 @@ class Contents {
 	/**
 	 * map
 	 * @param {Layout} layout 
-	 * @todo TODO: find where this is used - remove?
-	 * @returns {Array}
+	 * @todo find where this is used - remove?
+	 * @returns {object[]}
 	 */
 	map(layout) {
 
@@ -721,7 +726,7 @@ class Contents {
 	}
 
 	/**
-	 *  Apply Css to a Document
+	 * Apply Css to a Document
 	 * @param {Layout} layout 
 	 * @param {Section} section 
 	 */
@@ -739,6 +744,7 @@ class Contents {
 	/**
 	 * Size the contents to a given width and height
 	 * @param {Layout} layout
+	 * @private
 	 */
 	size(layout) {
 
@@ -768,6 +774,7 @@ class Contents {
 	/**
 	 * Apply columns to the contents for pagination
 	 * @param {Layout} layout
+	 * @private
 	 */
 	columns(layout) {
 
@@ -844,6 +851,7 @@ class Contents {
 	 * Fit contents into a fixed width and height
 	 * @param {Layout} layout
 	 * @param {Section} section
+	 * @private
 	 */
 	fit(layout, section) {
 
