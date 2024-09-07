@@ -721,6 +721,22 @@ class Contents {
 	}
 
 	/**
+	 *  Apply Css to a Document
+	 * @param {Layout} layout 
+	 * @param {Section} section 
+	 */
+	format(layout, section) {
+
+		if (layout.name === "pre-paginated") {
+			this.fit(layout, section);
+		} else if (layout.flow === "paginated") {
+			this.columns(layout);
+		} else {
+			this.size(layout);
+		}
+	}
+
+	/**
 	 * Size the contents to a given width and height
 	 * @param {Layout} layout
 	 */

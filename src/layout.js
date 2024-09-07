@@ -239,22 +239,6 @@ class Layout {
 	}
 
 	/**
-	 * Apply Css to a Document
-	 * @param {Contents} contents
-	 * @param {Section} section 
-	 */
-	format(contents, section) {
-
-		if (this.name === "pre-paginated") {
-			contents.fit(this, section);
-		} else if (this.flow === "paginated") {
-			contents.columns(this);
-		} else {
-			contents.size(this);
-		}
-	}
-
-	/**
 	 * Count number of pages
 	 * @param {number} totalLength
 	 * @param {number} [pageLength]
