@@ -8,6 +8,7 @@ class Layout {
 	/**
 	 * Constructor
 	 * @param {object} [options] 
+	 * @param {string} [options.axis='horizontal'] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
 	 * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
 	 * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
@@ -17,9 +18,15 @@ class Layout {
 	 */
 	constructor(options) {
 		/**
+		 * @member {string} axis
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.axis = "horizontal";
+		/**
 		 * @member {string} name Layout name
 		 * @memberof Layout
-		 * @protected
+		 * @readonly
 		 */
 		this.name = "reflowable";
 		/**
@@ -124,14 +131,17 @@ class Layout {
 						case "scrolled":
 						case "scrolled-continuous":
 							this.flow = "scrolled";
+							this.axis = "vertical"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						case "scrolled-doc":
 							this.flow = value;
+							this.axis = "vertical"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						default:
 							this.flow = "paginated";
+							this.axis = "horizontal"; // autocomplete
 							break;
 					}
 				} else error(opt);
