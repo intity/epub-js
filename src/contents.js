@@ -63,7 +63,7 @@ class Contents {
 		this.active = true;
 		this.window = this.document.defaultView;
 
-		this.listeners();
+		this.appendListeners();
 	}
 
 	/**
@@ -888,22 +888,6 @@ class Contents {
 		}
 
 		return this.window.getComputedStyle(this.documentElement)[WRITING_MODE] || "";
-	}
-
-	//-- events --//
-
-	/**
-	 * Add DOM listeners
-	 * @private
-	 */
-	listeners() {
-
-		this.appendListeners();
-		// this.imageLoadListeners();
-		// this.mediaQueryListeners();
-		// this.fontLoadListeners();
-		// this.transitionListeners();
-		// this.mutationListener();
 	}
 
 	/**
