@@ -826,16 +826,18 @@ class Contents {
 
 	/**
 	 * Fit contents into a fixed width and height
-	 * @param {number} width
-	 * @param {number} height
+	 * @param {Layout} layout
+	 * @param {Section} section
 	 */
-	fit(width, height, section) {
+	fit(layout, section) {
 
+		const clw = layout.columnWidth;
+		const szh = layout.height;
 		const viewport = this.viewport();
 		const viewportWidth = parseInt(viewport.width);
 		const viewportHeight = parseInt(viewport.height);
-		const widthScale = width / viewportWidth;
-		const heightScale = height / viewportHeight;
+		const widthScale = clw / viewportWidth;
+		const heightScale = szh / viewportHeight;
 		const scale = widthScale < heightScale ? widthScale : heightScale;
 
 		// scale needs width and height to be set
@@ -852,7 +854,7 @@ class Contents {
 		this.css("background-color", "transparent");
 		if (section && section.properties.includes("page-spread-left")) {
 			// set margin since scale is weird
-			const marginLeft = width - (viewportWidth * scale);
+			const marginLeft = clw - (viewportWidth * scale);
 			this.css("margin-left", marginLeft + "px");
 		}
 	}

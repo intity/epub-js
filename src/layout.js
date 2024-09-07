@@ -241,12 +241,12 @@ class Layout {
 	/**
 	 * Apply Css to a Document
 	 * @param {Contents} contents
-	 * @param {Section} [section] 
+	 * @param {Section} section 
 	 */
 	format(contents, section) {
 
 		if (this.name === "pre-paginated") {
-			contents.fit(this.columnWidth, this.height, section);
+			contents.fit(this, section);
 		} else if (this.flow === "paginated") {
 			contents.columns(this);
 		} else {
