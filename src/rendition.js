@@ -232,7 +232,7 @@ class Rendition {
 			} else if (this.layout.axis === "vertical") {
 				this.layout.set({ width: rect.width });
 			}
-			if (rect.width === 0 || rect.height === 0) return;
+			if (!this.location) return;
 			/**
 			 * Emit that the rendition has been resized
 			 * @event resized
@@ -240,12 +240,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.RESIZED, rect);
-			this.reportLocation().then(() => {
-				if (this.location &&
-					this.layout.flow === "paginated") {
-					this.display(this.location.start.cfi);
-				}
-			});
+			this.display(this.location.start.cfi);
 		});
 		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
 			/**
@@ -273,7 +268,7 @@ class Rendition {
 		this.manager.on(EVENTS.MANAGERS.ADDED, this.afterDisplayed.bind(this));
 		this.manager.on(EVENTS.MANAGERS.REMOVED, this.afterRemoved.bind(this));
 		this.manager.on(EVENTS.MANAGERS.RESIZED, this.onResized.bind(this));
-		this.manager.on(EVENTS.MANAGERS.SCROLLED, this.reportLocation.bind(this));
+		this.manager.on(EVENTS.MANAGERS.RELOCATED, this.relocated.bind(this));
 		/**
 		 * Emit that rendering has started
 		 * @event started
@@ -467,9 +462,7 @@ class Rendition {
 	 */
 	next() {
 
-		return this.q.enqueue(
-			this.manager.next.bind(this.manager)
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this.manager.next.bind(this.manager));
 	}
 
 	/**
@@ -478,9 +471,7 @@ class Rendition {
 	 */
 	prev() {
 
-		return this.q.enqueue(
-			this.manager.prev.bind(this.manager)
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this.manager.prev.bind(this.manager));
 	}
 
 	/**
@@ -515,43 +506,6 @@ class Rendition {
 	}
 
 	/**
-	 * Report the current location
-	 * @fires relocated
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	reportLocation() {
-
-		const report = (location) => {
-			const located = this.located(location);
-			if (!located || !located.start || !located.end) {
-				return;
-			}
-			this.location = located;
-			/**
-			 * @event relocated
-			 * @param {object} location
-			 * @memberof Rendition
-			 */
-			this.emit(EVENTS.RENDITION.RELOCATED, this.location);
-		}
-
-		const animate = () => {
-			const location = this.manager.currentLocation();
-			if (!location) return;
-			if (typeof location["then"] === "function") {
-				location.then((result) => report(result));
-			} else {
-				report(location);
-			}
-		}
-
-		return this.q.enqueue(() => {
-			requestAnimationFrame(animate);
-		});
-	}
-
-	/**
 	 * Get the Current Location object
 	 * @return {displayedLocation|Promise} location (may be a promise)
 	 */
@@ -571,7 +525,7 @@ class Rendition {
 	 * Creates a Rendition#locationRange from location
 	 * passed by the Manager
 	 * @param {object} location Location sections
-	 * @returns {displayedLocation}
+	 * @returns {object}
 	 * @private
 	 */
 	located(location) {
@@ -644,6 +598,26 @@ class Rendition {
 		}
 
 		return located;
+	}
+
+	/**
+	 * relocated event handler
+	 * @fires relocated
+	 * @private
+	 */
+	relocated(location) {
+
+		const located = this.located(location);
+		if (!located || !located.start || !located.end) {
+			return;
+		}
+		this.location = located;
+		/**
+		 * @event relocated
+		 * @param {object} location
+		 * @memberof Rendition
+		 */
+		this.emit(EVENTS.RENDITION.RELOCATED, this.location);
 	}
 
 	/**

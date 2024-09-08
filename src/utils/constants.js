@@ -29,6 +29,7 @@ export const EVENTS = {
         SCROLL: "scroll",
         SCROLLED: "scrolled",
         REMOVED: "removed",
+        RELOCATED: "relocated"
     },
     VIEWS: {
         AXIS: "axis",

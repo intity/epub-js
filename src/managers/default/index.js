@@ -43,9 +43,8 @@ class DefaultViewManager {
 				} else {
 					this.updateAxis(AXIS_V);
 				}
-			} else if (changed.width || changed.height) {
-				this.views.resize();
 			}
+			this.views.resize();
 			this.calculate();
 		});
 		this.settings = extend({
@@ -178,6 +177,7 @@ class DefaultViewManager {
 			displaying.reject(err);
 		}).then((view) => {
 			this.views.show();
+			this.currentLocation();
 			displaying.resolve(view);
 		});
 
@@ -291,6 +291,7 @@ class DefaultViewManager {
 	 */
 	afterResized(view) {
 
+		this.currentLocation();
 		this.emit(EVENTS.MANAGERS.RESIZED, view);
 	}
 
@@ -500,8 +501,9 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			});
+			}).then(this.currentLocation.bind(this));
 		} else {
+			this.currentLocation();
 			def.resolve(null);
 		}
 
@@ -601,8 +603,9 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			});
+			}).then(this.currentLocation.bind(this));
 		} else {
+			this.currentLocation();
 			def.resolve(null);
 		}
 
@@ -645,6 +648,7 @@ class DefaultViewManager {
 		} else {
 			this.location = this.scrolledLocation();
 		}
+		this.emit(EVENTS.MANAGERS.RELOCATED, this.location);
 		return this.location;
 	}
 
@@ -869,6 +873,7 @@ class DefaultViewManager {
 
 		clearTimeout(this.afterScrolled);
 		this.afterScrolled = setTimeout(() => {
+			this.currentLocation();
 			this.emit(EVENTS.MANAGERS.SCROLLED, {
 				top: this.scrollTop,
 				left: this.scrollLeft
@@ -918,7 +923,7 @@ class DefaultViewManager {
 			this.scrollTop = e.target.scrollTop;
 			this.scrollLeft = e.target.scrollLeft;
 		}
-		
+		this.currentLocation();
 		this.emit(EVENTS.MANAGERS.SCROLLED, {
 			top: this.scrollTop,
 			left: this.scrollLeft
