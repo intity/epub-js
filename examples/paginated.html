@@ -21,49 +21,26 @@
         </div>
     </div>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer">
+        <div id="viewer" class="paginated">
             <div id="divider"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
-    <script type="module">
-        import { put, gen } from "./performance.js"
+    <script>
         const spread = document.getElementById("spread")
         const divider = document.getElementById("divider")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
-        put("init", 0, false)
         const book = ePub("../assets/alice/")
-        book.loaded.packaging.then((packaging) => {
-
-            put("book.loaded.packaging")
-        })
-        book.loaded.resources.then((resources) => {
-
-            put("book.loaded.resources")
-        })
-        book.loaded.sections.then((sections) => {
-
-            put("book.loaded.sections")
-        })
-        book.loaded.navigation.then((navigation) => {
-
-            put("book.loaded.navigation")
-        })
-        const rendition = book.renderTo("viewer", {
-            width: "100%",
-            height: "100%"
-        })
+        const rendition = book.renderTo("viewer")
         prev.onclick = (e) => {
 
-            put("book.rendition.relocated", 0)
             rendition.prev()
             e.preventDefault()
         }
         next.onclick = (e) => {
 
-            put("book.rendition.relocated", 0)
             rendition.next()
             e.preventDefault()
         }
@@ -78,18 +55,15 @@
 
             switch (e.key) {
                 case "ArrowLeft":
-                    put("book.rendition.relocated", 0)
                     rendition.prev()
                     break
                 case "ArrowRight":
-                    put("book.rendition.relocated", 0)
                     rendition.next()
                     break
             }
         }
         spread.onchange = (e) => {
 
-            put("book.rendition.relocated", 0)
             rendition.updateLayout({
                 spread: e.target.value
             })
@@ -99,30 +73,13 @@
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
         })
-        rendition.on("started", () => {
-
-            put("book.rendition.started")
-        })
         rendition.on("attached", () => {
 
-            put("book.rendition.attached")
-        })
-        rendition.on("displayed", (section) => {
-
-            put("book.rendition.displayed")
-        })
-        rendition.on("rendered", (view) => {
-
-            put("book.rendition.rendered")
+            console.log(rendition)
         })
         rendition.on("relocated", (location) => {
 
-            console.clear()
-            put("book.rendition.relocated")
-            const { table, total } = gen()
-            console.table(table)
-            console.log(`total time: ${total} ms`)
-            console.log(book)
+            console.log(location)
             update(location)
         })
     </script>
