@@ -332,6 +332,7 @@ class Viewport {
 		}
 		if (this.target) {
 			this.target.dir = value;
+			this.target.classList.add(value);
 		}
 	}
 
