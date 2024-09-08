@@ -659,46 +659,32 @@ class DefaultViewManager {
 	 */
 	scrolledLocation() {
 
-		let offset = 0, used = 0;
-		if (this.fullsize) {
-			offset = this.viewport.axis === AXIS_V ? window.scrollY : window.scrollX;
-		}
-
-		const rect = this.viewport.rect;
-		const pageHeight = rect.height < window.innerHeight ? rect.height : window.innerHeight;
-		const pageWidth = rect.width < window.innerWidth ? rect.width : window.innerWidth;
+		const vpc = this.viewport.container;
 		const views = this.visible();
 		const sections = views.map((view) => {
 
 			const { index, href } = view.section;
-			const position = view.position();
 
 			let startPos;
 			let endPos;
-			let stopPos;
+			let startPage;
+			let endPage;
 			let total;
 
 			if (this.viewport.axis === AXIS_V) {
-				startPos = offset + rect.top - position.top + used;
-				endPos = startPos + pageHeight - used;
-				stopPos = pageHeight;
-				total = this.layout.count(view.height, pageHeight).pages;
+				const top = this.fullsize ? window.scrollY : vpc.scrollTop;
+				startPos = Math.abs(top);
+				endPos = Math.abs(top) + vpc.clientHeight;
+				startPage = Math.ceil(startPos / vpc.clientHeight);
+				endPage = Math.ceil(endPos / vpc.clientHeight);
+				total = this.layout.count(view.height, vpc.clientHeight).pages;
 			} else {
-				startPos = offset + rect.left - position.left + used;
-				endPos = startPos + pageWidth - used;
-				stopPos = pageWidth;
-				total = this.layout.count(view.width, pageWidth).pages;
-			}
-
-			let startPage = Math.ceil(startPos / stopPos);
-			let endPage = Math.ceil(endPos / stopPos);
-
-			// Reverse page counts for horizontal rtl
-			if (this.viewport.axis === AXIS_H &&
-				this.layout.direction === "rtl") {
-				const tmp = startPage;
-				startPage = total - endPage;
-				endPage = total - tmp;
+				const left = this.fullsize ? window.scrollX : vpc.scrollLeft;
+				startPos = Math.abs(left);
+				endPos = Math.abs(left) + vpc.clientWidth;
+				startPage = Math.ceil(startPos / vpc.clientWidth);
+				endPage = Math.ceil(endPos / vpc.clientWidth);
+				total = this.layout.count(view.height, vpc.clientWidth).pages;
 			}
 
 			const pages = [];
