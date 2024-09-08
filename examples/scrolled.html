@@ -12,7 +12,7 @@
 
 <body>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer"></div>
+        <div id="viewer" class="scrolled"></div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
@@ -21,9 +21,7 @@
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
-            flow: "scrolled",
-            width: "100%",
-            height: "100%"
+            flow: "scrolled"
         })
         next.onclick = (e) => {
 
@@ -35,9 +33,8 @@
             rendition.prev();
             e.preventDefault();
         }
-        const update = (location) => {
+        const update = (loc) => {
 
-            const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
         }
@@ -54,9 +51,12 @@
         }
         rendition.display().then(() => {
 
-            console.log(book)
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
+        })
+        rendition.on("attached", () => {
+
+            console.log(rendition)
         })
         rendition.on("relocated", (location) => {
 
