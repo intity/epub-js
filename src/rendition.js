@@ -485,13 +485,13 @@ class Rendition {
 		const metadata = this.book.packaging.metadata;
 		const direction = this.book.packaging.direction;
 		return {
-			name: this.settings.layout || metadata.get("layout") || "reflowable",
-			flow: this.settings.flow || metadata.get("flow") || "paginated",
-			spread: this.settings.spread || metadata.get("spread") || "auto",
-			viewport: metadata.get("viewport") || "",
+			name: this.settings.layout || metadata.get("layout"),
+			flow: this.settings.flow || metadata.get("flow"),
+			spread: this.settings.spread || metadata.get("spread"),
+			viewport: metadata.get("viewport"),
 			direction: this.settings.direction || direction || "ltr",
-			orientation: this.settings.orientation || metadata.get("orientation") || "auto",
-			minSpreadWidth: this.settings.minSpreadWidth || 800
+			orientation: this.settings.orientation || metadata.get("orientation"),
+			minSpreadWidth: this.settings.minSpreadWidth
 		}
 	}
 
