@@ -159,8 +159,8 @@ class Layout {
 				} else error(opt);
 			} else if (
 				opt === "width" ||
-				opt === "height" || 
-				opt === "gap" || 
+				opt === "height" ||
+				opt === "gap" ||
 				opt === "minSpreadWidth") {
 				if (typeof value === "number") {
 					if (value >= 0) {
@@ -185,37 +185,25 @@ class Layout {
 	 */
 	calculate(width, height, gap) {
 
-		if (typeof width === "undefined") {
-			width = this.width;
-		}
-		if (typeof height === "undefined") {
-			height = this.height;
-		}
+		if (!width) width = this.width;
+		if (!height) height = this.height;
 
-		//-- Check the width and create even width columns
+		if (this.name === "reflowable" && this.flow === "paginated" && !(gap >= 0)) {
+			const section = Math.floor(width / 12);
+			gap = ((section % 2 === 0) ? section : section - 1);
+		} else {
+			gap = 0;
+		}
 
 		let divisor;
+		let columnWidth;
+		let pageWidth;
 		if (this.spread === "auto" && width >= this.minSpreadWidth) {
 			divisor = 2;
 		} else {
 			divisor = 1;
 		}
 
-		const section = Math.floor(width / 12);
-
-		if (this.name === "reflowable" && this.flow === "paginated" && !(gap >= 0)) {
-			gap = ((section % 2 === 0) ? section : section - 1);
-		}
-		if (this.name === "pre-paginated") {
-			gap = 0;
-		}
-		if (typeof gap === "undefined") {
-			gap = 0;
-		}
-
-		let columnWidth;
-		let pageWidth;
-		//-- Double Page
 		if (divisor > 1) {
 			columnWidth = (width / divisor) - gap;
 			pageWidth = columnWidth + gap;
