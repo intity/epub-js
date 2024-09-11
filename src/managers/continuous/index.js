@@ -172,8 +172,8 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		const checking = new Defer();
 		const promises = [];
-		const vph = this.viewport.axis === AXIS_H;
-		const vpc = this.viewport.container;
+		const vph = this.layout.axis === AXIS_H;
+		const lsc = this.views.container;
 		const rtl = this.layout.direction === "rtl";
 		let delta = this.settings.offset || 0;
 
@@ -187,16 +187,10 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		const rect = this.viewport.rect;
 		const visibleLength = vph ? Math.floor(rect.width) : rect.height;
-		const contentLength = vph ? vpc.scrollWidth : vpc.scrollHeight;
+		const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
 		let offset = vph ? this.scrollLeft : this.scrollTop;
 
-		if (this.fullsize) {
-			// Scroll offset starts at 0 and goes negative
-			if ((vph && rtl && this.scrollType === "negative") ||
-				(!vph && rtl && this.scrollType === "default")) {
-				offset = offset * -1;
-			}
-		} else if (this.writingMode.indexOf(AXIS_H) === 0) {
+		if (this.writingMode.indexOf(AXIS_H) === 0) {
 			// Scroll offset starts at width of element
 			if (rtl && this.scrollType === "default") {
 				offset = contentLength - visibleLength - offset;
@@ -259,21 +253,8 @@ class ContinuousViewManager extends DefaultViewManager {
 	appendEventListeners() {
 
 		super.appendEventListeners();
-
-		if (this.fullsize) {
-			let dir;
-			if (this.layout.direction === "rtl" &&
-				this.scrollType === "default") {
-				dir = -1;
-			} else {
-				dir = 1;
-			}
-			this.scrollTop = window.scrollY * dir;
-			this.scrollLeft = window.scrollX * dir;
-		} else {
-			this.scrollTop = this.viewport.container.scrollTop;
-			this.scrollLeft = this.viewport.container.scrollLeft;
-		}
+		this.scrollTop = this.views.container.scrollTop;
+		this.scrollLeft = this.views.container.scrollLeft;
 	}
 
 	/**
@@ -356,7 +337,7 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		if (this.views.length === 0) return;
 		if (this.paginated &&
-			this.viewport.axis === AXIS_H) {
+			this.layout.axis === AXIS_H) {
 			this.scrollBy(delta, 0, true);
 		} else {
 			this.scrollBy(0, this.layout.height, true);
@@ -384,7 +365,7 @@ class ContinuousViewManager extends DefaultViewManager {
 		if (this.views.length === 0) return;
 
 		if (this.paginated &&
-			this.viewport.axis === AXIS_H) {
+			this.layout.axis === AXIS_H) {
 			this.scrollBy(-delta, 0, true);
 		} else {
 			this.scrollBy(0, -this.layout.height, true);

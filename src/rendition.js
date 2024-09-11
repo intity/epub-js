@@ -24,12 +24,13 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string|number} [options.width] viewport width
  * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|Function|object} [options.manager='default'] string values: default / continuous
- * @param {string|Function} [options.view='iframe']
+ * @param {string|class} [options.manager='default'] string values: default / continuous
+ * @param {string|class} [options.view='iframe']
  * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
  * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
+ * @param {number} [options.pageWidth] page width for scrolled-doc flow
  * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
@@ -46,7 +47,7 @@ class Rendition {
 		 * @readonly
 		 */
 		this.settings = extend({
-			axis: null,
+			axis: undefined,
 			width: null,
 			height: null,
 			manager: "default",
@@ -201,11 +202,6 @@ class Rendition {
 		 */
 		this.layout = new Layout(props);
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-			if (changed.flow) {
-				this.viewport.set({ flow: changed.flow });
-			} else if (changed.direction) {
-				this.viewport.set({ direction: changed.direction });
-			}
 			/**
 			 * Emit of updated the Layout state
 			 * @event layout
@@ -220,17 +216,24 @@ class Rendition {
 		 * @memberof Rendition
 		 * @readonly
 		 */
-		this.viewport = new Viewport({
+		this.viewport = new Viewport(this.layout, {
 			hidden: this.settings.hidden
 		});
 		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
 
 			if (this.layout.flow === "paginated") {
-				this.layout.set({ width: rect.width, height: rect.height });
+				this.layout.set({
+					width: rect.width,
+					height: rect.height
+				});
 			} else if (this.layout.axis === "horizontal") {
-				this.layout.set({ height: rect.height });
+				this.layout.set({
+					height: rect.height
+				});
 			} else if (this.layout.axis === "vertical") {
-				this.layout.set({ width: rect.width });
+				this.layout.set({
+					width: rect.width,
+				});
 			}
 			if (!this.location) return;
 			/**
@@ -254,7 +257,6 @@ class Rendition {
 		if (!this.manager) {
 			const manager = this.requireManager(this.settings.manager);
 			const options = {
-				axis: this.settings.axis,
 				snap: this.settings.snap,
 				view: this.settings.view,
 				method: this.settings.method,
@@ -364,6 +366,8 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
+		}).then(() => {
+			this.viewport.update();
 		});
 
 		return displaying.promise;
@@ -485,13 +489,15 @@ class Rendition {
 		const metadata = this.book.packaging.metadata;
 		const direction = this.book.packaging.direction;
 		return {
+			axis: this.settings.axis,
 			name: this.settings.layout || metadata.get("layout"),
 			flow: this.settings.flow || metadata.get("flow"),
 			spread: this.settings.spread || metadata.get("spread"),
 			viewport: metadata.get("viewport"),
 			direction: this.settings.direction || direction || "ltr",
 			orientation: this.settings.orientation || metadata.get("orientation"),
-			minSpreadWidth: this.settings.minSpreadWidth
+			minSpreadWidth: this.settings.minSpreadWidth,
+			pageWidth: this.settings.pageWidth
 		}
 	}
 

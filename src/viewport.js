@@ -8,19 +8,23 @@ import EventEmitter from "event-emitter";
 class Viewport {
 	/**
 	 * Constructor
+	 * @param {Layout} layout
 	 * @param {object} options
 	 * @param {boolean} [options.hidden] viewport hidden
 	 */
-	constructor(options) {
+	constructor(layout, options) {
 
+		this.layout = layout;
+		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
+			if (changed.axis) {
+				this.updateAxis(props.axis);
+			} else if (changed.flow) {
+				this.updateFlow(props.flow);
+			} else if (changed.direction) {
+				this.direction(props.direction);
+			}
+		});
 		this.settings = options || {};
-		/**
-		 * viewport axis
-		 * @member {string} axis
-		 * @memberof Viewport
-		 * @readonly
-		 */
-		this.axis = null;
 		/**
 		 * viewport id
 		 * @member {string} id
@@ -61,23 +65,34 @@ class Viewport {
 	}
 
 	/**
-	 * Set options
-	 * @param {object} options 
+	 * Attach to viewport element
+	 * @param {Element|string} input viewport element
+	 * @param {object} options
+	 * @param {string|number} options.width viewport width
+	 * @param {string|number} options.height viewport height
+	 * @param {Layout} layout
+	 * @returns {Element}
 	 */
-	set(options) {
+	attachTo(input, options) {
 
-		Object.keys(options).forEach((opt) => {
-			const value = options[opt];
-			if (this[opt] === value || typeof value === "undefined") {
-				delete options[opt];
-			} else if (opt === "axis") {
-				this.updateAxis(value);
-			} else if (opt === "flow") {
-				this.updateFlow(value);
-			} else if (opt === "direction") {
-				this.direction(value);
-			}
-		});
+		const element = this.getElement(input);
+		if (!element) return;
+
+		this.views = options.views;
+		this.container = this.create(options);
+		this.container.appendChild(this.views.container);
+
+		let base;
+		if (this.settings.hidden) {
+			base = this.wrapper;
+		} else {
+			base = this.container;
+		}
+
+		element.appendChild(base);
+		this.target = element;
+		this.appendListeners();
+		return element;
 	}
 
 	/**
@@ -111,6 +126,7 @@ class Viewport {
 		container.style.flexWrap = "nowrap";
 		container.style.width = szw || "100%";
 		container.style.height = szh || "100%";
+		container.style.overflow = "hidden";
 
 		if (this.settings.hidden) {
 			this.wrapper = this.wrap(container);
@@ -135,39 +151,6 @@ class Viewport {
 	}
 
 	/**
-	 * Attach to viewport element
-	 * @param {Element|string} input viewport element
-	 * @param {object} options
-	 * @param {string} options.axis
-	 * @param {string} options.flow
-	 * @param {string} options.direction
-	 * @param {string|number} options.width viewport width
-	 * @param {string|number} options.height viewport height
-	 * @param {Layout} layout
-	 * @returns {Element}
-	 */
-	attachTo(input, options) {
-
-		const element = this.getElement(input);
-		if (!element) return;
-
-		this.container = this.create(options);
-
-		let base;
-		if (this.settings.hidden) {
-			base = this.wrapper;
-		} else {
-			base = this.container;
-		}
-
-		element.appendChild(base);
-		this.target = element;
-		this.appendListeners();
-		this.set(options);
-		return element;
-	}
-
-	/**
 	 * appendListeners
 	 * @private
 	 */
@@ -178,7 +161,7 @@ class Viewport {
 		this.resizeFunc = new ResizeObserver((e) => {
 			requestAnimationFrame(() => this.resize(e));
 		});
-		this.resizeFunc.observe(this.target);
+		this.resizeFunc.observe(this.container);
 	}
 
 	/**
@@ -239,7 +222,8 @@ class Viewport {
 			}
 		});
 		entries.forEach((entry) => cmp(entry.contentRect));
-		changed && this.emit(EVENTS.VIEWPORT.RESIZED, this.rect);
+		if (!changed) return;
+		this.emit(EVENTS.VIEWPORT.RESIZED, this.rect);
 	}
 
 	/**
@@ -322,33 +306,30 @@ class Viewport {
 
 	/**
 	 * Update direction
-	 * @param {string} value `layout.direction` value
+	 * @param {string} [value] `layout.direction` value
 	 * @private
 	 */
 	direction(value) {
 
-		if (this.container) {
-			this.container.dir = value;
-		}
-		if (this.target) {
-			this.target.dir = value;
-			this.target.classList.add(value);
-		}
+		const dir = value || this.layout.direction;
+		this.target.dir = dir;
+		this.target.classList.add(dir);
 	}
 
 	/**
 	 * Update axis
-	 * @param {string} value values: `"horizontal"` OR `"vertical"`
+	 * @param {string} [value] values: `"horizontal"` OR `"vertical"`
 	 * @private
 	 */
 	updateAxis(value) {
 
-		if (value === "horizontal") {
-			this.container.style.flexDirection = "row";
+		const axis = value || this.layout.axis;
+		
+		if (axis === "horizontal") {
+			this.views.container.style["flex-wrap"] = "nowrap";
 		} else {
-			this.container.style.flexDirection = null;
+			this.views.container.style["flex-wrap"] = "wrap";
 		}
-		this.axis = value;
 	}
 
 	/**
@@ -358,24 +339,33 @@ class Viewport {
 	 */
 	updateFlow(value) {
 
-		switch (value) {
-			case "paginated":
-				this.container.style["overflow-y"] = "hidden";
-				this.container.style["overflow-x"] = "hidden";
-				this.container.style.flexWrap = "nowrap";
-				break;
-			case "scrolled":
-				this.container.style["overflow-y"] = "auto";
-				this.container.style["overflow-x"] = "hidden";
-				this.container.style.flexWrap = "wrap";
-				break;
-			case "scrolled-doc":
-				this.container.style["overflow-y"] = "hidden";
-				this.container.style["overflow-x"] = "hidden";
-				this.container.style.flexWrap = "wrap";
-				break;
+		const flow = value || this.layout.flow;
+
+		if (flow === "paginated") {
+			this.views.container.style["overflow-y"] = "hidden";
+			this.views.container.style["overflow-x"] = "hidden";
+			this.views.container.style["flex-wrap"] = "nowrap";
+		} else if (this.layout.axis === "horizontal") {
+			this.views.container.style["overflow-y"] = "hidden";
+			this.views.container.style["overflow-x"] = "auto";
+			this.views.container.style["flex-wrap"] = "nowrap";
+		} else if (this.layout.axis === "vertical") {
+			this.views.container.style["overflow-y"] = "auto";
+			this.views.container.style["overflow-x"] = "hidden";
+			this.views.container.style["flex-wrap"] = "wrap";
 		}
-		this.target.className = value;
+
+		this.target.className = flow;
+	}
+
+	/**
+	 * Update viewport container
+	 */
+	update() {
+
+		this.updateAxis();
+		this.updateFlow();
+		this.direction();
 	}
 
 	/**

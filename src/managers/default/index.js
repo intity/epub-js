@@ -20,7 +20,6 @@ class DefaultViewManager {
 	 * Constructor
 	 * @param {Book} book 
 	 * @param {object} [options]
-	 * @param {string} [options.axis=null] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
@@ -36,19 +35,12 @@ class DefaultViewManager {
 		this.layout = book.rendition.layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			if (changed.flow) {
-				this.fullsize = changed.flow === "scrolled-doc";
-				this.paginated = changed.flow === "paginated";
-				if (this.paginated) {
-					this.updateAxis(AXIS_H);
-				} else {
-					this.updateAxis(AXIS_V);
-				}
+				this.paginated = props.flow === "paginated";
 			}
-			this.views.resize();
+			this.views.update();
 			this.calculate();
 		});
 		this.settings = extend({
-			axis: null,
 			view: "iframe",
 			hidden: false,
 			method: null,
@@ -57,7 +49,6 @@ class DefaultViewManager {
 			allowScriptedContent: false,
 			forceEvenPages: true
 		}, options || {});
-		this.fullsize = this.layout.flow === "scrolled-doc";
 		/**
 		 * @member {boolean} paginated
 		 * @memberof DefaultViewManager
@@ -70,6 +61,12 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.location = [];
+		/**
+		 * @member {Mapping} mapping
+		 * @memberof DefaultViewManager
+		 * @readonly
+		 */
+		this.mapping = new Mapping(this.layout);
 		/**
 		 * @member {boolean} rendered
 		 * @memberof DefaultViewManager
@@ -105,14 +102,12 @@ class DefaultViewManager {
 	render(element, size) {
 
 		this.scrollType = scrollType();
+		this.views = new Views();
 		this.viewport.attachTo(element, {
-			axis: this.settings.axis,
-			flow: this.layout.flow,
-			direction: this.layout.direction,
+			views: this.views,
 			width: size.width,
 			height: size.height
 		});
-		this.views = new Views(this.viewport.container);
 		this.rendered = true;
 		this.appendEventListeners();
 		window.onpagehide = this.destroy.bind(this);
@@ -193,15 +188,10 @@ class DefaultViewManager {
 		if (this.paginated && this.name === "default") {
 			return;
 		}
-		let container;
-		if (this.fullsize) {
-			container = window;
-		} else {
-			container = this.viewport.container;
-		}
-		container.addEventListener("scroll", this.onscroll.bind(this));
+		const lsc = this.views.container;
+		lsc.addEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
-			container.addEventListener(
+			lsc.addEventListener(
 				"scrollend",
 				this.onscrollend.bind(this)
 			);
@@ -219,15 +209,10 @@ class DefaultViewManager {
 			return;
 		}
 		
-		let container;
-		if (this.fullsize) {
-			container = window;
-		} else {
-			container = this.viewport.container;
-		}
-		container.removeEventListener("scroll", this.onscroll.bind(this));
+		const lsc = this.views.container;
+		lsc.removeEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
-			container.removeEventListener(
+			lsc.removeEventListener(
 				"scrollend",
 				this.onscrollend.bind(this)
 			);
@@ -263,7 +248,6 @@ class DefaultViewManager {
 
 		const view = this.requireView(this.settings.view);
 		return new view(this.layout, section, {
-			axis: this.viewport.axis,
 			snap: this.settings.snap,
 			method: this.settings.method,
 			allowPopups: this.settings.allowPopups,
@@ -306,19 +290,19 @@ class DefaultViewManager {
 	moveTo(offset, width) {
 
 		let distX = 0, distY;
-		const vpc = this.viewport.container;
+		const lsc = this.views.container;
 
 		if (this.paginated) {
 			distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
 
-			if (distX + this.layout.delta > vpc.scrollWidth) {
-				distX = vpc.scrollWidth - this.layout.delta;
+			if (distX + this.layout.delta > lsc.scrollWidth) {
+				distX = lsc.scrollWidth - this.layout.delta;
 			}
 
 			distY = Math.floor(offset.top / this.layout.delta) * this.layout.delta;
 
-			if (distY + this.layout.delta > vpc.scrollHeight) {
-				distY = vpc.scrollHeight - this.layout.delta;
+			if (distY + this.layout.delta > lsc.scrollHeight) {
+				distY = lsc.scrollHeight - this.layout.delta;
 			}
 		} else {
 			distY = offset.top;
@@ -356,10 +340,6 @@ class DefaultViewManager {
 			this.afterResized(view);
 		});
 
-		view.on(EVENTS.VIEWS.AXIS, (axis) => {
-			this.updateAxis(axis);
-		});
-
 		view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
 			this.updateWritingMode(mode);
 		});
@@ -389,10 +369,6 @@ class DefaultViewManager {
 			this.afterResized(view);
 		});
 
-		view.on(EVENTS.VIEWS.AXIS, (axis) => {
-			this.updateAxis(axis);
-		});
-
 		view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
 			this.updateWritingMode(mode);
 		});
@@ -409,7 +385,7 @@ class DefaultViewManager {
 	 */
 	counter(bounds) {
 
-		if (this.viewport.axis === AXIS_V) {
+		if (this.layout.axis === AXIS_V) {
 			this.scrollBy(0, bounds.heightDelta, true);
 		} else {
 			this.scrollBy(bounds.widthDelta, 0, true);
@@ -425,28 +401,28 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const vph = this.viewport.axis === AXIS_H && this.paginated;
-		const vpc = this.viewport.container;
+		const vph = this.layout.axis === AXIS_H && this.paginated;
+		const lsc = this.views.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
 		} else if (vph && dir === "ltr") {
 
-			this.scrollLeft = vpc.scrollLeft;
-			left = vpc.scrollLeft + vpc.offsetWidth + this.layout.delta;
+			this.scrollLeft = lsc.scrollLeft;
+			left = lsc.scrollLeft + lsc.offsetWidth + this.layout.delta;
 
-			if (left <= vpc.scrollWidth) {
+			if (left <= lsc.scrollWidth) {
 				this.scrollBy(this.layout.delta, 0, true);
 			} else {
 				section = this.views.last().section.next();
 			}
 		} else if (vph && dir === "rtl") {
 
-			this.scrollLeft = vpc.scrollLeft;
+			this.scrollLeft = lsc.scrollLeft;
 
 			if (this.scrollType === "default") {
-				left = vpc.scrollLeft;
+				left = lsc.scrollLeft;
 
 				if (left > 0) {
 					this.scrollBy(this.layout.delta, 0, true);
@@ -454,20 +430,20 @@ class DefaultViewManager {
 					section = this.views.last().section.next();
 				}
 			} else {
-				left = vpc.scrollLeft + (this.layout.delta * -1);
+				left = lsc.scrollLeft + (this.layout.delta * -1);
 
-				if (left > vpc.scrollWidth * -1) {
+				if (left > lsc.scrollWidth * -1) {
 					this.scrollBy(this.layout.delta, 0, true);
 				} else {
 					section = this.views.last().section.next();
 				}
 			}
-		} else if (this.viewport.axis === AXIS_V && this.paginated) {
+		} else if (this.layout.axis === AXIS_V && this.paginated) {
 
-			this.scrollTop = vpc.scrollTop;
-			const top = vpc.scrollTop + vpc.offsetHeight;
+			this.scrollTop = lsc.scrollTop;
+			const top = lsc.scrollTop + lsc.offsetHeight;
 
-			if (top < vpc.scrollHeight) {
+			if (top < lsc.scrollHeight) {
 				this.scrollBy(0, this.layout.height, true);
 			} else {
 				section = this.views.last().section.next();
@@ -495,7 +471,7 @@ class DefaultViewManager {
 				// Reset position to start for scrolled-doc vertical-rl in default mode
 				if (!vph && dir === "rtl" &&
 					this.scrollType === "default") {
-					this.scrollTo(vpc.scrollWidth, 0, true);
+					this.scrollTo(lsc.scrollWidth, 0, true);
 				}
 				this.views.show();
 				def.resolve(view);
@@ -519,16 +495,16 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const vph = this.viewport.axis === AXIS_H && this.paginated;
-		const vpc = this.viewport.container;
+		const vph = this.layout.axis === AXIS_H && this.paginated;
+		const lsc = this.views.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
 		} else if (vph && dir === "ltr") {
 
-			this.scrollLeft = vpc.scrollLeft;
-			left = vpc.scrollLeft;
+			this.scrollLeft = lsc.scrollLeft;
+			left = lsc.scrollLeft;
 
 			if (left > 0) {
 				this.scrollBy(-this.layout.delta, 0, true);
@@ -537,19 +513,19 @@ class DefaultViewManager {
 			}
 		} else if (vph && dir === "rtl") {
 
-			this.scrollLeft = vpc.scrollLeft;
+			this.scrollLeft = lsc.scrollLeft;
 
 			if (this.scrollType === "default") {
-				left = vpc.scrollLeft + vpc.offsetWidth;
+				left = lsc.scrollLeft + lsc.offsetWidth;
 
-				if (left < vpc.scrollWidth) {
+				if (left < lsc.scrollWidth) {
 					this.scrollBy(-this.layout.delta, 0, true);
 				} else {
 					section = this.views.first().section.prev();
 				}
 			}
 			else {
-				left = vpc.scrollLeft;
+				left = lsc.scrollLeft;
 
 				if (left < 0) {
 					this.scrollBy(-this.layout.delta, 0, true);
@@ -557,10 +533,10 @@ class DefaultViewManager {
 					section = this.views.first().section.prev();
 				}
 			}
-		} else if (this.viewport.axis === AXIS_V && this.paginated) {
+		} else if (this.layout.axis === AXIS_V && this.paginated) {
 
-			this.scrollTop = vpc.scrollTop;
-			const top = vpc.scrollTop;
+			this.scrollTop = lsc.scrollTop;
+			const top = lsc.scrollTop;
 
 			if (top > 0) {
 				this.scrollBy(0, -(this.layout.height), true);
@@ -593,10 +569,10 @@ class DefaultViewManager {
 							this.scrollTo(0, 0, true);
 						}
 						else {
-							this.scrollTo((vpc.scrollWidth * -1) + this.layout.delta, 0, true);
+							this.scrollTo((lsc.scrollWidth * -1) + this.layout.delta, 0, true);
 						}
 					} else {
-						this.scrollTo(vpc.scrollWidth - this.layout.delta, 0, true);
+						this.scrollTo(lsc.scrollWidth - this.layout.delta, 0, true);
 					}
 				}
 				this.views.show();
@@ -643,7 +619,7 @@ class DefaultViewManager {
 	 */
 	currentLocation() {
 
-		if (this.viewport.axis === AXIS_H && this.paginated) {
+		if (this.layout.axis === AXIS_H && this.paginated) {
 			this.location = this.paginatedLocation();
 		} else {
 			this.location = this.scrolledLocation();
@@ -659,7 +635,7 @@ class DefaultViewManager {
 	 */
 	scrolledLocation() {
 
-		const vpc = this.viewport.container;
+		const lsc = this.views.container;
 		const views = this.visible();
 		const sections = views.map((view) => {
 
@@ -671,20 +647,20 @@ class DefaultViewManager {
 			let endPage;
 			let total;
 
-			if (this.viewport.axis === AXIS_V) {
-				const top = this.fullsize ? window.scrollY : vpc.scrollTop;
+			if (this.layout.axis === AXIS_V) {
+				const top = lsc.scrollTop;
 				startPos = Math.abs(top);
-				endPos = Math.abs(top) + vpc.clientHeight;
-				startPage = Math.ceil(startPos / vpc.clientHeight);
-				endPage = Math.ceil(endPos / vpc.clientHeight);
-				total = this.layout.count(view.height, vpc.clientHeight).pages;
+				endPos = Math.abs(top) + lsc.clientHeight;
+				startPage = Math.ceil(startPos / lsc.clientHeight);
+				endPage = Math.ceil(endPos / lsc.clientHeight);
+				total = this.layout.count(view.height, lsc.clientHeight).pages;
 			} else {
-				const left = this.fullsize ? window.scrollX : vpc.scrollLeft;
+				const left = lsc.scrollLeft;
 				startPos = Math.abs(left);
-				endPos = Math.abs(left) + vpc.clientWidth;
-				startPage = Math.ceil(startPos / vpc.clientWidth);
-				endPage = Math.ceil(endPos / vpc.clientWidth);
-				total = this.layout.count(view.height, vpc.clientWidth).pages;
+				endPos = Math.abs(left) + lsc.clientWidth;
+				startPage = Math.ceil(startPos / lsc.clientWidth);
+				endPage = Math.ceil(endPos / lsc.clientWidth);
+				total = this.layout.count(view.height, lsc.clientWidth).pages;
 			}
 
 			const pages = [];
@@ -700,7 +676,7 @@ class DefaultViewManager {
 			);
 
 			return {
-				axis: this.viewport.axis,
+				axis: this.layout.axis,
 				href,
 				index,
 				pages,
@@ -719,9 +695,9 @@ class DefaultViewManager {
 	 */
 	paginatedLocation() {
 
-		const vpc = this.viewport.container;
+		const lsc = this.views.container;
 		const rect = this.viewport.rect;
-		const left = this.fullsize ? window.scrollX : vpc.scrollLeft;
+		const left = lsc.scrollLeft;
 		const views = this.visible();
 		const sections = views.map((view) => {
 
@@ -745,7 +721,7 @@ class DefaultViewManager {
 			);
 
 			return {
-				axis: this.viewport.axis,
+				axis: this.layout.axis,
 				href,
 				index,
 				pages,
@@ -762,24 +738,23 @@ class DefaultViewManager {
 	 * @param {any} view 
 	 * @param {number} offsetPrev 
 	 * @param {number} offsetNext 
-	 * @param {DOMRect} [rect] 
 	 * @returns {boolean}
 	 * @private
 	 */
 	isVisible(view, offsetPrev, offsetNext) {
 
-		const position = view.position();
+		const vpos = view.position();
 		const rect = this.viewport.rect;
 
-		if (this.viewport.axis === AXIS_H &&
-			position.right > rect.left - offsetPrev &&
-			position.left < rect.right + offsetNext) {
+		if (this.layout.axis === AXIS_H &&
+			vpos.right > rect.left - offsetPrev &&
+			vpos.left < rect.right + offsetNext) {
 			return true;
 		}
 
-		if (this.viewport.axis === AXIS_V &&
-			position.bottom > rect.top - offsetPrev &&
-			position.top < rect.bottom + offsetNext) {
+		if (this.layout.axis === AXIS_V &&
+			vpos.bottom > rect.top - offsetPrev &&
+			vpos.top < rect.bottom + offsetNext) {
 			return true;
 		}
 
@@ -815,18 +790,14 @@ class DefaultViewManager {
 	scrollBy(x, y, silent) {
 
 		const dir = this.layout.direction === "rtl" ? -1 : 1;
-		const vpc = this.viewport.container;
+		const lsc = this.views.container;
 
 		if (silent) {
 			this.ignore = true;
 		}
 
-		if (this.fullsize) {
-			window.scrollBy(x * dir, y * dir);
-		} else {
-			if (x) vpc.scrollLeft += x * dir;
-			if (y) vpc.scrollTop += y;
-		}
+		if (x) lsc.scrollLeft += x * dir;
+		if (y) lsc.scrollTop += y;
 	}
 
 	/**
@@ -842,12 +813,8 @@ class DefaultViewManager {
 			this.ignore = true;
 		}
 
-		if (this.fullsize) {
-			window.scrollTo(x, y);
-		} else {
-			this.viewport.container.scrollLeft = x;
-			this.viewport.container.scrollTop = y;
-		}
+		this.views.container.scrollLeft = x;
+		this.views.container.scrollTop = y;
 	}
 
 	/**
@@ -935,13 +902,6 @@ class DefaultViewManager {
 				this.viewport.rect.height
 			);
 		}
-
-		/**
-		 * @member {Mapping} mapping
-		 * @memberof DefaultViewManager
-		 * @readonly
-		 */
-		this.mapping = new Mapping(this.layout, this.viewport.axis);
 	}
 
 	/**
@@ -952,20 +912,6 @@ class DefaultViewManager {
 	updateWritingMode(mode) {
 
 		this.writingMode = mode;
-	}
-
-	/**
-	 * Update axis
-	 * @param {string} value
-	 * @private
-	 */
-	updateAxis(value) {
-
-		if (this.viewport.axis === value) {
-			return;
-		}
-		this.viewport.set({ axis: value });
-		this.mapping = new Mapping(this.layout, value);
 	}
 
 	/**

@@ -4,12 +4,20 @@
 class Views extends Array {
 	/**
 	 * Constructor
-	 * @param {Element} container 
 	 */
-	constructor(container) {
+	constructor() {
 
 		super();
-		this.container = container;
+		/**
+		 * @member {Element} container
+		 * @memberof Views
+		 * @readonly
+		 */
+		this.container = document.createElement("div");
+		this.container.classList.add("views-container");
+		this.container.style.display = "flex";
+		this.container.style.width = "100%";
+		this.container.style.height = "100%";
 		this.hidden = false;
 	}
 
@@ -79,16 +87,6 @@ class Views extends Array {
 		}
 	}
 
-	resize() {
-
-		for (let i = 0; i < this.length; ++i) {
-			const view = this[i];
-			if (view.displayed) {
-				view.resize();
-			}
-		}
-	}
-
 	clear() {
 
 		if (this.length === 0) return;
@@ -143,6 +141,16 @@ class Views extends Array {
 			}
 		}
 		this.hidden = true;
+	}
+
+	update() {
+
+		for (let i = 0; i < this.length; ++i) {
+			const view = this[i];
+			if (view.displayed) {
+				view.update();
+			}
+		}
 	}
 }
 

@@ -117,22 +117,11 @@ class Contents {
 	textSize() {
 
 		const range = this.document.createRange();
-		const content = this.content;
-		// Select the contents of frame
-		range.selectNodeContents(content);
-		// get rect of the text content
+		range.selectNodeContents(this.content);
 		const rect = range.getBoundingClientRect();
-		const border = borders(content);
-		let width = rect.width;
-		let height = rect.height;
-		if (border) {
-			if (border.width) {
-				width += border.width;
-			}
-			if (border.height) {
-				height += border.height;
-			}
-		}
+		const border = borders(this.content);
+		const width = rect.width + border.width;
+		const height = this.content.clientHeight;
 
 		return {
 			width: Math.round(width),
@@ -748,7 +737,8 @@ class Contents {
 	 */
 	size(layout) {
 
-		const szw = layout.width;
+		const doc = layout.flow === "scrolled-doc";
+		const szw = doc ? layout.pageWidth : layout.width;
 		const szh = layout.height;
 		const dir = layout.direction;
 		const viewport = { scale: 1.0, scalable: "no" };
@@ -756,12 +746,13 @@ class Contents {
 		if (layout.axis === AXIS_V) {
 			this.width(szw);
 			viewport.width = szw;
-			this.css("padding", "0 " + (szw / 12) + "px");
-		}
-
-		if (layout.axis === AXIS_H) {
+			this.css("height", "auto");
+			this.css("padding", "20px " + (szw / 12) + "px");
+		} else {
 			this.height(szh);
 			viewport.height = szh;
+			this.css("width", "auto");
+			this.css("padding", (szw / 17) + "px 20px");
 		}
 
 		this.css("overflow", "hidden");
@@ -781,11 +772,8 @@ class Contents {
 		const szw = layout.width;
 		const szh = layout.height;
 		const clw = layout.columnWidth;
-		const gap = layout.gap;
 		const dir = layout.direction;
-		const COLUMN_GAP = prefixed("column-gap");
-		const COLUMN_WIDTH = prefixed("column-width");
-		const COLUMN_FILL = prefixed("column-fill");
+		const gap = layout.gap;
 
 		this.direction(dir);
 		this.width(szw);
@@ -797,30 +785,28 @@ class Contents {
 			scalable: "no"
 		});
 
-		// TODO: inline-block needs more testing
-		// Fixes Safari column cut offs, but causes RTL issues
-		// this.css("display", "inline-block");
-
 		this.css("overflow", "hidden");
 		this.css("margin", "0", true);
+		this.css("box-sizing", "border-box");
+		this.css("max-height", "inherit");
 
 		if (layout.axis === AXIS_V) {
+			this.css("display", "flex");
 			this.css("padding-top", (gap / 2) + "px", true);
 			this.css("padding-bottom", (gap / 2) + "px", true);
 			this.css("padding-left", "20px");
 			this.css("padding-right", "20px");
 		} else {
+			this.css("display", "block");
 			this.css("padding-top", "20px");
 			this.css("padding-bottom", "20px");
 			this.css("padding-left", (gap / 2) + "px", true);
 			this.css("padding-right", (gap / 2) + "px", true);
 		}
 
-		this.css("box-sizing", "border-box");
-		this.css("max-width", "inherit");
-		this.css(COLUMN_FILL, "auto");
-		this.css(COLUMN_GAP, gap + "px");
-		this.css(COLUMN_WIDTH, clw + "px");
+		this.css("column-gap", gap + "px");
+		this.css("column-fill", "auto");
+		this.css("column-width", clw + "px");
 
 		// Fix glyph clipping in WebKit
 		// https://github.com/futurepress/epub.js/issues/983
