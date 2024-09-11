@@ -10,56 +10,21 @@
     <script src="../dist/epub.js"></script>
 </head>
 
-<body>
-    <div id="content" class="ltr doc" dir="ltr">
-        <div id="viewer"></div>
-        <a id="prev" href="#prev" class="arrow"></a>
-        <a id="next" href="#next" class="arrow"></a>
-    </div>
+<body id="viewport" class="ltr" dir="ltr">
     <script>
-        const prev = document.getElementById("prev")
-        const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
+        const rendition = book.renderTo(document.body, {
+            manager: "continuous",
             flow: "scrolled-doc",
-            width: "100%"
+            pageWidth: 800
         })
-        next.onclick = (e) => {
+        rendition.display()
+        rendition.on("attached", () => {
 
-            rendition.next()
-            e.preventDefault()
-        }
-        prev.onclick = (e) => {
-
-            rendition.prev();
-            e.preventDefault();
-        }
-        const update = (location) => {
-
-            const loc = location || rendition.currentLocation()
-            prev.style.display = loc.atStart ? "none" : "block"
-            next.style.display = loc.atEnd ? "none" : "block"
-        }
-        const keybinding = (e) => {
-
-            switch (e.key) {
-                case "ArrowLeft":
-                    rendition.prev()
-                    break;
-                case "ArrowRight":
-                    rendition.next()
-                    break;
-            }
-        }
-        rendition.display().then(() => {
-
-            console.log(book)
-            document.onkeyup = keybinding
-            rendition.on("keyup", keybinding)
+            console.log(rendition)
         })
         rendition.on("relocated", (location) => {
 
-            update(location)
             console.log(location)
         })
     </script>

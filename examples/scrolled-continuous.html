@@ -27,12 +27,17 @@
         const rendition = book.renderTo("viewer", {
             manager: "continuous",
             flow: "scrolled",
-            width: "100%",
-            height: "100%"
+            width: 800,
+            height: window.innerHeight - 80
         })
-        rendition.display().then(() => {
+        rendition.display()
+        rendition.on("attached", () => {
 
-            console.log(book)
+            console.log(rendition)
+        })
+        rendition.on("rendered", (view) => {
+
+            console.log(view)
         })
         rendition.on("relocated", (location) => {
 

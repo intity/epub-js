@@ -16,7 +16,7 @@
             <label for="layout">Layout:</label>
             <select name="layout" id="layout">
                 <option value="reflowable">reflowable</option>
-                <option value="pre-paginated">pre-paginated</option>
+                <!-- <option value="pre-paginated">pre-paginated</option> -->
             </select>
         </div>
         <div class="box">
@@ -47,7 +47,7 @@
         </div>
     </div>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer">
+        <div id="viewer" class="paginated">
             <div id="divider"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
@@ -55,6 +55,7 @@
     </div>
     <script>
         const content = document.getElementById("content")
+        const viewer = document.getElementById("viewer")
         const layout = document.getElementById("layout")
         const flow = document.getElementById("flow")
         const spread = document.getElementById("spread")
@@ -65,38 +66,56 @@
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
-            width: "100%",
-            height: "100%"
+            width: 900,
+            height: 600
         })
         layout.onchange = (e) => {
 
-            const options = {
+            const props = {
                 name: e.target.value
             }
-            if (options.name === "pre-paginated") {
-                options.flow = "scrolled-doc"
-                options.spread = "none"
+            if (props.name === "pre-paginated") {
+                props.flow = "scrolled-doc"
+                props.spread = "none"
+                props.width = window.innerWidth
+                props.height = window.innerHeight
+                props.pageWidth = 800
                 spread.disabled = true
                 spread.value = "none"
                 flow.disabled = true
                 flow.value = "scrolled-doc"
+                rendition.resize("100%", props.height)
             } else {
                 flow.disabled = false
             }
-            rendition.updateLayout(options)
+            rendition.updateLayout(props)
         }
         flow.onchange = (e) => {
 
             const value = e.target.value
+            const props = {
+                flow: value
+            }
             if (value === "paginated") {
+                props.width = 900
+                props.height = 600
                 spread.disabled = false
-            } else {
+                rendition.resize(props.width, props.height)
+            } else if (value === "scrolled") {
+                props.width = 800
+                props.height = window.innerHeight - 80
                 spread.disabled = true
                 spread.value = "none"
+                rendition.resize(props.width, props.height)
+            } else {
+                props.width = window.innerWidth
+                props.height = window.innerHeight
+                props.pageWidth = 800
+                spread.disabled = true
+                spread.value = "none"
+                rendition.resize("100%", props.height)
             }
-            rendition.updateLayout({
-                flow: value
-            })
+            rendition.updateLayout(props)
         }
         spread.onchange = (e) => {
 
@@ -126,22 +145,15 @@
             rendition.next()
             e.preventDefault()
         }
-        const update = (location) => {
+        const update = (loc) => {
 
             const dir = rendition.layout.direction
             const div = rendition.layout.divisor
-            const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
             content.dir = dir
             content.className = dir
-            if (rendition.layout.flow === "paginated" ||
-                rendition.layout.flow === "scrolled") {
-                content.classList.remove("doc");
-            } else {
-                content.classList.add("doc");
-            }
         }
         const keybinding = (e) => {
 
@@ -160,14 +172,19 @@
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
         })
+        rendition.on("attached", () => {
+
+            console.log(rendition)
+        })
         rendition.on("layout", (props, changed) => {
 
-            console.log(props)
-            update()
+            console.log(changed)
+            const loc = rendition.location
+            if (loc) update(loc)
         })
         rendition.on("relocated", (location) => {
 
-            console.log(book)
+            console.log(location)
             update(location)
         })
     </script>

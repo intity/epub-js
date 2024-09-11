@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <div id="content" class="ltr doc" dir="ltr">
-        <div id="viewer"></div>
+    <div id="content" class="ltr" dir="ltr">
+        <div id="viewer" class="scrolled-doc"></div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
@@ -22,7 +22,7 @@
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             flow: "scrolled-doc",
-            width: "100%",
+            pageWidth: 800,
             allowScriptedContent: true
         })
         next.onclick = (e) => {

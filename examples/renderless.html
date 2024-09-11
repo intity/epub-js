@@ -36,12 +36,12 @@
             prev.style.display = hasPrev ? "none" : "block"
             next.style.display = hasNext ? "none" : "block"
         }
-        const createView = (html) => {
+        const createView = (lsc, html) => {
 
-            const rect = viewer.getBoundingClientRect()
+            const rect = lsc.getBoundingClientRect()
             const view = document.createElement("div")
             const iframe = document.createElement("iframe")
-            view.className = "epub-view"
+            view.className = "view-container"
             iframe.style.width = rect.width + "px"
             iframe.style.height = rect.height + "px"
             iframe.style.border = "none"
@@ -60,15 +60,22 @@
             if (viewer.firstChild) {
                 viewer.removeChild(viewer.firstChild)
             }
+            const vpc = document.createElement("div")
+            const lsc = document.createElement("div")
+            lsc.className = "views-container"
+            lsc.style.width = "100%"
+            lsc.style.height = "100%"
+            vpc.className = "viewport-container"
+            vpc.style.width = "800px"
+            vpc.style.height = (window.innerHeight - 80) + "px"
+            vpc.style.overflow = "hidden"
+            vpc.appendChild(lsc)
+            viewer.appendChild(vpc)
             const section = book.sections.get(target)
             if (section) {
                 section.render(book.request).then((html) => {
-
-                    const rect = viewer.getBoundingClientRect()
-                    const container = document.createElement("div")
-                    container.className = "epub-container"
-                    container.appendChild(createView(html))
-                    viewer.appendChild(container)
+                   
+                    lsc.appendChild(createView(lsc, html))
                 })
                 console.log(section)
             }

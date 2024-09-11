@@ -35,8 +35,8 @@
         const rendition = book.renderTo("viewer", {
             manager: "continuous",
             flow: "scrolled",
-            width: "100%",
-            height: "100%"
+            width: 800,
+            height: window.innerHeight - 40
         })
         theme.onchange = (e) => {
 

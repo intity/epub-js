@@ -33,7 +33,10 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer")
+        const rendition = book.renderTo("viewer", {
+            width: 900,
+            height: 600
+        })
         prev.onclick = (e) => {
 
             rendition.prev()
