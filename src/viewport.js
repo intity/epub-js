@@ -70,7 +70,6 @@ class Viewport {
 	 * @param {object} options
 	 * @param {string|number} options.width viewport width
 	 * @param {string|number} options.height viewport height
-	 * @param {Layout} layout
 	 * @returns {Element}
 	 */
 	attachTo(input, options) {
