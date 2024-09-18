@@ -10,20 +10,15 @@ Continuous view manager
     * [new ContinuousViewManager(book, [options])](#new_ContinuousViewManager_new)
     * _instance_
         * [.render(element, size)](#ContinuousViewManager+render)
-        * [.display(section, [target])](#ContinuousViewManager+display) ⇒ <code>Promise</code>
-        * [.fill(value)](#ContinuousViewManager+fill) ⇒ <code>Promise</code>
+        * [.display(section, [target])](#ContinuousViewManager+display) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+        * [.fill(value)](#ContinuousViewManager+fill) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.moveTo(offset)](#ContinuousViewManager+moveTo)
         * [.removeShownListeners(view)](#ContinuousViewManager+removeShownListeners)
-        * [.add(section)](#ContinuousViewManager+add) ⇒ <code>Promise</code>
-        * [.append(section)](#ContinuousViewManager+append) ⇒ <code>\*</code>
-        * [.prepend(section)](#ContinuousViewManager+prepend) ⇒ <code>\*</code>
-        * [.update([offset])](#ContinuousViewManager+update) ⇒ <code>Promise</code>
-        * [.check([offsetLeft], [offsetTop])](#ContinuousViewManager+check) ⇒ <code>Promise</code>
-        * [.trim()](#ContinuousViewManager+trim) ⇒ <code>Promise</code>
-        * [.erase(view, above)](#ContinuousViewManager+erase)
-        * [.addEventListeners()](#ContinuousViewManager+addEventListeners)
-        * [.removeEventListeners()](#ContinuousViewManager+removeEventListeners)
-        * [.onScroll()](#ContinuousViewManager+onScroll)
+        * [.update([offset])](#ContinuousViewManager+update) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.appendEventListeners()](#ContinuousViewManager+appendEventListeners)
+        * [.onscroll(e)](#ContinuousViewManager+onscroll)
+        * [.onscrollend(e)](#ContinuousViewManager+onscrollend)
+        * [.scrolled(e)](#ContinuousViewManager+scrolled)
         * [.next()](#ContinuousViewManager+next)
         * [.prev()](#ContinuousViewManager+prev)
         * [.destroy()](#ContinuousViewManager+destroy)
@@ -53,18 +48,18 @@ render
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
-| Param | Type |
-| --- | --- |
-| element | <code>Element</code> | 
-| size | <code>object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>Element</code> \| <code>string</code> | viewport element |
+| size | <code>object</code> |  |
 
 <a name="ContinuousViewManager+display"></a>
 
-## continuousViewManager.display(section, [target]) ⇒ <code>Promise</code>
+## continuousViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
 display
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-**Returns**: <code>Promise</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - displaying promise  
 
 | Param | Type |
 | --- | --- |
@@ -73,7 +68,7 @@ display
 
 <a name="ContinuousViewManager+fill"></a>
 
-## continuousViewManager.fill(value) ⇒ <code>Promise</code>
+## continuousViewManager.fill(value) ⇒ <code>Promise.&lt;any&gt;</code>
 fill
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
@@ -104,44 +99,9 @@ Remove Previous Listeners if present
 | --- | --- |
 | view | <code>\*</code> | 
 
-<a name="ContinuousViewManager+add"></a>
-
-## continuousViewManager.add(section) ⇒ <code>Promise</code>
-add
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-
-| Param | Type |
-| --- | --- |
-| section | <code>Section</code> | 
-
-<a name="ContinuousViewManager+append"></a>
-
-## continuousViewManager.append(section) ⇒ <code>\*</code>
-Append view
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-**Returns**: <code>\*</code> - view  
-
-| Param | Type |
-| --- | --- |
-| section | <code>Section</code> | 
-
-<a name="ContinuousViewManager+prepend"></a>
-
-## continuousViewManager.prepend(section) ⇒ <code>\*</code>
-Prepend view
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-**Returns**: <code>\*</code> - view  
-
-| Param | Type |
-| --- | --- |
-| section | <code>Section</code> | 
-
 <a name="ContinuousViewManager+update"></a>
 
-## continuousViewManager.update([offset]) ⇒ <code>Promise</code>
+## continuousViewManager.update([offset]) ⇒ <code>Promise.&lt;any&gt;</code>
 update
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
@@ -150,54 +110,45 @@ update
 | --- | --- |
 | [offset] | <code>number</code> | 
 
-<a name="ContinuousViewManager+check"></a>
+<a name="ContinuousViewManager+appendEventListeners"></a>
 
-## continuousViewManager.check([offsetLeft], [offsetTop]) ⇒ <code>Promise</code>
-check
+## continuousViewManager.appendEventListeners()
+appendEventListeners
+
+**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
+<a name="ContinuousViewManager+onscroll"></a>
+
+## continuousViewManager.onscroll(e)
+onscroll
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
 | Param | Type |
 | --- | --- |
-| [offsetLeft] | <code>number</code> | 
-| [offsetTop] | <code>number</code> | 
+| e | <code>Event</code> | 
 
-<a name="ContinuousViewManager+trim"></a>
+<a name="ContinuousViewManager+onscrollend"></a>
 
-## continuousViewManager.trim() ⇒ <code>Promise</code>
-trim
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-<a name="ContinuousViewManager+erase"></a>
-
-## continuousViewManager.erase(view, above)
-erase
+## continuousViewManager.onscrollend(e)
+onscrollend
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
 | Param | Type |
 | --- | --- |
-| view | <code>\*</code> | 
-| above | <code>\*</code> | 
+| e | <code>Event</code> | 
 
-<a name="ContinuousViewManager+addEventListeners"></a>
+<a name="ContinuousViewManager+scrolled"></a>
 
-## continuousViewManager.addEventListeners()
-addEventListeners
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-<a name="ContinuousViewManager+removeEventListeners"></a>
-
-## continuousViewManager.removeEventListeners()
-removeEventListeners
+## continuousViewManager.scrolled(e)
+scrolled
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-<a name="ContinuousViewManager+onScroll"></a>
 
-## continuousViewManager.onScroll()
-onScroll
+| Param | Type |
+| --- | --- |
+| e | <code>Event</code> | 
 
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 <a name="ContinuousViewManager+next"></a>
 
 ## continuousViewManager.next()

@@ -10,46 +10,40 @@ Handles DOM manipulation, queries and events for View contents
     * _instance_
         * [.width([w])](#Contents+width) ⇒ <code>number</code>
         * [.height([h])](#Contents+height) ⇒ <code>number</code>
-        * [.contentWidth([w])](#Contents+contentWidth) ⇒ <code>number</code>
-        * [.contentHeight([h])](#Contents+contentHeight) ⇒ <code>number</code>
         * [.textSize()](#Contents+textSize) ⇒ <code>Object</code>
         * [.scrollWidth()](#Contents+scrollWidth) ⇒ <code>number</code>
         * [.scrollHeight()](#Contents+scrollHeight) ⇒ <code>number</code>
-        * [.overflow([overflow])](#Contents+overflow)
-        * [.overflowX([overflow])](#Contents+overflowX)
-        * [.overflowY([overflow])](#Contents+overflowY)
-        * [.css(property, value, [priority])](#Contents+css)
-        * [.viewport([options])](#Contents+viewport)
+        * [.overflow([overflow])](#Contents+overflow) ⇒ <code>string</code>
+        * [.overflowX([overflow])](#Contents+overflowX) ⇒ <code>string</code>
+        * [.overflowY([overflow])](#Contents+overflowY) ⇒ <code>string</code>
+        * [.css(property, value, [priority])](#Contents+css) ⇒ <code>any</code>
+        * [.viewport([options])](#Contents+viewport) ⇒ <code>object</code>
         * [.root()](#Contents+root) ⇒ <code>Element</code>
         * [.locationOf(target, [ignoreClass])](#Contents+locationOf) ⇒ <code>Object</code>
-        * [.appendStylesheet(src, key)](#Contents+appendStylesheet) ⇒ <code>Promise.&lt;Node&gt;</code>
+        * [.appendStylesheet(key, input)](#Contents+appendStylesheet) ⇒ <code>Promise.&lt;Node&gt;</code>
         * [.removeStylesheet(key)](#Contents+removeStylesheet) ⇒ <code>boolean</code>
         * [.clearStylesheets()](#Contents+clearStylesheets)
-        * [.appendSerializedCSS(css, key)](#Contents+appendSerializedCSS)
-        * [.appendStylesheetRules(rules, key)](#Contents+appendStylesheetRules)
-        * [.appendScript(src, key)](#Contents+appendScript) ⇒ <code>Promise.&lt;Node&gt;</code>
+        * [.appendScript(key, src)](#Contents+appendScript) ⇒ <code>Promise.&lt;Node&gt;</code>
         * [.removeScript(key)](#Contents+removeScript) ⇒ <code>boolean</code>
         * [.clearScripts()](#Contents+clearScripts)
         * [.appendClass(className)](#Contents+appendClass)
         * [.removeClass(className)](#Contents+removeClass)
         * [.range(cfi, [ignoreClass])](#Contents+range) ⇒ <code>Range</code>
-        * [.cfiFromRange(range, [ignoreClass])](#Contents+cfiFromRange) ⇒ <code>EpubCFI</code>
-        * [.cfiFromNode(node, [ignoreClass])](#Contents+cfiFromNode) ⇒ <code>EpubCFI</code>
-        * [.map(layout)](#Contents+map) ⇒ <code>Array</code>
-        * [.size([width], [height], [dir])](#Contents+size)
-        * [.columns(width, height, columnWidth, gap, dir)](#Contents+columns)
+        * [.cfiFromRange(range, [ignoreClass])](#Contents+cfiFromRange) ⇒ <code>string</code>
+        * [.cfiFromNode(node, [ignoreClass])](#Contents+cfiFromNode) ⇒ <code>string</code>
+        * [.map(layout)](#Contents+map) ⇒ <code>Array.&lt;object&gt;</code>
+        * [.format(layout, section)](#Contents+format)
         * [.scaler(scale, offsetX, offsetY)](#Contents+scaler)
-        * [.fit(width, height)](#Contents+fit)
         * [.direction([dir])](#Contents+direction)
         * [.mapPage(cfiBase, layout, start, end, dev)](#Contents+mapPage) ⇒ <code>any</code>
         * [.writingMode([mode])](#Contents+writingMode)
         * [.destroy()](#Contents+destroy)
     * _static_
         * [.epubcfi](#Contents.epubcfi) : <code>EpubCFI</code>
-        * [.content](#Contents.content) : <code>object</code>
+        * [.content](#Contents.content) : <code>Element</code>
         * [.contentRect](#Contents.contentRect) : <code>object</code>
         * [.section](#Contents.section) : <code>Section</code>
-        * [.listenedEvents](#Contents.listenedEvents)
+        * [.mode](#Contents.mode) : <code>string</code>
 
 <a name="new_Contents_new"></a>
 
@@ -87,30 +81,6 @@ Get or Set height
 | --- | --- |
 | [h] | <code>number</code> | 
 
-<a name="Contents+contentWidth"></a>
-
-## contents.contentWidth([w]) ⇒ <code>number</code>
-Get or Set width of the contents
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - width  
-
-| Param | Type |
-| --- | --- |
-| [w] | <code>number</code> | 
-
-<a name="Contents+contentHeight"></a>
-
-## contents.contentHeight([h]) ⇒ <code>number</code>
-Get or Set height of the contents
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - height  
-
-| Param | Type |
-| --- | --- |
-| [h] | <code>number</code> | 
-
 <a name="Contents+textSize"></a>
 
 ## contents.textSize() ⇒ <code>Object</code>
@@ -133,7 +103,7 @@ Get documentElement scrollHeight
 **Returns**: <code>number</code> - height  
 <a name="Contents+overflow"></a>
 
-## contents.overflow([overflow])
+## contents.overflow([overflow]) ⇒ <code>string</code>
 Set overflow css style of the contents
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -144,7 +114,7 @@ Set overflow css style of the contents
 
 <a name="Contents+overflowX"></a>
 
-## contents.overflowX([overflow])
+## contents.overflowX([overflow]) ⇒ <code>string</code>
 Set overflowX css style of the documentElement
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -155,7 +125,7 @@ Set overflowX css style of the documentElement
 
 <a name="Contents+overflowY"></a>
 
-## contents.overflowY([overflow])
+## contents.overflowY([overflow]) ⇒ <code>string</code>
 Set overflowY css style of the documentElement
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -166,7 +136,7 @@ Set overflowY css style of the documentElement
 
 <a name="Contents+css"></a>
 
-## contents.css(property, value, [priority])
+## contents.css(property, value, [priority]) ⇒ <code>any</code>
 Set Css styles on the contents element (typically Body)
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -179,7 +149,7 @@ Set Css styles on the contents element (typically Body)
 
 <a name="Contents+viewport"></a>
 
-## contents.viewport([options])
+## contents.viewport([options]) ⇒ <code>object</code>
 Get or Set the viewport element
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -216,23 +186,27 @@ Get the location offset of a EpubCFI or an #id
 
 <a name="Contents+appendStylesheet"></a>
 
-## contents.appendStylesheet(src, key) ⇒ <code>Promise.&lt;Node&gt;</code>
-Append a stylesheet link to the document head
+## contents.appendStylesheet(key, input) ⇒ <code>Promise.&lt;Node&gt;</code>
+Append a stylesheet link/rules to the document head
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| src | <code>string</code> | url |
 | key | <code>string</code> |  |
+| input | <code>string</code> \| <code>object</code> | url or rules |
 
 **Example**  
 ```js
-appendStylesheet("/pach/to/stylesheet.css", "common")
+appendStylesheet("common", "/pach/to/stylesheet.css")
 ```
 **Example**  
 ```js
-appendStylesheet("https://example.com/to/stylesheet.css", "common")
+appendStylesheet("common", "https://example.com/to/stylesheet.css")
+```
+**Example**  
+```js
+appendStylesheet("common", { h1: { "font-size": "1.5em" }})
 ```
 <a name="Contents+removeStylesheet"></a>
 
@@ -251,42 +225,9 @@ Remove a stylesheet link from the document head
 Clear all injected stylesheets
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-<a name="Contents+appendSerializedCSS"></a>
-
-## contents.appendSerializedCSS(css, key)
-If the key is the same, the CSS will be replaced instead of inserted
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-
-| Param | Type |
-| --- | --- |
-| css | <code>string</code> | 
-| key | <code>string</code> | 
-
-**Example**  
-```js
-appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
-```
-<a name="Contents+appendStylesheetRules"></a>
-
-## contents.appendStylesheetRules(rules, key)
-If the key is the same, the CSS will be replaced instead of inserted
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Link**: https://github.com/desirable-objects/json-to-css  
-
-| Param | Type |
-| --- | --- |
-| rules | <code>object</code> | 
-| key | <code>string</code> | 
-
-**Example**  
-```js
-appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
-```
 <a name="Contents+appendScript"></a>
 
-## contents.appendScript(src, key) ⇒ <code>Promise.&lt;Node&gt;</code>
+## contents.appendScript(key, src) ⇒ <code>Promise.&lt;Node&gt;</code>
 Append a script node to the document head
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -294,16 +235,16 @@ Append a script node to the document head
 
 | Param | Type | Description |
 | --- | --- | --- |
-| src | <code>string</code> | url |
 | key | <code>string</code> |  |
+| src | <code>string</code> | url |
 
 **Example**  
 ```js
-appendScript("/path/to/script.js", "common")
+appendScript("common", "/path/to/script.js")
 ```
 **Example**  
 ```js
-appendScript("https://examples.com/to/script.js", "common")
+appendScript("common", "https://examples.com/to/script.js")
 ```
 <a name="Contents+removeScript"></a>
 
@@ -359,11 +300,11 @@ Get a Dom Range from EpubCFI
 
 <a name="Contents+cfiFromRange"></a>
 
-## contents.cfiFromRange(range, [ignoreClass]) ⇒ <code>EpubCFI</code>
+## contents.cfiFromRange(range, [ignoreClass]) ⇒ <code>string</code>
 Get an EpubCFI from a Dom Range
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>EpubCFI</code> - cfi  
+**Returns**: <code>string</code> - EpubCFI  
 
 | Param | Type |
 | --- | --- |
@@ -372,11 +313,11 @@ Get an EpubCFI from a Dom Range
 
 <a name="Contents+cfiFromNode"></a>
 
-## contents.cfiFromNode(node, [ignoreClass]) ⇒ <code>EpubCFI</code>
+## contents.cfiFromNode(node, [ignoreClass]) ⇒ <code>string</code>
 Get an EpubCFI from a Dom node
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>EpubCFI</code> - cfi  
+**Returns**: <code>string</code> - EpubCFI  
 
 | Param | Type |
 | --- | --- |
@@ -385,46 +326,30 @@ Get an EpubCFI from a Dom node
 
 <a name="Contents+map"></a>
 
-## contents.map(layout) ⇒ <code>Array</code>
+## contents.map(layout) ⇒ <code>Array.&lt;object&gt;</code>
 map
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 **Todo**
 
-- [ ] TODO: find where this is used - remove?
+- [ ] find where this is used - remove?
 
 
 | Param | Type |
 | --- | --- |
 | layout | <code>Layout</code> | 
 
-<a name="Contents+size"></a>
+<a name="Contents+format"></a>
 
-## contents.size([width], [height], [dir])
-Size the contents to a given width and height
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-
-| Param | Type |
-| --- | --- |
-| [width] | <code>number</code> | 
-| [height] | <code>number</code> | 
-| [dir] | <code>string</code> | 
-
-<a name="Contents+columns"></a>
-
-## contents.columns(width, height, columnWidth, gap, dir)
-Apply columns to the contents for pagination
+## contents.format(layout, section)
+Apply Css to a Document
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type |
 | --- | --- |
-| width | <code>number</code> | 
-| height | <code>number</code> | 
-| columnWidth | <code>number</code> | 
-| gap | <code>number</code> | 
-| dir | <code>string</code> | 
+| layout | <code>Layout</code> | 
+| section | <code>Section</code> | 
 
 <a name="Contents+scaler"></a>
 
@@ -438,18 +363,6 @@ Scale contents from center
 | scale | <code>number</code> | 
 | offsetX | <code>number</code> | 
 | offsetY | <code>number</code> | 
-
-<a name="Contents+fit"></a>
-
-## contents.fit(width, height)
-Fit contents into a fixed width and height
-
-**Kind**: instance method of [<code>Contents</code>](#Contents)  
-
-| Param | Type |
-| --- | --- |
-| width | <code>number</code> | 
-| height | <code>number</code> | 
 
 <a name="Contents+direction"></a>
 
@@ -503,7 +416,7 @@ Blank Cfi for Parsing
 **Read only**: true  
 <a name="Contents.content"></a>
 
-## Contents.content : <code>object</code>
+## Contents.content : <code>Element</code>
 document.body by current location
 
 **Kind**: static property of [<code>Contents</code>](#Contents)  
@@ -518,9 +431,10 @@ document.body by current location
 ## Contents.section : <code>Section</code>
 **Kind**: static property of [<code>Contents</code>](#Contents)  
 **Read only**: true  
-<a name="Contents.listenedEvents"></a>
+<a name="Contents.mode"></a>
 
-## Contents.listenedEvents
-Get DOM events that are listened for and passed along
+## Contents.mode : <code>string</code>
+writing-mode
 
 **Kind**: static property of [<code>Contents</code>](#Contents)  
+**Read only**: true  

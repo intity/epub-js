@@ -10,9 +10,9 @@ Figures out the CSS values to apply for a layout
     * _instance_
         * [.set(options)](#Layout+set)
         * [.calculate([width], [height], [gap])](#Layout+calculate)
-        * [.format(contents, [section], [axis])](#Layout+format) ⇒ <code>void</code> \| <code>Promise.&lt;any&gt;</code>
         * [.count(totalLength, [pageLength])](#Layout+count) ⇒ <code>Object</code>
     * _static_
+        * [.axis](#Layout.axis) : <code>string</code>
         * [.name](#Layout.name) : <code>string</code>
         * [.flow](#Layout.flow) : <code>string</code>
         * [.spread](#Layout.spread) : <code>boolean</code>
@@ -22,6 +22,8 @@ Figures out the CSS values to apply for a layout
         * [.minSpreadWidth](#Layout.minSpreadWidth) : <code>number</code>
         * [.width](#Layout.width) : <code>number</code>
         * [.height](#Layout.height) : <code>number</code>
+        * [.pageWidth](#Layout.pageWidth) : <code>number</code>
+        * [.pageHeight](#Layout.pageHeight) : <code>number</code>
         * [.spreadWidth](#Layout.spreadWidth) : <code>number</code>
         * [.delta](#Layout.delta) : <code>number</code>
         * [.columnWidth](#Layout.columnWidth) : <code>number</code>
@@ -37,12 +39,14 @@ Constructor
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>object</code> |  |  |
+| [options.axis] | <code>string</code> | <code>&quot;&#x27;horizontal&#x27;&quot;</code> | values: `"horizontal"` OR `"vertical"` |
 | [options.name] | <code>string</code> | <code>&quot;&#x27;reflowable&#x27;&quot;</code> | values: `"reflowable"` OR `"pre-paginated"` |
 | [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"` |
 | [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"none"` |
 | [options.direction] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | values: `"ltr"` OR `"rtl"` |
 | [options.orientation] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"landscape"` OR `"portrait"` |
 | [options.minSpreadWidth] | <code>number</code> | <code>800</code> |  |
+| [options.pageWidth] | <code>number</code> |  | page width for scrolled-doc flow |
 
 <a name="Layout+set"></a>
 
@@ -68,19 +72,6 @@ Calculate the dimensions of the pagination
 | [height] | <code>number</code> | height of the rendering |
 | [gap] | <code>number</code> | width of the gap between columns |
 
-<a name="Layout+format"></a>
-
-## layout.format(contents, [section], [axis]) ⇒ <code>void</code> \| <code>Promise.&lt;any&gt;</code>
-Apply Css to a Document
-
-**Kind**: instance method of [<code>Layout</code>](#Layout)  
-
-| Param | Type |
-| --- | --- |
-| contents | <code>Contents</code> | 
-| [section] | <code>Section</code> | 
-| [axis] | <code>string</code> | 
-
 <a name="Layout+count"></a>
 
 ## layout.count(totalLength, [pageLength]) ⇒ <code>Object</code>
@@ -93,13 +84,18 @@ Count number of pages
 | totalLength | <code>number</code> | 
 | [pageLength] | <code>number</code> | 
 
+<a name="Layout.axis"></a>
+
+## Layout.axis : <code>string</code>
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
 <a name="Layout.name"></a>
 
 ## Layout.name : <code>string</code>
 Layout name
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
-**Access**: protected  
+**Read only**: true  
 <a name="Layout.flow"></a>
 
 ## Layout.flow : <code>string</code>
@@ -146,6 +142,16 @@ Layout width
 ## Layout.height : <code>number</code>
 Layout height
 
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
+<a name="Layout.pageWidth"></a>
+
+## Layout.pageWidth : <code>number</code>
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
+<a name="Layout.pageHeight"></a>
+
+## Layout.pageHeight : <code>number</code>
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
 <a name="Layout.spreadWidth"></a>

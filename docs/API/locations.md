@@ -10,7 +10,7 @@ Find Locations for a Book
     * _instance_
         * [.generate([chars])](#Locations+generate) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.process(section)](#Locations+process) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
-        * [.parse(contents, cfiBase, [chars])](#Locations+parse) ⇒ [<code>Locations</code>](#Locations)
+        * [.parse(contents, cfiBase, [chars])](#Locations+parse) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.locationFromCfi(value)](#Locations+locationFromCfi) ⇒ <code>number</code>
         * [.percentageFromCfi(cfi)](#Locations+percentageFromCfi) ⇒ <code>number</code>
         * [.percentageFromLocation(index)](#Locations+percentageFromLocation) ⇒ <code>number</code>
@@ -63,7 +63,7 @@ process
 
 <a name="Locations+parse"></a>
 
-## locations.parse(contents, cfiBase, [chars]) ⇒ [<code>Locations</code>](#Locations)
+## locations.parse(contents, cfiBase, [chars]) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
 parse
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
