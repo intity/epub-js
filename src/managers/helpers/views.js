@@ -18,55 +18,88 @@ class Views extends Array {
 		this.container.style.display = "flex";
 		this.container.style.width = "100%";
 		this.container.style.height = "100%";
+		/**
+		 * @member {boolean} hidden
+		 * @memberof Views
+		 * @readonly
+		 */
 		this.hidden = false;
 	}
 
+	/**
+	 * first
+	 * @returns {object} view
+	 */
 	first() {
 
 		return this[0];
 	}
 
+	/**
+	 * last
+	 * @returns {object} view
+	 */
 	last() {
 
 		return this[this.length - 1];
 	}
 
+	/**
+	 * get
+	 * @param {number} i index
+	 * @returns {object} view
+	 */
 	get(i) {
 
 		return this[i];
 	}
 
+	/**
+	 * append
+	 * @param {object} view 
+	 * @returns {object} view
+	 */
 	append(view) {
 
-		if (this.container) {
-			this.container.appendChild(view.element);
-		}
+		this.container.appendChild(view.element);
 		this.push(view);
 		return view;
 	}
 
+	/**
+	 * prepend
+	 * @param {object} view 
+	 * @returns {object} view
+	 */
 	prepend(view) {
 
-		if (this.container) {
-			this.container.insertBefore(view.element, this.container.firstChild);
-		}
+		this.container.insertBefore(view.element, this.container.firstChild);
 		this.unshift(view);
 		return view;
 	}
 
+	/**
+	 * insert
+	 * @param {object} view 
+	 * @param {number} index 
+	 * @returns {object} view
+	 */
 	insert(view, index) {
 
-		if (this.container) {
-			if (index < this.container.children.length) {
-				this.container.insertBefore(view.element, this.container.children[index]);
-			} else {
-				this.container.appendChild(view.element);
-			}
+		const children = this.container.children;
+		if (index < children.length) {
+			this.container.insertBefore(view.element, children[index]);
+		} else {
+			this.container.appendChild(view.element);
 		}
 		this.splice(index, 0, view);
 		return view;
 	}
 
+	/**
+	 * remove
+	 * @param {object} view 
+	 */
 	remove(view) {
 
 		const index = this.indexOf(view);
@@ -76,21 +109,25 @@ class Views extends Array {
 		this.destroy(view);
 	}
 
+	/**
+	 * destroy
+	 * @param {object} view 
+	 */
 	destroy(view) {
 
 		if (view.displayed) {
 			view.destroy();
 		}
-
-		if (this.container) {
-			this.container.removeChild(view.element);
-		}
+		this.container.removeChild(view.element);
 	}
 
+	/**
+	 * clear
+	 * @returns {void}
+	 */
 	clear() {
 
 		if (this.length === 0) return;
-
 		for (let i = 0; i < this.length; i++) {
 			const view = this[i];
 			this.destroy(view);
@@ -98,6 +135,11 @@ class Views extends Array {
 		this.splice(0);
 	}
 
+	/**
+	 * find
+	 * @param {Section} section 
+	 * @returns {object} view
+	 */
 	find(section) {
 
 		for (let i = 0; i < this.length; i++) {
@@ -109,6 +151,10 @@ class Views extends Array {
 		}
 	}
 
+	/**
+	 * displayed
+	 * @returns {object[]}
+	 */
 	displayed() {
 
 		const displayed = [];
@@ -121,6 +167,9 @@ class Views extends Array {
 		return displayed;
 	}
 
+	/**
+	 * show
+	 */
 	show() {
 
 		for (let i = 0; i < this.length; i++) {
@@ -132,6 +181,9 @@ class Views extends Array {
 		this.hidden = false;
 	}
 
+	/**
+	 * hide
+	 */
 	hide() {
 
 		for (let i = 0; i < this.length; i++) {
@@ -143,6 +195,9 @@ class Views extends Array {
 		this.hidden = true;
 	}
 
+	/**
+	 * update
+	 */
 	update() {
 
 		for (let i = 0; i < this.length; ++i) {
