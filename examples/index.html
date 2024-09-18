@@ -54,7 +54,7 @@
                             is displayed on the screen; the others are always hidden. However, this rendering method
                             requires more computing resources. To navigate through pages, use swipe touch.</p>
                     </li>
-                    <li><a href="scrolled.html">Scrolling a document from a views-container</a>
+                    <li><a href="scrolled.html">Scrolling a document from a hidden area</a>
                         <p><b>Metadata value:</b> <code>scrolled-doc</code></p>
                         <p>In this example, the "flow" option is defined as "scrolled". Each section of the book is
                             displayed within the bounds of the <b>views-container</b>, with a scrollable hidden area.
@@ -62,13 +62,16 @@
                             between sections, use the left and right arrows, as well as key bindings.
                         </p>
                     </li>
-                    <li><a href="scrolled-doc.html">Scrolling a document from a viewport-container</a>
+                    <li><a href="scrolled-doc.html">Scrolling a document as pages</a>
                         <p><b>Metadata value:</b> <code>scrolled-doc</code></p>
                         <p>Displays each "section" or "chapter" of the ebook in its entirety as a single page of
                             variable height that you can scroll up and down. The difference from example (3) is that the
-                            scrolling of documents is done within the <b>viewport-containe</b>r. When a document reaches
-                            the end of the scrolling, the next document will be added, and so on until the end of the
-                            book.</p>
+                            width and height of <b>views-container</b> is 100%, and the <code>pageWidth</code> option is
+                            800. In addition, the <code>manager</code> option is set to "continuous". This way, when a
+                            document
+                            reaches the end of the scroll, the next document will be added to the
+                            <b>views-container</b>, and so on until the end of the book.
+                        </p>
                     </li>
                     <li><a href="scrolled-continuous.html">Continuous scrolling</a>
                         <p><b>Metadata value:</b> <code>scrolled-continuous</code></p>
