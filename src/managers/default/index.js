@@ -184,10 +184,7 @@ class DefaultViewManager {
 	 * @private
 	 */
 	appendEventListeners() {
-		
-		if (this.paginated && this.name === "default") {
-			return;
-		}
+
 		const lsc = this.views.container;
 		lsc.addEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
@@ -205,10 +202,6 @@ class DefaultViewManager {
 	 */
 	removeEventListeners() {
 
-		if (this.paginated && this.name === "default") {
-			return;
-		}
-		
 		const lsc = this.views.container;
 		lsc.removeEventListener("scroll", this.onscroll.bind(this));
 		if ("onscrollend" in window) {
@@ -841,7 +834,9 @@ class DefaultViewManager {
 	 */
 	onscroll(e) {
 
-		if (e.target.nodeType === Node.DOCUMENT_NODE) {
+		if (this.paginated && this.name === "default") {
+			return;
+		} else if (e.target.nodeType === Node.DOCUMENT_NODE) {
 			this.scrollTop = window.scrollY;
 			this.scrollLeft = window.scrollX;
 		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
@@ -869,13 +864,16 @@ class DefaultViewManager {
 	 */
 	onscrollend(e) {
 
-		if (e.target.nodeType === Node.DOCUMENT_NODE) {
+		if (this.paginated && this.name === "default") {
+			return;
+		} else if (e.target.nodeType === Node.DOCUMENT_NODE) {
 			this.scrollTop = window.scrollY;
 			this.scrollLeft = window.scrollX;
 		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
 			this.scrollTop = e.target.scrollTop;
 			this.scrollLeft = e.target.scrollLeft;
 		}
+
 		this.currentLocation();
 		this.emit(EVENTS.MANAGERS.SCROLLED, {
 			top: this.scrollTop,
