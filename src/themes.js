@@ -215,6 +215,8 @@ class Themes extends Map {
 	 */
 	inject(contents) {
 
+		if (!this.current) return;
+		
 		this.forEach((theme, key) => {
 
 			if (this.current === key) {
