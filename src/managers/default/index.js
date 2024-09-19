@@ -23,6 +23,7 @@ class DefaultViewManager {
 	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
+	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
 	 */
 	constructor(book, options) {
 		/**
@@ -44,9 +45,8 @@ class DefaultViewManager {
 			view: "iframe",
 			hidden: false,
 			method: null,
+			sandbox: [],
 			ignoreClass: "",
-			allowPopups: false,
-			allowScriptedContent: false,
 			forceEvenPages: true
 		}, options || {});
 		/**
@@ -243,9 +243,8 @@ class DefaultViewManager {
 		return new view(this.layout, section, {
 			snap: this.settings.snap,
 			method: this.settings.method,
-			allowPopups: this.settings.allowPopups,
+			sandbox: this.settings.sandbox,
 			ignoreClass: this.settings.ignoreClass,
-			allowScriptedContent: this.settings.allowScriptedContent,
 			forceRight: forceRight,
 			forceEvenPages: this.settings.forceEvenPages
 		});

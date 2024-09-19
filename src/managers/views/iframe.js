@@ -22,8 +22,7 @@ class IframeView {
 	 * @param {object} [options]
 	 * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
-	 * @param {boolean} [options.allowPopups=false]
-	 * @param {boolean} [options.allowScriptedContent=false]
+	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
 	 * @param {boolean} [options.forceRight=false]
 	 */
 	constructor(layout, section, options) {
@@ -34,11 +33,10 @@ class IframeView {
 		 */
 		this.settings = extend({
 			method: null,
+			sandbox: [],
 			forceRight: false,
 			forceEvenPages: false,
 			ignoreClass: "",
-			allowPopups: false,
-			allowScriptedContent: false,
 		}, options || {});
 		/**
 		 * @member {string} id
@@ -126,13 +124,8 @@ class IframeView {
 		this.iframe.style.width = "0";
 		this.iframe.style.height = "0";
 
-		// sandbox
-		this.iframe.sandbox = "allow-same-origin";
-		if (this.settings.allowPopups) {
-			this.iframe.sandbox += " allow-popups";
-		}
-		if (this.settings.allowScriptedContent) {
-			this.iframe.sandbox += " allow-scripts";
+		for (const p of this.settings.sandbox) {
+			if (p) this.iframe.sandbox.add(p);
 		}
 
 		this.iframe.setAttribute("enable-annotation", "true");

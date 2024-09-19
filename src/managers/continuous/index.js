@@ -20,6 +20,7 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string|object} [options.view='iframe']
+	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
 	 */
 	constructor(book, options) {
 
@@ -38,8 +39,6 @@ class ContinuousViewManager extends DefaultViewManager {
 			offset: 500,
 			offsetDelta: 250,
 			ignoreClass: "",
-			allowPopups: false,
-			allowScriptedContent: false,
 			forceEvenPages: false
 		}, options || {});
 	}

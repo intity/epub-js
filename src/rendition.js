@@ -36,8 +36,7 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
  * @param {boolean} [options.hidden=false] viewport hidden
- * @param {boolean} [options.allowPopups=false] enable opening popup in content
- * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
+ * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
  */
 class Rendition {
 	constructor(book, options) {
@@ -62,9 +61,8 @@ class Rendition {
 			snap: false,
 			direction: null, // TODO: implement to 'auto' detection
 			ignoreClass: "",
-			stylesheet: null,
-			allowPopups: false,
-			allowScriptedContent: false,
+			sandbox: [],
+			stylesheet: null
 		}, options || {});
 
 		if (typeof this.settings.manager === "object") {
@@ -260,9 +258,8 @@ class Rendition {
 				snap: this.settings.snap,
 				view: this.settings.view,
 				method: this.settings.method,
-				ignoreClass: this.settings.ignoreClass,
-				allowPopups: this.settings.allowPopups,
-				allowScriptedContent: this.settings.allowScriptedContent
+				sandbox: this.settings.sandbox,
+				ignoreClass: this.settings.ignoreClass
 			};
 			this.manager = new manager(this.book, options);
 		}
