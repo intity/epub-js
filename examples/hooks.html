@@ -23,7 +23,7 @@
         const rendition = book.renderTo("viewer", {
             flow: "scrolled-doc",
             pageWidth: 800,
-            allowScriptedContent: true
+            // sandbox: ["allow-same-origin", "allow-scripts"]
         })
         next.onclick = (e) => {
 
@@ -54,8 +54,10 @@
 
             const src = "https://code.jquery.com/jquery-3.7.1.min.js"
             const css = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
+            const url = location.origin + "/examples/hooks.js";
             return Promise.all([
                 contents.appendScript("jquery", src),
+                contents.appendScript("jqtest", url),
                 contents.appendStylesheet("jquery", css)
             ])
         })
