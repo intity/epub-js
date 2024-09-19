@@ -313,7 +313,7 @@ class ContinuousViewManager extends DefaultViewManager {
 			return this.check();
 		});
 		return this.q.run().then(() => {
-			this.currentLocation();
+			this.relocated();
 			this.emit(EVENTS.MANAGERS.SCROLLED, {
 				top: this.scrollTop,
 				left: this.scrollLeft

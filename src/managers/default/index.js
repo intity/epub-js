@@ -172,7 +172,7 @@ class DefaultViewManager {
 			displaying.reject(err);
 		}).then((view) => {
 			this.views.show();
-			this.currentLocation();
+			this.relocated();
 			displaying.resolve(view);
 		});
 
@@ -268,7 +268,7 @@ class DefaultViewManager {
 	 */
 	afterResized(view) {
 
-		this.currentLocation();
+		this.relocated();
 		this.emit(EVENTS.MANAGERS.RESIZED, view);
 	}
 
@@ -470,9 +470,9 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			}).then(this.currentLocation.bind(this));
+			}).then(this.relocated.bind(this));
 		} else {
-			this.currentLocation();
+			this.relocated();
 			def.resolve(null);
 		}
 
@@ -572,9 +572,9 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			}).then(this.currentLocation.bind(this));
+			}).then(this.relocated.bind(this));
 		} else {
-			this.currentLocation();
+			this.relocated();
 			def.resolve(null);
 		}
 
@@ -607,6 +607,16 @@ class DefaultViewManager {
 	}
 
 	/**
+	 * relocated
+	 * @private
+	 */
+	relocated() {
+
+		this.currentLocation();
+		this.emit(EVENTS.MANAGERS.RELOCATED, this.location);
+	}
+
+	/**
 	 * currentLocation
 	 * @returns {object[]} Location sections
 	 */
@@ -617,7 +627,6 @@ class DefaultViewManager {
 		} else {
 			this.location = this.scrolledLocation();
 		}
-		this.emit(EVENTS.MANAGERS.RELOCATED, this.location);
 		return this.location;
 	}
 
@@ -819,7 +828,7 @@ class DefaultViewManager {
 
 		clearTimeout(this.afterScrolled);
 		this.afterScrolled = setTimeout(() => {
-			this.currentLocation();
+			this.relocated();
 			this.emit(EVENTS.MANAGERS.SCROLLED, {
 				top: this.scrollTop,
 				left: this.scrollLeft
@@ -874,7 +883,7 @@ class DefaultViewManager {
 			this.scrollLeft = e.target.scrollLeft;
 		}
 
-		this.currentLocation();
+		this.relocated();
 		this.emit(EVENTS.MANAGERS.SCROLLED, {
 			top: this.scrollTop,
 			left: this.scrollLeft
