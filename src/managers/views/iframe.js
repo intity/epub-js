@@ -201,7 +201,6 @@ class IframeView {
 			this.contentWidth = undefined; // unused
 			this.contentHeight = undefined; // unused
 		}
-		this.needsReframe = true;
 	}
 
 	/**
@@ -307,11 +306,7 @@ class IframeView {
 			}
 		}
 
-		// Only Resize if dimensions have changed or
-		// if Frame is still hidden, so needs reframing
-		if (this.needsReframe ||
-			this.width !== width ||
-			this.height !== height) {
+		if (this.width !== width || this.height !== height) {
 			this.reframe(width, height);
 		}
 
