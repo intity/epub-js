@@ -73,8 +73,6 @@ class DefaultViewManager {
 		 * @readonly
 		 */
 		this.rendered = false;
-		this.scrollTop = 0;
-		this.scrollLeft = 0;
 		this.scrollType = null;
 		/**
 		 * @member {Views} views 
@@ -172,7 +170,6 @@ class DefaultViewManager {
 			displaying.reject(err);
 		}).then((view) => {
 			this.views.show();
-			this.relocated();
 			displaying.resolve(view);
 		});
 
@@ -193,7 +190,8 @@ class DefaultViewManager {
 				this.onscrollend.bind(this)
 			);
 		}
-		this.scrollend = debounce(this.scrolled.bind(this), 30);
+		const timeout = this.name === "default" ? 0 : 30;
+		this.scrollend = debounce(this.scrolled.bind(this), timeout);
 	}
 
 	/**
@@ -251,21 +249,21 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * afterDisplayed
-	 * @param {*} view 
+	 * the view displayed event handler
+	 * @param {object} view 
 	 * @private
 	 */
-	afterDisplayed(view) {
+	displayed(view) {
 
 		this.emit(EVENTS.MANAGERS.ADDED, view);
 	}
 
 	/**
-	 * afterResized
+	 * the view resized event handler
 	 * @param {object} view 
 	 * @private
 	 */
-	afterResized(view) {
+	resized(view) {
 
 		this.relocated();
 		this.emit(EVENTS.MANAGERS.RESIZED, view);
@@ -325,11 +323,11 @@ class DefaultViewManager {
 		const view = this.createView(section, forceRight);
 
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
-			this.afterDisplayed(view);
+			this.displayed(view);
 		});
 
 		view.on(EVENTS.VIEWS.RESIZED, (rect) => {
-			this.afterResized(view);
+			this.resized(view);
 		});
 
 		view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
@@ -353,12 +351,12 @@ class DefaultViewManager {
 		const view = this.createView(section, forceRight);
 
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
-			this.afterDisplayed(view);
+			this.displayed(view);
 		});
 
 		view.on(EVENTS.VIEWS.RESIZED, (rect) => {
-			this.counter(rect);
-			this.afterResized(view);
+			this.counter(view);
+			this.resized(view);
 		});
 
 		view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
@@ -372,15 +370,19 @@ class DefaultViewManager {
 
 	/**
 	 * counter
-	 * @param {object} bounds 
+	 * @param {object} view 
 	 * @private
 	 */
-	counter(bounds) {
+	counter(view) {
+
+		const content = view.contents.content;
 
 		if (this.layout.axis === AXIS_V) {
-			this.scrollBy(0, bounds.heightDelta, true);
+			const y = content.scrollHeight;
+			this.scrollBy(0, y, true);
 		} else {
-			this.scrollBy(bounds.widthDelta, 0, true);
+			const x = content.scrollWidth;
+			this.scrollBy(x, 0, true);
 		}
 	}
 
@@ -432,7 +434,6 @@ class DefaultViewManager {
 			}
 		} else if (this.layout.axis === AXIS_V && this.paginated) {
 
-			this.scrollTop = lsc.scrollTop;
 			const top = lsc.scrollTop + lsc.offsetHeight;
 
 			if (top < lsc.scrollHeight) {
@@ -469,7 +470,7 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			}).then(this.relocated.bind(this));
+			});
 		} else {
 			this.relocated();
 			def.resolve(null);
@@ -527,7 +528,6 @@ class DefaultViewManager {
 			}
 		} else if (this.layout.axis === AXIS_V && this.paginated) {
 
-			this.scrollTop = lsc.scrollTop;
 			const top = lsc.scrollTop;
 
 			if (top > 0) {
@@ -571,7 +571,7 @@ class DefaultViewManager {
 				def.resolve(view);
 			}, (err) => {
 				def.reject(err);
-			}).then(this.relocated.bind(this));
+			});
 		} else {
 			this.relocated();
 			def.resolve(null);
@@ -821,18 +821,19 @@ class DefaultViewManager {
 	/**
 	 * scrolled
 	 * @param {Event} e 
-	 * @description This event handler is used when the browser does not support the onscrollend event.
 	 */
 	scrolled(e) {
 
-		clearTimeout(this.afterScrolled);
-		this.afterScrolled = setTimeout(() => {
-			this.relocated();
-			this.emit(EVENTS.MANAGERS.SCROLLED, {
-				top: this.scrollTop,
-				left: this.scrollLeft
-			});
-		}, 20);
+		if (this.paginated &&
+			this.name === "default") {
+			return;
+		}
+
+		this.relocated();
+		this.emit(EVENTS.MANAGERS.SCROLLED, {
+			top: e.target.scrollTop,
+			left: e.target.scrollLeft
+		});
 	}
 
 	/**
@@ -842,22 +843,17 @@ class DefaultViewManager {
 	 */
 	onscroll(e) {
 
-		if (this.paginated && this.name === "default") {
+		if (this.paginated &&
+			this.name === "default") {
 			return;
-		} else if (e.target.nodeType === Node.DOCUMENT_NODE) {
-			this.scrollTop = window.scrollY;
-			this.scrollLeft = window.scrollX;
-		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
-			this.scrollTop = e.target.scrollTop;
-			this.scrollLeft = e.target.scrollLeft;
 		}
 
 		if (this.ignore) {
 			this.ignore = false;
 		} else {
 			this.emit(EVENTS.MANAGERS.SCROLL, {
-				top: this.scrollTop,
-				left: this.scrollLeft
+				top: e.target.scrollTop,
+				left: e.target.scrollLeft
 			});
 			if (!("onscrollend" in window)) {
 				this.scrollend(e);
@@ -872,21 +868,7 @@ class DefaultViewManager {
 	 */
 	onscrollend(e) {
 
-		if (this.paginated && this.name === "default") {
-			return;
-		} else if (e.target.nodeType === Node.DOCUMENT_NODE) {
-			this.scrollTop = window.scrollY;
-			this.scrollLeft = window.scrollX;
-		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
-			this.scrollTop = e.target.scrollTop;
-			this.scrollLeft = e.target.scrollLeft;
-		}
-
-		this.relocated();
-		this.emit(EVENTS.MANAGERS.SCROLLED, {
-			top: this.scrollTop,
-			left: this.scrollLeft
-		});
+		this.scrollend(e);
 	}
 
 	/**
@@ -952,14 +934,11 @@ class DefaultViewManager {
 	destroy() {
 
 		this.ignore = true;
-		clearTimeout(this.afterScrolled);
 		this.clear();
 		this.removeEventListeners();
 		this.viewport.destroy();
 		this.viewport = undefined;
 		this.rendered = false;
-		this.scrollTop = undefined;
-		this.scrollLeft = undefined;
 		this.scrollType = undefined;
 		this.writingMode = undefined;
 	}

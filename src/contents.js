@@ -338,13 +338,15 @@ class Contents {
 
 		let changed = false;
 		const cmp = (rect) => Object.keys(this.contentRect).forEach(p => {
+			if (!rect) return;
 			if (this.contentRect[p] !== rect[p] && rect[p] !== void 0) {
 				this.contentRect[p] = rect[p];
 				changed = true;
 			}
 		});
-		entries.forEach(entry => entry.contentRect && cmp(entry.contentRect));
-		changed && this.emit(EVENTS.CONTENTS.RESIZE, this.contentRect);
+		entries.forEach((entry) => cmp(entry.contentRect));
+		if (!changed) return;
+		this.emit(EVENTS.CONTENTS.RESIZED, this.contentRect);
 	}
 
 	/**

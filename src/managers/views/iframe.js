@@ -330,21 +330,7 @@ class IframeView {
 		this.width = width;
 		this.height = height;
 
-		const size = {
-			width: width,
-			height: height,
-			widthDelta: this.prevBounds ? width - this.prevBounds.width : width,
-			heightDelta: this.prevBounds ? height - this.prevBounds.height : height,
-		};
-
 		this.marks && this.marks.render();
-		/**
-		 * @event resized
-		 * @param {object} size
-		 * @memberof IframeView
-		 */
-		this.emit(EVENTS.VIEWS.RESIZED, size);
-		this.prevBounds = size;
 		this.elementBounds = bounds(this.element);
 	}
 
@@ -409,6 +395,15 @@ class IframeView {
 			link.setAttribute("href", this.section.canonical);
 			this.document.querySelector("head").appendChild(link);
 		}
+
+		this.contents.on(EVENTS.CONTENTS.RESIZED, (rect) => {
+			/**
+			 * @event resized
+			 * @param {object} rect
+			 * @memberof IframeView
+			 */
+			this.emit(EVENTS.VIEWS.RESIZED, rect);
+		});
 
 		defer.resolve(this.contents);
 	}

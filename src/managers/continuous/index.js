@@ -130,7 +130,6 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		const views = this.views;
 		const delta = offset || this.settings.offset || 0;
-		const updating = new Defer();
 		const promises = [];
 
 		for (let i = 0; i < views.length; i++) {
@@ -151,12 +150,9 @@ class ContinuousViewManager extends DefaultViewManager {
 		}
 
 		if (promises.length) {
-			return Promise.all(promises).catch((err) => {
-				updating.reject(err);
-			});
+			return Promise.all(promises);
 		} else {
-			updating.resolve();
-			return updating.promise;
+			return Promise.resolve(null);
 		}
 	}
 
@@ -167,9 +163,8 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	check(offsetLeft, offsetTop) {
+	async check(offsetLeft, offsetTop) {
 
-		const checking = new Defer();
 		const promises = [];
 		const vph = this.layout.axis === AXIS_H;
 		const lsc = this.views.container;
@@ -187,7 +182,7 @@ class ContinuousViewManager extends DefaultViewManager {
 		const rect = this.viewport.rect;
 		const visibleLength = vph ? Math.floor(rect.width) : rect.height;
 		const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
-		let offset = vph ? this.scrollLeft : this.scrollTop;
+		let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
 
 		if (this.writingMode.indexOf(AXIS_H) === 0) {
 			// Scroll offset starts at width of element
@@ -201,16 +196,16 @@ class ContinuousViewManager extends DefaultViewManager {
 		}
 
 		const append = () => {
-			const last = this.views.last();
-			const next = last && last.section.next();
+			const view = this.views.last();
+			const next = view && view.section.next();
 			if (next) {
 				promises.push(this.append(next));
 			}
 		};
 
 		const prepend = () => {
-			const first = this.views.first();
-			const prev = first && first.section.prev();
+			const view = this.views.first();
+			const prev = view && view.section.prev();
 			if (prev) {
 				promises.push(this.prepend(prev));
 			}
@@ -229,76 +224,11 @@ class ContinuousViewManager extends DefaultViewManager {
 
 		if (promises.length) {
 			return Promise.all(promises).then(() => {
-				return this.check(); // recursive call
-			}).then(() => {
-				// Check to see if anything new is on screen after rendering
 				return this.update(delta);
-			}, (err) => {
-				return err;
 			});
 		} else {
-			this.q.enqueue(() => {
-				this.update();
-			});
-			checking.resolve(false);
-			return checking.promise;
+			return Promise.resolve(null);
 		}
-	}
-
-	/**
-	 * appendEventListeners
-	 * @override
-	 */
-	appendEventListeners() {
-
-		super.appendEventListeners();
-		this.scrollTop = this.views.container.scrollTop;
-		this.scrollLeft = this.views.container.scrollLeft;
-	}
-
-	/**
-	 * onscroll
-	 * @param {Event} e 
-	 * @override
-	 */
-	onscroll(e) {
-
-		if (e.target.nodeType === Node.DOCUMENT_NODE) {
-			let dir;
-			if (this.layout.direction === "rtl" &&
-				this.scrollType === "default") {
-				dir = -1;
-			} else {
-				dir = 1;
-			}
-			this.scrollTop = window.scrollY * dir;
-			this.scrollLeft = window.scrollX * dir;
-		} else if (e.target.nodeType === Node.ELEMENT_NODE) {
-			this.scrollTop = e.target.scrollTop;
-			this.scrollLeft = e.target.scrollLeft;
-		}
-
-		if (this.ignore) {
-			this.ignore = false;
-		} else {
-			this.emit(EVENTS.MANAGERS.SCROLL, {
-				top: this.scrollTop,
-				left: this.scrollLeft
-			});
-			if (!("onscrollend" in window)) {
-				this.scrollend(e);
-			}
-		}
-	}
-
-	/**
-	 * onscrollend
-	 * @param {Event} e 
-	 * @override
-	 */
-	onscrollend(e) {
-
-		this.scrollend(e);
 	}
 
 	/**
@@ -306,26 +236,30 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * @param {Event} e 
 	 * @override
 	 */
-	async scrolled(e) {
+	scrolled(e) {
 
 		this.q.enqueue(() => {
 			return this.check();
-		});
-		return this.q.run().then(() => {
+		}).then(() => {
 			this.relocated();
 			this.emit(EVENTS.MANAGERS.SCROLLED, {
-				top: this.scrollTop,
-				left: this.scrollLeft
+				top: e.target.scrollTop,
+				left: e.target.scrollLeft
 			});
 		});
 	}
 
 	/**
 	 * next
+	 * @returns {Promise<any>}
 	 * @override
 	 */
 	next() {
 
+		if (this.views.length === 0) {
+			return Promise.resolve(null);
+		}
+		
 		let delta;
 		if (this.layout.name === "pre-paginated" &&
 			this.layout.spread === "auto") {
@@ -334,7 +268,6 @@ class ContinuousViewManager extends DefaultViewManager {
 			delta = this.layout.delta;
 		}
 
-		if (this.views.length === 0) return;
 		if (this.paginated &&
 			this.layout.axis === AXIS_H) {
 			this.scrollBy(delta, 0, true);
@@ -342,17 +275,22 @@ class ContinuousViewManager extends DefaultViewManager {
 			this.scrollBy(0, this.layout.height, true);
 		}
 
-		this.q.enqueue(() => {
+		return this.q.enqueue(() => {
 			return this.check();
 		});
 	}
 
 	/**
 	 * prev
+	 * @returns {Promise<any>}
 	 * @override
 	 */
 	prev() {
 
+		if (this.views.length === 0) {
+			return Promise.resolve(null);
+		}
+		
 		let delta;
 		if (this.layout.name === "pre-paginated" &&
 			this.layout.spread === "auto") {
@@ -360,8 +298,6 @@ class ContinuousViewManager extends DefaultViewManager {
 		} else {
 			delta = this.layout.delta;
 		}
-
-		if (this.views.length === 0) return;
 
 		if (this.paginated &&
 			this.layout.axis === AXIS_H) {
@@ -370,7 +306,7 @@ class ContinuousViewManager extends DefaultViewManager {
 			this.scrollBy(0, -this.layout.height, true);
 		}
 
-		this.q.enqueue(() => {
+		return this.q.enqueue(() => {
 			return this.check();
 		});
 	}
