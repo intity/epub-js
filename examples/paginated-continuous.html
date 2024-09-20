@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="continuous swiping of pages example for mobile devices">
-    <title>EPUB.JS: Continuous swiping of pages - Example</title>
+    <title>EPUB.JS: Continuous swiping of pages (mobile) - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
@@ -41,13 +41,13 @@
 
                 console.log(rendition)
             })
-            rendition.on("rendered", (view) => {
-
-                console.log(view)
-            })
             rendition.on("relocated", (location) => {
 
                 console.log(location)
+            })
+            rendition.on("rendered", (view) => {
+
+                console.log(view)
             })
         }
     </script>

@@ -4,46 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Continuous scrolling - Example</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="continuous scrolling of documents example for mobile devices">
+    <title>EPUB.JS: Continuous scrolling of documents (mobile) - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
     <script>
         window.onload = (e) => {
-            const content = document.getElementById("content")
-            if ("ontouchstart" in window) {
-                content.className = "mobile"
-            }
+            const book = ePub("../assets/alice/")
+            const rendition = book.renderTo(document.body, {
+                manager: "continuous",
+                flow: "scrolled"
+            })
+            rendition.display()
+            rendition.on("attached", () => {
+
+                console.log(rendition)
+            })
+            rendition.on("relocated", (location) => {
+
+                console.log(location)
+            })
+            rendition.on("rendered", (view) => {
+
+                console.log(view)
+            })
         }
     </script>
 </head>
 
-<body>
-    <div id="content">
-        <div id="viewer"></div>
-    </div>
-    <script>
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
-            manager: "continuous",
-            flow: "scrolled",
-            width: 800,
-            height: window.innerHeight - 80
-        })
-        rendition.display()
-        rendition.on("attached", () => {
-
-            console.log(rendition)
-        })
-        rendition.on("rendered", (view) => {
-
-            console.log(view)
-        })
-        rendition.on("relocated", (location) => {
-
-            console.log(location)
-        })
-    </script>
+<body id="viewport" class="scrolled">
 </body>
 
 </html>
