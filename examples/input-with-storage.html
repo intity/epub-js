@@ -19,6 +19,7 @@
     <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
+            <div id="loader" style="display: none;"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
@@ -27,6 +28,7 @@
         const openbook = document.getElementById("openbook")
         const content = document.getElementById("content")
         const divider = document.getElementById("divider")
+        const loader = document.getElementById("loader")
         const next = document.getElementById("next")
         const prev = document.getElementById("prev")
         const book = ePub({ store: "epub-js" })
@@ -68,6 +70,7 @@
         }
         const init = (data) => {
 
+            loader.style.display = "block"
             if (rendition) {
                 rendition.destroy();
             }
@@ -77,6 +80,7 @@
                 console.log(book)
                 rendition.on("keyup", keybinding)
                 document.onkeyup = keybinding
+                loader.style.display = "none"
             })
             rendition = book.renderTo("viewer", {
                 width: 900,

@@ -12,8 +12,9 @@
 
 <body>
 	<div id="content" class="ltr" dir="ltr">
-		<div id="viewer">
+		<div id="viewer" class="paginated">
 			<div id="divider" style="display: block;"></div>
+			<div id="loader"></div>
 		</div>
 		<a id="prev" href="#prev" class="arrow"></a>
 		<a id="next" href="#next" class="arrow"></a>
@@ -25,6 +26,7 @@
 		</div>
 	</div>
 	<script>
+		const loader = document.getElementById("loader")
 		const label = document.getElementById("current-percent")
 		const range = document.getElementById("range")
 		const prev = document.getElementById("prev")
@@ -32,6 +34,8 @@
 		const book = ePub()
 		let stored, timeStamp
 		book.open("../assets/alice/").then(() => {
+
+			loader.style.display = "none"
 			// Load in stored locations from json or local storage
 			const key = book.key() + "-locations"
 			stored = localStorage.getItem(key)

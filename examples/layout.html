@@ -49,12 +49,14 @@
     <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
+            <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
         const content = document.getElementById("content")
+        const loader = document.getElementById("loader")
         const viewer = document.getElementById("viewer")
         const layout = document.getElementById("layout")
         const flow = document.getElementById("flow")
@@ -68,6 +70,10 @@
         const rendition = book.renderTo("viewer", {
             width: 900,
             height: 600
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         layout.onchange = (e) => {
 

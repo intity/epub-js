@@ -13,11 +13,14 @@
 
 <body>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated"></div>
+        <div id="viewer" class="paginated">
+            <div id="loader"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice.epub")
@@ -25,6 +28,10 @@
             width: 900,
             height: 600,
             spread: "none"
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         const keybinding = (e) => {
 

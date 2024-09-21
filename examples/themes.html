@@ -26,10 +26,13 @@
         </div>
     </div>
     <div id="content" dir="ltr">
-        <div id="viewer" class="scrolled"></div>
+        <div id="viewer" class="scrolled">
+            <div id="loader"></div>
+        </div>
     </div>
     <script>
         const theme = document.getElementById("theme")
+        const loader = document.getElementById("loader")
         const fontSize = document.getElementById("font-size")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
@@ -37,6 +40,10 @@
             flow: "scrolled",
             width: 800,
             height: window.innerHeight - 40
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         theme.onchange = (e) => {
 

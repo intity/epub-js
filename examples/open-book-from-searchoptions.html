@@ -15,6 +15,7 @@
     <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
+            <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
@@ -24,6 +25,7 @@
         const uri = url.searchParams.get("bookPath") || "../assets/alice/"
         const content = document.getElementById("content")
         const divider = document.getElementById("divider")
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const time = Date.now()
@@ -31,6 +33,10 @@
         const rendition = book.renderTo("viewer", {
             width: 900,
             height: 600
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         prev.onclick = (e) => {
 
@@ -80,7 +86,7 @@
             console.log(`displayed: ${Date.now() - time} ms`)
         })
         rendition.on("displayerror", (err) => {
-            
+
             console.log(err)
         })
     </script>

@@ -13,16 +13,23 @@
 
 <body>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated"></div>
+        <div id="viewer" class="paginated">
+            <div id="loader"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("https://intity.github.io/epub-js/assets/alice/", {
             replacements: "base64",
             store: "epub-js"
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         book.storage.on("online", () => {
 

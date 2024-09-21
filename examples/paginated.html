@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Paginated - Example</title>
+    <title>EPUB.JS: Spreading a document into pages - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
@@ -23,19 +23,25 @@
     <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
+            <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
-        const spread = document.getElementById("spread")
         const divider = document.getElementById("divider")
+        const loader = document.getElementById("loader")
+        const spread = document.getElementById("spread")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             width: 900,
             height: 600
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         prev.onclick = (e) => {
 

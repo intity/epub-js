@@ -13,29 +13,35 @@
     <script src="../dist/epub.js"></script>
     <script>
         window.onload = (e) => {
+            const loader = document.getElementById("loader")
             const book = ePub("../assets/alice/")
             const rendition = book.renderTo(document.body, {
                 manager: "continuous",
                 flow: "scrolled"
+            })
+            book.opened.then(() => {
+
+                loader.style.display = "none"
             })
             rendition.display()
             rendition.on("attached", () => {
 
                 console.log(rendition)
             })
-            rendition.on("relocated", (location) => {
-
-                console.log(location)
-            })
             rendition.on("rendered", (view) => {
 
                 console.log(view)
+            })
+            rendition.on("relocated", (location) => {
+
+                console.log(location)
             })
         }
     </script>
 </head>
 
 <body id="viewport" class="scrolled">
+    <div id="loader"></div>
 </body>
 
 </html>

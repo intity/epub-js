@@ -12,7 +12,9 @@
 
 <body>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer"></div>
+        <div id="viewer" class="paginated">
+            <div id="loader"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
@@ -20,6 +22,7 @@
         <ul id="list"></ul>
     </div>
     <script>
+        const loader = document.getElementById("loader")
         const list = document.getElementById("list")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
@@ -28,6 +31,10 @@
             width: 900,
             height: 600,
             spread: "none"
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         prev.onclick = (e) => {
             rendition.prev()

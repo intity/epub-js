@@ -14,16 +14,19 @@
     <div id="toolbar">
         <div class="box">
             <label for="toc">Table of Contents:</label>
-            <select id="toc"></select>
+            <select id="toc" style="width: 218px;"></select>
         </div>
     </div>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="scrolled"></div>
+        <div id="viewer" class="scrolled">
+            <div id="loader"></div>
+        </div>
         <div id="prev" class="arrow"></div>
         <div id="next" class="arrow"></div>
     </div>
     <script>
         const viewer = document.getElementById("viewer")
+        const loader = document.getElementById("loader")
         const list = document.getElementById("toc")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
@@ -36,30 +39,8 @@
             prev.style.display = hasPrev ? "none" : "block"
             next.style.display = hasNext ? "none" : "block"
         }
-        const createView = (lsc, html) => {
+        const init = () => {
 
-            const rect = lsc.getBoundingClientRect()
-            const view = document.createElement("div")
-            const iframe = document.createElement("iframe")
-            view.className = "view-container"
-            iframe.style.width = rect.width + "px"
-            iframe.style.height = rect.height + "px"
-            iframe.style.border = "none"
-            iframe.style.overflow = "hidden"
-            iframe.srcdoc = html
-            iframe.onload = (e) => {
-
-                const body = iframe.contentDocument.body
-                body.style.padding = "37px"
-            }
-            view.appendChild(iframe)
-            return view
-        }
-        const display = (target) => {
-
-            if (viewer.firstChild) {
-                viewer.removeChild(viewer.firstChild)
-            }
             const vpc = document.createElement("div")
             const lsc = document.createElement("div")
             lsc.className = "views-container"
@@ -68,18 +49,55 @@
             vpc.className = "viewport-container"
             vpc.style.width = "800px"
             vpc.style.height = (window.innerHeight - 80) + "px"
+            vpc.style.display = "flex"
             vpc.style.overflow = "hidden"
+            vpc.style.position = "relative"
+            vpc.style.flexWrap = "nowrap"
             vpc.appendChild(lsc)
             viewer.appendChild(vpc)
+            return { lsc, rect: vpc.getBoundingClientRect() }
+        }
+        const { lsc, rect } = init()
+        const load = (html) => {
+
+            const view = document.createElement("div")
+            const iframe = document.createElement("iframe")
+            view.className = "view-container"
+            view.style.visibility = "hidden"
+            iframe.style.width = rect.width + "px"
+            iframe.style.height = rect.height + "px"
+            iframe.style.border = "none"
+            iframe.style.overflow = "hidden"
+            iframe.srcdoc = html
+            iframe.onload = (e) => {
+
+                const body = e.target.contentDocument.body
+                body.style.padding = "37px"
+                body.style.margin = "0"
+                view.style.width = body.clientWidth + "px"
+                view.style.height = body.clientHeight + "px"
+                view.style.visibility = "visible"
+            }
+            view.appendChild(iframe)
+            return Promise.resolve(view)
+        }
+        const display = (target) => {
+
+            if (lsc.firstChild) {
+                lsc.removeChild(lsc.firstChild)
+            }
+
             const section = book.sections.get(target)
             if (section) {
-                section.render(book.request).then((html) => {
-                   
-                    lsc.appendChild(createView(lsc, html))
-                })
                 console.log(section)
+                return section.render(book.request).then((html) => {
+                    return load(html)
+                }).then((view) => {
+                    lsc.appendChild(view)
+                    return section
+                })
             }
-            return section;
+            return Promise.resolve(null);
         }
         book.loaded.navigation.then((toc) => {
 
@@ -94,18 +112,20 @@
 
                 const ind = e.target.selectedIndex
                 const url = e.target[ind].ref
-                display(url)
-                update()
+                display(url).then((s) => {
+                    if (s) update()
+                })
             }
             prev.onclick = (e) => {
 
                 let index = list.selectedIndex - 1
                 if (index >= 0) {
                     const url = list[index].ref
-                    if (display(url)) {
+                    display(url).then((s) => {
+                        if (!s) return
                         list.selectedIndex = index
                         update()
-                    }
+                    })
                 }
                 e.preventDefault()
             }
@@ -114,26 +134,28 @@
                 let index = list.selectedIndex + 1
                 if (index < list.length) {
                     const url = list[index].ref
-                    if (display(url)) {
+                    display(url).then((s) => {
+                        if (!s) return
                         list.selectedIndex = index
                         update()
-                    }
+                    })
                 }
                 e.preventDefault()
             }
-            book.opened.then(() => {
+        })
+        book.opened.then(() => {
 
-                const section = display(6)
-                if (section) {
-                    for (const opt of list.children) {
-                        if (section.href === opt.ref) {
-                            list.selectedIndex = opt.index
-                            break
-                        }
+            const section = display()
+            if (section) {
+                for (const opt of list.children) {
+                    if (section.href === opt.ref) {
+                        list.selectedIndex = opt.index
+                        break
                     }
-                    update()
                 }
-            })
+                update()
+            }
+            loader.style.display = "none"
         })
     </script>
 </body>

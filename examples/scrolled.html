@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Scrolled - Example</title>
+    <title>EPUB.JS: Scrolling a document - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
@@ -12,11 +12,14 @@
 
 <body>
     <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="scrolled"></div>
+        <div id="viewer" class="scrolled">
+            <div id="loader"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script>
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
@@ -24,6 +27,10 @@
             flow: "scrolled",
             width: 800,
             height: window.innerHeight - 80
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         next.onclick = (e) => {
 

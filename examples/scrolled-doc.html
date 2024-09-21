@@ -8,26 +8,34 @@
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <link rel="stylesheet" type="text/css" href="examples.css">
     <script src="../dist/epub.js"></script>
+    <script>
+        window.onload = (e) => {
+            const loader = document.getElementById("loader")
+            const book = ePub("../assets/alice/")
+            const rendition = book.renderTo(document.body, {
+                manager: "continuous",
+                flow: "scrolled-doc",
+                pageWidth: 800
+            })
+            book.opened.then(() => {
+
+                loader.style.display = "none"
+            })
+            rendition.display()
+            rendition.on("attached", () => {
+
+                console.log(rendition)
+            })
+            rendition.on("relocated", (location) => {
+
+                console.log(location)
+            })
+        }
+    </script>
 </head>
 
-<body id="viewport" class="ltr" dir="ltr">
-    <script>
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo(document.body, {
-            manager: "continuous",
-            flow: "scrolled-doc",
-            pageWidth: 800
-        })
-        rendition.display()
-        rendition.on("attached", () => {
-
-            console.log(rendition)
-        })
-        rendition.on("relocated", (location) => {
-
-            console.log(location)
-        })
-    </script>
+<body id="viewport">
+    <div id="loader"></div>
 </body>
 
 </html>
