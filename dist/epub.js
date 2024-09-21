@@ -6239,82 +6239,6 @@ module.exports = now;
 
 /***/ }),
 
-/***/ 7350:
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-var debounce = __webpack_require__(8221),
-    isObject = __webpack_require__(3805);
-
-/** Error message constants. */
-var FUNC_ERROR_TEXT = 'Expected a function';
-
-/**
- * Creates a throttled function that only invokes `func` at most once per
- * every `wait` milliseconds. The throttled function comes with a `cancel`
- * method to cancel delayed `func` invocations and a `flush` method to
- * immediately invoke them. Provide `options` to indicate whether `func`
- * should be invoked on the leading and/or trailing edge of the `wait`
- * timeout. The `func` is invoked with the last arguments provided to the
- * throttled function. Subsequent calls to the throttled function return the
- * result of the last `func` invocation.
- *
- * **Note:** If `leading` and `trailing` options are `true`, `func` is
- * invoked on the trailing edge of the timeout only if the throttled function
- * is invoked more than once during the `wait` timeout.
- *
- * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
- * until to the next tick, similar to `setTimeout` with a timeout of `0`.
- *
- * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
- * for details over the differences between `_.throttle` and `_.debounce`.
- *
- * @static
- * @memberOf _
- * @since 0.1.0
- * @category Function
- * @param {Function} func The function to throttle.
- * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
- * @param {Object} [options={}] The options object.
- * @param {boolean} [options.leading=true]
- *  Specify invoking on the leading edge of the timeout.
- * @param {boolean} [options.trailing=true]
- *  Specify invoking on the trailing edge of the timeout.
- * @returns {Function} Returns the new throttled function.
- * @example
- *
- * // Avoid excessively updating the position while scrolling.
- * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
- *
- * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
- * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
- * jQuery(element).on('click', throttled);
- *
- * // Cancel the trailing throttled invocation.
- * jQuery(window).on('popstate', throttled.cancel);
- */
-function throttle(func, wait, options) {
-  var leading = true,
-      trailing = true;
-
-  if (typeof func != 'function') {
-    throw new TypeError(FUNC_ERROR_TEXT);
-  }
-  if (isObject(options)) {
-    leading = 'leading' in options ? !!options.leading : leading;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
-  }
-  return debounce(func, wait, {
-    'leading': leading,
-    'maxWait': wait,
-    'trailing': trailing
-  });
-}
-
-module.exports = throttle;
-
-
-/***/ }),
-
 /***/ 9374:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6712,6 +6636,22 @@ module.exports = function (argument) {
 
 /***/ }),
 
+/***/ 6194:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var has = (__webpack_require__(2248).has);
+
+// Perform ? RequireInternalSlot(M, [[MapData]])
+module.exports = function (it) {
+  has(it);
+  return it;
+};
+
+
+/***/ }),
+
 /***/ 3506:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6766,6 +6706,126 @@ module.exports = function (argument) {
 
 /***/ }),
 
+/***/ 7394:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var uncurryThisAccessor = __webpack_require__(6706);
+var classof = __webpack_require__(2195);
+
+var ArrayBuffer = globalThis.ArrayBuffer;
+var TypeError = globalThis.TypeError;
+
+// Includes
+// - Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
+// - If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
+module.exports = ArrayBuffer && uncurryThisAccessor(ArrayBuffer.prototype, 'byteLength', 'get') || function (O) {
+  if (classof(O) !== 'ArrayBuffer') throw new TypeError('ArrayBuffer expected');
+  return O.byteLength;
+};
+
+
+/***/ }),
+
+/***/ 3238:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var uncurryThis = __webpack_require__(7476);
+var arrayBufferByteLength = __webpack_require__(7394);
+
+var ArrayBuffer = globalThis.ArrayBuffer;
+var ArrayBufferPrototype = ArrayBuffer && ArrayBuffer.prototype;
+var slice = ArrayBufferPrototype && uncurryThis(ArrayBufferPrototype.slice);
+
+module.exports = function (O) {
+  if (arrayBufferByteLength(O) !== 0) return false;
+  if (!slice) return false;
+  try {
+    slice(O, 0, 0);
+    return false;
+  } catch (error) {
+    return true;
+  }
+};
+
+
+/***/ }),
+
+/***/ 5169:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var isDetached = __webpack_require__(3238);
+
+var $TypeError = TypeError;
+
+module.exports = function (it) {
+  if (isDetached(it)) throw new $TypeError('ArrayBuffer is detached');
+  return it;
+};
+
+
+/***/ }),
+
+/***/ 5636:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var uncurryThis = __webpack_require__(9504);
+var uncurryThisAccessor = __webpack_require__(6706);
+var toIndex = __webpack_require__(7696);
+var notDetached = __webpack_require__(5169);
+var arrayBufferByteLength = __webpack_require__(7394);
+var detachTransferable = __webpack_require__(4483);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(1548);
+
+var structuredClone = globalThis.structuredClone;
+var ArrayBuffer = globalThis.ArrayBuffer;
+var DataView = globalThis.DataView;
+var min = Math.min;
+var ArrayBufferPrototype = ArrayBuffer.prototype;
+var DataViewPrototype = DataView.prototype;
+var slice = uncurryThis(ArrayBufferPrototype.slice);
+var isResizable = uncurryThisAccessor(ArrayBufferPrototype, 'resizable', 'get');
+var maxByteLength = uncurryThisAccessor(ArrayBufferPrototype, 'maxByteLength', 'get');
+var getInt8 = uncurryThis(DataViewPrototype.getInt8);
+var setInt8 = uncurryThis(DataViewPrototype.setInt8);
+
+module.exports = (PROPER_STRUCTURED_CLONE_TRANSFER || detachTransferable) && function (arrayBuffer, newLength, preserveResizability) {
+  var byteLength = arrayBufferByteLength(arrayBuffer);
+  var newByteLength = newLength === undefined ? byteLength : toIndex(newLength);
+  var fixedLength = !isResizable || !isResizable(arrayBuffer);
+  var newBuffer;
+  notDetached(arrayBuffer);
+  if (PROPER_STRUCTURED_CLONE_TRANSFER) {
+    arrayBuffer = structuredClone(arrayBuffer, { transfer: [arrayBuffer] });
+    if (byteLength === newByteLength && (preserveResizability || fixedLength)) return arrayBuffer;
+  }
+  if (byteLength >= newByteLength && (!preserveResizability || fixedLength)) {
+    newBuffer = slice(arrayBuffer, 0, newByteLength);
+  } else {
+    var options = preserveResizability && !fixedLength && maxByteLength ? { maxByteLength: maxByteLength(arrayBuffer) } : undefined;
+    newBuffer = new ArrayBuffer(newByteLength, options);
+    var a = new DataView(arrayBuffer);
+    var b = new DataView(newBuffer);
+    var copyLength = min(newByteLength, byteLength);
+    for (var i = 0; i < copyLength; i++) setInt8(b, i, getInt8(a, i));
+  }
+  if (!PROPER_STRUCTURED_CLONE_TRANSFER) detachTransferable(arrayBuffer);
+  return newBuffer;
+};
+
+
+/***/ }),
+
 /***/ 9617:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6803,6 +6863,410 @@ module.exports = {
   // `Array.prototype.indexOf` method
   // https://tc39.es/ecma262/#sec-array.prototype.indexof
   indexOf: createMethod(false)
+};
+
+
+/***/ }),
+
+/***/ 4527:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(3724);
+var isArray = __webpack_require__(4376);
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+
+// Safari < 13 does not throw an error in this case
+var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
+  // makes no sense without proper strict mode support
+  if (this !== undefined) return true;
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).length = 1;
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+}();
+
+module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
+  if (isArray(O) && !getOwnPropertyDescriptor(O, 'length').writable) {
+    throw new $TypeError('Cannot set read only .length');
+  } return O.length = length;
+} : function (O, length) {
+  return O.length = length;
+};
+
+
+/***/ }),
+
+/***/ 772:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var getBuiltIn = __webpack_require__(7751);
+var getMethod = __webpack_require__(5966);
+
+module.exports = function (iterator, method, argument, reject) {
+  try {
+    var returnMethod = getMethod(iterator, 'return');
+    if (returnMethod) {
+      return getBuiltIn('Promise').resolve(call(returnMethod, iterator)).then(function () {
+        method(argument);
+      }, function (error) {
+        reject(error);
+      });
+    }
+  } catch (error2) {
+    return reject(error2);
+  } method(argument);
+};
+
+
+/***/ }),
+
+/***/ 2059:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var perform = __webpack_require__(1103);
+var anObject = __webpack_require__(8551);
+var create = __webpack_require__(2360);
+var createNonEnumerableProperty = __webpack_require__(6699);
+var defineBuiltIns = __webpack_require__(6279);
+var wellKnownSymbol = __webpack_require__(8227);
+var InternalStateModule = __webpack_require__(1181);
+var getBuiltIn = __webpack_require__(7751);
+var getMethod = __webpack_require__(5966);
+var AsyncIteratorPrototype = __webpack_require__(3982);
+var createIterResultObject = __webpack_require__(2529);
+var iteratorClose = __webpack_require__(9539);
+
+var Promise = getBuiltIn('Promise');
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var ASYNC_ITERATOR_HELPER = 'AsyncIteratorHelper';
+var WRAP_FOR_VALID_ASYNC_ITERATOR = 'WrapForValidAsyncIterator';
+var setInternalState = InternalStateModule.set;
+
+var createAsyncIteratorProxyPrototype = function (IS_ITERATOR) {
+  var IS_GENERATOR = !IS_ITERATOR;
+  var getInternalState = InternalStateModule.getterFor(IS_ITERATOR ? WRAP_FOR_VALID_ASYNC_ITERATOR : ASYNC_ITERATOR_HELPER);
+
+  var getStateOrEarlyExit = function (that) {
+    var stateCompletion = perform(function () {
+      return getInternalState(that);
+    });
+
+    var stateError = stateCompletion.error;
+    var state = stateCompletion.value;
+
+    if (stateError || (IS_GENERATOR && state.done)) {
+      return { exit: true, value: stateError ? Promise.reject(state) : Promise.resolve(createIterResultObject(undefined, true)) };
+    } return { exit: false, value: state };
+  };
+
+  return defineBuiltIns(create(AsyncIteratorPrototype), {
+    next: function next() {
+      var stateCompletion = getStateOrEarlyExit(this);
+      var state = stateCompletion.value;
+      if (stateCompletion.exit) return state;
+      var handlerCompletion = perform(function () {
+        return anObject(state.nextHandler(Promise));
+      });
+      var handlerError = handlerCompletion.error;
+      var value = handlerCompletion.value;
+      if (handlerError) state.done = true;
+      return handlerError ? Promise.reject(value) : Promise.resolve(value);
+    },
+    'return': function () {
+      var stateCompletion = getStateOrEarlyExit(this);
+      var state = stateCompletion.value;
+      if (stateCompletion.exit) return state;
+      state.done = true;
+      var iterator = state.iterator;
+      var returnMethod, result;
+      var completion = perform(function () {
+        if (state.inner) try {
+          iteratorClose(state.inner.iterator, 'normal');
+        } catch (error) {
+          return iteratorClose(iterator, 'throw', error);
+        }
+        return getMethod(iterator, 'return');
+      });
+      returnMethod = result = completion.value;
+      if (completion.error) return Promise.reject(result);
+      if (returnMethod === undefined) return Promise.resolve(createIterResultObject(undefined, true));
+      completion = perform(function () {
+        return call(returnMethod, iterator);
+      });
+      result = completion.value;
+      if (completion.error) return Promise.reject(result);
+      return IS_ITERATOR ? Promise.resolve(result) : Promise.resolve(result).then(function (resolved) {
+        anObject(resolved);
+        return createIterResultObject(undefined, true);
+      });
+    }
+  });
+};
+
+var WrapForValidAsyncIteratorPrototype = createAsyncIteratorProxyPrototype(true);
+var AsyncIteratorHelperPrototype = createAsyncIteratorProxyPrototype(false);
+
+createNonEnumerableProperty(AsyncIteratorHelperPrototype, TO_STRING_TAG, 'Async Iterator Helper');
+
+module.exports = function (nextHandler, IS_ITERATOR) {
+  var AsyncIteratorProxy = function AsyncIterator(record, state) {
+    if (state) {
+      state.iterator = record.iterator;
+      state.next = record.next;
+    } else state = record;
+    state.type = IS_ITERATOR ? WRAP_FOR_VALID_ASYNC_ITERATOR : ASYNC_ITERATOR_HELPER;
+    state.nextHandler = nextHandler;
+    state.counter = 0;
+    state.done = false;
+    setInternalState(this, state);
+  };
+
+  AsyncIteratorProxy.prototype = IS_ITERATOR ? WrapForValidAsyncIteratorPrototype : AsyncIteratorHelperPrototype;
+
+  return AsyncIteratorProxy;
+};
+
+
+/***/ }),
+
+/***/ 6639:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+// https://github.com/tc39/proposal-iterator-helpers
+// https://github.com/tc39/proposal-array-from-async
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var isObject = __webpack_require__(34);
+var doesNotExceedSafeInteger = __webpack_require__(6837);
+var getBuiltIn = __webpack_require__(7751);
+var getIteratorDirect = __webpack_require__(1767);
+var closeAsyncIteration = __webpack_require__(772);
+
+var createMethod = function (TYPE) {
+  var IS_TO_ARRAY = TYPE === 0;
+  var IS_FOR_EACH = TYPE === 1;
+  var IS_EVERY = TYPE === 2;
+  var IS_SOME = TYPE === 3;
+  return function (object, fn, target) {
+    anObject(object);
+    var MAPPING = fn !== undefined;
+    if (MAPPING || !IS_TO_ARRAY) aCallable(fn);
+    var record = getIteratorDirect(object);
+    var Promise = getBuiltIn('Promise');
+    var iterator = record.iterator;
+    var next = record.next;
+    var counter = 0;
+
+    return new Promise(function (resolve, reject) {
+      var ifAbruptCloseAsyncIterator = function (error) {
+        closeAsyncIteration(iterator, reject, error, reject);
+      };
+
+      var loop = function () {
+        try {
+          if (MAPPING) try {
+            doesNotExceedSafeInteger(counter);
+          } catch (error5) { ifAbruptCloseAsyncIterator(error5); }
+          Promise.resolve(anObject(call(next, iterator))).then(function (step) {
+            try {
+              if (anObject(step).done) {
+                if (IS_TO_ARRAY) {
+                  target.length = counter;
+                  resolve(target);
+                } else resolve(IS_SOME ? false : IS_EVERY || undefined);
+              } else {
+                var value = step.value;
+                try {
+                  if (MAPPING) {
+                    var result = fn(value, counter);
+
+                    var handler = function ($result) {
+                      if (IS_FOR_EACH) {
+                        loop();
+                      } else if (IS_EVERY) {
+                        $result ? loop() : closeAsyncIteration(iterator, resolve, false, reject);
+                      } else if (IS_TO_ARRAY) {
+                        try {
+                          target[counter++] = $result;
+                          loop();
+                        } catch (error4) { ifAbruptCloseAsyncIterator(error4); }
+                      } else {
+                        $result ? closeAsyncIteration(iterator, resolve, IS_SOME || value, reject) : loop();
+                      }
+                    };
+
+                    if (isObject(result)) Promise.resolve(result).then(handler, ifAbruptCloseAsyncIterator);
+                    else handler(result);
+                  } else {
+                    target[counter++] = value;
+                    loop();
+                  }
+                } catch (error3) { ifAbruptCloseAsyncIterator(error3); }
+              }
+            } catch (error2) { reject(error2); }
+          }, reject);
+        } catch (error) { reject(error); }
+      };
+
+      loop();
+    });
+  };
+};
+
+module.exports = {
+  toArray: createMethod(0),
+  forEach: createMethod(1),
+  every: createMethod(2),
+  some: createMethod(3),
+  find: createMethod(4)
+};
+
+
+/***/ }),
+
+/***/ 1750:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var isObject = __webpack_require__(34);
+var getIteratorDirect = __webpack_require__(1767);
+var createAsyncIteratorProxy = __webpack_require__(2059);
+var createIterResultObject = __webpack_require__(2529);
+var closeAsyncIteration = __webpack_require__(772);
+
+var AsyncIteratorProxy = createAsyncIteratorProxy(function (Promise) {
+  var state = this;
+  var iterator = state.iterator;
+  var mapper = state.mapper;
+
+  return new Promise(function (resolve, reject) {
+    var doneAndReject = function (error) {
+      state.done = true;
+      reject(error);
+    };
+
+    var ifAbruptCloseAsyncIterator = function (error) {
+      closeAsyncIteration(iterator, doneAndReject, error, doneAndReject);
+    };
+
+    Promise.resolve(anObject(call(state.next, iterator))).then(function (step) {
+      try {
+        if (anObject(step).done) {
+          state.done = true;
+          resolve(createIterResultObject(undefined, true));
+        } else {
+          var value = step.value;
+          try {
+            var result = mapper(value, state.counter++);
+
+            var handler = function (mapped) {
+              resolve(createIterResultObject(mapped, false));
+            };
+
+            if (isObject(result)) Promise.resolve(result).then(handler, ifAbruptCloseAsyncIterator);
+            else handler(result);
+          } catch (error2) { ifAbruptCloseAsyncIterator(error2); }
+        }
+      } catch (error) { doneAndReject(error); }
+    }, doneAndReject);
+  });
+});
+
+// `AsyncIterator.prototype.map` method
+// https://github.com/tc39/proposal-iterator-helpers
+module.exports = function map(mapper) {
+  anObject(this);
+  aCallable(mapper);
+  return new AsyncIteratorProxy(getIteratorDirect(this), {
+    mapper: mapper
+  });
+};
+
+
+/***/ }),
+
+/***/ 3982:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var shared = __webpack_require__(7629);
+var isCallable = __webpack_require__(4901);
+var create = __webpack_require__(2360);
+var getPrototypeOf = __webpack_require__(2787);
+var defineBuiltIn = __webpack_require__(6840);
+var wellKnownSymbol = __webpack_require__(8227);
+var IS_PURE = __webpack_require__(6395);
+
+var USE_FUNCTION_CONSTRUCTOR = 'USE_FUNCTION_CONSTRUCTOR';
+var ASYNC_ITERATOR = wellKnownSymbol('asyncIterator');
+var AsyncIterator = globalThis.AsyncIterator;
+var PassedAsyncIteratorPrototype = shared.AsyncIteratorPrototype;
+var AsyncIteratorPrototype, prototype;
+
+if (PassedAsyncIteratorPrototype) {
+  AsyncIteratorPrototype = PassedAsyncIteratorPrototype;
+} else if (isCallable(AsyncIterator)) {
+  AsyncIteratorPrototype = AsyncIterator.prototype;
+} else if (shared[USE_FUNCTION_CONSTRUCTOR] || globalThis[USE_FUNCTION_CONSTRUCTOR]) {
+  try {
+    // eslint-disable-next-line no-new-func -- we have no alternatives without usage of modern syntax
+    prototype = getPrototypeOf(getPrototypeOf(getPrototypeOf(Function('return async function*(){}()')())));
+    if (getPrototypeOf(prototype) === Object.prototype) AsyncIteratorPrototype = prototype;
+  } catch (error) { /* empty */ }
+}
+
+if (!AsyncIteratorPrototype) AsyncIteratorPrototype = {};
+else if (IS_PURE) AsyncIteratorPrototype = create(AsyncIteratorPrototype);
+
+if (!isCallable(AsyncIteratorPrototype[ASYNC_ITERATOR])) {
+  defineBuiltIn(AsyncIteratorPrototype, ASYNC_ITERATOR, function () {
+    return this;
+  });
+}
+
+module.exports = AsyncIteratorPrototype;
+
+
+/***/ }),
+
+/***/ 6319:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var anObject = __webpack_require__(8551);
+var iteratorClose = __webpack_require__(9539);
+
+// call something on iterator step with safe closing on error
+module.exports = function (iterator, fn, value, ENTRIES) {
+  try {
+    return ENTRIES ? fn(anObject(value)[0], value[1]) : fn(value);
+  } catch (error) {
+    iteratorClose(iterator, 'throw', error);
+  }
 };
 
 
@@ -6888,6 +7352,37 @@ module.exports = function (target, source, exceptions) {
 
 /***/ }),
 
+/***/ 2211:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var fails = __webpack_require__(9039);
+
+module.exports = !fails(function () {
+  function F() { /* empty */ }
+  F.prototype.constructor = null;
+  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
+  return Object.getPrototypeOf(new F()) !== F.prototype;
+});
+
+
+/***/ }),
+
+/***/ 2529:
+/***/ ((module) => {
+
+"use strict";
+
+// `CreateIterResultObject` abstract operation
+// https://tc39.es/ecma262/#sec-createiterresultobject
+module.exports = function (value, done) {
+  return { value: value, done: done };
+};
+
+
+/***/ }),
+
 /***/ 6699:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6919,6 +7414,40 @@ module.exports = function (bitmap, value) {
     writable: !(bitmap & 4),
     value: value
   };
+};
+
+
+/***/ }),
+
+/***/ 4659:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(3724);
+var definePropertyModule = __webpack_require__(4913);
+var createPropertyDescriptor = __webpack_require__(6980);
+
+module.exports = function (object, key, value) {
+  if (DESCRIPTORS) definePropertyModule.f(object, key, createPropertyDescriptor(0, value));
+  else object[key] = value;
+};
+
+
+/***/ }),
+
+/***/ 2106:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var makeBuiltIn = __webpack_require__(283);
+var defineProperty = __webpack_require__(4913);
+
+module.exports = function (target, name, descriptor) {
+  if (descriptor.get) makeBuiltIn(descriptor.get, name, { getter: true });
+  if (descriptor.set) makeBuiltIn(descriptor.set, name, { setter: true });
+  return defineProperty.f(target, name, descriptor);
 };
 
 
@@ -6960,6 +7489,21 @@ module.exports = function (O, key, value, options) {
 
 /***/ }),
 
+/***/ 6279:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var defineBuiltIn = __webpack_require__(6840);
+
+module.exports = function (target, src, options) {
+  for (var key in src) defineBuiltIn(target, key, src[key], options);
+  return target;
+};
+
+
+/***/ }),
+
 /***/ 9433:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6981,6 +7525,22 @@ module.exports = function (key, value) {
 
 /***/ }),
 
+/***/ 4606:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var tryToString = __webpack_require__(6823);
+
+var $TypeError = TypeError;
+
+module.exports = function (O, P) {
+  if (!delete O[P]) throw new $TypeError('Cannot delete property ' + tryToString(P) + ' of ' + tryToString(O));
+};
+
+
+/***/ }),
+
 /***/ 3724:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -6993,6 +7553,51 @@ module.exports = !fails(function () {
   // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] !== 7;
 });
+
+
+/***/ }),
+
+/***/ 4483:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var getBuiltInNodeModule = __webpack_require__(9429);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(1548);
+
+var structuredClone = globalThis.structuredClone;
+var $ArrayBuffer = globalThis.ArrayBuffer;
+var $MessageChannel = globalThis.MessageChannel;
+var detach = false;
+var WorkerThreads, channel, buffer, $detach;
+
+if (PROPER_STRUCTURED_CLONE_TRANSFER) {
+  detach = function (transferable) {
+    structuredClone(transferable, { transfer: [transferable] });
+  };
+} else if ($ArrayBuffer) try {
+  if (!$MessageChannel) {
+    WorkerThreads = getBuiltInNodeModule('worker_threads');
+    if (WorkerThreads) $MessageChannel = WorkerThreads.MessageChannel;
+  }
+
+  if ($MessageChannel) {
+    channel = new $MessageChannel();
+    buffer = new $ArrayBuffer(2);
+
+    $detach = function (transferable) {
+      channel.port1.postMessage(null, [transferable]);
+    };
+
+    if (buffer.byteLength === 2) {
+      $detach(buffer);
+      if (buffer.byteLength === 0) detach = $detach;
+    }
+  }
+} catch (error) { /* empty */ }
+
+module.exports = detach;
 
 
 /***/ }),
@@ -7011,6 +7616,22 @@ var EXISTS = isObject(document) && isObject(document.createElement);
 
 module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
+};
+
+
+/***/ }),
+
+/***/ 6837:
+/***/ ((module) => {
+
+"use strict";
+
+var $TypeError = TypeError;
+var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF; // 2 ** 53 - 1 == 9007199254740991
+
+module.exports = function (it) {
+  if (it > MAX_SAFE_INTEGER) throw $TypeError('Maximum allowed index exceeded');
+  return it;
 };
 
 
@@ -7071,6 +7692,18 @@ module.exports = [
 
 /***/ }),
 
+/***/ 6193:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var ENVIRONMENT = __webpack_require__(4215);
+
+module.exports = ENVIRONMENT === 'NODE';
+
+
+/***/ }),
+
 /***/ 2839:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7122,7 +7755,36 @@ module.exports = version;
 
 /***/ }),
 
-/***/ 6193:
+/***/ 4215:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+/* global Bun, Deno -- detection */
+var globalThis = __webpack_require__(4576);
+var userAgent = __webpack_require__(2839);
+var classof = __webpack_require__(2195);
+
+var userAgentStartsWith = function (string) {
+  return userAgent.slice(0, string.length) === string;
+};
+
+module.exports = (function () {
+  if (userAgentStartsWith('Bun/')) return 'BUN';
+  if (userAgentStartsWith('Cloudflare-Workers')) return 'CLOUDFLARE';
+  if (userAgentStartsWith('Deno/')) return 'DENO';
+  if (userAgentStartsWith('Node.js/')) return 'NODE';
+  if (globalThis.Bun && typeof Bun.version == 'string') return 'BUN';
+  if (globalThis.Deno && typeof Deno.version == 'object') return 'DENO';
+  if (classof(globalThis.process) === 'process') return 'NODE';
+  if (globalThis.window && globalThis.document) return 'BROWSER';
+  return 'REST';
+})();
+
+
+/***/ }),
+
+/***/ 8574:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 "use strict";
@@ -7225,6 +7887,28 @@ module.exports = function (exec) {
 
 /***/ }),
 
+/***/ 6080:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(7476);
+var aCallable = __webpack_require__(9306);
+var NATIVE_BIND = __webpack_require__(616);
+
+var bind = uncurryThis(uncurryThis.bind);
+
+// optional / simple context binding
+module.exports = function (fn, that) {
+  aCallable(fn);
+  return that === undefined ? fn : NATIVE_BIND ? bind(fn, that) : function (/* ...args */) {
+    return fn.apply(that, arguments);
+  };
+};
+
+
+/***/ }),
+
 /***/ 616:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7302,6 +7986,24 @@ module.exports = function (object, key, method) {
 
 /***/ }),
 
+/***/ 7476:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var classofRaw = __webpack_require__(2195);
+var uncurryThis = __webpack_require__(9504);
+
+module.exports = function (fn) {
+  // Nashorn bug:
+  //   https://github.com/zloirock/core-js/issues/1128
+  //   https://github.com/zloirock/core-js/issues/1130
+  if (classofRaw(fn) === 'Function') return uncurryThis(fn);
+};
+
+
+/***/ }),
+
 /***/ 9504:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7322,6 +8024,29 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
 
 /***/ }),
 
+/***/ 9429:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var IS_NODE = __webpack_require__(6193);
+
+module.exports = function (name) {
+  if (IS_NODE) {
+    try {
+      return globalThis.process.getBuiltinModule(name);
+    } catch (error) { /* empty */ }
+    try {
+      // eslint-disable-next-line no-new-func -- safe
+      return Function('return require("' + name + '")')();
+    } catch (error) { /* empty */ }
+  }
+};
+
+
+/***/ }),
+
 /***/ 7751:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7336,6 +8061,68 @@ var aFunction = function (argument) {
 
 module.exports = function (namespace, method) {
   return arguments.length < 2 ? aFunction(globalThis[namespace]) : globalThis[namespace] && globalThis[namespace][method];
+};
+
+
+/***/ }),
+
+/***/ 1767:
+/***/ ((module) => {
+
+"use strict";
+
+// `GetIteratorDirect(obj)` abstract operation
+// https://tc39.es/proposal-iterator-helpers/#sec-getiteratordirect
+module.exports = function (obj) {
+  return {
+    iterator: obj,
+    next: obj.next,
+    done: false
+  };
+};
+
+
+/***/ }),
+
+/***/ 851:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var classof = __webpack_require__(6955);
+var getMethod = __webpack_require__(5966);
+var isNullOrUndefined = __webpack_require__(4117);
+var Iterators = __webpack_require__(6269);
+var wellKnownSymbol = __webpack_require__(8227);
+
+var ITERATOR = wellKnownSymbol('iterator');
+
+module.exports = function (it) {
+  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
+    || getMethod(it, '@@iterator')
+    || Iterators[classof(it)];
+};
+
+
+/***/ }),
+
+/***/ 81:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var tryToString = __webpack_require__(6823);
+var getIteratorMethod = __webpack_require__(851);
+
+var $TypeError = TypeError;
+
+module.exports = function (argument, usingIterator) {
+  var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
+  if (aCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
+  throw new $TypeError(tryToString(argument) + ' is not iterable');
 };
 
 
@@ -7409,6 +8196,18 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
 "use strict";
 
 module.exports = {};
+
+
+/***/ }),
+
+/***/ 397:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var getBuiltIn = __webpack_require__(7751);
+
+module.exports = getBuiltIn('document', 'documentElement');
 
 
 /***/ }),
@@ -7586,6 +8385,42 @@ module.exports = {
 
 /***/ }),
 
+/***/ 4209:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var wellKnownSymbol = __webpack_require__(8227);
+var Iterators = __webpack_require__(6269);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var ArrayPrototype = Array.prototype;
+
+// check on default Array iterator
+module.exports = function (it) {
+  return it !== undefined && (Iterators.Array === it || ArrayPrototype[ITERATOR] === it);
+};
+
+
+/***/ }),
+
+/***/ 4376:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var classof = __webpack_require__(2195);
+
+// `IsArray` abstract operation
+// https://tc39.es/ecma262/#sec-isarray
+// eslint-disable-next-line es/no-array-isarray -- safe
+module.exports = Array.isArray || function isArray(argument) {
+  return classof(argument) === 'Array';
+};
+
+
+/***/ }),
+
 /***/ 4901:
 /***/ ((module) => {
 
@@ -7711,6 +8546,318 @@ module.exports = USE_SYMBOL_AS_UID ? function (it) {
 
 /***/ }),
 
+/***/ 507:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+
+module.exports = function (record, fn, ITERATOR_INSTEAD_OF_RECORD) {
+  var iterator = ITERATOR_INSTEAD_OF_RECORD ? record : record.iterator;
+  var next = record.next;
+  var step, result;
+  while (!(step = call(next, iterator)).done) {
+    result = fn(step.value);
+    if (result !== undefined) return result;
+  }
+};
+
+
+/***/ }),
+
+/***/ 2652:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var bind = __webpack_require__(6080);
+var call = __webpack_require__(9565);
+var anObject = __webpack_require__(8551);
+var tryToString = __webpack_require__(6823);
+var isArrayIteratorMethod = __webpack_require__(4209);
+var lengthOfArrayLike = __webpack_require__(6198);
+var isPrototypeOf = __webpack_require__(1625);
+var getIterator = __webpack_require__(81);
+var getIteratorMethod = __webpack_require__(851);
+var iteratorClose = __webpack_require__(9539);
+
+var $TypeError = TypeError;
+
+var Result = function (stopped, result) {
+  this.stopped = stopped;
+  this.result = result;
+};
+
+var ResultPrototype = Result.prototype;
+
+module.exports = function (iterable, unboundFunction, options) {
+  var that = options && options.that;
+  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+  var IS_RECORD = !!(options && options.IS_RECORD);
+  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+  var INTERRUPTED = !!(options && options.INTERRUPTED);
+  var fn = bind(unboundFunction, that);
+  var iterator, iterFn, index, length, result, next, step;
+
+  var stop = function (condition) {
+    if (iterator) iteratorClose(iterator, 'normal', condition);
+    return new Result(true, condition);
+  };
+
+  var callFn = function (value) {
+    if (AS_ENTRIES) {
+      anObject(value);
+      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+    } return INTERRUPTED ? fn(value, stop) : fn(value);
+  };
+
+  if (IS_RECORD) {
+    iterator = iterable.iterator;
+  } else if (IS_ITERATOR) {
+    iterator = iterable;
+  } else {
+    iterFn = getIteratorMethod(iterable);
+    if (!iterFn) throw new $TypeError(tryToString(iterable) + ' is not iterable');
+    // optimisation for array iterators
+    if (isArrayIteratorMethod(iterFn)) {
+      for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
+        result = callFn(iterable[index]);
+        if (result && isPrototypeOf(ResultPrototype, result)) return result;
+      } return new Result(false);
+    }
+    iterator = getIterator(iterable, iterFn);
+  }
+
+  next = IS_RECORD ? iterable.next : iterator.next;
+  while (!(step = call(next, iterator)).done) {
+    try {
+      result = callFn(step.value);
+    } catch (error) {
+      iteratorClose(iterator, 'throw', error);
+    }
+    if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
+  } return new Result(false);
+};
+
+
+/***/ }),
+
+/***/ 9539:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var anObject = __webpack_require__(8551);
+var getMethod = __webpack_require__(5966);
+
+module.exports = function (iterator, kind, value) {
+  var innerResult, innerError;
+  anObject(iterator);
+  try {
+    innerResult = getMethod(iterator, 'return');
+    if (!innerResult) {
+      if (kind === 'throw') throw value;
+      return value;
+    }
+    innerResult = call(innerResult, iterator);
+  } catch (error) {
+    innerError = true;
+    innerResult = error;
+  }
+  if (kind === 'throw') throw value;
+  if (innerError) throw innerResult;
+  anObject(innerResult);
+  return value;
+};
+
+
+/***/ }),
+
+/***/ 9462:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var create = __webpack_require__(2360);
+var createNonEnumerableProperty = __webpack_require__(6699);
+var defineBuiltIns = __webpack_require__(6279);
+var wellKnownSymbol = __webpack_require__(8227);
+var InternalStateModule = __webpack_require__(1181);
+var getMethod = __webpack_require__(5966);
+var IteratorPrototype = (__webpack_require__(7657).IteratorPrototype);
+var createIterResultObject = __webpack_require__(2529);
+var iteratorClose = __webpack_require__(9539);
+
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+var ITERATOR_HELPER = 'IteratorHelper';
+var WRAP_FOR_VALID_ITERATOR = 'WrapForValidIterator';
+var setInternalState = InternalStateModule.set;
+
+var createIteratorProxyPrototype = function (IS_ITERATOR) {
+  var getInternalState = InternalStateModule.getterFor(IS_ITERATOR ? WRAP_FOR_VALID_ITERATOR : ITERATOR_HELPER);
+
+  return defineBuiltIns(create(IteratorPrototype), {
+    next: function next() {
+      var state = getInternalState(this);
+      // for simplification:
+      //   for `%WrapForValidIteratorPrototype%.next` our `nextHandler` returns `IterResultObject`
+      //   for `%IteratorHelperPrototype%.next` - just a value
+      if (IS_ITERATOR) return state.nextHandler();
+      try {
+        var result = state.done ? undefined : state.nextHandler();
+        return createIterResultObject(result, state.done);
+      } catch (error) {
+        state.done = true;
+        throw error;
+      }
+    },
+    'return': function () {
+      var state = getInternalState(this);
+      var iterator = state.iterator;
+      state.done = true;
+      if (IS_ITERATOR) {
+        var returnMethod = getMethod(iterator, 'return');
+        return returnMethod ? call(returnMethod, iterator) : createIterResultObject(undefined, true);
+      }
+      if (state.inner) try {
+        iteratorClose(state.inner.iterator, 'normal');
+      } catch (error) {
+        return iteratorClose(iterator, 'throw', error);
+      }
+      iteratorClose(iterator, 'normal');
+      return createIterResultObject(undefined, true);
+    }
+  });
+};
+
+var WrapForValidIteratorPrototype = createIteratorProxyPrototype(true);
+var IteratorHelperPrototype = createIteratorProxyPrototype(false);
+
+createNonEnumerableProperty(IteratorHelperPrototype, TO_STRING_TAG, 'Iterator Helper');
+
+module.exports = function (nextHandler, IS_ITERATOR) {
+  var IteratorProxy = function Iterator(record, state) {
+    if (state) {
+      state.iterator = record.iterator;
+      state.next = record.next;
+    } else state = record;
+    state.type = IS_ITERATOR ? WRAP_FOR_VALID_ITERATOR : ITERATOR_HELPER;
+    state.nextHandler = nextHandler;
+    state.counter = 0;
+    state.done = false;
+    setInternalState(this, state);
+  };
+
+  IteratorProxy.prototype = IS_ITERATOR ? WrapForValidIteratorPrototype : IteratorHelperPrototype;
+
+  return IteratorProxy;
+};
+
+
+/***/ }),
+
+/***/ 713:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+var createIteratorProxy = __webpack_require__(9462);
+var callWithSafeIterationClosing = __webpack_require__(6319);
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var result = anObject(call(this.next, iterator));
+  var done = this.done = !!result.done;
+  if (!done) return callWithSafeIterationClosing(iterator, this.mapper, [result.value, this.counter++], true);
+});
+
+// `Iterator.prototype.map` method
+// https://github.com/tc39/proposal-iterator-helpers
+module.exports = function map(mapper) {
+  anObject(this);
+  aCallable(mapper);
+  return new IteratorProxy(getIteratorDirect(this), {
+    mapper: mapper
+  });
+};
+
+
+/***/ }),
+
+/***/ 7657:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var fails = __webpack_require__(9039);
+var isCallable = __webpack_require__(4901);
+var isObject = __webpack_require__(34);
+var create = __webpack_require__(2360);
+var getPrototypeOf = __webpack_require__(2787);
+var defineBuiltIn = __webpack_require__(6840);
+var wellKnownSymbol = __webpack_require__(8227);
+var IS_PURE = __webpack_require__(6395);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var BUGGY_SAFARI_ITERATORS = false;
+
+// `%IteratorPrototype%` object
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-object
+var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
+
+/* eslint-disable es/no-array-prototype-keys -- safe */
+if ([].keys) {
+  arrayIterator = [].keys();
+  // Safari 8 has buggy iterators w/o `next`
+  if (!('next' in arrayIterator)) BUGGY_SAFARI_ITERATORS = true;
+  else {
+    PrototypeOfArrayIteratorPrototype = getPrototypeOf(getPrototypeOf(arrayIterator));
+    if (PrototypeOfArrayIteratorPrototype !== Object.prototype) IteratorPrototype = PrototypeOfArrayIteratorPrototype;
+  }
+}
+
+var NEW_ITERATOR_PROTOTYPE = !isObject(IteratorPrototype) || fails(function () {
+  var test = {};
+  // FF44- legacy iterators case
+  return IteratorPrototype[ITERATOR].call(test) !== test;
+});
+
+if (NEW_ITERATOR_PROTOTYPE) IteratorPrototype = {};
+else if (IS_PURE) IteratorPrototype = create(IteratorPrototype);
+
+// `%IteratorPrototype%[@@iterator]()` method
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-@@iterator
+if (!isCallable(IteratorPrototype[ITERATOR])) {
+  defineBuiltIn(IteratorPrototype, ITERATOR, function () {
+    return this;
+  });
+}
+
+module.exports = {
+  IteratorPrototype: IteratorPrototype,
+  BUGGY_SAFARI_ITERATORS: BUGGY_SAFARI_ITERATORS
+};
+
+
+/***/ }),
+
+/***/ 6269:
+/***/ ((module) => {
+
+"use strict";
+
+module.exports = {};
+
+
+/***/ }),
+
 /***/ 6198:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7790,6 +8937,53 @@ Function.prototype.toString = makeBuiltIn(function toString() {
 
 /***/ }),
 
+/***/ 2248:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(9504);
+
+// eslint-disable-next-line es/no-map -- safe
+var MapPrototype = Map.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-map -- safe
+  Map: Map,
+  set: uncurryThis(MapPrototype.set),
+  get: uncurryThis(MapPrototype.get),
+  has: uncurryThis(MapPrototype.has),
+  remove: uncurryThis(MapPrototype['delete']),
+  proto: MapPrototype
+};
+
+
+/***/ }),
+
+/***/ 6223:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(9504);
+var iterateSimple = __webpack_require__(507);
+var MapHelpers = __webpack_require__(2248);
+
+var Map = MapHelpers.Map;
+var MapPrototype = MapHelpers.proto;
+var forEach = uncurryThis(MapPrototype.forEach);
+var entries = uncurryThis(MapPrototype.entries);
+var next = entries(new Map()).next;
+
+module.exports = function (map, fn, interruptible) {
+  return interruptible ? iterateSimple({ iterator: entries(map), next: next }, function (entry) {
+    return fn(entry[1], entry[0]);
+  }) : forEach(map, fn);
+};
+
+
+/***/ }),
+
 /***/ 741:
 /***/ ((module) => {
 
@@ -7818,6 +9012,128 @@ var toString = __webpack_require__(655);
 
 module.exports = function (argument, $default) {
   return argument === undefined ? arguments.length < 2 ? '' : $default : toString(argument);
+};
+
+
+/***/ }),
+
+/***/ 2360:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+/* global ActiveXObject -- old IE, WSH */
+var anObject = __webpack_require__(8551);
+var definePropertiesModule = __webpack_require__(6801);
+var enumBugKeys = __webpack_require__(8727);
+var hiddenKeys = __webpack_require__(421);
+var html = __webpack_require__(397);
+var documentCreateElement = __webpack_require__(4055);
+var sharedKey = __webpack_require__(6119);
+
+var GT = '>';
+var LT = '<';
+var PROTOTYPE = 'prototype';
+var SCRIPT = 'script';
+var IE_PROTO = sharedKey('IE_PROTO');
+
+var EmptyConstructor = function () { /* empty */ };
+
+var scriptTag = function (content) {
+  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+};
+
+// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+var NullProtoObjectViaActiveX = function (activeXDocument) {
+  activeXDocument.write(scriptTag(''));
+  activeXDocument.close();
+  var temp = activeXDocument.parentWindow.Object;
+  // eslint-disable-next-line no-useless-assignment -- avoid memory leak
+  activeXDocument = null;
+  return temp;
+};
+
+// Create object with fake `null` prototype: use iframe Object with cleared prototype
+var NullProtoObjectViaIFrame = function () {
+  // Thrash, waste and sodomy: IE GC bug
+  var iframe = documentCreateElement('iframe');
+  var JS = 'java' + SCRIPT + ':';
+  var iframeDocument;
+  iframe.style.display = 'none';
+  html.appendChild(iframe);
+  // https://github.com/zloirock/core-js/issues/475
+  iframe.src = String(JS);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(scriptTag('document.F=Object'));
+  iframeDocument.close();
+  return iframeDocument.F;
+};
+
+// Check for document.domain and active x support
+// No need to use active x approach when document.domain is not set
+// see https://github.com/es-shims/es5-shim/issues/150
+// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+// avoid IE GC bug
+var activeXDocument;
+var NullProtoObject = function () {
+  try {
+    activeXDocument = new ActiveXObject('htmlfile');
+  } catch (error) { /* ignore */ }
+  NullProtoObject = typeof document != 'undefined'
+    ? document.domain && activeXDocument
+      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
+      : NullProtoObjectViaIFrame()
+    : NullProtoObjectViaActiveX(activeXDocument); // WSH
+  var length = enumBugKeys.length;
+  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+  return NullProtoObject();
+};
+
+hiddenKeys[IE_PROTO] = true;
+
+// `Object.create` method
+// https://tc39.es/ecma262/#sec-object.create
+// eslint-disable-next-line es/no-object-create -- safe
+module.exports = Object.create || function create(O, Properties) {
+  var result;
+  if (O !== null) {
+    EmptyConstructor[PROTOTYPE] = anObject(O);
+    result = new EmptyConstructor();
+    EmptyConstructor[PROTOTYPE] = null;
+    // add "__proto__" for Object.getPrototypeOf polyfill
+    result[IE_PROTO] = O;
+  } else result = NullProtoObject();
+  return Properties === undefined ? result : definePropertiesModule.f(result, Properties);
+};
+
+
+/***/ }),
+
+/***/ 6801:
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(3724);
+var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(8686);
+var definePropertyModule = __webpack_require__(4913);
+var anObject = __webpack_require__(8551);
+var toIndexedObject = __webpack_require__(5397);
+var objectKeys = __webpack_require__(1072);
+
+// `Object.defineProperties` method
+// https://tc39.es/ecma262/#sec-object.defineproperties
+// eslint-disable-next-line es/no-object-defineproperties -- safe
+exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
+  anObject(O);
+  var props = toIndexedObject(Properties);
+  var keys = objectKeys(Properties);
+  var length = keys.length;
+  var index = 0;
+  var key;
+  while (length > index) definePropertyModule.f(O, key = keys[index++], props[key]);
+  return O;
 };
 
 
@@ -7937,6 +9253,36 @@ exports.f = Object.getOwnPropertySymbols;
 
 /***/ }),
 
+/***/ 2787:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var hasOwn = __webpack_require__(9297);
+var isCallable = __webpack_require__(4901);
+var toObject = __webpack_require__(8981);
+var sharedKey = __webpack_require__(6119);
+var CORRECT_PROTOTYPE_GETTER = __webpack_require__(2211);
+
+var IE_PROTO = sharedKey('IE_PROTO');
+var $Object = Object;
+var ObjectPrototype = $Object.prototype;
+
+// `Object.getPrototypeOf` method
+// https://tc39.es/ecma262/#sec-object.getprototypeof
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
+module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
+  var object = toObject(O);
+  if (hasOwn(object, IE_PROTO)) return object[IE_PROTO];
+  var constructor = object.constructor;
+  if (isCallable(constructor) && object instanceof constructor) {
+    return constructor.prototype;
+  } return object instanceof $Object ? ObjectPrototype : null;
+};
+
+
+/***/ }),
+
 /***/ 1625:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -7973,6 +9319,24 @@ module.exports = function (object, names) {
     ~indexOf(result, key) || push(result, key);
   }
   return result;
+};
+
+
+/***/ }),
+
+/***/ 1072:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var internalObjectKeys = __webpack_require__(1828);
+var enumBugKeys = __webpack_require__(8727);
+
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+// eslint-disable-next-line es/no-object-keys -- safe
+module.exports = Object.keys || function keys(O) {
+  return internalObjectKeys(O, enumBugKeys);
 };
 
 
@@ -8084,6 +9448,86 @@ module.exports = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
 
 /***/ }),
 
+/***/ 8235:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(9504);
+var hasOwn = __webpack_require__(9297);
+
+var $SyntaxError = SyntaxError;
+var $parseInt = parseInt;
+var fromCharCode = String.fromCharCode;
+var at = uncurryThis(''.charAt);
+var slice = uncurryThis(''.slice);
+var exec = uncurryThis(/./.exec);
+
+var codePoints = {
+  '\\"': '"',
+  '\\\\': '\\',
+  '\\/': '/',
+  '\\b': '\b',
+  '\\f': '\f',
+  '\\n': '\n',
+  '\\r': '\r',
+  '\\t': '\t'
+};
+
+var IS_4_HEX_DIGITS = /^[\da-f]{4}$/i;
+// eslint-disable-next-line regexp/no-control-character -- safe
+var IS_C0_CONTROL_CODE = /^[\u0000-\u001F]$/;
+
+module.exports = function (source, i) {
+  var unterminated = true;
+  var value = '';
+  while (i < source.length) {
+    var chr = at(source, i);
+    if (chr === '\\') {
+      var twoChars = slice(source, i, i + 2);
+      if (hasOwn(codePoints, twoChars)) {
+        value += codePoints[twoChars];
+        i += 2;
+      } else if (twoChars === '\\u') {
+        i += 2;
+        var fourHexDigits = slice(source, i, i + 4);
+        if (!exec(IS_4_HEX_DIGITS, fourHexDigits)) throw new $SyntaxError('Bad Unicode escape at: ' + i);
+        value += fromCharCode($parseInt(fourHexDigits, 16));
+        i += 4;
+      } else throw new $SyntaxError('Unknown escape sequence: "' + twoChars + '"');
+    } else if (chr === '"') {
+      unterminated = false;
+      i++;
+      break;
+    } else {
+      if (exec(IS_C0_CONTROL_CODE, chr)) throw new $SyntaxError('Bad control character in string literal at: ' + i);
+      value += chr;
+      i++;
+    }
+  }
+  if (unterminated) throw new $SyntaxError('Unterminated string at: ' + i);
+  return { value: value, end: i };
+};
+
+
+/***/ }),
+
+/***/ 1103:
+/***/ ((module) => {
+
+"use strict";
+
+module.exports = function (exec) {
+  try {
+    return { error: false, value: exec() };
+  } catch (error) {
+    return { error: true, value: error };
+  }
+};
+
+
+/***/ }),
+
 /***/ 7750:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8098,6 +9542,21 @@ var $TypeError = TypeError;
 module.exports = function (it) {
   if (isNullOrUndefined(it)) throw new $TypeError("Can't call method on " + it);
   return it;
+};
+
+
+/***/ }),
+
+/***/ 3317:
+/***/ ((module) => {
+
+"use strict";
+
+// `SameValueZero` abstract operation
+// https://tc39.es/ecma262/#sec-samevaluezero
+module.exports = function (x, y) {
+  // eslint-disable-next-line no-self-compare -- NaN check
+  return x === y || x !== x && y !== y;
 };
 
 
@@ -8157,6 +9616,30 @@ module.exports = function (key, value) {
 
 /***/ }),
 
+/***/ 1548:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var globalThis = __webpack_require__(4576);
+var fails = __webpack_require__(9039);
+var V8 = __webpack_require__(9519);
+var ENVIRONMENT = __webpack_require__(4215);
+
+var structuredClone = globalThis.structuredClone;
+
+module.exports = !!structuredClone && !fails(function () {
+  // prevent V8 ArrayBufferDetaching protector cell invalidation and performance degradation
+  // https://github.com/zloirock/core-js/issues/679
+  if ((ENVIRONMENT === 'DENO' && V8 > 92) || (ENVIRONMENT === 'NODE' && V8 > 94) || (ENVIRONMENT === 'BROWSER' && V8 > 97)) return false;
+  var buffer = new ArrayBuffer(8);
+  var clone = structuredClone(buffer, { transfer: [buffer] });
+  return buffer.byteLength !== 0 || clone.byteLength !== 8;
+});
+
+
+/***/ }),
+
 /***/ 4495:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8200,6 +9683,29 @@ var min = Math.min;
 module.exports = function (index, length) {
   var integer = toIntegerOrInfinity(index);
   return integer < 0 ? max(integer + length, 0) : min(integer, length);
+};
+
+
+/***/ }),
+
+/***/ 7696:
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var toIntegerOrInfinity = __webpack_require__(1291);
+var toLength = __webpack_require__(8014);
+
+var $RangeError = RangeError;
+
+// `ToIndex` abstract operation
+// https://tc39.es/ecma262/#sec-toindex
+module.exports = function (it) {
+  if (it === undefined) return 0;
+  var number = toIntegerOrInfinity(it);
+  var length = toLength(number);
+  if (number !== length) throw new $RangeError('Wrong length or index');
+  return length;
 };
 
 
@@ -8434,6 +9940,21 @@ module.exports = DESCRIPTORS && fails(function () {
 
 /***/ }),
 
+/***/ 2812:
+/***/ ((module) => {
+
+"use strict";
+
+var $TypeError = TypeError;
+
+module.exports = function (passed, required) {
+  if (passed < required) throw new $TypeError('Not enough arguments');
+  return passed;
+};
+
+
+/***/ }),
+
 /***/ 8622:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8476,6 +9997,1267 @@ module.exports = function (name) {
 
 /***/ }),
 
+/***/ 6573:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(3724);
+var defineBuiltInAccessor = __webpack_require__(2106);
+var isDetached = __webpack_require__(3238);
+
+var ArrayBufferPrototype = ArrayBuffer.prototype;
+
+if (DESCRIPTORS && !('detached' in ArrayBufferPrototype)) {
+  defineBuiltInAccessor(ArrayBufferPrototype, 'detached', {
+    configurable: true,
+    get: function detached() {
+      return isDetached(this);
+    }
+  });
+}
+
+
+/***/ }),
+
+/***/ 7936:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var $transfer = __webpack_require__(5636);
+
+// `ArrayBuffer.prototype.transferToFixedLength` method
+// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfertofixedlength
+if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
+  transferToFixedLength: function transferToFixedLength() {
+    return $transfer(this, arguments.length ? arguments[0] : undefined, false);
+  }
+});
+
+
+/***/ }),
+
+/***/ 8100:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var $transfer = __webpack_require__(5636);
+
+// `ArrayBuffer.prototype.transfer` method
+// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfer
+if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
+  transfer: function transfer() {
+    return $transfer(this, arguments.length ? arguments[0] : undefined, true);
+  }
+});
+
+
+/***/ }),
+
+/***/ 4114:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var toObject = __webpack_require__(8981);
+var lengthOfArrayLike = __webpack_require__(6198);
+var setArrayLength = __webpack_require__(4527);
+var doesNotExceedSafeInteger = __webpack_require__(6837);
+var fails = __webpack_require__(9039);
+
+var INCORRECT_TO_LENGTH = fails(function () {
+  return [].push.call({ length: 0x100000000 }, 1) !== 4294967297;
+});
+
+// V8 <= 121 and Safari <= 15.4; FF < 23 throws InternalError
+// https://bugs.chromium.org/p/v8/issues/detail?id=12681
+var properErrorOnNonWritableLength = function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).push();
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+};
+
+var FORCED = INCORRECT_TO_LENGTH || !properErrorOnNonWritableLength();
+
+// `Array.prototype.push` method
+// https://tc39.es/ecma262/#sec-array.prototype.push
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  push: function push(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    doesNotExceedSafeInteger(len + argCount);
+    for (var i = 0; i < argCount; i++) {
+      O[len] = arguments[i];
+      len++;
+    }
+    setArrayLength(O, len);
+    return len;
+  }
+});
+
+
+/***/ }),
+
+/***/ 3609:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var toObject = __webpack_require__(8981);
+var lengthOfArrayLike = __webpack_require__(6198);
+var setArrayLength = __webpack_require__(4527);
+var deletePropertyOrThrow = __webpack_require__(4606);
+var doesNotExceedSafeInteger = __webpack_require__(6837);
+
+// IE8-
+var INCORRECT_RESULT = [].unshift(0) !== 1;
+
+// V8 ~ Chrome < 71 and Safari <= 15.4, FF < 23 throws InternalError
+var properErrorOnNonWritableLength = function () {
+  try {
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
+    Object.defineProperty([], 'length', { writable: false }).unshift();
+  } catch (error) {
+    return error instanceof TypeError;
+  }
+};
+
+var FORCED = INCORRECT_RESULT || !properErrorOnNonWritableLength();
+
+// `Array.prototype.unshift` method
+// https://tc39.es/ecma262/#sec-array.prototype.unshift
+$({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  unshift: function unshift(item) {
+    var O = toObject(this);
+    var len = lengthOfArrayLike(O);
+    var argCount = arguments.length;
+    if (argCount) {
+      doesNotExceedSafeInteger(len + argCount);
+      var k = len;
+      while (k--) {
+        var to = k + argCount;
+        if (k in O) O[to] = O[k];
+        else deletePropertyOrThrow(O, to);
+      }
+      for (var j = 0; j < argCount; j++) {
+        O[j] = arguments[j];
+      }
+    } return setArrayLength(O, len + argCount);
+  }
+});
+
+
+/***/ }),
+
+/***/ 7333:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var isObject = __webpack_require__(34);
+var getIteratorDirect = __webpack_require__(1767);
+var createAsyncIteratorProxy = __webpack_require__(2059);
+var createIterResultObject = __webpack_require__(2529);
+var closeAsyncIteration = __webpack_require__(772);
+var IS_PURE = __webpack_require__(6395);
+
+var AsyncIteratorProxy = createAsyncIteratorProxy(function (Promise) {
+  var state = this;
+  var iterator = state.iterator;
+  var predicate = state.predicate;
+
+  return new Promise(function (resolve, reject) {
+    var doneAndReject = function (error) {
+      state.done = true;
+      reject(error);
+    };
+
+    var ifAbruptCloseAsyncIterator = function (error) {
+      closeAsyncIteration(iterator, doneAndReject, error, doneAndReject);
+    };
+
+    var loop = function () {
+      try {
+        Promise.resolve(anObject(call(state.next, iterator))).then(function (step) {
+          try {
+            if (anObject(step).done) {
+              state.done = true;
+              resolve(createIterResultObject(undefined, true));
+            } else {
+              var value = step.value;
+              try {
+                var result = predicate(value, state.counter++);
+
+                var handler = function (selected) {
+                  selected ? resolve(createIterResultObject(value, false)) : loop();
+                };
+
+                if (isObject(result)) Promise.resolve(result).then(handler, ifAbruptCloseAsyncIterator);
+                else handler(result);
+              } catch (error3) { ifAbruptCloseAsyncIterator(error3); }
+            }
+          } catch (error2) { doneAndReject(error2); }
+        }, doneAndReject);
+      } catch (error) { doneAndReject(error); }
+    };
+
+    loop();
+  });
+});
+
+// `AsyncIterator.prototype.filter` method
+// https://github.com/tc39/proposal-async-iterator-helpers
+$({ target: 'AsyncIterator', proto: true, real: true, forced: IS_PURE }, {
+  filter: function filter(predicate) {
+    anObject(this);
+    aCallable(predicate);
+    return new AsyncIteratorProxy(getIteratorDirect(this), {
+      predicate: predicate
+    });
+  }
+});
+
+
+/***/ }),
+
+/***/ 3064:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var $find = (__webpack_require__(6639).find);
+
+// `AsyncIterator.prototype.find` method
+// https://github.com/tc39/proposal-async-iterator-helpers
+$({ target: 'AsyncIterator', proto: true, real: true }, {
+  find: function find(predicate) {
+    return $find(this, predicate);
+  }
+});
+
+
+/***/ }),
+
+/***/ 9920:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var $forEach = (__webpack_require__(6639).forEach);
+
+// `AsyncIterator.prototype.forEach` method
+// https://github.com/tc39/proposal-async-iterator-helpers
+$({ target: 'AsyncIterator', proto: true, real: true }, {
+  forEach: function forEach(fn) {
+    return $forEach(this, fn);
+  }
+});
+
+
+/***/ }),
+
+/***/ 1393:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var map = __webpack_require__(1750);
+var IS_PURE = __webpack_require__(6395);
+
+// `AsyncIterator.prototype.map` method
+// https://github.com/tc39/proposal-async-iterator-helpers
+$({ target: 'AsyncIterator', proto: true, real: true, forced: IS_PURE }, {
+  map: map
+});
+
+
+
+/***/ }),
+
+/***/ 4905:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var isObject = __webpack_require__(34);
+var getBuiltIn = __webpack_require__(7751);
+var getIteratorDirect = __webpack_require__(1767);
+var closeAsyncIteration = __webpack_require__(772);
+
+var Promise = getBuiltIn('Promise');
+var $TypeError = TypeError;
+
+// `AsyncIterator.prototype.reduce` method
+// https://github.com/tc39/proposal-async-iterator-helpers
+$({ target: 'AsyncIterator', proto: true, real: true }, {
+  reduce: function reduce(reducer /* , initialValue */) {
+    anObject(this);
+    aCallable(reducer);
+    var record = getIteratorDirect(this);
+    var iterator = record.iterator;
+    var next = record.next;
+    var noInitial = arguments.length < 2;
+    var accumulator = noInitial ? undefined : arguments[1];
+    var counter = 0;
+
+    return new Promise(function (resolve, reject) {
+      var ifAbruptCloseAsyncIterator = function (error) {
+        closeAsyncIteration(iterator, reject, error, reject);
+      };
+
+      var loop = function () {
+        try {
+          Promise.resolve(anObject(call(next, iterator))).then(function (step) {
+            try {
+              if (anObject(step).done) {
+                noInitial ? reject(new $TypeError('Reduce of empty iterator with no initial value')) : resolve(accumulator);
+              } else {
+                var value = step.value;
+                if (noInitial) {
+                  noInitial = false;
+                  accumulator = value;
+                  loop();
+                } else try {
+                  var result = reducer(accumulator, value, counter);
+
+                  var handler = function ($result) {
+                    accumulator = $result;
+                    loop();
+                  };
+
+                  if (isObject(result)) Promise.resolve(result).then(handler, ifAbruptCloseAsyncIterator);
+                  else handler(result);
+                } catch (error3) { ifAbruptCloseAsyncIterator(error3); }
+              }
+              counter++;
+            } catch (error2) { reject(error2); }
+          }, reject);
+        } catch (error) { reject(error); }
+      };
+
+      loop();
+    });
+  }
+});
+
+
+/***/ }),
+
+/***/ 8992:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var globalThis = __webpack_require__(4576);
+var anInstance = __webpack_require__(679);
+var anObject = __webpack_require__(8551);
+var isCallable = __webpack_require__(4901);
+var getPrototypeOf = __webpack_require__(2787);
+var defineBuiltInAccessor = __webpack_require__(2106);
+var createProperty = __webpack_require__(4659);
+var fails = __webpack_require__(9039);
+var hasOwn = __webpack_require__(9297);
+var wellKnownSymbol = __webpack_require__(8227);
+var IteratorPrototype = (__webpack_require__(7657).IteratorPrototype);
+var DESCRIPTORS = __webpack_require__(3724);
+var IS_PURE = __webpack_require__(6395);
+
+var CONSTRUCTOR = 'constructor';
+var ITERATOR = 'Iterator';
+var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+
+var $TypeError = TypeError;
+var NativeIterator = globalThis[ITERATOR];
+
+// FF56- have non-standard global helper `Iterator`
+var FORCED = IS_PURE
+  || !isCallable(NativeIterator)
+  || NativeIterator.prototype !== IteratorPrototype
+  // FF44- non-standard `Iterator` passes previous tests
+  || !fails(function () { NativeIterator({}); });
+
+var IteratorConstructor = function Iterator() {
+  anInstance(this, IteratorPrototype);
+  if (getPrototypeOf(this) === IteratorPrototype) throw new $TypeError('Abstract class Iterator not directly constructable');
+};
+
+var defineIteratorPrototypeAccessor = function (key, value) {
+  if (DESCRIPTORS) {
+    defineBuiltInAccessor(IteratorPrototype, key, {
+      configurable: true,
+      get: function () {
+        return value;
+      },
+      set: function (replacement) {
+        anObject(this);
+        if (this === IteratorPrototype) throw new $TypeError("You can't redefine this property");
+        if (hasOwn(this, key)) this[key] = replacement;
+        else createProperty(this, key, replacement);
+      }
+    });
+  } else IteratorPrototype[key] = value;
+};
+
+if (!hasOwn(IteratorPrototype, TO_STRING_TAG)) defineIteratorPrototypeAccessor(TO_STRING_TAG, ITERATOR);
+
+if (FORCED || !hasOwn(IteratorPrototype, CONSTRUCTOR) || IteratorPrototype[CONSTRUCTOR] === Object) {
+  defineIteratorPrototypeAccessor(CONSTRUCTOR, IteratorConstructor);
+}
+
+IteratorConstructor.prototype = IteratorPrototype;
+
+// `Iterator` constructor
+// https://github.com/tc39/proposal-iterator-helpers
+$({ global: true, constructor: true, forced: FORCED }, {
+  Iterator: IteratorConstructor
+});
+
+
+/***/ }),
+
+/***/ 4520:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var call = __webpack_require__(9565);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+var createIteratorProxy = __webpack_require__(9462);
+var callWithSafeIterationClosing = __webpack_require__(6319);
+var IS_PURE = __webpack_require__(6395);
+
+var IteratorProxy = createIteratorProxy(function () {
+  var iterator = this.iterator;
+  var predicate = this.predicate;
+  var next = this.next;
+  var result, done, value;
+  while (true) {
+    result = anObject(call(next, iterator));
+    done = this.done = !!result.done;
+    if (done) return;
+    value = result.value;
+    if (callWithSafeIterationClosing(iterator, predicate, [value, this.counter++], true)) return value;
+  }
+});
+
+// `Iterator.prototype.filter` method
+// https://github.com/tc39/proposal-iterator-helpers
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+  filter: function filter(predicate) {
+    anObject(this);
+    aCallable(predicate);
+    return new IteratorProxy(getIteratorDirect(this), {
+      predicate: predicate
+    });
+  }
+});
+
+
+/***/ }),
+
+/***/ 2577:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var iterate = __webpack_require__(2652);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+
+// `Iterator.prototype.find` method
+// https://github.com/tc39/proposal-iterator-helpers
+$({ target: 'Iterator', proto: true, real: true }, {
+  find: function find(predicate) {
+    anObject(this);
+    aCallable(predicate);
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    return iterate(record, function (value, stop) {
+      if (predicate(value, counter++)) return stop(value);
+    }, { IS_RECORD: true, INTERRUPTED: true }).result;
+  }
+});
+
+
+/***/ }),
+
+/***/ 3949:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var iterate = __webpack_require__(2652);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+
+// `Iterator.prototype.forEach` method
+// https://github.com/tc39/proposal-iterator-helpers
+$({ target: 'Iterator', proto: true, real: true }, {
+  forEach: function forEach(fn) {
+    anObject(this);
+    aCallable(fn);
+    var record = getIteratorDirect(this);
+    var counter = 0;
+    iterate(record, function (value) {
+      fn(value, counter++);
+    }, { IS_RECORD: true });
+  }
+});
+
+
+/***/ }),
+
+/***/ 1454:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var map = __webpack_require__(713);
+var IS_PURE = __webpack_require__(6395);
+
+// `Iterator.prototype.map` method
+// https://github.com/tc39/proposal-iterator-helpers
+$({ target: 'Iterator', proto: true, real: true, forced: IS_PURE }, {
+  map: map
+});
+
+
+/***/ }),
+
+/***/ 8872:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var iterate = __webpack_require__(2652);
+var aCallable = __webpack_require__(9306);
+var anObject = __webpack_require__(8551);
+var getIteratorDirect = __webpack_require__(1767);
+
+var $TypeError = TypeError;
+
+// `Iterator.prototype.reduce` method
+// https://github.com/tc39/proposal-iterator-helpers
+$({ target: 'Iterator', proto: true, real: true }, {
+  reduce: function reduce(reducer /* , initialValue */) {
+    anObject(this);
+    aCallable(reducer);
+    var record = getIteratorDirect(this);
+    var noInitial = arguments.length < 2;
+    var accumulator = noInitial ? undefined : arguments[1];
+    var counter = 0;
+    iterate(record, function (value) {
+      if (noInitial) {
+        noInitial = false;
+        accumulator = value;
+      } else {
+        accumulator = reducer(accumulator, value, counter);
+      }
+      counter++;
+    }, { IS_RECORD: true });
+    if (noInitial) throw new $TypeError('Reduce of empty iterator with no initial value');
+    return accumulator;
+  }
+});
+
+
+/***/ }),
+
+/***/ 8335:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var DESCRIPTORS = __webpack_require__(3724);
+var globalThis = __webpack_require__(4576);
+var getBuiltIn = __webpack_require__(7751);
+var uncurryThis = __webpack_require__(9504);
+var call = __webpack_require__(9565);
+var isCallable = __webpack_require__(4901);
+var isObject = __webpack_require__(34);
+var isArray = __webpack_require__(4376);
+var hasOwn = __webpack_require__(9297);
+var toString = __webpack_require__(655);
+var lengthOfArrayLike = __webpack_require__(6198);
+var createProperty = __webpack_require__(4659);
+var fails = __webpack_require__(9039);
+var parseJSONString = __webpack_require__(8235);
+var NATIVE_SYMBOL = __webpack_require__(4495);
+
+var JSON = globalThis.JSON;
+var Number = globalThis.Number;
+var SyntaxError = globalThis.SyntaxError;
+var nativeParse = JSON && JSON.parse;
+var enumerableOwnProperties = getBuiltIn('Object', 'keys');
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+var at = uncurryThis(''.charAt);
+var slice = uncurryThis(''.slice);
+var exec = uncurryThis(/./.exec);
+var push = uncurryThis([].push);
+
+var IS_DIGIT = /^\d$/;
+var IS_NON_ZERO_DIGIT = /^[1-9]$/;
+var IS_NUMBER_START = /^[\d-]$/;
+var IS_WHITESPACE = /^[\t\n\r ]$/;
+
+var PRIMITIVE = 0;
+var OBJECT = 1;
+
+var $parse = function (source, reviver) {
+  source = toString(source);
+  var context = new Context(source, 0, '');
+  var root = context.parse();
+  var value = root.value;
+  var endIndex = context.skip(IS_WHITESPACE, root.end);
+  if (endIndex < source.length) {
+    throw new SyntaxError('Unexpected extra character: "' + at(source, endIndex) + '" after the parsed data at: ' + endIndex);
+  }
+  return isCallable(reviver) ? internalize({ '': value }, '', reviver, root) : value;
+};
+
+var internalize = function (holder, name, reviver, node) {
+  var val = holder[name];
+  var unmodified = node && val === node.value;
+  var context = unmodified && typeof node.source == 'string' ? { source: node.source } : {};
+  var elementRecordsLen, keys, len, i, P;
+  if (isObject(val)) {
+    var nodeIsArray = isArray(val);
+    var nodes = unmodified ? node.nodes : nodeIsArray ? [] : {};
+    if (nodeIsArray) {
+      elementRecordsLen = nodes.length;
+      len = lengthOfArrayLike(val);
+      for (i = 0; i < len; i++) {
+        internalizeProperty(val, i, internalize(val, '' + i, reviver, i < elementRecordsLen ? nodes[i] : undefined));
+      }
+    } else {
+      keys = enumerableOwnProperties(val);
+      len = lengthOfArrayLike(keys);
+      for (i = 0; i < len; i++) {
+        P = keys[i];
+        internalizeProperty(val, P, internalize(val, P, reviver, hasOwn(nodes, P) ? nodes[P] : undefined));
+      }
+    }
+  }
+  return call(reviver, holder, name, val, context);
+};
+
+var internalizeProperty = function (object, key, value) {
+  if (DESCRIPTORS) {
+    var descriptor = getOwnPropertyDescriptor(object, key);
+    if (descriptor && !descriptor.configurable) return;
+  }
+  if (value === undefined) delete object[key];
+  else createProperty(object, key, value);
+};
+
+var Node = function (value, end, source, nodes) {
+  this.value = value;
+  this.end = end;
+  this.source = source;
+  this.nodes = nodes;
+};
+
+var Context = function (source, index) {
+  this.source = source;
+  this.index = index;
+};
+
+// https://www.json.org/json-en.html
+Context.prototype = {
+  fork: function (nextIndex) {
+    return new Context(this.source, nextIndex);
+  },
+  parse: function () {
+    var source = this.source;
+    var i = this.skip(IS_WHITESPACE, this.index);
+    var fork = this.fork(i);
+    var chr = at(source, i);
+    if (exec(IS_NUMBER_START, chr)) return fork.number();
+    switch (chr) {
+      case '{':
+        return fork.object();
+      case '[':
+        return fork.array();
+      case '"':
+        return fork.string();
+      case 't':
+        return fork.keyword(true);
+      case 'f':
+        return fork.keyword(false);
+      case 'n':
+        return fork.keyword(null);
+    } throw new SyntaxError('Unexpected character: "' + chr + '" at: ' + i);
+  },
+  node: function (type, value, start, end, nodes) {
+    return new Node(value, end, type ? null : slice(this.source, start, end), nodes);
+  },
+  object: function () {
+    var source = this.source;
+    var i = this.index + 1;
+    var expectKeypair = false;
+    var object = {};
+    var nodes = {};
+    while (i < source.length) {
+      i = this.until(['"', '}'], i);
+      if (at(source, i) === '}' && !expectKeypair) {
+        i++;
+        break;
+      }
+      // Parsing the key
+      var result = this.fork(i).string();
+      var key = result.value;
+      i = result.end;
+      i = this.until([':'], i) + 1;
+      // Parsing value
+      i = this.skip(IS_WHITESPACE, i);
+      result = this.fork(i).parse();
+      createProperty(nodes, key, result);
+      createProperty(object, key, result.value);
+      i = this.until([',', '}'], result.end);
+      var chr = at(source, i);
+      if (chr === ',') {
+        expectKeypair = true;
+        i++;
+      } else if (chr === '}') {
+        i++;
+        break;
+      }
+    }
+    return this.node(OBJECT, object, this.index, i, nodes);
+  },
+  array: function () {
+    var source = this.source;
+    var i = this.index + 1;
+    var expectElement = false;
+    var array = [];
+    var nodes = [];
+    while (i < source.length) {
+      i = this.skip(IS_WHITESPACE, i);
+      if (at(source, i) === ']' && !expectElement) {
+        i++;
+        break;
+      }
+      var result = this.fork(i).parse();
+      push(nodes, result);
+      push(array, result.value);
+      i = this.until([',', ']'], result.end);
+      if (at(source, i) === ',') {
+        expectElement = true;
+        i++;
+      } else if (at(source, i) === ']') {
+        i++;
+        break;
+      }
+    }
+    return this.node(OBJECT, array, this.index, i, nodes);
+  },
+  string: function () {
+    var index = this.index;
+    var parsed = parseJSONString(this.source, this.index + 1);
+    return this.node(PRIMITIVE, parsed.value, index, parsed.end);
+  },
+  number: function () {
+    var source = this.source;
+    var startIndex = this.index;
+    var i = startIndex;
+    if (at(source, i) === '-') i++;
+    if (at(source, i) === '0') i++;
+    else if (exec(IS_NON_ZERO_DIGIT, at(source, i))) i = this.skip(IS_DIGIT, i + 1);
+    else throw new SyntaxError('Failed to parse number at: ' + i);
+    if (at(source, i) === '.') i = this.skip(IS_DIGIT, i + 1);
+    if (at(source, i) === 'e' || at(source, i) === 'E') {
+      i++;
+      if (at(source, i) === '+' || at(source, i) === '-') i++;
+      var exponentStartIndex = i;
+      i = this.skip(IS_DIGIT, i);
+      if (exponentStartIndex === i) throw new SyntaxError("Failed to parse number's exponent value at: " + i);
+    }
+    return this.node(PRIMITIVE, Number(slice(source, startIndex, i)), startIndex, i);
+  },
+  keyword: function (value) {
+    var keyword = '' + value;
+    var index = this.index;
+    var endIndex = index + keyword.length;
+    if (slice(this.source, index, endIndex) !== keyword) throw new SyntaxError('Failed to parse value at: ' + index);
+    return this.node(PRIMITIVE, value, index, endIndex);
+  },
+  skip: function (regex, i) {
+    var source = this.source;
+    for (; i < source.length; i++) if (!exec(regex, at(source, i))) break;
+    return i;
+  },
+  until: function (array, i) {
+    i = this.skip(IS_WHITESPACE, i);
+    var chr = at(this.source, i);
+    for (var j = 0; j < array.length; j++) if (array[j] === chr) return i;
+    throw new SyntaxError('Unexpected character: "' + chr + '" at: ' + i);
+  }
+};
+
+var NO_SOURCE_SUPPORT = fails(function () {
+  var unsafeInt = '9007199254740993';
+  var source;
+  nativeParse(unsafeInt, function (key, value, context) {
+    source = context.source;
+  });
+  return source !== unsafeInt;
+});
+
+var PROPER_BASE_PARSE = NATIVE_SYMBOL && !fails(function () {
+  // Safari 9 bug
+  return 1 / nativeParse('-0 \t') !== -Infinity;
+});
+
+// `JSON.parse` method
+// https://tc39.es/ecma262/#sec-json.parse
+// https://github.com/tc39/proposal-json-parse-with-source
+$({ target: 'JSON', stat: true, forced: NO_SOURCE_SUPPORT }, {
+  parse: function parse(text, reviver) {
+    return PROPER_BASE_PARSE && !isCallable(reviver) ? nativeParse(text) : $parse(text, reviver);
+  }
+});
+
+
+/***/ }),
+
+/***/ 1517:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aMap = __webpack_require__(6194);
+var remove = (__webpack_require__(2248).remove);
+
+// `Map.prototype.deleteAll` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  deleteAll: function deleteAll(/* ...elements */) {
+    var collection = aMap(this);
+    var allDeleted = true;
+    var wasDeleted;
+    for (var k = 0, len = arguments.length; k < len; k++) {
+      wasDeleted = remove(collection, arguments[k]);
+      allDeleted = allDeleted && wasDeleted;
+    } return !!allDeleted;
+  }
+});
+
+
+/***/ }),
+
+/***/ 1379:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.emplace` method
+// https://github.com/tc39/proposal-upsert
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  emplace: function emplace(key, handler) {
+    var map = aMap(this);
+    var value, inserted;
+    if (has(map, key)) {
+      value = get(map, key);
+      if ('update' in handler) {
+        value = handler.update(value, key, map);
+        set(map, key, value);
+      } return value;
+    }
+    inserted = handler.insert(key, map);
+    set(map, key, inserted);
+    return inserted;
+  }
+});
+
+
+/***/ }),
+
+/***/ 3777:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.every` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  every: function every(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    return iterate(map, function (value, key) {
+      if (!boundFunction(value, key, map)) return false;
+    }, true) !== false;
+  }
+});
+
+
+/***/ }),
+
+/***/ 4190:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+var iterate = __webpack_require__(6223);
+
+var Map = MapHelpers.Map;
+var set = MapHelpers.set;
+
+// `Map.prototype.filter` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  filter: function filter(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    var newMap = new Map();
+    iterate(map, function (value, key) {
+      if (boundFunction(value, key, map)) set(newMap, key, value);
+    });
+    return newMap;
+  }
+});
+
+
+/***/ }),
+
+/***/ 6097:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.findKey` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  findKey: function findKey(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    var result = iterate(map, function (value, key) {
+      if (boundFunction(value, key, map)) return { key: key };
+    }, true);
+    return result && result.key;
+  }
+});
+
+
+/***/ }),
+
+/***/ 2359:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.find` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  find: function find(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    var result = iterate(map, function (value, key) {
+      if (boundFunction(value, key, map)) return { value: value };
+    }, true);
+    return result && result.value;
+  }
+});
+
+
+/***/ }),
+
+/***/ 7273:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var sameValueZero = __webpack_require__(3317);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.includes` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  includes: function includes(searchElement) {
+    return iterate(aMap(this), function (value) {
+      if (sameValueZero(value, searchElement)) return true;
+    }, true) === true;
+  }
+});
+
+
+/***/ }),
+
+/***/ 7415:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.keyOf` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  keyOf: function keyOf(searchElement) {
+    var result = iterate(aMap(this), function (value, key) {
+      if (value === searchElement) return { key: key };
+    }, true);
+    return result && result.key;
+  }
+});
+
+
+/***/ }),
+
+/***/ 9929:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+var iterate = __webpack_require__(6223);
+
+var Map = MapHelpers.Map;
+var set = MapHelpers.set;
+
+// `Map.prototype.mapKeys` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  mapKeys: function mapKeys(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    var newMap = new Map();
+    iterate(map, function (value, key) {
+      set(newMap, boundFunction(value, key, map), value);
+    });
+    return newMap;
+  }
+});
+
+
+/***/ }),
+
+/***/ 7583:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+var iterate = __webpack_require__(6223);
+
+var Map = MapHelpers.Map;
+var set = MapHelpers.set;
+
+// `Map.prototype.mapValues` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  mapValues: function mapValues(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    var newMap = new Map();
+    iterate(map, function (value, key) {
+      set(newMap, key, boundFunction(value, key, map));
+    });
+    return newMap;
+  }
+});
+
+
+/***/ }),
+
+/***/ 5122:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(2652);
+var set = (__webpack_require__(2248).set);
+
+// `Map.prototype.merge` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, arity: 1, forced: true }, {
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
+  merge: function merge(iterable /* ...iterables */) {
+    var map = aMap(this);
+    var argumentsLength = arguments.length;
+    var i = 0;
+    while (i < argumentsLength) {
+      iterate(arguments[i++], function (key, value) {
+        set(map, key, value);
+      }, { AS_ENTRIES: true });
+    }
+    return map;
+  }
+});
+
+
+/***/ }),
+
+/***/ 230:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aCallable = __webpack_require__(9306);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+var $TypeError = TypeError;
+
+// `Map.prototype.reduce` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  reduce: function reduce(callbackfn /* , initialValue */) {
+    var map = aMap(this);
+    var noInitial = arguments.length < 2;
+    var accumulator = noInitial ? undefined : arguments[1];
+    aCallable(callbackfn);
+    iterate(map, function (value, key) {
+      if (noInitial) {
+        noInitial = false;
+        accumulator = value;
+      } else {
+        accumulator = callbackfn(accumulator, value, key, map);
+      }
+    });
+    if (noInitial) throw new $TypeError('Reduce of empty map with no initial value');
+    return accumulator;
+  }
+});
+
+
+/***/ }),
+
+/***/ 7268:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var bind = __webpack_require__(6080);
+var aMap = __webpack_require__(6194);
+var iterate = __webpack_require__(6223);
+
+// `Map.prototype.some` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  some: function some(callbackfn /* , thisArg */) {
+    var map = aMap(this);
+    var boundFunction = bind(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    return iterate(map, function (value, key) {
+      if (boundFunction(value, key, map)) return true;
+    }, true) === true;
+  }
+});
+
+
+/***/ }),
+
+/***/ 9733:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aCallable = __webpack_require__(9306);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+
+var $TypeError = TypeError;
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.update` method
+// https://github.com/tc39/proposal-collection-methods
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  update: function update(key, callback /* , thunk */) {
+    var map = aMap(this);
+    var length = arguments.length;
+    aCallable(callback);
+    var isPresentInMap = has(map, key);
+    if (!isPresentInMap && length < 3) {
+      throw new $TypeError('Updating absent value');
+    }
+    var value = isPresentInMap ? get(map, key) : aCallable(length > 2 ? arguments[2] : undefined)(key, map);
+    set(map, key, callback(value, key, map));
+    return map;
+  }
+});
+
+
+/***/ }),
+
 /***/ 4979:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -8491,7 +11273,7 @@ var anInstance = __webpack_require__(679);
 var inheritIfRequired = __webpack_require__(3167);
 var normalizeStringArgument = __webpack_require__(2603);
 var DOMExceptionConstants = __webpack_require__(5002);
-var clearErrorStack = __webpack_require__(6193);
+var clearErrorStack = __webpack_require__(8574);
 var DESCRIPTORS = __webpack_require__(3724);
 var IS_PURE = __webpack_require__(6395);
 
@@ -8547,6 +11329,128 @@ if (PolyfilledDOMExceptionPrototype.constructor !== PolyfilledDOMException) {
       defineProperty(PolyfilledDOMException, constantName, createPropertyDescriptor(6, constant.c));
     }
   }
+}
+
+
+/***/ }),
+
+/***/ 4603:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var defineBuiltIn = __webpack_require__(6840);
+var uncurryThis = __webpack_require__(9504);
+var toString = __webpack_require__(655);
+var validateArgumentsLength = __webpack_require__(2812);
+
+var $URLSearchParams = URLSearchParams;
+var URLSearchParamsPrototype = $URLSearchParams.prototype;
+var append = uncurryThis(URLSearchParamsPrototype.append);
+var $delete = uncurryThis(URLSearchParamsPrototype['delete']);
+var forEach = uncurryThis(URLSearchParamsPrototype.forEach);
+var push = uncurryThis([].push);
+var params = new $URLSearchParams('a=1&a=2&b=3');
+
+params['delete']('a', 1);
+// `undefined` case is a Chromium 117 bug
+// https://bugs.chromium.org/p/v8/issues/detail?id=14222
+params['delete']('b', undefined);
+
+if (params + '' !== 'a=2') {
+  defineBuiltIn(URLSearchParamsPrototype, 'delete', function (name /* , value */) {
+    var length = arguments.length;
+    var $value = length < 2 ? undefined : arguments[1];
+    if (length && $value === undefined) return $delete(this, name);
+    var entries = [];
+    forEach(this, function (v, k) { // also validates `this`
+      push(entries, { key: k, value: v });
+    });
+    validateArgumentsLength(length, 1);
+    var key = toString(name);
+    var value = toString($value);
+    var index = 0;
+    var dindex = 0;
+    var found = false;
+    var entriesLength = entries.length;
+    var entry;
+    while (index < entriesLength) {
+      entry = entries[index++];
+      if (found || entry.key === key) {
+        found = true;
+        $delete(this, entry.key);
+      } else dindex++;
+    }
+    while (dindex < entriesLength) {
+      entry = entries[dindex++];
+      if (!(entry.key === key && entry.value === value)) append(this, entry.key, entry.value);
+    }
+  }, { enumerable: true, unsafe: true });
+}
+
+
+/***/ }),
+
+/***/ 7566:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var defineBuiltIn = __webpack_require__(6840);
+var uncurryThis = __webpack_require__(9504);
+var toString = __webpack_require__(655);
+var validateArgumentsLength = __webpack_require__(2812);
+
+var $URLSearchParams = URLSearchParams;
+var URLSearchParamsPrototype = $URLSearchParams.prototype;
+var getAll = uncurryThis(URLSearchParamsPrototype.getAll);
+var $has = uncurryThis(URLSearchParamsPrototype.has);
+var params = new $URLSearchParams('a=1');
+
+// `undefined` case is a Chromium 117 bug
+// https://bugs.chromium.org/p/v8/issues/detail?id=14222
+if (params.has('a', 2) || !params.has('a', undefined)) {
+  defineBuiltIn(URLSearchParamsPrototype, 'has', function has(name /* , value */) {
+    var length = arguments.length;
+    var $value = length < 2 ? undefined : arguments[1];
+    if (length && $value === undefined) return $has(this, name);
+    var values = getAll(this, name); // also validates `this`
+    validateArgumentsLength(length, 1);
+    var value = toString($value);
+    var index = 0;
+    while (index < values.length) {
+      if (values[index++] === value) return true;
+    } return false;
+  }, { enumerable: true, unsafe: true });
+}
+
+
+/***/ }),
+
+/***/ 8721:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(3724);
+var uncurryThis = __webpack_require__(9504);
+var defineBuiltInAccessor = __webpack_require__(2106);
+
+var URLSearchParamsPrototype = URLSearchParams.prototype;
+var forEach = uncurryThis(URLSearchParamsPrototype.forEach);
+
+// `URLSearchParams.prototype.size` getter
+// https://github.com/whatwg/url/pull/734
+if (DESCRIPTORS && !('size' in URLSearchParamsPrototype)) {
+  defineBuiltInAccessor(URLSearchParamsPrototype, 'size', {
+    get: function size() {
+      var count = 0;
+      forEach(this, function () { count++; });
+      return count;
+    },
+    configurable: true,
+    enumerable: true
+  });
 }
 
 
@@ -8686,14 +11590,50 @@ __webpack_require__.d(core_namespaceObject, {
   windowBounds: () => (windowBounds)
 });
 
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.detached.js
+var es_array_buffer_detached = __webpack_require__(6573);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.transfer.js
+var es_array_buffer_transfer = __webpack_require__(8100);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array-buffer.transfer-to-fixed-length.js
+var es_array_buffer_transfer_to_fixed_length = __webpack_require__(7936);
 // EXTERNAL MODULE: ./node_modules/event-emitter/index.js
 var event_emitter = __webpack_require__(3068);
 var event_emitter_default = /*#__PURE__*/__webpack_require__.n(event_emitter);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
+var es_array_push = __webpack_require__(4114);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.unshift.js
+var es_array_unshift = __webpack_require__(3609);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.async-iterator.filter.js
+var esnext_async_iterator_filter = __webpack_require__(7333);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.async-iterator.for-each.js
+var esnext_async_iterator_for_each = __webpack_require__(9920);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.constructor.js
+var esnext_iterator_constructor = __webpack_require__(8992);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.filter.js
+var esnext_iterator_filter = __webpack_require__(4520);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.for-each.js
+var esnext_iterator_for_each = __webpack_require__(3949);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-exception.stack.js
 var web_dom_exception_stack = __webpack_require__(4979);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.delete.js
+var web_url_search_params_delete = __webpack_require__(4603);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.has.js
+var web_url_search_params_has = __webpack_require__(7566);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.size.js
+var web_url_search_params_size = __webpack_require__(8721);
 // EXTERNAL MODULE: ./node_modules/@xmldom/xmldom/lib/index.js
 var lib = __webpack_require__(8978);
 ;// CONCATENATED MODULE: ./src/utils/core.js
+
+
+
+
+
+
+
+
+
+
 
 /**
  * @module core
@@ -9395,6 +12335,10 @@ class Defer {
 /* harmony default export */ const defer = (Defer);
 ;// CONCATENATED MODULE: ./src/utils/path.js
 /* provided dependency */ var process = __webpack_require__(5606);
+
+
+
+
 /**
  * Creates a Path object for parsing and manipulation of a path strings
  * @link https://nodejs.org/api/path.html
@@ -9634,6 +12578,9 @@ class Path {
 ;// CONCATENATED MODULE: ./src/utils/url.js
 
 
+
+
+
 /**
  * Creates a Url object for parsing and manipulation of a url string
  */
@@ -9732,6 +12679,40 @@ class Url {
   }
 }
 /* harmony default export */ const utils_url = (Url);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.json.parse.js
+var esnext_json_parse = __webpack_require__(8335);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.delete-all.js
+var esnext_map_delete_all = __webpack_require__(1517);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.emplace.js
+var esnext_map_emplace = __webpack_require__(1379);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.every.js
+var esnext_map_every = __webpack_require__(3777);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.filter.js
+var esnext_map_filter = __webpack_require__(4190);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.find.js
+var esnext_map_find = __webpack_require__(2359);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.find-key.js
+var esnext_map_find_key = __webpack_require__(6097);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.includes.js
+var esnext_map_includes = __webpack_require__(7273);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.key-of.js
+var esnext_map_key_of = __webpack_require__(7415);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.map-keys.js
+var esnext_map_map_keys = __webpack_require__(9929);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.map-values.js
+var esnext_map_map_values = __webpack_require__(7583);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.merge.js
+var esnext_map_merge = __webpack_require__(5122);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.reduce.js
+var esnext_map_reduce = __webpack_require__(230);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.some.js
+var esnext_map_some = __webpack_require__(7268);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.update.js
+var esnext_map_update = __webpack_require__(9733);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.async-iterator.map.js
+var esnext_async_iterator_map = __webpack_require__(1393);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.map.js
+var esnext_iterator_map = __webpack_require__(1454);
 ;// CONCATENATED MODULE: ./src/utils/rangeobject.js
 
 
@@ -9841,6 +12822,15 @@ class RangeObject {
 }
 /* harmony default export */ const rangeobject = (RangeObject);
 ;// CONCATENATED MODULE: ./src/epubcfi.js
+
+
+
+
+
+
+
+
+
 
 
 
@@ -10863,6 +13853,7 @@ class Location {
 
 
 
+
 /**
  * Queue for handling tasks one at a time
  */
@@ -11028,7 +14019,7 @@ const EVENTS = {
   },
   CONTENTS: {
     EXPAND: "expand",
-    RESIZE: "resize",
+    RESIZED: "resized",
     SELECTED: "selected",
     SELECTED_RANGE: "selectedRange",
     LINK_CLICKED: "linkClicked"
@@ -11043,7 +14034,8 @@ const EVENTS = {
     ADDED: "added",
     SCROLL: "scroll",
     SCROLLED: "scrolled",
-    REMOVED: "removed"
+    REMOVED: "removed",
+    RELOCATED: "relocated"
   },
   VIEWS: {
     AXIS: "axis",
@@ -11081,9 +14073,32 @@ const EVENTS = {
     SELECTED: "selected",
     INJECTED: "injected",
     REJECTED: "rejected"
+  },
+  VIEWPORT: {
+    RESIZED: "resized",
+    ORIENTATION_CHANGE: "orientationchange"
   }
 };
 ;// CONCATENATED MODULE: ./src/locations.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -11121,7 +14136,6 @@ class Locations extends Map {
      * @readonly
      */
     this.generated = this.processing.promise;
-    this.processingTimeout = undefined;
     this.q = new queue(this);
   }
 
@@ -11179,13 +14193,7 @@ class Locations extends Map {
    */
   async process(section) {
     return section.load(this.request).then(contents => {
-      const completed = new defer();
-      const locations = this.parse(contents, section.cfiBase);
-      section.unload();
-      this.processingTimeout = setTimeout(() => {
-        completed.resolve(locations);
-      }, this.pause);
-      return completed.promise;
+      return this.parse(contents, section.cfiBase);
     });
   }
 
@@ -11194,16 +14202,18 @@ class Locations extends Map {
    * @param {Element} contents 
    * @param {string} cfiBase 
    * @param {number} [chars]
-   * @returns {Locations}
+   * @returns {Promise<Locations>}
    */
-  parse(contents, cfiBase, chars) {
+  async parse(contents, cfiBase, chars) {
     chars = chars || this.break;
     let range;
     let counter = 0;
     let prev;
     const parser = node => {
+      const def = new defer();
       if (node.textContent.trim().length === 0) {
-        return false; // continue
+        def.resolve(false);
+        return def.promise; // continue
       }
 
       // Start range
@@ -11254,23 +14264,42 @@ class Locations extends Map {
         }
       }
       prev = node;
+      def.resolve(true);
+      return def.promise;
     };
     const doc = contents.ownerDocument;
     const body = qs(doc, "body");
-    sprint(body, parser.bind(this));
+    return this.treeWalker(body, parser).then(() => {
+      // Close remaining
+      if (range && range.startContainer && prev) {
+        range.endContainer = prev;
+        range.endOffset = prev.length;
+        const cfi = new src_epubcfi(range, cfiBase).toString();
+        const loc = new src_location().set({
+          cfi
+        });
+        this.set(cfi, loc);
+        counter = 0;
+      }
+      return this;
+    });
+  }
 
-    // Close remaining
-    if (range && range.startContainer && prev) {
-      range.endContainer = prev;
-      range.endOffset = prev.length;
-      const cfi = new src_epubcfi(range, cfiBase).toString();
-      const loc = new src_location().set({
-        cfi
-      });
-      this.set(cfi, loc);
-      counter = 0;
+  /**
+   * treeWalker
+   * @param {Node} root 
+   * @param {function} func 
+   * @returns {Promise<any>}
+   * @private
+   */
+  treeWalker(root, func) {
+    const what = NodeFilter.SHOW_TEXT;
+    const task = document.createTreeWalker(root, what);
+    const tasks = [];
+    while (task.nextNode()) {
+      tasks.push(func(task.currentNode));
     }
-    return this;
+    return Promise.all(tasks);
   }
 
   /**
@@ -11469,7 +14498,6 @@ class Locations extends Map {
     this.q = undefined;
     this.sections = undefined;
     this.generated = undefined;
-    clearTimeout(this.processingTimeout);
   }
 }
 event_emitter_default()(Locations.prototype);
@@ -11561,6 +14589,23 @@ class Container {
 }
 /* harmony default export */ const container = (Container);
 ;// CONCATENATED MODULE: ./src/packaging/metadata.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Metadata class
  * @extends {Map}
@@ -11653,6 +14698,23 @@ class Metadata extends Map {
 }
 /* harmony default export */ const metadata = (Metadata);
 ;// CONCATENATED MODULE: ./src/packaging/manifest.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -11775,6 +14837,23 @@ class Manifest extends Map {
 ;// CONCATENATED MODULE: ./src/packaging/spine.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * A collection of Spine Items
  * @extends {Map}
@@ -11854,6 +14933,7 @@ class Spine extends Map {
 }
 /* harmony default export */ const spine = (Spine);
 ;// CONCATENATED MODULE: ./src/packaging.js
+
 
 
 
@@ -12039,6 +15119,23 @@ class Packaging {
 ;// CONCATENATED MODULE: ./src/navigation/landmarks.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Landmarks Parser
  * @link https://www.w3.org/TR/epub/#sec-nav-landmarks
@@ -12122,6 +15219,10 @@ class Landmarks extends Map {
 }
 /* harmony default export */ const landmarks = (Landmarks);
 ;// CONCATENATED MODULE: ./src/navigation/pagelist.js
+
+
+
+
 
 
 
@@ -12402,6 +15503,24 @@ class PageList extends Array {
 ;// CONCATENATED MODULE: ./src/navigation/toc.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Table Of Contents Parser
  * @link https://www.w3.org/TR/epub/#sec-nav-toc
@@ -12599,6 +15718,10 @@ class Toc extends Array {
 
 
 
+
+
+
+
 /**
  * Navigation Parser
  * @link https://www.w3.org/TR/epub/#sec-nav
@@ -12709,6 +15832,12 @@ class Navigation {
 }
 /* harmony default export */ const navigation = (Navigation);
 ;// CONCATENATED MODULE: ./src/utils/replacements.js
+
+
+
+
+
+
 /**
  * @module replacements
  */
@@ -13009,6 +16138,27 @@ const lookup = filename => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const resources_URL = window.URL || window.webkitURL || window.mozURL;
 
 /**
@@ -13258,6 +16408,23 @@ event_emitter_default()(Annotation.prototype);
 ;// CONCATENATED MODULE: ./src/annotations.js
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Handles managing adding & removing Annotations
  */
@@ -13361,6 +16528,9 @@ class Annotations extends Map {
 
 
 
+
+
+
 /**
  * Figures out the CSS values to apply for a layout
  */
@@ -13368,18 +16538,26 @@ class Layout {
   /**
    * Constructor
    * @param {object} [options] 
+   * @param {string} [options.axis='horizontal'] values: `"horizontal"` OR `"vertical"`
    * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
    * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
    * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
    * @param {string} [options.direction='ltr'] values: `"ltr"` OR `"rtl"`
    * @param {string} [options.orientation='auto'] values: `"auto"` OR `"landscape"` OR `"portrait"`
    * @param {number} [options.minSpreadWidth=800]
+   * @param {number} [options.pageWidth] page width for scrolled-doc flow
    */
   constructor(options) {
     /**
+     * @member {string} axis
+     * @memberof Layout
+     * @readonly
+     */
+    this.axis = "horizontal";
+    /**
      * @member {string} name Layout name
      * @memberof Layout
-     * @protected
+     * @readonly
      */
     this.name = "reflowable";
     /**
@@ -13431,6 +16609,18 @@ class Layout {
      */
     this.height = 0;
     /**
+     * @member {number} pageWidth
+     * @memberof Layout
+     * @readonly
+     */
+    this.pageWidth = 0;
+    /**
+     * @member {number} pageHeight
+     * @memberof Layout
+     * @readonly
+     */
+    this.pageHeight = 0;
+    /**
      * @member {number} spreadWidth Spread width
      * @memberof Layout
      * @readonly
@@ -13460,14 +16650,7 @@ class Layout {
      * @readonly
      */
     this.divisor = 1;
-    this.set({
-      name: options && options.name,
-      flow: options && options.flow,
-      spread: options && options.spread,
-      direction: options && options.direction,
-      orientation: options && options.orientation,
-      minSpreadWidth: options && options.minSpreadWidth
-    });
+    this.set(options || {});
   }
 
   /**
@@ -13480,7 +16663,7 @@ class Layout {
       const value = options[opt];
       if (this[opt] === value || typeof value === "undefined") {
         delete options[opt];
-      } else if (opt === "name" || opt === "direction" || opt === "orientation") {
+      } else if (opt === "axis" || opt === "name" || opt === "direction" || opt === "orientation") {
         if (typeof value === "string") {
           this[opt] = options[opt];
         } else error(opt);
@@ -13490,14 +16673,17 @@ class Layout {
             case "scrolled":
             case "scrolled-continuous":
               this.flow = "scrolled";
+              this.axis = options["axis"] || "vertical";
               this.spread = "none"; // autocomplete
               break;
             case "scrolled-doc":
               this.flow = value;
+              this.axis = options["axis"] || "vertical";
               this.spread = "none"; // autocomplete
               break;
             default:
               this.flow = "paginated";
+              this.axis = "horizontal"; // autocomplete
               break;
           }
         } else error(opt);
@@ -13513,7 +16699,7 @@ class Layout {
               break;
           }
         } else error(opt);
-      } else if (opt === "width" || opt === "height" || opt === "gap" || opt === "minSpreadWidth") {
+      } else if (opt === "width" || opt === "height" || opt === "pageWidth" || opt === "pageHeight" || opt === "gap" || opt === "minSpreadWidth") {
         if (typeof value === "number") {
           if (value >= 0) {
             this[opt] = options[opt];
@@ -13534,34 +16720,27 @@ class Layout {
    * @param {number} [gap] width of the gap between columns
    */
   calculate(width, height, gap) {
-    if (typeof width === "undefined") {
-      width = this.width;
+    if (!width) width = this.width;
+    if (!height) height = this.height;
+    if (this.name === "reflowable" && !(gap >= 0)) {
+      let section;
+      if (this.axis === "horizontal") {
+        section = Math.floor(width / 12);
+      } else {
+        section = Math.floor(height / 17);
+      }
+      gap = section % 2 === 0 ? section : section - 1;
+    } else {
+      gap = 0;
     }
-    if (typeof height === "undefined") {
-      height = this.height;
-    }
-
-    //-- Check the width and create even width columns
-
     let divisor;
     if (this.spread === "auto" && width >= this.minSpreadWidth) {
       divisor = 2;
     } else {
       divisor = 1;
     }
-    const section = Math.floor(width / 12);
-    if (this.name === "reflowable" && this.flow === "paginated" && !(gap >= 0)) {
-      gap = section % 2 === 0 ? section : section - 1;
-    }
-    if (this.name === "pre-paginated") {
-      gap = 0;
-    }
-    if (typeof gap === "undefined") {
-      gap = 0;
-    }
-    let columnWidth;
     let pageWidth;
-    //-- Double Page
+    let columnWidth;
     if (divisor > 1) {
       columnWidth = width / divisor - gap;
       pageWidth = columnWidth + gap;
@@ -13572,35 +16751,19 @@ class Layout {
     if (this.name === "pre-paginated" && divisor > 1) {
       width = columnWidth;
     }
+    if (this.flow === "scrolled-doc" && this.pageWidth) {
+      columnWidth = this.pageWidth;
+      pageWidth = this.pageWidth;
+    }
+    this.gap = gap;
+    this.delta = width;
     this.width = width;
     this.height = height;
-    this.spreadWidth = columnWidth * divisor + gap;
-    this.pageWidth = pageWidth;
-    this.delta = width;
-    this.columnWidth = columnWidth;
-    this.gap = gap;
     this.divisor = divisor;
-  }
-
-  /**
-   * Apply Css to a Document
-   * @param {Contents} contents
-   * @param {Section} [section] 
-   * @param {string} [axis] 
-   * @return {void|Promise<any>}
-   */
-  format(contents, section, axis) {
-    let formating;
-    if (this.name === "pre-paginated") {
-      formating = contents.fit(this.columnWidth, this.height, section);
-    } else if (this.flow === "paginated") {
-      formating = contents.columns(this.width, this.height, this.columnWidth, this.gap, this.direction);
-    } else if (axis && axis === "horizontal") {
-      formating = contents.size(null, this.height, this.direction);
-    } else {
-      formating = contents.size(this.width, null, this.direction);
-    }
-    return formating; // might be a promise in some View Managers
+    this.pageWidth = pageWidth;
+    this.pageHeight = height - gap;
+    this.columnWidth = columnWidth;
+    this.spreadWidth = columnWidth * divisor + gap;
   }
 
   /**
@@ -13633,6 +16796,23 @@ class Layout {
 event_emitter_default()(Layout.prototype);
 /* harmony default export */ const layout = (Layout);
 ;// CONCATENATED MODULE: ./src/themes.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -13781,11 +16961,11 @@ class Themes extends Map {
    */
   append(key, theme, contents) {
     if (theme.url) {
-      contents.appendStylesheet(theme.url, key);
+      contents.appendStylesheet(key, theme.url);
       theme.injected = true;
     }
     if (theme.rules) {
-      contents.appendStylesheetRules(theme.rules, key);
+      contents.appendStylesheet(key, theme.rules);
       theme.injected = true;
     }
     if (theme.injected) {
@@ -13837,6 +17017,7 @@ class Themes extends Map {
    * @private
    */
   inject(contents) {
+    if (!this.current) return;
     this.forEach((theme, key) => {
       if (this.current === key) {
         this.append(key, theme, contents);
@@ -13931,6 +17112,10 @@ class Themes extends Map {
 event_emitter_default()(Themes.prototype);
 /* harmony default export */ const themes = (Themes);
 ;// CONCATENATED MODULE: ./src/utils/hook.js
+
+
+
+
 /**
  * Hooks allow for injecting functions that must all complete in order before finishing
  * They will execute in parallel but all must finish before continuing
@@ -14017,7 +17202,374 @@ class Hook {
   }
 }
 /* harmony default export */ const hook = (Hook);
+;// CONCATENATED MODULE: ./src/viewport.js
+
+
+
+
+
+
+
+/**
+ * viewport configuration class
+ */
+class Viewport {
+  /**
+   * Constructor
+   * @param {Layout} layout
+   * @param {object} options
+   * @param {boolean} [options.hidden] viewport hidden
+   */
+  constructor(layout, options) {
+    this.layout = layout;
+    this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
+      if (changed.axis) {
+        this.updateAxis(props.axis);
+      } else if (changed.flow) {
+        this.updateFlow(props.flow);
+      } else if (changed.direction) {
+        this.direction(props.direction);
+      }
+    });
+    this.settings = options || {};
+    /**
+     * viewport id
+     * @member {string} id
+     * @memberof Viewport
+     * @readonly
+     */
+    this.id = "vp-" + uuid();
+    /**
+     * viewport container
+     * @member {Element} container
+     * @memberof Viewport
+     * @readonly
+     */
+    this.container = null;
+    /**
+     * viewport element
+     * @member {Element} target
+     * @memberof Viewport
+     * @readonly
+     */
+    this.target = null;
+    /**
+     * viewport rect
+     * @member {object} rect
+     * @memberof Viewport
+     * @readonly
+     */
+    this.rect = {
+      bottom: 0,
+      height: 0,
+      left: 0,
+      right: 0,
+      top: 0,
+      width: 0,
+      x: 0,
+      y: 0
+    };
+  }
+
+  /**
+   * Attach to viewport element
+   * @param {Element|string} input viewport element
+   * @param {object} options
+   * @param {string|number} options.width viewport width
+   * @param {string|number} options.height viewport height
+   * @returns {Element}
+   */
+  attachTo(input, options) {
+    const element = this.getElement(input);
+    if (!element) return;
+    this.views = options.views;
+    this.container = this.create(options);
+    this.container.appendChild(this.views.container);
+    let base;
+    if (this.settings.hidden) {
+      base = this.wrapper;
+    } else {
+      base = this.container;
+    }
+    element.appendChild(base);
+    this.target = element;
+    this.appendListeners();
+    return element;
+  }
+
+  /**
+   * Create viewport-container
+   * @param {object} options 
+   * @param {string|number} [options.width]
+   * @param {string|number} [options.height]
+   * @returns {Element} container
+   * @private
+   */
+  create(options) {
+    let szw = options.width;
+    let szh = options.height;
+    if (szw && isNumber(szw)) {
+      szw = szw + "px";
+    }
+    if (szh && isNumber(szh)) {
+      szh = szh + "px";
+    }
+    const container = document.createElement("div");
+    container.classList.add("viewport-container");
+    container.style.wordSpacing = "0";
+    container.style.lineHeight = "0";
+    container.style.verticalAlign = "top";
+    container.style.position = "relative";
+    container.style.display = "flex";
+    container.style.flexWrap = "nowrap";
+    container.style.width = szw || "100%";
+    container.style.height = szh || "100%";
+    container.style.overflow = "hidden";
+    if (this.settings.hidden) {
+      this.wrapper = this.wrap(container);
+    }
+    return container;
+  }
+
+  /**
+   * wrap
+   * @param {Element} container 
+   * @returns {Element} wrapper
+   */
+  wrap(container) {
+    const wrapper = document.createElement("div");
+    wrapper.style.visibility = "hidden";
+    wrapper.style.overflow = "hidden";
+    wrapper.style.width = "0";
+    wrapper.style.height = "0";
+    wrapper.appendChild(container);
+    return wrapper;
+  }
+
+  /**
+   * appendListeners
+   * @private
+   */
+  appendListeners() {
+    //-- ORIENTATION_CHANGE
+    screen.orientation.addEventListener("change", this.orientation.bind(this));
+    //-- RESIZE
+    this.resizeFunc = new ResizeObserver(e => {
+      requestAnimationFrame(() => this.resize(e));
+    });
+    this.resizeFunc.observe(this.container);
+  }
+
+  /**
+   * removeListeners
+   * @private
+   */
+  removeListeners() {
+    //-- ORIENTATION_CHANGE
+    screen.orientation.removeEventListener("change", this.orientation.bind(this));
+    //-- RESIZE
+    if (this.resizeFunc) {
+      this.resizeFunc.disconnect();
+    }
+  }
+
+  /**
+   * Get viewport element
+   * @param {Element|string} input 
+   * @returns {Element}
+   * @private
+   */
+  getElement(input) {
+    let element;
+    if (typeof input === "string") {
+      element = document.getElementById(input);
+    } else if (input instanceof Element) {
+      element = input;
+    } else {
+      throw new TypeError("Invalid argument type");
+    }
+    return element;
+  }
+
+  /**
+   * orientationchanged
+   * @param {Event} e 
+   * @private
+   */
+  orientation(e) {
+    this.emit(EVENTS.VIEWPORT.ORIENTATION_CHANGE, e.target);
+  }
+
+  /**
+   * resize
+   * @param {object} entries 
+   * @private
+   */
+  resize(entries) {
+    let changed = false;
+    const cmp = rect => Object.keys(this.rect).forEach(p => {
+      if (!rect) return;
+      if (this.rect[p] !== rect[p] && rect[p] !== void 0) {
+        this.rect[p] = rect[p];
+        changed = true;
+      }
+    });
+    entries.forEach(entry => cmp(entry.contentRect));
+    if (!changed) return;
+    this.emit(EVENTS.VIEWPORT.RESIZED, this.rect);
+  }
+
+  /**
+   * size
+   * @param {string|number} [width] 
+   * @param {string|number} [height] 
+   * @returns {object}
+   */
+  size(width, height) {
+    this.rect.width = this.target.clientWidth;
+    this.rect.height = this.target.clientHeight;
+    if (!width) {
+      width = this.rect.width;
+      this.container.style.width = width + "px";
+    } else if (isNumber(width)) {
+      this.container.style.width = width + "px";
+      this.rect.width = width;
+    } else {
+      this.container.style.width = width;
+      this.rect.width = this.container.clientWidth;
+    }
+    if (!height) {
+      height = this.rect.height;
+      this.container.style.height = height + "px";
+    } else if (isNumber(height)) {
+      this.container.style.height = height + "px";
+      this.rect.height = height;
+    } else {
+      this.container.style.height = height;
+      this.rect.height = this.container.clientHeight;
+    }
+    return {
+      width: this.rect.width,
+      height: this.rect.height
+    };
+  }
+
+  /**
+   * getSheet
+   * @returns {CSSStyleSheet}
+   */
+  getSheet() {
+    const style = document.createElement("style");
+    // WebKit hack --> https://davidwalsh.name/add-rules-stylesheets
+    style.appendChild(document.createTextNode(""));
+    document.head.appendChild(style);
+    return style.sheet;
+  }
+
+  /**
+   * addStyleRules
+   * @param {string} selector 
+   * @param {object[]} rulesArray 
+   */
+  addStyleRules(selector, rulesArray) {
+    let scope = "#" + this.id + " ";
+    let rules = "";
+    if (!this.sheet) {
+      this.sheet = this.getSheet();
+    }
+    rulesArray.forEach(set => {
+      for (const prop in set) {
+        if (set.hasOwnProperty(prop)) {
+          rules += prop + ":" + set[prop] + ";";
+        }
+      }
+    });
+    this.sheet.insertRule(scope + selector + " {" + rules + "}", 0);
+  }
+
+  /**
+   * Update direction
+   * @param {string} [value] `layout.direction` value
+   * @private
+   */
+  direction(value) {
+    const dir = value || this.layout.direction;
+    this.target.dir = dir;
+    this.target.classList.add(dir);
+  }
+
+  /**
+   * Update axis
+   * @param {string} [value] values: `"horizontal"` OR `"vertical"`
+   * @private
+   */
+  updateAxis(value) {
+    const axis = value || this.layout.axis;
+    if (axis === "horizontal") {
+      this.views.container.style["flex-wrap"] = "nowrap";
+    } else {
+      this.views.container.style["flex-wrap"] = "wrap";
+    }
+  }
+
+  /**
+   * Update flow
+   * @param {string} [value] `layout.flow` value
+   * @private
+   */
+  updateFlow(value) {
+    const flow = value || this.layout.flow;
+    if (flow === "paginated") {
+      this.views.container.style["overflow-y"] = "hidden";
+      this.views.container.style["overflow-x"] = "hidden";
+      this.views.container.style["flex-wrap"] = "nowrap";
+    } else if (this.layout.axis === "horizontal") {
+      this.views.container.style["overflow-y"] = "hidden";
+      this.views.container.style["overflow-x"] = "auto";
+      this.views.container.style["flex-wrap"] = "nowrap";
+    } else if (this.layout.axis === "vertical") {
+      this.views.container.style["overflow-y"] = "auto";
+      this.views.container.style["overflow-x"] = "hidden";
+      this.views.container.style["flex-wrap"] = "wrap";
+    }
+    this.target.className = flow;
+  }
+
+  /**
+   * Update viewport container
+   */
+  update() {
+    this.updateAxis();
+    this.updateFlow();
+    this.direction();
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    if (this.target) {
+      let base;
+      if (this.settings.hidden) {
+        base = this.wrapper;
+      } else {
+        base = this.container;
+      }
+      if (this.target.contains(base)) {
+        this.target.removeChild(base);
+      }
+      this.removeListeners();
+    }
+  }
+}
+event_emitter_default()(Viewport.prototype);
+/* harmony default export */ const viewport = (Viewport);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.async-iterator.find.js
+var esnext_async_iterator_find = __webpack_require__(3064);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.find.js
+var esnext_iterator_find = __webpack_require__(2577);
 ;// CONCATENATED MODULE: ./src/mapping.js
+
 
 
 
@@ -14028,12 +17580,10 @@ class Mapping {
   /**
    * Constructor
    * @param {Layout} layout Layout to apply
-   * @param {string} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
    * @param {boolean} [dev=false] toggle developer highlighting
    */
-  constructor(layout, axis = "horizontal", dev = false) {
+  constructor(layout, dev = false) {
     this.layout = layout;
-    this.horizontal = axis === "horizontal";
     this.devMode = dev;
   }
 
@@ -14147,15 +17697,18 @@ class Mapping {
    */
   findStart(root, start, end) {
     const stack = [root];
+    const hor = this.layout.axis === "horizontal";
+    const ltr = this.layout.direction === "ltr";
+    const rtl = this.layout.direction === "rtl";
     let prev = root;
     while (stack.length) {
       const el = stack.shift();
       const found = this.walk(el, node => {
         let left, right, top, bottom;
         const elPos = nodeBounds(node);
-        if (this.horizontal && this.layout.direction === "ltr") {
-          left = this.horizontal ? elPos.left : elPos.top;
-          right = this.horizontal ? elPos.right : elPos.bottom;
+        if (hor && ltr) {
+          left = hor ? elPos.left : elPos.top;
+          right = hor ? elPos.right : elPos.bottom;
           if (left >= start && left <= end) {
             return node;
           } else if (right > start) {
@@ -14164,7 +17717,7 @@ class Mapping {
             prev = node;
             stack.push(node);
           }
-        } else if (this.horizontal && this.layout.direction === "rtl") {
+        } else if (hor && rtl) {
           left = elPos.left;
           right = elPos.right;
           if (right <= end && right >= start) {
@@ -14207,13 +17760,16 @@ class Mapping {
    */
   findEnd(root, start, end) {
     const stack = [root];
+    const hor = this.layout.axis === "horizontal";
+    const ltr = this.layout.direction === "ltr";
+    const rtl = this.layout.direction === "rtl";
     let prev = root;
     while (stack.length) {
       const el = stack.shift();
       const found = this.walk(el, node => {
         let left, right, top, bottom;
         const elPos = nodeBounds(node);
-        if (this.horizontal && this.layout.direction === "ltr") {
+        if (hor && ltr) {
           left = Math.round(elPos.left);
           right = Math.round(elPos.right);
           if (left > end && prev) {
@@ -14224,9 +17780,9 @@ class Mapping {
             prev = node;
             stack.push(node);
           }
-        } else if (this.horizontal && this.layout.direction === "rtl") {
-          left = Math.round(this.horizontal ? elPos.left : elPos.top);
-          right = Math.round(this.horizontal ? elPos.right : elPos.bottom);
+        } else if (hor && rtl) {
+          left = Math.round(hor ? elPos.left : elPos.top);
+          right = Math.round(hor ? elPos.right : elPos.bottom);
           if (right < start && prev) {
             return prev;
           } else if (left < start) {
@@ -14267,14 +17823,17 @@ class Mapping {
    */
   findTextStartRange(node, start, end) {
     const ranges = this.splitTextNodeIntoRanges(node);
+    const hor = this.layout.axis === "horizontal";
+    const ltr = this.layout.direction === "ltr";
+    const rtl = this.layout.direction === "rtl";
     for (let i = 0; i < ranges.length; i++) {
       const range = ranges[i];
       const pos = range.getBoundingClientRect();
-      if (this.horizontal && this.layout.direction === "ltr") {
+      if (hor && ltr) {
         if (pos.left >= start) {
           return range;
         }
-      } else if (this.horizontal && this.layout.direction === "rtl") {
+      } else if (hor && rtl) {
         if (pos.right <= end) {
           return range;
         }
@@ -14297,17 +17856,20 @@ class Mapping {
    */
   findTextEndRange(node, start, end) {
     const ranges = this.splitTextNodeIntoRanges(node);
+    const hor = this.layout.axis === "horizontal";
+    const ltr = this.layout.direction === "ltr";
+    const rtl = this.layout.direction === "rtl";
     let prev;
     for (let i = 0; i < ranges.length; i++) {
       const range = ranges[i];
       const pos = range.getBoundingClientRect();
-      if (this.horizontal && this.layout.direction === "ltr") {
+      if (hor && ltr) {
         if (pos.left > end && prev) {
           return prev;
         } else if (pos.right > end) {
           return range;
         }
-      } else if (this.horizontal && this.layout.direction === "rtl") {
+      } else if (hor && rtl) {
         if (pos.right < start && prev) {
           return prev;
         } else if (pos.left < start) {
@@ -14401,437 +17963,106 @@ class Mapping {
     }
     return map;
   }
-
-  /**
-   * Set the axis for mapping
-   * @param {string} value `"horizontal"` OR `"vertical"`
-   * @return {boolean} is it horizontal?
-   */
-  axis(value) {
-    this.horizontal = value === "horizontal";
-    return this.horizontal;
-  }
 }
 /* harmony default export */ const src_mapping = (Mapping);
-// EXTERNAL MODULE: ./node_modules/lodash/throttle.js
-var throttle = __webpack_require__(7350);
-var throttle_default = /*#__PURE__*/__webpack_require__.n(throttle);
-;// CONCATENATED MODULE: ./src/managers/helpers/stage.js
-
-
-
-
-/**
- * Stage
- */
-class Stage {
-  /**
-   * Constructor
-   * @param {Layout} layout 
-   * @param {object} options
-   * @param {string} options.axis
-   * @param {boolean} options.fullsize
-   * @param {string|number} options.width
-   * @param {string|number} options.height
-   */
-  constructor(layout, options) {
-    /**
-     * @member {object} settings
-     * @memberof Stage
-     * @readonly
-     */
-    this.settings = options || {};
-    /**
-     * @member {string} id
-     * @memberof Stage
-     * @readonly
-     */
-    this.id = "epubjs-container-" + uuid();
-    /**
-     * @member {Element} container
-     * @memberof Stage
-     * @readonly
-     */
-    this.container = this.create(this.settings);
-    this.layout = layout;
-    this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-      if (changed.flow) {
-        this.updateFlow(changed.flow);
-      } else if (changed.direction) {
-        this.direction(changed.direction);
-      }
-    });
-    this.updateFlow();
-    this.direction();
-    this.axis(options.axis || "vertical");
-    if (this.settings.hidden) {
-      this.wrapper = this.wrap(this.container);
-    }
-  }
-
-  /**
-   * Creates an element to render to.
-   * Resizes to passed width and height or to the elements size
-   * @param {object} options 
-   * @returns {Element} container
-   */
-  create(options) {
-    let width = options.width;
-    let height = options.height;
-    extend(this.settings, options);
-    if (options.height && isNumber(options.height)) {
-      height = options.height + "px";
-    }
-    if (options.width && isNumber(options.width)) {
-      width = options.width + "px";
-    }
-
-    // Create new container element
-    const container = document.createElement("div");
-    container.id = this.id;
-    container.classList.add("epub-container");
-
-    // Style Element
-    container.style.wordSpacing = "0";
-    container.style.lineHeight = "0";
-    container.style.verticalAlign = "top";
-    container.style.position = "relative";
-    container.style.display = "flex";
-    container.style.flexWrap = "nowrap";
-    if (width) {
-      container.style.width = width;
-    }
-    if (height) {
-      container.style.height = height;
-    }
-    return container;
-  }
-
-  /**
-   * wrap
-   * @param {Element} container 
-   * @returns {Element} wrapper
-   */
-  wrap(container) {
-    const wrapper = document.createElement("div");
-    wrapper.style.visibility = "hidden";
-    wrapper.style.overflow = "hidden";
-    wrapper.style.width = "0";
-    wrapper.style.height = "0";
-    wrapper.appendChild(container);
-    return wrapper;
-  }
-
-  /**
-   * getElement
-   * @param {Element|string} element 
-   * @returns {Element}
-   */
-  getElement(element) {
-    let elm;
-    if (isElement(element)) {
-      elm = element;
-    } else if (typeof element === "string") {
-      elm = document.getElementById(element);
-    } else {
-      throw new TypeError("not valid argument type");
-    }
-    return elm;
-  }
-
-  /**
-   * attachTo
-   * @param {Element|string} what 
-   * @returns {Element}
-   */
-  attachTo(what) {
-    const element = this.getElement(what);
-    if (!element) return;
-    let base;
-    if (this.settings.hidden) {
-      base = this.wrapper;
-    } else {
-      base = this.container;
-    }
-    element.appendChild(base);
-    this.parentElement = element;
-    return element;
-  }
-
-  /**
-   * getContainer
-   * @returns {Element} container
-   */
-  getContainer() {
-    return this.container;
-  }
-
-  /**
-   * onResize
-   * @param {*} func 
-   */
-  onResize(func) {
-    // Only listen to window for resize event if width and height are not fixed.
-    // This applies if it is set to a percent or auto.
-    if (!isNumber(this.settings.width) || !isNumber(this.settings.height)) {
-      this.resizeFunc = throttle_default()(func, 50);
-      window.addEventListener("resize", this.resizeFunc, false);
-    }
-  }
-
-  /**
-   * onOrientationChange
-   * @param {*} func 
-   */
-  onOrientationChange(func) {
-    this.orientationChangeFunc = func;
-    window.addEventListener("orientationchange", this.orientationChangeFunc, false);
-  }
-
-  /**
-   * size
-   * @param {string|number} [width] 
-   * @param {string|number} [height] 
-   * @returns {object}
-   */
-  size(width, height) {
-    let bounds;
-    let _width = width || this.settings.width;
-    let _height = height || this.settings.height;
-
-    // If width or height are set to false, inherit them from containing element
-    if (!width) {
-      bounds = this.parentElement.getBoundingClientRect();
-      if (bounds.width) {
-        width = Math.floor(bounds.width);
-        this.container.style.width = width + "px";
-      }
-    } else {
-      if (isNumber(width)) {
-        this.container.style.width = width + "px";
-      } else {
-        this.container.style.width = width;
-      }
-    }
-    if (!height) {
-      bounds = bounds || this.parentElement.getBoundingClientRect();
-      if (bounds.height) {
-        height = bounds.height;
-        this.container.style.height = height + "px";
-      }
-    } else {
-      if (isNumber(height)) {
-        this.container.style.height = height + "px";
-      } else {
-        this.container.style.height = height;
-      }
-    }
-    if (!isNumber(width)) {
-      width = this.container.clientWidth;
-    }
-    if (!isNumber(height)) {
-      height = this.container.clientHeight;
-    }
-    this.containerStyles = window.getComputedStyle(this.container);
-    this.containerPadding = {
-      left: parseFloat(this.containerStyles["padding-left"]) || 0,
-      right: parseFloat(this.containerStyles["padding-right"]) || 0,
-      top: parseFloat(this.containerStyles["padding-top"]) || 0,
-      bottom: parseFloat(this.containerStyles["padding-bottom"]) || 0
-    };
-
-    // Bounds not set, get them from window
-    let wndBounds = windowBounds();
-    let bodyStyles = window.getComputedStyle(document.body);
-    let bodyPadding = {
-      left: parseFloat(bodyStyles["padding-left"]) || 0,
-      right: parseFloat(bodyStyles["padding-right"]) || 0,
-      top: parseFloat(bodyStyles["padding-top"]) || 0,
-      bottom: parseFloat(bodyStyles["padding-bottom"]) || 0
-    };
-    if (!_width) {
-      width = wndBounds.width - bodyPadding.left - bodyPadding.right;
-    }
-    if (this.settings.fullsize && !_height || !_height) {
-      height = wndBounds.height - bodyPadding.top - bodyPadding.bottom;
-    }
-    return {
-      width: width - this.containerPadding.left - this.containerPadding.right,
-      height: height - this.containerPadding.top - this.containerPadding.bottom
-    };
-  }
-
-  /**
-   * Get bounding client rect
-   * @returns {DOMRect|object}
-   */
-  bounds() {
-    let box;
-    if (this.container.style.overflow !== "visible") {
-      box = this.container && this.container.getBoundingClientRect();
-    }
-    if (!box || !box.width || !box.height) {
-      return windowBounds();
-    } else {
-      return box;
-    }
-  }
-
-  /**
-   * getSheet
-   * @returns {CSSStyleSheet}
-   */
-  getSheet() {
-    const style = document.createElement("style");
-    // WebKit hack --> https://davidwalsh.name/add-rules-stylesheets
-    style.appendChild(document.createTextNode(""));
-    document.head.appendChild(style);
-    return style.sheet;
-  }
-
-  /**
-   * addStyleRules
-   * @param {string} selector 
-   * @param {object[]} rulesArray 
-   */
-  addStyleRules(selector, rulesArray) {
-    let scope = "#" + this.id + " ";
-    let rules = "";
-    if (!this.sheet) {
-      this.sheet = this.getSheet();
-    }
-    rulesArray.forEach(set => {
-      for (const prop in set) {
-        if (set.hasOwnProperty(prop)) {
-          rules += prop + ":" + set[prop] + ";";
-        }
-      }
-    });
-    this.sheet.insertRule(scope + selector + " {" + rules + "}", 0);
-  }
-
-  /**
-   * Set axis
-   * @param {string} value values: `"horizontal"` OR `"vertical"`
-   */
-  axis(value) {
-    if (value === "horizontal") {
-      this.container.style.flexDirection = "row";
-    } else {
-      this.container.style.flexDirection = null;
-    }
-    this.settings.axis = value;
-  }
-
-  /**
-   * Update direction
-   * @param {string} [value] direction
-   * @private
-   */
-  direction(value) {
-    value = value || this.layout.direction;
-    if (this.container) {
-      this.container.dir = value;
-    }
-    if (this.settings.fullsize) {
-      document.body.style["direction"] = value;
-    }
-  }
-
-  /**
-   * Update Flow
-   * @param {string} [value] `layout.flow` value
-   * @private
-   */
-  updateFlow(value) {
-    value = value || this.layout.flow;
-    switch (value) {
-      case "paginated":
-        this.container.style["overflow-y"] = "hidden";
-        this.container.style["overflow-x"] = "hidden";
-        this.container.style.flexWrap = "nowrap";
-        break;
-      case "scrolled":
-        this.container.style["overflow-y"] = "auto";
-        this.container.style["overflow-x"] = "hidden";
-        this.container.style.flexWrap = "wrap";
-        break;
-      case "scrolled-doc":
-        this.container.style["overflow-y"] = "hidden";
-        this.container.style["overflow-x"] = "hidden";
-        this.container.style.flexWrap = "wrap";
-        break;
-    }
-  }
-
-  /**
-   * destroy
-   */
-  destroy() {
-    if (this.parentElement) {
-      let base;
-      if (this.settings.hidden) {
-        base = this.wrapper;
-      } else {
-        base = this.container;
-      }
-      if (this.parentElement.contains(base)) {
-        this.parentElement.removeChild(base);
-      }
-      window.removeEventListener("resize", this.resizeFunc);
-      window.removeEventListener("orientationChange", this.orientationChangeFunc);
-    }
-  }
-}
-/* harmony default export */ const stage = (Stage);
 ;// CONCATENATED MODULE: ./src/managers/helpers/views.js
+
+
 /**
  * Views
  */
 class Views extends Array {
   /**
    * Constructor
-   * @param {Element} container 
    */
-  constructor(container) {
+  constructor() {
     super();
-    this.container = container;
+    /**
+     * @member {Element} container
+     * @memberof Views
+     * @readonly
+     */
+    this.container = document.createElement("div");
+    this.container.classList.add("views-container");
+    this.container.style.display = "flex";
+    this.container.style.width = "100%";
+    this.container.style.height = "100%";
+    /**
+     * @member {boolean} hidden
+     * @memberof Views
+     * @readonly
+     */
     this.hidden = false;
   }
+
+  /**
+   * first
+   * @returns {object} view
+   */
   first() {
     return this[0];
   }
+
+  /**
+   * last
+   * @returns {object} view
+   */
   last() {
     return this[this.length - 1];
   }
+
+  /**
+   * get
+   * @param {number} i index
+   * @returns {object} view
+   */
   get(i) {
     return this[i];
   }
+
+  /**
+   * append
+   * @param {object} view 
+   * @returns {object} view
+   */
   append(view) {
-    if (this.container) {
-      this.container.appendChild(view.element);
-    }
+    this.container.appendChild(view.element);
     this.push(view);
     return view;
   }
+
+  /**
+   * prepend
+   * @param {object} view 
+   * @returns {object} view
+   */
   prepend(view) {
-    if (this.container) {
-      this.container.insertBefore(view.element, this.container.firstChild);
-    }
+    this.container.insertBefore(view.element, this.container.firstChild);
     this.unshift(view);
     return view;
   }
+
+  /**
+   * insert
+   * @param {object} view 
+   * @param {number} index 
+   * @returns {object} view
+   */
   insert(view, index) {
-    if (this.container) {
-      if (index < this.container.children.length) {
-        this.container.insertBefore(view.element, this.container.children[index]);
-      } else {
-        this.container.appendChild(view.element);
-      }
+    const children = this.container.children;
+    if (index < children.length) {
+      this.container.insertBefore(view.element, children[index]);
+    } else {
+      this.container.appendChild(view.element);
     }
     this.splice(index, 0, view);
     return view;
   }
+
+  /**
+   * remove
+   * @param {object} view 
+   */
   remove(view) {
     const index = this.indexOf(view);
     if (index > -1) {
@@ -14839,14 +18070,22 @@ class Views extends Array {
     }
     this.destroy(view);
   }
+
+  /**
+   * destroy
+   * @param {object} view 
+   */
   destroy(view) {
     if (view.displayed) {
       view.destroy();
     }
-    if (this.container) {
-      this.container.removeChild(view.element);
-    }
+    this.container.removeChild(view.element);
   }
+
+  /**
+   * clear
+   * @returns {void}
+   */
   clear() {
     if (this.length === 0) return;
     for (let i = 0; i < this.length; i++) {
@@ -14855,6 +18094,12 @@ class Views extends Array {
     }
     this.splice(0);
   }
+
+  /**
+   * find
+   * @param {Section} section 
+   * @returns {object} view
+   */
   find(section) {
     for (let i = 0; i < this.length; i++) {
       const view = this[i];
@@ -14863,6 +18108,11 @@ class Views extends Array {
       }
     }
   }
+
+  /**
+   * displayed
+   * @returns {object[]}
+   */
   displayed() {
     const displayed = [];
     for (let i = 0; i < this.length; i++) {
@@ -14873,6 +18123,10 @@ class Views extends Array {
     }
     return displayed;
   }
+
+  /**
+   * show
+   */
   show() {
     for (let i = 0; i < this.length; i++) {
       const view = this[i];
@@ -14882,6 +18136,10 @@ class Views extends Array {
     }
     this.hidden = false;
   }
+
+  /**
+   * hide
+   */
   hide() {
     for (let i = 0; i < this.length; i++) {
       const view = this[i];
@@ -14890,6 +18148,18 @@ class Views extends Array {
       }
     }
     this.hidden = true;
+  }
+
+  /**
+   * update
+   */
+  update() {
+    for (let i = 0; i < this.length; ++i) {
+      const view = this[i];
+      if (view.displayed) {
+        view.update();
+      }
+    }
   }
 }
 /* harmony default export */ const views = (Views);
@@ -14900,9 +18170,32 @@ class Views extends Array {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
+const AXIS_H = "horizontal";
+const AXIS_V = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -14922,9 +18215,8 @@ class Contents {
      */
     this.epubcfi = new src_epubcfi();
     this.document = doc;
-    this.documentElement = this.document.documentElement;
     /**
-     * @member {object} content document.body by current location
+     * @member {Element} content document.body by current location
      * @memberof Contents
      * @readonly
      */
@@ -14954,15 +18246,13 @@ class Contents {
     this.styles = new Map();
     this.active = true;
     this.window = this.document.defaultView;
-    this.epubReadingSystem("epub.js", EPUBJS_VERSION);
-    this.listeners();
-  }
-
-  /**
-   * Get DOM events that are listened for and passed along
-   */
-  static get listenedEvents() {
-    return DOM_EVENTS;
+    /**
+     * @member {string} mode writing-mode
+     * @memberof Contents
+     * @readonly
+     */
+    this.mode = this.writingMode();
+    this.appendListeners();
   }
 
   /**
@@ -14998,59 +18288,16 @@ class Contents {
   }
 
   /**
-   * Get or Set width of the contents
-   * @param {number} [w]
-   * @returns {number} width
-   */
-  contentWidth(w) {
-    const content = this.content || this.document.body;
-    if (w && isNumber(w)) {
-      w = w + "px";
-    }
-    if (w) {
-      content.style.width = w;
-    }
-    return parseInt(this.window.getComputedStyle(content)["width"]);
-  }
-
-  /**
-   * Get or Set height of the contents
-   * @param {number} [h]
-   * @returns {number} height
-   */
-  contentHeight(h) {
-    const content = this.content;
-    if (h && isNumber(h)) {
-      h = h + "px";
-    }
-    if (h) {
-      content.style.height = h;
-    }
-    return parseInt(this.window.getComputedStyle(content)["height"]);
-  }
-
-  /**
    * Get size of the text using Range
    * @returns {{ width: number, height: number }}
    */
   textSize() {
     const range = this.document.createRange();
-    const content = this.content;
-    // Select the contents of frame
-    range.selectNodeContents(content);
-    // get rect of the text content
+    range.selectNodeContents(this.content);
     const rect = range.getBoundingClientRect();
-    const border = borders(content);
-    let width = rect.width;
-    let height = rect.height;
-    if (border) {
-      if (border.width) {
-        width += border.width;
-      }
-      if (border.height) {
-        height += border.height;
-      }
-    }
+    const border = borders(this.content);
+    const width = rect.width + border.width;
+    const height = this.content.clientHeight;
     return {
       width: Math.round(width),
       height: Math.round(height)
@@ -15062,7 +18309,7 @@ class Contents {
    * @returns {number} width
    */
   scrollWidth() {
-    return this.documentElement.scrollWidth;
+    return this.document.documentElement.scrollWidth;
   }
 
   /**
@@ -15070,40 +18317,46 @@ class Contents {
    * @returns {number} height
    */
   scrollHeight() {
-    return this.documentElement.scrollHeight;
+    return this.document.documentElement.scrollHeight;
   }
 
   /**
    * Set overflow css style of the contents
    * @param {string} [overflow]
+   * @returns {string}
    */
   overflow(overflow) {
+    const elt = this.document.documentElement;
     if (overflow) {
-      this.documentElement.style.overflow = overflow;
+      elt.style.overflow = overflow;
     }
-    return this.window.getComputedStyle(this.documentElement)["overflow"];
+    return this.window.getComputedStyle(elt)["overflow"];
   }
 
   /**
    * Set overflowX css style of the documentElement
    * @param {string} [overflow]
+   * @returns {string}
    */
   overflowX(overflow) {
+    const elt = this.document.documentElement;
     if (overflow) {
-      this.documentElement.style.overflowX = overflow;
+      elt.style.overflowX = overflow;
     }
-    return this.window.getComputedStyle(this.documentElement)["overflowX"];
+    return this.window.getComputedStyle(elt)["overflowX"];
   }
 
   /**
    * Set overflowY css style of the documentElement
    * @param {string} [overflow]
+   * @returns {string}
    */
   overflowY(overflow) {
+    const elt = this.document.documentElement;
     if (overflow) {
-      this.documentElement.style.overflowY = overflow;
+      elt.style.overflowY = overflow;
     }
-    return this.window.getComputedStyle(this.documentElement)["overflowY"];
+    return this.window.getComputedStyle(elt)["overflowY"];
   }
 
   /**
@@ -15111,6 +18364,7 @@ class Contents {
    * @param {string} property
    * @param {string} value
    * @param {boolean} [priority] set as "important"
+   * @returns {any}
    */
   css(property, value, priority) {
     const content = this.content;
@@ -15131,6 +18385,7 @@ class Contents {
    * @param {string} [options.minimum]
    * @param {string} [options.maximum]
    * @param {string} [options.scalable]
+   * @returns {object}
    */
   viewport(options) {
     const parsed = {
@@ -15204,7 +18459,7 @@ class Contents {
       if (viewport === null) {
         viewport = this.document.createElement("meta");
         viewport.setAttribute("name", "viewport");
-        this.document.querySelector("head").appendChild(viewport);
+        this.document.head.appendChild(viewport);
       }
       viewport.setAttribute("content", newContent.join(", "));
       this.window.scrollTo(0, 0);
@@ -15228,13 +18483,15 @@ class Contents {
   resize(entries) {
     let changed = false;
     const cmp = rect => Object.keys(this.contentRect).forEach(p => {
+      if (!rect) return;
       if (this.contentRect[p] !== rect[p] && rect[p] !== void 0) {
         this.contentRect[p] = rect[p];
         changed = true;
       }
     });
-    entries.forEach(entry => entry.contentRect && cmp(entry.contentRect));
-    changed && this.emit(EVENTS.CONTENTS.RESIZE, this.contentRect);
+    entries.forEach(entry => cmp(entry.contentRect));
+    if (!changed) return;
+    this.emit(EVENTS.CONTENTS.RESIZED, this.contentRect);
   }
 
   /**
@@ -15334,54 +18591,89 @@ class Contents {
   }
 
   /**
-   * Get injected stylesheet node
+   * Create stylesheet link
    * @param {string} key 
-   * @returns {Node}
+   * @param {string} src 
+   * @returns {Promise<Node>}
    * @private
    */
-  getStylesheetNode(key) {
-    if (!this.document) return null;
-    const id = `epubjs-injected-css-${key}`;
-    let node = this.styles.get(id);
-    if (typeof node === "undefined") {
-      node = this.document.createElement("style");
-      node.id = id;
+  createLink(key, src) {
+    return new Promise((resolve, reject) => {
+      const id = `epubjs-injected-css-${key}`;
+      let node = this.styles.get(id);
+      if (node) {
+        this.document.head.removeChild(node);
+      }
+      node = this.document.createElement("link");
+      node.rel = "stylesheet";
+      node.type = "text/css";
+      node.href = src;
+      node.onload = () => {
+        resolve(node);
+      };
+      node.onerror = () => {
+        reject(new Error(`Failed to load source: ${src}`));
+      };
       this.document.head.appendChild(node);
-    }
-    return node;
+      this.styles.set(id, node);
+    });
   }
 
   /**
-   * Append a stylesheet link to the document head
-   * @param {string} src url
+   * Create stylesheet rules
    * @param {string} key 
-   * @example appendStylesheet("/pach/to/stylesheet.css", "common")
-   * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
+   * @param {object} rules 
    * @returns {Promise<Node>}
+   * @private
    */
-  appendStylesheet(src, key) {
-    return new Promise((resolve, reject) => {
-      if (!this.document) {
-        reject(new Error("Document cannot be null"));
-        return;
-      }
+  createStyle(key, rules) {
+    return new Promise(resolve => {
       const id = `epubjs-injected-css-${key}`;
       let node = this.styles.get(id);
-      if (typeof node === "undefined") {
-        node = this.document.createElement("link");
-        node.rel = "stylesheet";
-        node.type = "text/css";
-        node.href = src;
-        node.onload = () => {
-          resolve(node);
-        };
-        node.onerror = () => {
-          reject(new Error(`Failed to load source: ${src}`));
-        };
-        this.document.head.appendChild(node);
+      if (node) {
+        this.document.head.removeChild(node);
       }
+      node = this.document.createElement("style");
+      node.id = id;
+      this.document.head.appendChild(node);
+      Object.keys(rules).forEach(selector => {
+        const value = rules[selector];
+        const index = node.sheet.cssRules.length;
+        const items = Object.keys(value).map(k => {
+          return `${k}:${value[k]}`;
+        }).join(";");
+        node.sheet.insertRule(`${selector}{${items}}`, index);
+      });
       this.styles.set(id, node);
+      resolve(node);
     });
+  }
+
+  /**
+   * Append a stylesheet link/rules to the document head
+   * @param {string} key
+   * @param {string|object} input url or rules 
+   * @returns {Promise<Node>}
+   * @example appendStylesheet("common", "/pach/to/stylesheet.css")
+   * @example appendStylesheet("common", "https://example.com/to/stylesheet.css")
+   * @example appendStylesheet("common", { h1: { "font-size": "1.5em" }})
+   */
+  appendStylesheet(key, input) {
+    const def = new defer();
+    if (!this.document) {
+      def.reject(new Error("Document cannot be null"));
+      return def.promise;
+    }
+    if (typeof input === "string") {
+      this.createLink(key, input).then(node => {
+        def.resolve(node);
+      });
+    } else {
+      this.createStyle(key, input).then(node => {
+        def.resolve(node);
+      });
+    }
+    return def.promise;
   }
 
   /**
@@ -15413,50 +18705,14 @@ class Contents {
   }
 
   /**
-   * Append serialized stylesheet
-   * @param {string} css
-   * @param {string} key
-   * @example appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
-   * @description If the key is the same, the CSS will be replaced instead of inserted
-   */
-  appendSerializedCSS(css, key) {
-    if (!this.document) return;
-    const node = this.getStylesheetNode(key);
-    node.innerHTML = css;
-    this.styles.set(node.id, node);
-  }
-
-  /**
-   * Append stylesheet rules to a generate stylesheet
-   * @link https://github.com/desirable-objects/json-to-css
-   * @param {object} rules
-   * @param {string} key
-   * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
-   * @description If the key is the same, the CSS will be replaced instead of inserted
-   */
-  appendStylesheetRules(rules, key) {
-    if (!this.document) return;
-    const node = this.getStylesheetNode(key);
-    Object.keys(rules).forEach(selector => {
-      const value = rules[selector];
-      const index = node.sheet.cssRules.length;
-      const items = Object.keys(value).map(k => {
-        return `${k}:${value[k]}`;
-      }).join(";");
-      node.sheet.insertRule(`${selector}{${items}}`, index);
-    });
-    this.styles.set(node.id, node);
-  }
-
-  /**
    * Append a script node to the document head
-   * @param {string} src url
-   * @param {string} key 
-   * @example appendScript("/path/to/script.js", "common")
-   * @example appendScript("https://examples.com/to/script.js", "common")
+   * @param {string} key
+   * @param {string} src url 
+   * @example appendScript("common", "/path/to/script.js")
+   * @example appendScript("common", "https://examples.com/to/script.js")
    * @returns {Promise<Node>} loaded
    */
-  appendScript(src, key) {
+  appendScript(key, src) {
     return new Promise((resolve, reject) => {
       if (!this.document) {
         reject(new Error("Document cannot be null"));
@@ -15547,7 +18803,7 @@ class Contents {
    * Get an EpubCFI from a Dom Range
    * @param {Range} range
    * @param {string} [ignoreClass]
-   * @returns {EpubCFI} cfi
+   * @returns {string} EpubCFI
    */
   cfiFromRange(range, ignoreClass) {
     return new src_epubcfi(range, this.section.cfiBase, ignoreClass).toString();
@@ -15557,7 +18813,7 @@ class Contents {
    * Get an EpubCFI from a Dom node
    * @param {Node} node
    * @param {string} [ignoreClass]
-   * @returns {EpubCFI} cfi
+   * @returns {string} EpubCFI
    */
   cfiFromNode(node, ignoreClass) {
     return new src_epubcfi(node, this.section.cfiBase, ignoreClass).toString();
@@ -15566,8 +18822,8 @@ class Contents {
   /**
    * map
    * @param {Layout} layout 
-   * @todo TODO: find where this is used - remove?
-   * @returns {Array}
+   * @todo find where this is used - remove?
+   * @returns {object[]}
    */
   map(layout) {
     const map = new src_mapping(layout);
@@ -15575,26 +18831,46 @@ class Contents {
   }
 
   /**
-   * Size the contents to a given width and height
-   * @param {number} [width]
-   * @param {number} [height]
-   * @param {string} [dir]
+   * Apply Css to a Document
+   * @param {Layout} layout 
+   * @param {Section} section 
    */
-  size(width, height, dir) {
+  format(layout, section) {
+    if (layout.name === "pre-paginated") {
+      this.fit(layout, section);
+    } else if (layout.flow === "paginated") {
+      this.columns(layout);
+    } else {
+      this.size(layout);
+    }
+  }
+
+  /**
+   * Size the contents to a given width and height
+   * @param {Layout} layout
+   * @private
+   */
+  size(layout) {
+    const doc = layout.flow === "scrolled-doc";
+    const szw = doc ? layout.pageWidth : layout.width;
+    const szh = layout.height;
+    const dir = layout.direction;
     const viewport = {
       scale: 1.0,
       scalable: "no"
     };
-    this.setLayoutStyle("scrolling");
-    if (width >= 0) {
-      this.width(width);
-      viewport.width = width;
-      this.css("padding", "0 " + width / 12 + "px");
+    if (layout.axis === AXIS_V) {
+      this.width(szw);
+      viewport.width = szw;
+      this.css("height", "auto");
+      this.css("padding", "20px " + szw / 12 + "px");
+    } else {
+      this.height(szh);
+      viewport.height = szh;
+      this.css("width", "auto");
+      this.css("padding", szw / 17 + "px 20px");
     }
-    if (height >= 0) {
-      this.height(height);
-      viewport.height = height;
-    }
+    this.css("overflow", "hidden");
     this.css("margin", "0");
     this.css("box-sizing", "border-box");
     this.viewport(viewport);
@@ -15603,58 +18879,44 @@ class Contents {
 
   /**
    * Apply columns to the contents for pagination
-   * @param {number} width
-   * @param {number} height
-   * @param {number} columnWidth
-   * @param {number} gap
-   * @param {string} dir
+   * @param {Layout} layout
+   * @private
    */
-  columns(width, height, columnWidth, gap, dir) {
-    const COLUMN_AXIS = prefixed("column-axis");
-    const COLUMN_GAP = prefixed("column-gap");
-    const COLUMN_WIDTH = prefixed("column-width");
-    const COLUMN_FILL = prefixed("column-fill");
-    const AXIS_H = "horizontal";
-    const AXIS_V = "vertical";
-    const writingMode = this.writingMode();
-    const axis = writingMode.indexOf(AXIS_V) === 0 ? AXIS_V : AXIS_H;
-    this.setLayoutStyle("paginated");
+  columns(layout) {
+    const szw = layout.width;
+    const szh = layout.height;
+    const clw = layout.columnWidth;
+    const dir = layout.direction;
+    const gap = layout.gap;
     this.direction(dir);
-    this.width(width);
-    this.height(height);
-
-    // Deal with Mobile trying to scale to viewport
+    this.width(szw);
+    this.height(szh);
     this.viewport({
-      width: width,
-      height: height,
+      width: szw,
+      height: szh,
       scale: 1.0,
       scalable: "no"
     });
-
-    // TODO: inline-block needs more testing
-    // Fixes Safari column cut offs, but causes RTL issues
-    // this.css("display", "inline-block");
-
-    this.css("overflow-y", "hidden");
+    this.css("overflow", "hidden");
     this.css("margin", "0", true);
-    if (axis === AXIS_V) {
+    this.css("box-sizing", "border-box");
+    this.css("max-height", "inherit");
+    if (layout.axis === AXIS_V) {
+      this.css("display", "flex");
       this.css("padding-top", gap / 2 + "px", true);
       this.css("padding-bottom", gap / 2 + "px", true);
       this.css("padding-left", "20px");
       this.css("padding-right", "20px");
-      this.css(COLUMN_AXIS, AXIS_V);
     } else {
+      this.css("display", "block");
       this.css("padding-top", "20px");
       this.css("padding-bottom", "20px");
       this.css("padding-left", gap / 2 + "px", true);
       this.css("padding-right", gap / 2 + "px", true);
-      this.css(COLUMN_AXIS, AXIS_H);
     }
-    this.css("box-sizing", "border-box");
-    this.css("max-width", "inherit");
-    this.css(COLUMN_FILL, "auto");
-    this.css(COLUMN_GAP, gap + "px");
-    this.css(COLUMN_WIDTH, columnWidth + "px");
+    this.css("column-gap", gap + "px");
+    this.css("column-fill", "auto");
+    this.css("column-width", clw + "px");
 
     // Fix glyph clipping in WebKit
     // https://github.com/futurepress/epub.js/issues/983
@@ -15670,7 +18932,6 @@ class Contents {
   scaler(scale, offsetX, offsetY) {
     const scaleStr = "scale(" + scale + ")";
     let translateStr = "";
-    // this.css("position", "absolute"));
     this.css("transform-origin", "top left");
     if (offsetX >= 0 || offsetY >= 0) {
       translateStr = " translate(" + (offsetX || 0) + "px, " + (offsetY || 0) + "px )";
@@ -15680,25 +18941,19 @@ class Contents {
 
   /**
    * Fit contents into a fixed width and height
-   * @param {number} width
-   * @param {number} height
+   * @param {Layout} layout
+   * @param {Section} section
+   * @private
    */
-  fit(width, height, section) {
+  fit(layout, section) {
+    const clw = layout.columnWidth;
+    const szh = layout.height;
     const viewport = this.viewport();
     const viewportWidth = parseInt(viewport.width);
     const viewportHeight = parseInt(viewport.height);
-    const widthScale = width / viewportWidth;
-    const heightScale = height / viewportHeight;
+    const widthScale = clw / viewportWidth;
+    const heightScale = szh / viewportHeight;
     const scale = widthScale < heightScale ? widthScale : heightScale;
-
-    // the translate does not work as intended, elements can end up unaligned
-    // var offsetY = (height - (viewportHeight * scale)) / 2;
-    // var offsetX = 0;
-    // if (this.section.index % 2 === 1) {
-    // 	offsetX = width - (viewportWidth * scale);
-    // }
-
-    this.setLayoutStyle("paginated");
 
     // scale needs width and height to be set
     this.width(viewportWidth);
@@ -15707,14 +18962,13 @@ class Contents {
 
     // Scale to the correct size
     this.scaler(scale, 0, 0);
-    // this.scaler(scale, offsetX > 0 ? offsetX : 0, offsetY);
 
     // background images are not scaled by transform
     this.css("background-size", viewportWidth * scale + "px " + viewportHeight * scale + "px");
     this.css("background-color", "transparent");
     if (section && section.properties.includes("page-spread-left")) {
       // set margin since scale is weird
-      const marginLeft = width - viewportWidth * scale;
+      const marginLeft = clw - viewportWidth * scale;
       this.css("margin-left", marginLeft + "px");
     }
   }
@@ -15724,9 +18978,7 @@ class Contents {
    * @param {string} [dir='ltr'] values: `"ltr"` OR `"rtl"`
    */
   direction(dir = "ltr") {
-    if (this.documentElement) {
-      this.documentElement.dir = dir;
-    }
+    this.document.documentElement.dir = dir;
   }
 
   /**
@@ -15748,70 +19000,12 @@ class Contents {
    * @param {string} [mode='horizontal-tb'] `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
    */
   writingMode(mode = "horizontal-tb") {
+    if (this.mode === mode) return this.mode;
     const WRITING_MODE = prefixed("writing-mode");
-    if (this.documentElement) {
-      this.documentElement.style[WRITING_MODE] = mode;
-    }
-    return this.window.getComputedStyle(this.documentElement)[WRITING_MODE] || "";
-  }
-
-  /**
-   * Set the layout style of the content
-   * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
-   * @private
-   */
-  setLayoutStyle(value = "paginated") {
-    this.layoutStyle = value;
-    navigator.epubReadingSystem.layoutStyle = value;
-    return value;
-  }
-
-  /**
-   * Add the epubReadingSystem object to the navigator
-   * @param {string} name
-   * @param {string} version
-   * @private
-   */
-  epubReadingSystem(name, version) {
-    navigator.epubReadingSystem = {
-      name: name,
-      version: version,
-      layoutStyle: "paginated",
-      hasFeature: feature => {
-        switch (feature) {
-          case "dom-manipulation":
-            return true;
-          case "layout-changes":
-            return true;
-          case "touch-events":
-            return true;
-          case "mouse-events":
-            return true;
-          case "keyboard-events":
-            return true;
-          case "spine-scripting":
-            return false;
-          default:
-            return false;
-        }
-      }
-    };
-    return navigator.epubReadingSystem;
-  }
-
-  //-- events --//
-
-  /**
-   * Add DOM listeners
-   * @private
-   */
-  listeners() {
-    this.appendListeners();
-    // this.imageLoadListeners();
-    // this.mediaQueryListeners();
-    // this.fontLoadListeners();
-    // this.transitionListeners();
-    // this.mutationListener();
+    const elt = this.document.documentElement;
+    elt.style[WRITING_MODE] = mode;
+    this.mode = this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+    return this.mode;
   }
 
   /**
@@ -16000,6 +19194,9 @@ class Contents {
 event_emitter_default()(Contents.prototype);
 /* harmony default export */ const contents = (Contents);
 ;// CONCATENATED MODULE: ./src/marks-pane/events.js
+
+
+
 const rectContains = (rect, x, y, offset) => {
   const top = rect.top - offset.top;
   const left = rect.left - offset.left;
@@ -16085,6 +19282,23 @@ const proxyMouse = (target, marks) => {
 };
 /* harmony default export */ const events = (proxyMouse);
 ;// CONCATENATED MODULE: ./src/marks-pane/marks.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const NS_URI = "http://www.w3.org/2000/svg";
 
@@ -16172,6 +19386,7 @@ class Marks extends Map {
 }
 /* harmony default export */ const marks = (Marks);
 ;// CONCATENATED MODULE: ./src/marks-pane/mark.js
+
 /**
  * Mark class
  */
@@ -16393,8 +19608,11 @@ class Underline extends highlight {
 
 
 
-const AXIS_H = "horizontal";
-const AXIS_V = "vertical";
+
+
+
+const iframe_AXIS_H = "horizontal";
+const iframe_AXIS_V = "vertical";
 
 /**
  * IframeView class
@@ -16405,11 +19623,9 @@ class IframeView {
    * @param {Layout} layout
    * @param {Section} section
    * @param {object} [options]
-   * @param {string} [options.axis] values: `"horizontal"` OR `"vertical"`
    * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
    * @param {string} [options.ignoreClass='']
-   * @param {boolean} [options.allowPopups=false]
-   * @param {boolean} [options.allowScriptedContent=false]
+   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    * @param {boolean} [options.forceRight=false]
    */
   constructor(layout, section, options) {
@@ -16419,13 +19635,11 @@ class IframeView {
      * @readonly
      */
     this.settings = extend({
-      axis: null,
       method: null,
+      sandbox: [],
       forceRight: false,
       forceEvenPages: false,
-      ignoreClass: "",
-      allowPopups: false,
-      allowScriptedContent: false
+      ignoreClass: ""
     }, options || {});
     /**
      * @member {string} id
@@ -16439,12 +19653,6 @@ class IframeView {
      * @readonly
      */
     this.section = section;
-    /**
-     * @member {string} axis
-     * @memberof IframeView
-     * @readonly
-     */
-    this.axis = null;
     /**
      * @member {Contents} contents
      * @memberof IframeView
@@ -16468,9 +19676,6 @@ class IframeView {
      * @readonly
      */
     this.layout = layout;
-    this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-      this.updateLayout();
-    });
     /**
      * @member {Marks} marks
      * @memberof IframeView
@@ -16484,6 +19689,12 @@ class IframeView {
      * @readonly
      */
     this.method = this.settings.method || "write";
+    /**
+     * @member {string} writingMode
+     * @memberof IframeView
+     * @readonly
+     */
+    this.writingMode = "";
   }
 
   /**
@@ -16493,7 +19704,7 @@ class IframeView {
    */
   container() {
     const element = document.createElement("div");
-    element.classList.add("epub-view");
+    element.classList.add("view-container");
     element.style.height = "0";
     element.style.width = "0";
     element.style.overflow = "hidden";
@@ -16513,14 +19724,8 @@ class IframeView {
     this.iframe.style.border = "none";
     this.iframe.style.width = "0";
     this.iframe.style.height = "0";
-
-    // sandbox
-    this.iframe.sandbox = "allow-same-origin";
-    if (this.settings.allowPopups) {
-      this.iframe.sandbox += " allow-popups";
-    }
-    if (this.settings.allowScriptedContent) {
-      this.iframe.sandbox += " allow-scripts";
+    for (const p of this.settings.sandbox) {
+      if (p) this.iframe.sandbox.add(p);
     }
     this.iframe.setAttribute("enable-annotation", "true");
     this.element.setAttribute("ref", this.section.index);
@@ -16546,33 +19751,8 @@ class IframeView {
     this.section.render(request).then(contents => {
       return this.load(contents);
     }).then(output => {
-      // find and report the writingMode axis
-      const writingMode = this.contents.writingMode();
-      const hasVertical = writingMode.indexOf(AXIS_V) === 0;
-
-      // Set the axis based on the flow and writing mode
-      let axis;
-      if (this.layout.flow === "scrolled" || this.layout.flow === "scrolled-doc") {
-        axis = hasVertical ? AXIS_H : AXIS_V;
-      } else {
-        axis = hasVertical ? AXIS_V : AXIS_H;
-      }
-      if (hasVertical && this.layout.flow === "paginated") {
-        this.layout.delta = this.layout.height;
-      }
-      this.setAxis(axis);
-      this.emit(EVENTS.VIEWS.AXIS, axis);
-      this.setWritingMode(writingMode);
-      this.emit(EVENTS.VIEWS.WRITING_MODE, writingMode);
-
-      // apply the layout function to the contents
-      this.layout.format(this.contents, this.section, this.axis);
-
-      // Listen for events that require an expansion of the iframe
-      this.addListeners();
-
-      // Expand the iframe to the full size of the content
-      this.expand();
+      this.setWritingMode(this.contents.mode);
+      this.update();
       if (this.settings.forceRight) {
         this.element.style.marginLeft = this.width + "px";
       }
@@ -16610,98 +19790,64 @@ class IframeView {
       this.contentWidth = undefined; // unused
       this.contentHeight = undefined; // unused
     }
-    this.needsReframe = true;
   }
 
   /**
-   * Set axis
-   * @param {string} [value] 
+   * Update view
    */
-  setAxis(value) {
-    if (value === null) {
-      value = this.layout.flow === "paginated" ? AXIS_H : AXIS_V;
-    }
-    if (value === AXIS_H) {
+  update() {
+    this.contents.format(this.layout, this.section);
+    this.axis();
+    this.size();
+    this.expand();
+  }
+
+  /**
+   * update axis
+   * @private
+   */
+  axis() {
+    if (this.layout.axis === iframe_AXIS_H) {
       this.element.style.flex = "none";
     } else {
       this.element.style.flex = "initial";
     }
-    this.axis = value;
-    this.size();
   }
 
   /**
    * Set writing mode
    * @param {string} mode 
+   * @private
    */
   setWritingMode(mode) {
-    this.writingMode = mode;
+    if (this.writingMode !== mode) {
+      this.writingMode = mode;
+      this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
+    }
   }
 
   /**
-   * size
-   * Determine locks base on settings
-   * @param {number} [width] 
-   * @param {number} [height] 
+   * update size
+   * @private
    */
-  size(width, height) {
-    width = width || this.layout.width;
-    height = height || this.layout.height;
-    let what;
+  size() {
+    const elb = borders(this.element);
+    const ifb = borders(this.iframe);
+    const szw = this.layout.width;
+    const szh = this.layout.height;
     if (this.layout.name === "pre-paginated") {
-      what = "both";
-    } else if (this.axis === AXIS_H) {
-      what = "height";
+      this.lockedWidth = szw - elb.width - ifb.width;
+      this.lockedHeight = szh - elb.height - ifb.height;
+    } else if (this.layout.axis === iframe_AXIS_V) {
+      this.lockedWidth = szw - elb.width - ifb.width;
     } else {
-      what = "width";
-    }
-    this.lock(what, width, height);
-  }
-
-  /**
-   * lock
-   * Lock an axis to element dimensions, taking borders into account
-   * @param {string} what 
-   * @param {number} width 
-   * @param {number} height 
-   */
-  lock(what, width, height) {
-    const elBorders = borders(this.element);
-    let iframeBorders;
-    if (this.iframe) {
-      iframeBorders = borders(this.iframe);
-    } else {
-      iframeBorders = {
-        width: 0,
-        height: 0
-      };
-    }
-    switch (what) {
-      case "both":
-        if (isNumber(width) && isNumber(height)) {
-          this.lockedWidth = width - elBorders.width - iframeBorders.width;
-          this.lockedHeight = height - elBorders.height - iframeBorders.height;
-        }
-        break;
-      case "width":
-        if (isNumber(width)) {
-          this.lockedWidth = width - elBorders.width - iframeBorders.width;
-        }
-        break;
-      case "height":
-        if (isNumber(height)) {
-          this.lockedHeight = height - elBorders.height - iframeBorders.height;
-        }
-        break;
-    }
-    if (this.displayed && this.iframe) {
-      this.expand();
+      this.lockedHeight = szh - elb.height - ifb.height;
     }
   }
 
   /**
-   * expand
    * Resize a single axis based on content dimensions
+   * @private
    */
   expand() {
     let width = this.lockedWidth;
@@ -16711,7 +19857,7 @@ class IframeView {
     if (this.layout.name === "pre-paginated") {
       width = this.layout.columnWidth;
       height = this.layout.height;
-    } else if (this.axis === AXIS_H) {
+    } else if (this.layout.axis === iframe_AXIS_H) {
       // Get the width of the text
       width = this.contents.textSize().width;
       if (width % this.layout.pageWidth > 0) {
@@ -16724,17 +19870,16 @@ class IframeView {
           width += this.layout.pageWidth;
         }
       }
-    } else if (this.axis === AXIS_V) {
+    } else if (this.layout.axis === iframe_AXIS_V) {
       // Expand Vertically
-      height = this.contents.textSize().height;
+      const size = this.contents.textSize();
+      width = size.width;
+      height = size.height;
       if (this.layout.flow === "paginated" && height % this.layout.height > 0) {
         height = Math.ceil(height / this.layout.height) * this.layout.height;
       }
     }
-
-    // Only Resize if dimensions have changed or
-    // if Frame is still hidden, so needs reframing
-    if (this.needsReframe || this.width !== width || this.height !== height) {
+    if (this.width !== width || this.height !== height) {
       this.reframe(width, height);
     }
     this.expanding = false;
@@ -16744,6 +19889,7 @@ class IframeView {
    * reframe
    * @param {number} width 
    * @param {number} height 
+   * @private
    */
   reframe(width, height) {
     this.element.style.width = width + "px";
@@ -16752,20 +19898,7 @@ class IframeView {
     this.iframe.style.height = height + "px";
     this.width = width;
     this.height = height;
-    const size = {
-      width: width,
-      height: height,
-      widthDelta: this.prevBounds ? width - this.prevBounds.width : width,
-      heightDelta: this.prevBounds ? height - this.prevBounds.height : height
-    };
     this.marks && this.marks.render();
-    /**
-     * @event resized
-     * @param {object} size
-     * @memberof IframeView
-     */
-    this.emit(EVENTS.VIEWS.RESIZED, size);
-    this.prevBounds = size;
     this.elementBounds = bounds(this.element);
   }
 
@@ -16811,7 +19944,6 @@ class IframeView {
   onLoad(event, defer) {
     this.window = this.iframe.contentWindow;
     this.document = this.iframe.contentDocument;
-    this.document.body.style.overflow = "hidden";
     this.contents = new contents(this.document, this.document.body, this.section);
     this.rendering = false;
     let link = this.document.querySelector("link[rel='canonical']");
@@ -16823,40 +19955,15 @@ class IframeView {
       link.setAttribute("href", this.section.canonical);
       this.document.querySelector("head").appendChild(link);
     }
-    this.contents.on(EVENTS.CONTENTS.EXPAND, () => {
-      if (this.displayed && this.iframe) {
-        this.expand();
-        if (this.contents) {
-          this.layout.format(this.contents);
-        }
-      }
-    });
-    this.contents.on(EVENTS.CONTENTS.RESIZE, rect => {
-      if (this.displayed && this.iframe) {
-        this.expand();
-        if (this.contents) {
-          this.layout.format(this.contents);
-        }
-      }
+    this.contents.on(EVENTS.CONTENTS.RESIZED, rect => {
+      /**
+       * @event resized
+       * @param {object} rect
+       * @memberof IframeView
+       */
+      this.emit(EVENTS.VIEWS.RESIZED, rect);
     });
     defer.resolve(this.contents);
-  }
-
-  /**
-   * Update Layout
-   * @private
-   */
-  updateLayout() {
-    if (this.contents) {
-      this.layout.format(this.contents);
-      this.expand();
-    }
-  }
-  addListeners() {
-    //TODO: Add content listeners for expanding
-  }
-  removeListeners(layoutFunc) {
-    //TODO: remove content listeners for expanding
   }
 
   /**
@@ -16866,7 +19973,9 @@ class IframeView {
    */
   display(request) {
     const displayed = new defer();
-    if (this.displayed === false) {
+    if (this.displayed) {
+      displayed.resolve(this);
+    } else {
       this.render(request).then(() => {
         /**
          * @event displayed
@@ -16876,10 +19985,8 @@ class IframeView {
         this.displayed = true;
         displayed.resolve(this);
       }, err => {
-        displayed.reject(err, this);
+        displayed.reject(err);
       });
-    } else {
-      displayed.resolve(this);
     }
     return displayed.promise;
   }
@@ -17128,7 +20235,6 @@ class IframeView {
     }
     if (this.displayed) {
       this.displayed = false;
-      this.removeListeners();
       this.contents.destroy();
       this.stopExpanding = true;
       this.element.removeChild(this.iframe);
@@ -17136,7 +20242,6 @@ class IframeView {
         this.marks.element.remove();
         this.marks.clear();
       }
-      this.axis = undefined;
       this.iframe = undefined;
       this.contents = undefined;
       this.document = undefined;
@@ -17205,7 +20310,18 @@ const scrollType = () => {
   return type;
 };
 /* harmony default export */ const scrolltype = (scrollType);
+// EXTERNAL MODULE: ./node_modules/lodash/debounce.js
+var debounce = __webpack_require__(8221);
+var debounce_default = /*#__PURE__*/__webpack_require__.n(debounce);
 ;// CONCATENATED MODULE: ./src/managers/default/index.js
+
+
+
+
+
+
+
+
 
 
 
@@ -17226,52 +20342,36 @@ class DefaultViewManager {
   /**
    * Constructor
    * @param {Book} book 
-   * @param {Layout} layout 
    * @param {object} [options]
-   * @param {string} [options.axis]
    * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
    * @param {string} [options.ignoreClass='']
    * @param {string|object} [options.view='iframe']
+   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    */
-  constructor(book, layout, options) {
+  constructor(book, options) {
     /**
      * @member {string} name Manager name
      * @memberof DefaultViewManager
      * @readonly
      */
     this.name = "default";
-    this.request = book.load.bind(book);
+    this.load = book.load.bind(book);
+    this.layout = book.rendition.layout;
+    this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
+      if (changed.flow) {
+        this.paginated = props.flow === "paginated";
+      }
+      this.views.update();
+      this.calculate();
+    });
     this.settings = extend({
-      axis: null,
       view: "iframe",
       hidden: false,
       method: null,
-      fullsize: null,
+      sandbox: [],
       ignoreClass: "",
-      writingMode: undefined,
-      allowPopups: false,
-      allowScriptedContent: false,
-      resizeOnOrientationChange: true,
       forceEvenPages: true
     }, options || {});
-    /**
-     * @member {Layout} layout
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.layout = layout;
-    this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-      if (changed.flow) {
-        this.paginated = changed.flow === "paginated";
-        if (this.paginated) {
-          this.updateAxis(default_AXIS_H);
-        } else {
-          this.updateAxis(default_AXIS_V);
-        }
-      }
-      this.clear();
-      this.updateLayout();
-    });
     /**
      * @member {boolean} paginated
      * @memberof DefaultViewManager
@@ -17285,241 +20385,52 @@ class DefaultViewManager {
      */
     this.location = [];
     /**
+     * @member {Mapping} mapping
+     * @memberof DefaultViewManager
+     * @readonly
+     */
+    this.mapping = new src_mapping(this.layout);
+    /**
      * @member {boolean} rendered
      * @memberof DefaultViewManager
      * @readonly
      */
     this.rendered = false;
-    /**
-     * @member {string} scrollType
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.scrollType = undefined;
-    /**
-     * @member {string} writingMode
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.writingMode = this.settings.writingMode;
-    this.q = new queue(this);
-  }
-
-  /**
-   * render
-   * @param {Element} element 
-   * @param {object} size 
-   * @param {string|number} size.width
-   * @param {string|number} size.height
-   */
-  render(element, size) {
-    let tag;
-    if (element.tagName) {
-      tag = element.tagName.toLowerCase();
-      tag = tag === "body" || tag === "html";
-    }
-    if (this.settings.fullsize === null && tag) {
-      this.settings.fullsize = true;
-    }
-    this.scrollType = scrolltype();
-    /**
-     * @member {Stage} stage
-     * @memberof DefaultViewManager
-     * @property {string} axis
-     * @property {string|number} width
-     * @property {string|number} height
-     * @property {boolean} hidden
-     * @property {boolean} fullsize
-     * @readonly
-     */
-    this.stage = new stage(this.layout, {
-      axis: this.settings.axis,
-      width: size.width,
-      height: size.height,
-      hidden: this.settings.hidden,
-      fullsize: this.settings.fullsize
-    });
-    this.stage.attachTo(element);
-    /**
-     * Stage container
-     * @member {Element} container div element
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.container = this.stage.getContainer();
+    this.scrollType = null;
     /**
      * @member {Views} views 
      * @memberof DefaultViewManager
      * @readonly
      */
-    this.views = new views(this.container);
+    this.views = [];
+    this.viewport = book.rendition.viewport;
     /**
-     * @member {object} stageSize
+     * @member {string} writingMode
      * @memberof DefaultViewManager
      * @readonly
      */
-    this.stageSize = this.stage.size();
-
-    // Function to handle a resize event.
-    // Will only attach if width and height are both fixed.
-    this.stage.onResize(this.onResized.bind(this));
-    this.stage.onOrientationChange(this.onOrientationChange.bind(this));
-    this.rendered = true;
-    this.updateLayout();
-
-    // Add Event Listeners
-    this.addEventListeners();
+    this.writingMode = null;
+    this.q = new queue(this);
   }
 
   /**
-   * addEventListeners
-   * @private
+   * render
+   * @param {Element|string} element viewport element
+   * @param {object} size 
+   * @param {string|number} size.width
+   * @param {string|number} size.height
    */
-  addEventListeners() {
-    window.onpagehide = e => this.destroy();
-    let container;
-    if (this.settings.fullsize) {
-      container = window;
-    } else {
-      container = this.container;
-    }
-    container.addEventListener("scroll", this.onScroll.bind(this));
-  }
-
-  /**
-   * removeEventListeners
-   * @private
-   */
-  removeEventListeners() {
-    let container;
-    if (this.settings.fullsize) {
-      container = window;
-    } else {
-      container = this.container;
-    }
-    container.removeEventListener("scroll", this.onScroll.bind(this));
-  }
-
-  /**
-   * destroy
-   */
-  destroy() {
-    clearTimeout(this.orientationTimeout);
-    clearTimeout(this.resizeTimeout);
-    clearTimeout(this.afterScrolled);
-    this.clear();
-    this.removeEventListeners();
-    this.stage.destroy();
-    this.rendered = false;
-    this.scrollType = undefined;
-    this.writingMode = undefined;
-  }
-
-  /**
-   * onOrientationChange
-   * @param {Event} e 
-   * @private
-   */
-  onOrientationChange(e) {
-    let {
-      orientation
-    } = window.screen;
-    if (this.settings.resizeOnOrientationChange) {
-      this.resize();
-    }
-
-    // Per ampproject:
-    // In IOS 10.3, the measured size of an element is incorrect if the
-    // element size depends on window size directly and the measurement
-    // happens in window.resize event. Adding a timeout for correct
-    // measurement. See https://github.com/ampproject/amphtml/issues/8479
-    clearTimeout(this.orientationTimeout);
-    this.orientationTimeout = setTimeout(() => {
-      this.orientationTimeout = undefined;
-      if (this.settings.resizeOnOrientationChange) {
-        this.resize();
-      }
-      this.emit(EVENTS.MANAGERS.ORIENTATION_CHANGE, orientation);
-    }, 500);
-  }
-
-  /**
-   * onResized
-   * @param {Event} e 
-   * @private
-   */
-  onResized(e) {
-    this.resize();
-  }
-
-  /**
-   * resize
-   * @param {number} [width] 
-   * @param {number} [height] 
-   * @param {string} [epubcfi] 
-   */
-  resize(width, height, epubcfi) {
-    const stageSize = this.stage.size(width, height);
-
-    // For Safari, wait for orientation to catch up
-    // if the window is a square
-    this.winBounds = windowBounds();
-    if (this.orientationTimeout && this.winBounds.width === this.winBounds.height) {
-      // reset the stage size for next resize
-      this.stageSize = undefined;
-      return;
-    }
-    if (this.stageSize && this.stageSize.width === stageSize.width && this.stageSize.height === stageSize.height) {
-      // Size is the same, no need to resize
-      return;
-    }
-    this.stageSize = stageSize;
-    this.clear(); // Clear current views
-    this.updateLayout();
-    this.emit(EVENTS.MANAGERS.RESIZED, {
-      width: this.stageSize.width,
-      height: this.stageSize.height
-    }, epubcfi);
-  }
-
-  /**
-   * Require the view from passed string, or as a class function
-   * @param {string|Function|object} view
-   * @return {any}
-   * @private
-   */
-  requireView(view) {
-    let ret;
-
-    // If view is a string, try to load from imported views,
-    if (typeof view == "string" && view === "iframe") {
-      ret = iframe;
-    } else {
-      // otherwise, assume we were passed a class function
-      ret = view;
-    }
-    return ret;
-  }
-
-  /**
-   * createView
-   * @param {Section} section 
-   * @param {boolean} [forceRight]
-   * @returns {object} View (default: IframeView)
-   * @private
-   */
-  createView(section, forceRight) {
-    const view = this.requireView(this.settings.view);
-    return new view(this.layout, section, {
-      axis: this.settings.axis,
-      snap: this.settings.snap,
-      method: this.settings.method,
-      allowPopups: this.settings.allowPopups,
-      ignoreClass: this.settings.ignoreClass,
-      allowScriptedContent: this.settings.allowScriptedContent,
-      forceRight: forceRight,
-      forceEvenPages: this.settings.forceEvenPages
+  render(element, size) {
+    this.scrollType = scrolltype();
+    this.views = new views();
+    this.viewport.attachTo(element, {
+      views: this.views,
+      width: size.width,
+      height: size.height
     });
+    this.rendered = true;
+    this.appendEventListeners();
+    window.onpagehide = this.destroy.bind(this);
   }
 
   /**
@@ -17563,7 +20474,7 @@ class DefaultViewManager {
     if (this.layout.name === "pre-paginated" && this.layout.divisor === 2 && section.properties.includes("page-spread-right")) {
       forceRight = true;
     }
-    this.add(section, forceRight).then(view => {
+    this.append(section, forceRight).then(view => {
       // Move to correct place within the section, if needed
       if (target) {
         const offset = view.locationOf(target);
@@ -17580,21 +20491,84 @@ class DefaultViewManager {
   }
 
   /**
-   * afterDisplayed
-   * @param {*} view 
+   * appendEventListeners
    * @private
    */
-  afterDisplayed(view) {
+  appendEventListeners() {
+    const lsc = this.views.container;
+    lsc.addEventListener("scroll", this.onscroll.bind(this));
+    if ("onscrollend" in window) {
+      lsc.addEventListener("scrollend", this.onscrollend.bind(this));
+    }
+    const timeout = this.name === "default" ? 0 : 30;
+    this.scrollend = debounce_default()(this.scrolled.bind(this), timeout);
+  }
+
+  /**
+   * removeEventListeners
+   * @private
+   */
+  removeEventListeners() {
+    const lsc = this.views.container;
+    lsc.removeEventListener("scroll", this.onscroll.bind(this));
+    if ("onscrollend" in window) {
+      lsc.removeEventListener("scrollend", this.onscrollend.bind(this));
+    }
+    this.scrollend = undefined;
+  }
+
+  /**
+   * Require the view from passed string, or as a class function
+   * @param {string|class} view
+   * @return {class}
+   * @private
+   */
+  requireView(view) {
+    let result;
+    if (typeof view == "string" && view === "iframe") {
+      result = iframe;
+    } else {
+      result = view;
+    }
+    return result;
+  }
+
+  /**
+   * createView
+   * @param {Section} section 
+   * @param {boolean} [forceRight]
+   * @returns {object} View (default: IframeView)
+   * @private
+   */
+  createView(section, forceRight) {
+    const view = this.requireView(this.settings.view);
+    return new view(this.layout, section, {
+      snap: this.settings.snap,
+      method: this.settings.method,
+      sandbox: this.settings.sandbox,
+      ignoreClass: this.settings.ignoreClass,
+      forceRight: forceRight,
+      forceEvenPages: this.settings.forceEvenPages
+    });
+  }
+
+  /**
+   * the view displayed event handler
+   * @param {object} view 
+   * @private
+   */
+  displayed(view) {
     this.emit(EVENTS.MANAGERS.ADDED, view);
   }
 
   /**
-   * afterResized
-   * @param {*} view 
+   * the view resized event handler
+   * @param {object} view 
    * @private
    */
-  afterResized(view) {
-    this.emit(EVENTS.MANAGERS.RESIZE, view.section);
+  resized(view) {
+    this.relocated();
+    this.emit(EVENTS.MANAGERS.RESIZED, view);
   }
 
   /**
@@ -17608,14 +20582,15 @@ class DefaultViewManager {
   moveTo(offset, width) {
     let distX = 0,
       distY;
+    const lsc = this.views.container;
     if (this.paginated) {
       distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
-      if (distX + this.layout.delta > this.container.scrollWidth) {
-        distX = this.container.scrollWidth - this.layout.delta;
+      if (distX + this.layout.delta > lsc.scrollWidth) {
+        distX = lsc.scrollWidth - this.layout.delta;
       }
       distY = Math.floor(offset.top / this.layout.delta) * this.layout.delta;
-      if (distY + this.layout.delta > this.container.scrollHeight) {
-        distY = this.container.scrollHeight - this.layout.delta;
+      if (distY + this.layout.delta > lsc.scrollHeight) {
+        distY = lsc.scrollHeight - this.layout.delta;
       }
     } else {
       distY = offset.top;
@@ -17637,34 +20612,21 @@ class DefaultViewManager {
    * @param {Section} section Section object
    * @param {boolean} [forceRight] 
    * @returns {Promise<any>}
+   * @private
    */
-  add(section, forceRight) {
+  append(section, forceRight) {
     const view = this.createView(section, forceRight);
     view.on(EVENTS.VIEWS.DISPLAYED, () => {
-      this.afterDisplayed(view);
+      this.displayed(view);
     });
-    view.on(EVENTS.VIEWS.RESIZED, bounds => {
-      this.afterResized(view);
-    });
-    view.on(EVENTS.VIEWS.AXIS, axis => {
-      this.updateAxis(axis);
+    view.on(EVENTS.VIEWS.RESIZED, rect => {
+      this.resized(view);
     });
     view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
       this.updateWritingMode(mode);
     });
     this.views.append(view);
-    return view.display(this.request);
-  }
-
-  /**
-   * append
-   * @param {Section} section Section object
-   * @param {boolean} [forceRight] 
-   * @returns {Promise<any>}
-   * @private
-   */
-  append(section, forceRight) {
-    return this.add(section, forceRight);
+    return view.display(this.load);
   }
 
   /**
@@ -17677,32 +20639,32 @@ class DefaultViewManager {
   prepend(section, forceRight) {
     const view = this.createView(section, forceRight);
     view.on(EVENTS.VIEWS.DISPLAYED, () => {
-      this.afterDisplayed(view);
+      this.displayed(view);
     });
-    view.on(EVENTS.VIEWS.RESIZED, bounds => {
-      this.counter(bounds);
-      this.afterResized(view);
-    });
-    view.on(EVENTS.VIEWS.AXIS, axis => {
-      this.updateAxis(axis);
+    view.on(EVENTS.VIEWS.RESIZED, rect => {
+      this.counter(view);
+      this.resized(view);
     });
     view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
       this.updateWritingMode(mode);
     });
     this.views.prepend(view);
-    return view.display(this.request);
+    return view.display(this.load);
   }
 
   /**
    * counter
-   * @param {object} bounds 
+   * @param {object} view 
    * @private
    */
-  counter(bounds) {
-    if (this.settings.axis === default_AXIS_V) {
-      this.scrollBy(0, bounds.heightDelta, true);
+  counter(view) {
+    const content = view.contents.content;
+    if (this.layout.axis === default_AXIS_V) {
+      const y = content.scrollHeight;
+      this.scrollBy(0, y, true);
     } else {
-      this.scrollBy(bounds.widthDelta, 0, true);
+      const x = content.scrollWidth;
+      this.scrollBy(x, 0, true);
     }
   }
 
@@ -17714,39 +20676,39 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const hvx = this.paginated && this.settings.axis === default_AXIS_H;
+    const vph = this.layout.axis === default_AXIS_H && this.paginated;
+    const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
       return def.promise;
-    } else if (hvx && dir === "ltr") {
-      this.scrollLeft = this.container.scrollLeft;
-      left = this.container.scrollLeft + this.container.offsetWidth + this.layout.delta;
-      if (left <= this.container.scrollWidth) {
+    } else if (vph && dir === "ltr") {
+      this.scrollLeft = lsc.scrollLeft;
+      left = lsc.scrollLeft + lsc.offsetWidth + this.layout.delta;
+      if (left <= lsc.scrollWidth) {
         this.scrollBy(this.layout.delta, 0, true);
       } else {
         section = this.views.last().section.next();
       }
-    } else if (hvx && dir === "rtl") {
-      this.scrollLeft = this.container.scrollLeft;
+    } else if (vph && dir === "rtl") {
+      this.scrollLeft = lsc.scrollLeft;
       if (this.scrollType === "default") {
-        left = this.container.scrollLeft;
+        left = lsc.scrollLeft;
         if (left > 0) {
           this.scrollBy(this.layout.delta, 0, true);
         } else {
           section = this.views.last().section.next();
         }
       } else {
-        left = this.container.scrollLeft + this.layout.delta * -1;
-        if (left > this.container.scrollWidth * -1) {
+        left = lsc.scrollLeft + this.layout.delta * -1;
+        if (left > lsc.scrollWidth * -1) {
           this.scrollBy(this.layout.delta, 0, true);
         } else {
           section = this.views.last().section.next();
         }
       }
-    } else if (this.paginated && this.settings.axis === default_AXIS_V) {
-      this.scrollTop = this.container.scrollTop;
-      const top = this.container.scrollTop + this.container.offsetHeight;
-      if (top < this.container.scrollHeight) {
+    } else if (this.layout.axis === default_AXIS_V && this.paginated) {
+      const top = lsc.scrollTop + lsc.offsetHeight;
+      if (top < lsc.scrollHeight) {
         this.scrollBy(0, this.layout.height, true);
       } else {
         section = this.views.last().section.next();
@@ -17759,15 +20721,15 @@ class DefaultViewManager {
       // The new section may have a different 
       // writing-mode from the old section. 
       // Thus, we need to update layout.
-      this.updateLayout();
+      this.calculate();
       let forceRight = false;
       if (this.layout.name === "pre-paginated" && this.layout.divisor === 2 && section.properties.includes("page-spread-right")) {
         forceRight = true;
       }
       this.append(section, forceRight).then(view => {
         // Reset position to start for scrolled-doc vertical-rl in default mode
-        if (!hvx && dir === "rtl" && this.scrollType === "default") {
-          this.scrollTo(this.container.scrollWidth, 0, true);
+        if (!vph && dir === "rtl" && this.scrollType === "default") {
+          this.scrollTo(lsc.scrollWidth, 0, true);
         }
         this.views.show();
         def.resolve(view);
@@ -17775,6 +20737,7 @@ class DefaultViewManager {
         def.reject(err);
       });
     } else {
+      this.relocated();
       def.resolve(null);
     }
     return def.promise;
@@ -17788,38 +20751,38 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const hvx = this.paginated && this.settings.axis === default_AXIS_H;
+    const vph = this.layout.axis === default_AXIS_H && this.paginated;
+    const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
       return def.promise;
-    } else if (hvx && dir === "ltr") {
-      this.scrollLeft = this.container.scrollLeft;
-      left = this.container.scrollLeft;
+    } else if (vph && dir === "ltr") {
+      this.scrollLeft = lsc.scrollLeft;
+      left = lsc.scrollLeft;
       if (left > 0) {
         this.scrollBy(-this.layout.delta, 0, true);
       } else {
         section = this.views.first().section.prev();
       }
-    } else if (hvx && dir === "rtl") {
-      this.scrollLeft = this.container.scrollLeft;
+    } else if (vph && dir === "rtl") {
+      this.scrollLeft = lsc.scrollLeft;
       if (this.scrollType === "default") {
-        left = this.container.scrollLeft + this.container.offsetWidth;
-        if (left < this.container.scrollWidth) {
+        left = lsc.scrollLeft + lsc.offsetWidth;
+        if (left < lsc.scrollWidth) {
           this.scrollBy(-this.layout.delta, 0, true);
         } else {
           section = this.views.first().section.prev();
         }
       } else {
-        left = this.container.scrollLeft;
+        left = lsc.scrollLeft;
         if (left < 0) {
           this.scrollBy(-this.layout.delta, 0, true);
         } else {
           section = this.views.first().section.prev();
         }
       }
-    } else if (this.paginated && this.settings.axis === default_AXIS_V) {
-      this.scrollTop = this.container.scrollTop;
-      const top = this.container.scrollTop;
+    } else if (this.layout.axis === default_AXIS_V && this.paginated) {
+      const top = lsc.scrollTop;
       if (top > 0) {
         this.scrollBy(0, -this.layout.height, true);
       } else {
@@ -17833,21 +20796,21 @@ class DefaultViewManager {
       // The new section may have a different 
       // writing-mode from the old section. 
       // Thus, we need to update layout.
-      this.updateLayout();
+      this.calculate();
       let forceRight = false;
       if (this.layout.name === "pre-paginated" && this.layout.divisor === 2 && typeof section.prev() !== "object") {
         forceRight = true;
       }
       this.prepend(section, forceRight).then(view => {
-        if (hvx) {
+        if (vph) {
           if (dir === "rtl") {
             if (this.scrollType === "default") {
               this.scrollTo(0, 0, true);
             } else {
-              this.scrollTo(this.container.scrollWidth * -1 + this.layout.delta, 0, true);
+              this.scrollTo(lsc.scrollWidth * -1 + this.layout.delta, 0, true);
             }
           } else {
-            this.scrollTo(this.container.scrollWidth - this.layout.delta, 0, true);
+            this.scrollTo(lsc.scrollWidth - this.layout.delta, 0, true);
           }
         }
         this.views.show();
@@ -17856,6 +20819,7 @@ class DefaultViewManager {
         def.reject(err);
       });
     } else {
+      this.relocated();
       def.resolve(null);
     }
     return def.promise;
@@ -17868,7 +20832,6 @@ class DefaultViewManager {
   current() {
     const views = this.visible();
     if (views.length) {
-      // Current is the last visible view
       return views[views.length - 1];
     }
     return null;
@@ -17886,12 +20849,20 @@ class DefaultViewManager {
   }
 
   /**
+   * relocated
+   * @private
+   */
+  relocated() {
+    this.currentLocation();
+    this.emit(EVENTS.MANAGERS.RELOCATED, this.location);
+  }
+
+  /**
    * currentLocation
    * @returns {object[]} Location sections
    */
   currentLocation() {
-    this.updateLayout();
-    if (this.paginated && this.settings.axis === default_AXIS_H) {
+    if (this.layout.axis === default_AXIS_H && this.paginated) {
       this.location = this.paginatedLocation();
     } else {
       this.location = this.scrolledLocation();
@@ -17905,44 +20876,32 @@ class DefaultViewManager {
    * @private
    */
   scrolledLocation() {
-    let offset = 0,
-      used = 0;
-    if (this.settings.fullsize) {
-      offset = this.settings.axis === default_AXIS_V ? window.scrollY : window.scrollX;
-    }
-    const container = this.container.getBoundingClientRect();
-    const pageHeight = container.height < window.innerHeight ? container.height : window.innerHeight;
-    const pageWidth = container.width < window.innerWidth ? container.width : window.innerWidth;
+    const lsc = this.views.container;
     const views = this.visible();
     const sections = views.map(view => {
       const {
         index,
         href
       } = view.section;
-      const position = view.position();
       let startPos;
       let endPos;
-      let stopPos;
+      let startPage;
+      let endPage;
       let total;
-      if (this.settings.axis === default_AXIS_V) {
-        startPos = offset + container.top - position.top + used;
-        endPos = startPos + pageHeight - used;
-        stopPos = pageHeight;
-        total = this.layout.count(view.height, pageHeight).pages;
+      if (this.layout.axis === default_AXIS_V) {
+        const top = lsc.scrollTop;
+        startPos = Math.abs(top);
+        endPos = Math.abs(top) + lsc.clientHeight;
+        startPage = Math.ceil(startPos / lsc.clientHeight);
+        endPage = Math.ceil(endPos / lsc.clientHeight);
+        total = this.layout.count(view.height, lsc.clientHeight).pages;
       } else {
-        startPos = offset + container.left - position.left + used;
-        endPos = startPos + pageWidth - used;
-        stopPos = pageWidth;
-        total = this.layout.count(view.width, pageWidth).pages;
-      }
-      let startPage = Math.ceil(startPos / stopPos);
-      let endPage = Math.ceil(endPos / stopPos);
-
-      // Reverse page counts for horizontal rtl
-      if (this.settings.axis === default_AXIS_H && this.layout.direction === "rtl") {
-        const tmp = startPage;
-        startPage = total - endPage;
-        endPage = total - tmp;
+        const left = lsc.scrollLeft;
+        startPos = Math.abs(left);
+        endPos = Math.abs(left) + lsc.clientWidth;
+        startPage = Math.ceil(startPos / lsc.clientWidth);
+        endPage = Math.ceil(endPos / lsc.clientWidth);
+        total = this.layout.count(view.height, lsc.clientWidth).pages;
       }
       const pages = [];
       for (let i = startPage; i < endPage; i++) {
@@ -17952,7 +20911,7 @@ class DefaultViewManager {
       }
       const mapping = this.mapping.page(view.contents, view.section.cfiBase, startPos, endPos);
       return {
-        axis: this.settings.axis,
+        axis: this.layout.axis,
         href,
         index,
         pages,
@@ -17969,53 +20928,21 @@ class DefaultViewManager {
    * @private
    */
   paginatedLocation() {
-    let left = 0,
-      used = 0;
-    if (this.settings.fullsize) {
-      left = window.scrollX;
-    }
-    const container = this.container.getBoundingClientRect();
+    const lsc = this.views.container;
+    const rect = this.viewport.rect;
+    const left = lsc.scrollLeft;
     const views = this.visible();
     const sections = views.map(view => {
       const {
         index,
         href
       } = view.section;
-      const position = view.position();
-
-      // Find mapping
-      let offset;
-      let startPos;
-      let endPos;
-      let pageWidth;
-      if (this.layout.direction === "rtl") {
-        offset = container.right - left;
-        pageWidth = Math.min(Math.abs(offset - position.left), this.layout.width) - used;
-        endPos = position.width - (position.right - offset) - used;
-        startPos = endPos - pageWidth;
-      } else {
-        offset = container.left + left;
-        pageWidth = Math.min(position.right - offset, this.layout.width) - used;
-        startPos = offset - position.left + used;
-        endPos = startPos + pageWidth;
-      }
-      used += pageWidth;
-      let startPage = Math.floor(startPos / this.layout.pageWidth);
-      let endPage = Math.floor(endPos / this.layout.pageWidth);
-
-      // start page should not be negative
-      if (startPage < 0) {
-        startPage = 0;
-        endPage = endPage + 1;
-      }
-      const total = this.layout.count(view.width).pages;
-      // Reverse page counts for rtl
-      if (this.layout.direction === "rtl") {
-        const tmp = startPage;
-        startPage = total - endPage;
-        endPage = total - tmp;
-      }
       const pages = [];
+      const total = this.layout.count(view.width).pages;
+      const startPos = Math.abs(left);
+      const endPos = Math.abs(left) + rect.width;
+      const startPage = Math.floor(startPos / this.layout.pageWidth);
+      const endPage = Math.floor(endPos / this.layout.pageWidth);
       for (let i = startPage; i < endPage; i++) {
         pages.push({
           index: i
@@ -18023,7 +20950,7 @@ class DefaultViewManager {
       }
       const mapping = this.mapping.page(view.contents, view.section.cfiBase, startPos, endPos);
       return {
-        axis: this.settings.axis,
+        axis: this.layout.axis,
         href,
         index,
         pages,
@@ -18039,16 +20966,16 @@ class DefaultViewManager {
    * @param {any} view 
    * @param {number} offsetPrev 
    * @param {number} offsetNext 
-   * @param {DOMRect} [rect] 
    * @returns {boolean}
    * @private
    */
-  isVisible(view, offsetPrev, offsetNext, rect) {
-    const position = view.position();
-    const container = rect || this.bounds();
-    if (this.settings.axis === default_AXIS_H && position.right > container.left - offsetPrev && position.left < container.right + offsetNext) {
+  isVisible(view, offsetPrev, offsetNext) {
+    const vpos = view.position();
+    const rect = this.viewport.rect;
+    if (this.layout.axis === default_AXIS_H && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
       return true;
-    } else if (this.settings.axis === default_AXIS_V && position.bottom > container.top - offsetPrev && position.top < container.bottom + offsetNext) {
+    }
+    if (this.layout.axis === default_AXIS_V && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
       return true;
     }
     return false;
@@ -18059,12 +20986,11 @@ class DefaultViewManager {
    * @returns {object[]} array of visible views
    */
   visible() {
-    const container = this.bounds();
     const views = this.views.displayed();
     const items = [];
     for (let i = 0, len = views.length; i < len; i++) {
       const view = views[i];
-      if (this.isVisible(view, 0, 0, container)) {
+      if (this.isVisible(view, 0, 0)) {
         items.push(view);
       }
     }
@@ -18080,15 +21006,12 @@ class DefaultViewManager {
    */
   scrollBy(x, y, silent) {
     const dir = this.layout.direction === "rtl" ? -1 : 1;
+    const lsc = this.views.container;
     if (silent) {
       this.ignore = true;
     }
-    if (this.settings.fullsize) {
-      window.scrollBy(x * dir, y * dir);
-    } else {
-      if (x) this.container.scrollLeft += x * dir;
-      if (y) this.container.scrollTop += y;
-    }
+    if (x) lsc.scrollLeft += x * dir;
+    if (y) lsc.scrollTop += y;
   }
 
   /**
@@ -18102,79 +21025,67 @@ class DefaultViewManager {
     if (silent) {
       this.ignore = true;
     }
-    if (this.settings.fullsize) {
-      window.scrollTo(x, y);
-    } else {
-      this.container.scrollLeft = x;
-      this.container.scrollTop = y;
-    }
+    this.views.container.scrollLeft = x;
+    this.views.container.scrollTop = y;
   }
 
   /**
-   * onScroll event handler
+   * scrolled
+   * @param {Event} e 
+   */
+  scrolled(e) {
+    if (this.paginated && this.name === "default") {
+      return;
+    }
+    this.relocated();
+    this.emit(EVENTS.MANAGERS.SCROLLED, {
+      top: e.target.scrollTop,
+      left: e.target.scrollLeft
+    });
+  }
+
+  /**
+   * onscroll
+   * @param {Event} e 
    * @private
    */
-  onScroll() {
-    let scrollTop;
-    let scrollLeft;
-    if (this.settings.fullsize) {
-      scrollTop = window.scrollY;
-      scrollLeft = window.scrollX;
-    } else {
-      scrollTop = this.container.scrollTop;
-      scrollLeft = this.container.scrollLeft;
+  onscroll(e) {
+    if (this.paginated && this.name === "default") {
+      return;
     }
-    this.scrollTop = scrollTop;
-    this.scrollLeft = scrollLeft;
     if (this.ignore) {
       this.ignore = false;
     } else {
       this.emit(EVENTS.MANAGERS.SCROLL, {
-        top: scrollTop,
-        left: scrollLeft
+        top: e.target.scrollTop,
+        left: e.target.scrollLeft
       });
-      clearTimeout(this.afterScrolled);
-      this.afterScrolled = setTimeout(() => {
-        this.emit(EVENTS.MANAGERS.SCROLLED, {
-          top: scrollTop,
-          left: scrollLeft
-        });
-      }, 20);
+      if (!("onscrollend" in window)) {
+        this.scrollend(e);
+      }
     }
   }
 
   /**
-   * Get bounds
-   * @returns {DOMRect}
+   * onscrollend
+   * @param {Event} e 
+   * @private
    */
-  bounds() {
-    return this.stage.bounds();
+  onscrollend(e) {
+    this.scrollend(e);
   }
 
   /**
-   * Update Layout
+   * calculate
+   * @private
    */
-  updateLayout() {
-    let height;
-    if (this.layout.flow === "scrolled-doc") {
-      const view = this.current();
-      height = view && view.height;
-    }
-    this.stageSize = this.stage.size(null, height);
+  calculate() {
     if (this.paginated) {
-      this.layout.calculate(this.stageSize.width, this.stageSize.height, this.settings.gap);
-      // Set the look ahead offset for what is visible
+      this.layout.calculate(this.viewport.rect.width, this.viewport.rect.height, this.settings.gap);
       this.settings.offset = this.layout.delta / this.layout.divisor;
     } else {
-      this.layout.calculate(this.stageSize.width, this.stageSize.height);
+      this.layout.calculate(this.viewport.rect.width, this.viewport.rect.height);
     }
-
-    /**
-     * @member {Mapping} mapping
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.mapping = new src_mapping(this.layout, this.settings.axis);
   }
 
   /**
@@ -18183,24 +21094,7 @@ class DefaultViewManager {
    * @private
    */
   updateWritingMode(mode) {
-    this.writingMode = mode; // unused
-  }
-
-  /**
-   * Update axis
-   * @param {string} axis
-   * @param {boolean} [forceUpdate=false] force update
-   * @private
-   */
-  updateAxis(axis, forceUpdate = false) {
-    if (axis === this.settings.axis && forceUpdate === false) {
-      return;
-    }
-    this.settings.axis = axis;
-    this.stage.axis(axis);
-    if (this.mapping) {
-      this.mapping = new src_mapping(this.layout, axis);
-    }
+    this.writingMode = mode;
   }
 
   /**
@@ -18224,6 +21118,20 @@ class DefaultViewManager {
    */
   isRendered() {
     return this.rendered;
+  }
+
+  /**
+   * destroy
+   */
+  destroy() {
+    this.ignore = true;
+    this.clear();
+    this.removeEventListeners();
+    this.viewport.destroy();
+    this.viewport = undefined;
+    this.rendered = false;
+    this.scrollType = undefined;
+    this.writingMode = undefined;
   }
 }
 event_emitter_default()(DefaultViewManager.prototype);
@@ -18285,20 +21193,13 @@ class Snap {
   setup(manager) {
     this.manager = manager;
     this.layout = this.manager.layout;
-    this.fullsize = this.manager.settings.fullsize;
-    if (this.fullsize) {
-      this.element = this.manager.stage.element;
-      this.scroller = window;
-      this.disableScroll();
-    } else {
-      this.element = this.manager.stage.container;
-      this.scroller = this.element;
-    }
+    this.element = this.manager.views.container;
+    this.scroller = this.element;
 
     // set lookahead offset to page width
     this.manager.settings.offset = this.layout.width;
     this.manager.settings.afterScrolledTimeout = this.settings.duration * 2;
-    this.isVertical = this.manager.settings.axis === "vertical";
+    this.isVertical = this.manager.layout.axis === "vertical";
 
     // disable snapping if not paginated or axis in not horizontal
     if (!this.manager.paginated || this.isVertical) {
@@ -18416,8 +21317,8 @@ class Snap {
    * @private
    */
   onScroll(e) {
-    this.scrollLeft = this.fullsize ? window.scrollX : this.scroller.scrollLeft;
-    this.scrollTop = this.fullsize ? window.scrollY : this.scroller.scrollTop;
+    this.scrollLeft = this.scroller.scrollLeft;
+    this.scrollTop = this.scroller.scrollTop;
   }
 
   /**
@@ -18439,9 +21340,6 @@ class Snap {
       screenX,
       screenY
     } = e.touches[0];
-    if (this.fullsize) {
-      this.enableScroll();
-    }
     this.touchCanceler = true;
     if (!this.startTouchX) {
       this.startTouchX = screenX;
@@ -18465,7 +21363,7 @@ class Snap {
     } = e.touches[0];
     const deltaY = Math.abs(screenY - this.endTouchY);
     this.touchCanceler = true;
-    if (!this.fullsize && deltaY < 10) {
+    if (deltaY < 10) {
       this.element.scrollLeft -= screenX - this.endTouchX;
     }
     this.endTouchX = screenX;
@@ -18479,9 +21377,6 @@ class Snap {
    * @private
    */
   onTouchEnd(e) {
-    if (this.fullsize) {
-      this.disableScroll();
-    }
     this.touchCanceler = false;
     let swipped = this.wasSwiped();
     if (swipped !== 0) {
@@ -18584,12 +21479,8 @@ class Snap {
    * @param {number} [top=0] 
    */
   scrollTo(left = 0, top = 0) {
-    if (this.fullsize) {
-      window.scroll(left, top);
-    } else {
-      this.scroller.scrollLeft = left;
-      this.scroller.scrollTop = top;
-    }
+    this.scroller.scrollLeft = left;
+    this.scroller.scrollTop = top;
   }
 
   /**
@@ -18600,18 +21491,12 @@ class Snap {
     if (typeof this.scroller === "undefined") {
       return;
     }
-    if (this.fullsize) {
-      this.enableScroll();
-    }
     this.removeListeners();
     this.scroller = undefined;
   }
 }
 event_emitter_default()(Snap.prototype);
 /* harmony default export */ const snap = (Snap);
-// EXTERNAL MODULE: ./node_modules/lodash/debounce.js
-var debounce = __webpack_require__(8221);
-var debounce_default = /*#__PURE__*/__webpack_require__.n(debounce);
 ;// CONCATENATED MODULE: ./src/managers/continuous/index.js
 
 
@@ -18619,6 +21504,7 @@ var debounce_default = /*#__PURE__*/__webpack_require__.n(debounce);
 
 
 
+const continuous_AXIS_H = "horizontal";
 
 /**
  * Continuous view manager
@@ -18634,9 +21520,10 @@ class ContinuousViewManager extends managers_default {
    * @param {string} [options.method] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
    * @param {string} [options.ignoreClass='']
    * @param {string|object} [options.view='iframe']
+   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    */
-  constructor(book, layout, options) {
-    super(book, layout, options);
+  constructor(book, options) {
+    super(book, options);
     /**
      * @member {string} name
      * @memberof ContinuousViewManager
@@ -18651,20 +21538,13 @@ class ContinuousViewManager extends managers_default {
       offset: 500,
       offsetDelta: 250,
       ignoreClass: "",
-      writingMode: undefined,
-      allowPopups: false,
-      afterScrolledTimeout: 10,
-      allowScriptedContent: false,
-      resizeOnOrientationChange: true,
       forceEvenPages: false
     }, options || {});
-    this.scrollTop = 0;
-    this.scrollLeft = 0;
   }
 
   /**
    * render
-   * @param {Element} element 
+   * @param {Element|string} element viewport element
    * @param {object} size 
    * @override
    */
@@ -18679,7 +21559,7 @@ class ContinuousViewManager extends managers_default {
    * display
    * @param {Section} section 
    * @param {string|number} [target] 
-   * @returns {Promise} displaying promise
+   * @returns {Promise<view|null>} displaying promise
    * @override
    */
   async display(section, target) {
@@ -18689,7 +21569,7 @@ class ContinuousViewManager extends managers_default {
   /**
    * fill
    * @param {Defer} value
-   * @returns {Promise}
+   * @returns {Promise<any>}
    */
   fill(value) {
     const full = value || new defer();
@@ -18713,14 +21593,10 @@ class ContinuousViewManager extends managers_default {
   moveTo(offset) {
     let distX = 0,
       distY = 0;
-    //let offsetX = 0, offsetY = 0; // unused
-
     if (this.paginated) {
       distX = Math.floor(offset.left / this.layout.delta) * this.layout.delta;
-      //offsetX = distX + this.settings.offsetDelta;
     } else {
       distY = offset.top;
-      //offsetY = offset.top + this.settings.offsetDelta;
     }
     if (distX > 0 || distY > 0) {
       this.scrollBy(distX, distY, true);
@@ -18736,121 +21612,31 @@ class ContinuousViewManager extends managers_default {
   }
 
   /**
-   * add
-   * @param {Section} section 
-   * @returns {Promise}
-   * @override
-   */
-  add(section) {
-    const view = this.createView(section);
-    view.on(EVENTS.VIEWS.DISPLAYED, () => {
-      this.afterDisplayed(view);
-    });
-    view.on(EVENTS.VIEWS.RESIZED, bounds => {
-      this.afterResized(view);
-    });
-    view.on(EVENTS.VIEWS.AXIS, axis => {
-      this.updateAxis(axis);
-    });
-    view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
-      this.updateWritingMode(mode);
-    });
-    this.views.append(view);
-    return view.display(this.request);
-  }
-
-  /**
-   * Append view
-   * @param {Section} section 
-   * @returns {*} view
-   * @override
-   */
-  append(section) {
-    const view = this.createView(section);
-    view.on(EVENTS.VIEWS.DISPLAYED, () => {
-      this.afterDisplayed(view);
-    });
-    view.on(EVENTS.VIEWS.RESIZED, bounds => {
-      this.afterResized(view);
-    });
-    view.on(EVENTS.VIEWS.AXIS, axis => {
-      this.updateAxis(axis);
-    });
-    view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
-      this.updateWritingMode(mode);
-    });
-    this.views.append(view);
-    return view;
-  }
-
-  /**
-   * Prepend view
-   * @param {Section} section 
-   * @returns {*} view
-   * @override
-   */
-  prepend(section) {
-    const view = this.createView(section);
-    view.on(EVENTS.VIEWS.DISPLAYED, () => {
-      this.afterDisplayed(view);
-    });
-    view.on(EVENTS.VIEWS.RESIZED, bounds => {
-      this.counter(bounds);
-      this.afterResized(view);
-    });
-    view.on(EVENTS.VIEWS.AXIS, axis => {
-      this.updateAxis(axis);
-    });
-    view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
-      this.updateWritingMode(mode);
-    });
-    this.views.prepend(view);
-    return view;
-  }
-
-  /**
    * update
    * @param {number} [offset] 
-   * @returns {Promise}
+   * @returns {Promise<any>}
    */
   async update(offset) {
-    const rect = this.bounds();
     const views = this.views;
-    const _offset = typeof offset !== "undefined" ? offset : this.settings.offset || 0;
-    const updating = new defer();
+    const delta = offset || this.settings.offset || 0;
     const promises = [];
     for (let i = 0; i < views.length; i++) {
       const view = views[i];
-      const isVisible = this.isVisible(view, _offset, _offset, rect);
-      if (isVisible === true) {
+      if (this.isVisible(view, delta, delta)) {
         if (view.displayed) {
           view.show();
         } else {
-          const displayed = view.display(this.request).then(view => {
+          const displayed = view.display(this.load).then(view => {
             view.show();
-          }, err => {
-            view.hide();
-            console.error(err);
           });
           promises.push(displayed);
         }
-      } else {
-        this.q.enqueue(view.destroy.bind(view));
-        // console.log("hidden " + view.section.index, view.displayed);
-
-        clearTimeout(this.trimTimeout);
-        this.trimTimeout = setTimeout(() => {
-          this.q.enqueue(this.trim.bind(this));
-        }, 250);
       }
     }
     if (promises.length) {
-      return Promise.all(promises).catch(err => {
-        updating.reject(err);
-      });
+      return Promise.all(promises);
     } else {
-      updating.resolve();
-      return updating.promise;
+      return Promise.resolve(null);
     }
   }
 
@@ -18858,53 +21644,47 @@ class ContinuousViewManager extends managers_default {
    * check
    * @param {number} [offsetLeft]
    * @param {number} [offsetTop]
-   * @returns {Promise}
+   * @returns {Promise<any>}
+   * @private
    */
-  check(offsetLeft, offsetTop) {
-    const checking = new defer();
-    const newViews = [];
-    const horizontal = this.settings.axis === "horizontal";
+  async check(offsetLeft, offsetTop) {
+    const promises = [];
+    const vph = this.layout.axis === continuous_AXIS_H;
+    const lsc = this.views.container;
+    const rtl = this.layout.direction === "rtl";
     let delta = this.settings.offset || 0;
-    if (offsetLeft && horizontal) {
+    if (offsetLeft && vph) {
       delta = offsetLeft;
     }
-    if (offsetTop && !horizontal) {
+    if (offsetTop && !vph) {
       delta = offsetTop;
     }
-    const bounds = this.bounds(); // bounds saved this until resize
-    const visibleLength = horizontal ? Math.floor(bounds.width) : bounds.height;
-    const contentLength = horizontal ? this.container.scrollWidth : this.container.scrollHeight;
-    const writingMode = this.writingMode && this.writingMode.indexOf("vertical") === 0 ? "vertical" : "horizontal";
-    const rtlScrollType = this.settings.rtlScrollType;
-    const rtl = this.layout.direction === "rtl";
-    let offset = horizontal ? this.scrollLeft : this.scrollTop;
-    if (this.settings.fullsize) {
-      // Scroll offset starts at 0 and goes negative
-      if (horizontal && rtl && rtlScrollType === "negative" || !horizontal && rtl && rtlScrollType === "default") {
-        offset = offset * -1;
-      }
-    } else {
+    const rect = this.viewport.rect;
+    const visibleLength = vph ? Math.floor(rect.width) : rect.height;
+    const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
+    let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
+    if (this.writingMode.indexOf(continuous_AXIS_H) === 0) {
       // Scroll offset starts at width of element
-      if (rtl && rtlScrollType === "default" && writingMode === "horizontal") {
+      if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;
       }
       // Scroll offset starts at 0 and goes negative
-      if (rtl && rtlScrollType === "negative" && writingMode === "horizontal") {
+      if (rtl && this.scrollType === "negative") {
         offset = offset * -1;
       }
     }
     const append = () => {
-      const last = this.views.last();
-      const next = last && last.section.next();
+      const view = this.views.last();
+      const next = view && view.section.next();
       if (next) {
-        newViews.push(this.append(next));
+        promises.push(this.append(next));
       }
     };
     const prepend = () => {
-      const first = this.views.first();
-      const prev = first && first.section.prev();
+      const view = this.views.first();
+      const prev = view && view.section.prev();
       if (prev) {
-        newViews.push(this.prepend(prev));
+        promises.push(this.prepend(prev));
       }
     };
     const end = offset + visibleLength + delta;
@@ -18915,248 +21695,78 @@ class ContinuousViewManager extends managers_default {
     if (start < 0) {
       prepend();
     }
-    const promises = newViews.map(view => {
-      return view.display(this.request);
-    });
-    if (newViews.length) {
+    if (promises.length) {
       return Promise.all(promises).then(() => {
-        return this.check();
-      }).then(() => {
-        // Check to see if anything new is on screen after rendering
         return this.update(delta);
-      }, err => {
-        return err;
       });
     } else {
-      this.q.enqueue(() => {
-        this.update();
-      });
-      checking.resolve(false);
-      return checking.promise;
+      return Promise.resolve(null);
     }
-  }
-
-  /**
-   * trim
-   * @returns {Promise}
-   */
-  trim() {
-    const task = new defer();
-    const displayed = this.views.displayed();
-    const first = displayed[0];
-    const last = displayed[displayed.length - 1];
-    const firstIndex = this.views.indexOf(first);
-    const lastIndex = this.views.indexOf(last);
-    const above = this.views.slice(0, firstIndex);
-    const below = this.views.slice(lastIndex + 1);
-
-    // Erase all but last above
-    for (let i = 0; i < above.length - 1; i++) {
-      this.erase(above[i], above);
-    }
-
-    // Erase all except first below
-    for (let j = 1; j < below.length; j++) {
-      this.erase(below[j]);
-    }
-    task.resolve();
-    return task.promise;
-  }
-
-  /**
-   * erase
-   * @param {*} view 
-   * @param {*} above 
-   */
-  erase(view, above) {
-    let prevTop;
-    let prevLeft;
-    if (this.settings.fullsize) {
-      prevTop = window.scrollY;
-      prevLeft = window.scrollX;
-    } else {
-      prevTop = this.container.scrollTop;
-      prevLeft = this.container.scrollLeft;
-    }
-    const bounds = view.bounds();
-    this.views.remove(view);
-    if (above) {
-      if (this.settings.axis === "vertical") {
-        this.scrollTo(0, prevTop - bounds.height, true);
-      } else {
-        if (this.layout.direction === "rtl") {
-          if (!this.settings.fullsize) {
-            this.scrollTo(prevLeft, 0, true);
-          } else {
-            this.scrollTo(prevLeft + Math.floor(bounds.width), 0, true);
-          }
-        } else {
-          this.scrollTo(prevLeft - Math.floor(bounds.width), 0, true);
-        }
-      }
-    }
-  }
-
-  /**
-   * addEventListeners
-   * @override
-   */
-  addEventListeners() {
-    window.onpagehide = e => {
-      this.ignore = true;
-      this.destroy();
-    };
-    this.addScrollListeners();
-  }
-
-  /**
-   * addScrollListeners
-   * @private
-   */
-  addScrollListeners() {
-    this.tick = core_requestAnimationFrame;
-    let dir;
-    if (this.layout.direction === "rtl" && this.settings.rtlScrollType === "default") {
-      dir = -1;
-    } else {
-      dir = 1;
-    }
-    this.scrollDeltaVert = 0;
-    this.scrollDeltaHorz = 0;
-    let scroller;
-    if (!this.settings.fullsize) {
-      scroller = this.container;
-      this.scrollTop = this.container.scrollTop;
-      this.scrollLeft = this.container.scrollLeft;
-    } else {
-      scroller = window;
-      this.scrollTop = window.scrollY * dir;
-      this.scrollLeft = window.scrollX * dir;
-    }
-    scroller.addEventListener("scroll", this.onScroll.bind(this));
-    this._scrolled = debounce_default()(this.scrolled.bind(this), 30);
-    this.didScroll = false;
-  }
-
-  /**
-   * removeEventListeners
-   * @override
-   */
-  removeEventListeners() {
-    let scroller;
-    if (this.settings.fullsize) {
-      scroller = window;
-    } else {
-      scroller = this.container;
-    }
-    scroller.removeEventListener("scroll", this.onScroll.bind(this));
-  }
-
-  /**
-   * onScroll
-   * @override
-   */
-  onScroll() {
-    let scrollTop;
-    let scrollLeft;
-    let dir;
-    if (this.layout.direction === "rtl" && this.settings.rtlScrollType === "default") {
-      dir = -1;
-    } else {
-      dir = 1;
-    }
-    if (!this.settings.fullsize) {
-      scrollTop = this.container.scrollTop;
-      scrollLeft = this.container.scrollLeft;
-    } else {
-      scrollTop = window.scrollY * dir;
-      scrollLeft = window.scrollX * dir;
-    }
-    this.scrollTop = scrollTop;
-    this.scrollLeft = scrollLeft;
-    if (!this.ignore) {
-      this._scrolled();
-    } else {
-      this.ignore = false;
-    }
-    this.scrollDeltaVert += Math.abs(scrollTop - this.prevScrollTop);
-    this.scrollDeltaHorz += Math.abs(scrollLeft - this.prevScrollLeft);
-    this.prevScrollTop = scrollTop;
-    this.prevScrollLeft = scrollLeft;
-    clearTimeout(this.scrollTimeout);
-    this.scrollTimeout = setTimeout(() => {
-      this.scrollDeltaVert = 0;
-      this.scrollDeltaHorz = 0;
-    }, 150);
-    clearTimeout(this.afterScrolled);
-    this.didScroll = false;
   }
 
   /**
    * scrolled
-   * @private
+   * @param {Event} e 
+   * @override
    */
-  scrolled() {
+  scrolled(e) {
     this.q.enqueue(() => {
       return this.check();
-    });
-    this.emit(EVENTS.MANAGERS.SCROLL, {
-      top: this.scrollTop,
-      left: this.scrollLeft
-    });
-    clearTimeout(this.afterScrolled);
-    this.afterScrolled = setTimeout(() => {
-      // Don't report scroll if we are about the snap
-      if (this.snapper && this.snapper.supportsTouch() && this.snapper.needsSnap()) {
-        return;
-      }
+    }).then(() => {
+      this.relocated();
       this.emit(EVENTS.MANAGERS.SCROLLED, {
-        top: this.scrollTop,
-        left: this.scrollLeft
+        top: e.target.scrollTop,
+        left: e.target.scrollLeft
       });
-    }, this.settings.afterScrolledTimeout);
+    });
   }
 
   /**
    * next
+   * @returns {Promise<any>}
    * @override
    */
   next() {
+    if (this.views.length === 0) {
+      return Promise.resolve(null);
+    }
     let delta;
     if (this.layout.name === "pre-paginated" && this.layout.spread === "auto") {
       delta = this.layout.delta * 2;
     } else {
       delta = this.layout.delta;
     }
-    if (this.views.length === 0) return;
-    if (this.paginated && this.settings.axis === "horizontal") {
+    if (this.paginated && this.layout.axis === continuous_AXIS_H) {
       this.scrollBy(delta, 0, true);
     } else {
       this.scrollBy(0, this.layout.height, true);
     }
-    this.q.enqueue(() => {
+    return this.q.enqueue(() => {
       return this.check();
     });
   }
 
   /**
    * prev
+   * @returns {Promise<any>}
    * @override
    */
   prev() {
+    if (this.views.length === 0) {
+      return Promise.resolve(null);
+    }
     let delta;
     if (this.layout.name === "pre-paginated" && this.layout.spread === "auto") {
       delta = this.layout.delta * 2;
     } else {
       delta = this.layout.delta;
     }
-    if (this.views.length === 0) return;
-    if (this.paginated && this.settings.axis === "horizontal") {
+    if (this.paginated && this.layout.axis === continuous_AXIS_H) {
       this.scrollBy(-delta, 0, true);
     } else {
       this.scrollBy(0, -this.layout.height, true);
     }
-    this.q.enqueue(() => {
+    return this.q.enqueue(() => {
       return this.check();
     });
   }
@@ -19185,6 +21795,12 @@ class ContinuousViewManager extends managers_default {
 
 
 
+
+
+
+
+
+
 // Default View Managers
 
 
@@ -19195,23 +21811,23 @@ class ContinuousViewManager extends managers_default {
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {number} [options.width]
- * @param {number} [options.height]
+ * @param {string} [options.axis] viewport axis
+ * @param {string|number} [options.width] viewport width
+ * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|Function|object} [options.manager='default'] string values: default / continuous
- * @param {string|Function} [options.view='iframe']
+ * @param {string|class} [options.manager='default'] string values: default / continuous
+ * @param {string|class} [options.view='iframe']
  * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
  * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
+ * @param {number} [options.pageWidth] page width for scrolled-doc flow
  * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
- * @param {boolean} [options.fullsize=false]
- * @param {boolean} [options.allowPopups=false] enable opening popup in content
- * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
- * @param {boolean} [options.resizeOnOrientationChange=true] false to disable orientation events
+ * @param {boolean} [options.hidden=false] viewport hidden
+ * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
  */
 class Rendition {
   constructor(book, options) {
@@ -19221,11 +21837,13 @@ class Rendition {
      * @readonly
      */
     this.settings = extend({
+      axis: undefined,
       width: null,
       height: null,
       manager: "default",
       view: "iframe",
       flow: null,
+      hidden: false,
       method: "write",
       // the 'baseUrl' value is set from the 'book.settings.replacements' property
       layout: null,
@@ -19236,11 +21854,8 @@ class Rendition {
       direction: null,
       // TODO: implement to 'auto' detection
       ignoreClass: "",
-      stylesheet: null,
-      fullsize: false,
-      allowPopups: false,
-      allowScriptedContent: false,
-      resizeOnOrientationChange: true
+      sandbox: [],
+      stylesheet: null
     }, options || {});
     if (typeof this.settings.manager === "object") {
       this.manager = this.settings.manager;
@@ -19288,8 +21903,6 @@ class Rendition {
      */
     this.themes = new themes(this);
     this.epubcfi = new src_epubcfi();
-    this.q = new queue(this);
-
     /**
      * A Rendered Location Range
      * @typedef location
@@ -19317,9 +21930,6 @@ class Rendition {
      * @memberof Rendition
      */
     this.location = undefined;
-
-    // Hold queue until book is opened
-    this.q.enqueue(this.book.opened);
     this.starting = new defer();
     /**
      * returns after the rendition has started
@@ -19327,7 +21937,9 @@ class Rendition {
      * @memberof Rendition
      */
     this.started = this.starting.promise;
-
+    this.q = new queue(this);
+    // Hold queue until book is opened
+    this.q.enqueue(this.book.opened);
     // Block the queue until rendering is started
     this.q.enqueue(this.start.bind(this));
   }
@@ -19364,9 +21976,12 @@ class Rendition {
    * Start the rendering
    */
   start() {
-    // Parse metadata to get layout props
     const props = this.determineLayoutProperties();
-    this.settings.layout = props.name;
+    /**
+     * @member {Layout} layout
+     * @memberof Rendition
+     * @readonly
+     */
     this.layout = new layout(props);
     this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
       /**
@@ -19378,49 +21993,75 @@ class Rendition {
        */
       this.emit(EVENTS.RENDITION.LAYOUT, props, changed);
     });
-    if (this.manager === undefined) {
+    /**
+     * @member {Viewport} viewport
+     * @memberof Rendition
+     * @readonly
+     */
+    this.viewport = new viewport(this.layout, {
+      hidden: this.settings.hidden
+    });
+    this.viewport.on(EVENTS.VIEWPORT.RESIZED, rect => {
+      if (this.layout.flow === "paginated") {
+        this.layout.set({
+          width: rect.width,
+          height: rect.height
+        });
+      } else if (this.layout.axis === "horizontal") {
+        this.layout.set({
+          height: rect.height
+        });
+      } else if (this.layout.axis === "vertical") {
+        this.layout.set({
+          width: rect.width
+        });
+      }
+      if (!this.location) return;
+      /**
+       * Emit that the rendition has been resized
+       * @event resized
+       * @param {object} rect
+       * @memberof Rendition
+       */
+      this.emit(EVENTS.RENDITION.RESIZED, rect);
+      this.display(this.location.start.cfi);
+    });
+    this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, target => {
+      /**
+       * @event orientationchange
+       * @param {object} target
+       * @memberof Rendition
+       */
+      this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, target);
+    });
+    if (!this.manager) {
       const manager = this.requireManager(this.settings.manager);
       const options = {
         snap: this.settings.snap,
         view: this.settings.view,
         method: this.settings.method,
-        fullsize: this.settings.fullsize,
-        ignoreClass: this.settings.ignoreClass,
-        allowPopups: this.settings.allowPopups,
-        allowScriptedContent: this.settings.allowScriptedContent,
-        resizeOnOrientationChange: this.settings.resizeOnOrientationChange
+        sandbox: this.settings.sandbox,
+        ignoreClass: this.settings.ignoreClass
       };
-      this.manager = new manager(this.book, this.layout, options);
+      this.manager = new manager(this.book, options);
     }
-
-    // Listen for displayed views
     this.manager.on(EVENTS.MANAGERS.ADDED, this.afterDisplayed.bind(this));
     this.manager.on(EVENTS.MANAGERS.REMOVED, this.afterRemoved.bind(this));
-
-    // Listen for resizing
     this.manager.on(EVENTS.MANAGERS.RESIZED, this.onResized.bind(this));
-
-    // Listen for rotation
-    this.manager.on(EVENTS.MANAGERS.ORIENTATION_CHANGE, this.onOrientationChange.bind(this));
-
-    // Listen for scroll changes
-    this.manager.on(EVENTS.MANAGERS.SCROLLED, this.reportLocation.bind(this));
-
+    this.manager.on(EVENTS.MANAGERS.RELOCATED, this.relocated.bind(this));
     /**
      * Emit that rendering has started
      * @event started
      * @memberof Rendition
      */
     this.emit(EVENTS.RENDITION.STARTED);
-
-    // Start processing queue
     this.starting.resolve();
   }
 
   /**
    * Call to attach the container to an element in the dom
    * Container must be attached before rendering can begin
-   * @param {Element} element to attach to
+   * @param {Element|string} element viewport element
    * @return {Promise<any>}
    */
   attachTo(element) {
@@ -19496,7 +22137,9 @@ class Rendition {
        * @memberof Rendition
        */
       this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
-    }).then(this.reportLocation.bind(this));
+    }).then(() => {
+      this.viewport.update();
+    });
     return displaying.promise;
   }
 
@@ -19545,41 +22188,11 @@ class Rendition {
 
   /**
    * Report resize events and display the last seen location
-   * @param {object} size 
-   * @param {number} size.width
-   * @param {number} size.height
-   * @param {string} [epubcfi]
+   * @param {object} view 
    * @private
    */
-  onResized(size, epubcfi) {
-    /**
-     * Emit that the rendition has been resized
-     * @event resized
-     * @param {object} size
-     * @param {number} size.width
-     * @param {number} size.height
-     * @param {string} [epubcfi]
-     * @memberof Rendition
-     */
-    this.emit(EVENTS.RENDITION.RESIZED, size, epubcfi);
-    if (this.location && this.location.start) {
-      this.display(epubcfi || this.location.start.cfi);
-    }
-  }
-
-  /**
-   * Report orientation events and display the last seen location
-   * @param {ScreenOrientation} orientation 
-   * @private
-   */
-  onOrientationChange(orientation) {
-    /**
-     * Emit that the rendition has been rotated
-     * @event orientationchange
-     * @param {ScreenOrientation} orientation
-     * @memberof Rendition
-     */
-    this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, orientation);
+  onResized(view) {
+    return this.adjustImages(view.contents);
   }
 
   /**
@@ -19592,19 +22205,15 @@ class Rendition {
   }
 
   /**
-   * Trigger a resize of the views
-   * @param {number} [width]
-   * @param {number} [height]
-   * @param {string} [epubcfi]
+   * Resize viewport container
+   * @param {number|string} [width]
+   * @param {number|string} [height]
+   * @returns {{ width: number, height: number }}
+   * @example rendition.resize(800, 600)
+   * @example rendition.resize("90%", 600)
    */
-  resize(width, height, epubcfi) {
-    if (width) {
-      this.settings.width = width;
-    }
-    if (height) {
-      this.settings.height = height;
-    }
-    this.manager.resize(width, height, epubcfi);
+  resize(width, height) {
+    return this.viewport.size(width, height);
   }
 
   /**
@@ -19619,7 +22228,7 @@ class Rendition {
    * @return {Promise<any>}
    */
   next() {
-    return this.q.enqueue(this.manager.next.bind(this.manager)).then(this.reportLocation.bind(this));
+    return this.q.enqueue(this.manager.next.bind(this.manager));
   }
 
   /**
@@ -19627,7 +22236,7 @@ class Rendition {
    * @return {Promise<any>}
    */
   prev() {
-    return this.q.enqueue(this.manager.prev.bind(this.manager)).then(this.reportLocation.bind(this));
+    return this.q.enqueue(this.manager.prev.bind(this.manager));
   }
 
   /**
@@ -19640,13 +22249,15 @@ class Rendition {
     const metadata = this.book.packaging.metadata;
     const direction = this.book.packaging.direction;
     return {
-      name: this.settings.layout || metadata.get("layout") || "reflowable",
-      flow: this.settings.flow || metadata.get("flow") || "paginated",
-      spread: this.settings.spread || metadata.get("spread") || "auto",
-      viewport: metadata.get("viewport") || "",
+      axis: this.settings.axis,
+      name: this.settings.layout || metadata.get("layout"),
+      flow: this.settings.flow || metadata.get("flow"),
+      spread: this.settings.spread || metadata.get("spread"),
+      viewport: metadata.get("viewport"),
       direction: this.settings.direction || direction || "ltr",
-      orientation: this.settings.orientation || metadata.get("orientation") || "auto",
-      minSpreadWidth: this.settings.minSpreadWidth || 800
+      orientation: this.settings.orientation || metadata.get("orientation"),
+      minSpreadWidth: this.settings.minSpreadWidth,
+      pageWidth: this.settings.pageWidth
     };
   }
 
@@ -19657,40 +22268,6 @@ class Rendition {
   updateLayout(options) {
     this.layout.set(options);
     this.display(this.location.start.cfi);
-  }
-
-  /**
-   * Report the current location
-   * @fires relocated
-   * @returns {Promise<any>}
-   * @private
-   */
-  reportLocation() {
-    const report = location => {
-      const located = this.located(location);
-      if (!located || !located.start || !located.end) {
-        return;
-      }
-      this.location = located;
-      /**
-       * @event relocated
-       * @type {displayedLocation}
-       * @memberof Rendition
-       */
-      this.emit(EVENTS.RENDITION.RELOCATED, this.location);
-    };
-    const animate = () => {
-      const location = this.manager.currentLocation();
-      if (!location) return;
-      if (typeof location["then"] === "function") {
-        location.then(result => report(result));
-      } else {
-        report(location);
-      }
-    };
-    return this.q.enqueue(() => {
-      requestAnimationFrame(animate);
-    });
   }
 
   /**
@@ -19712,7 +22289,7 @@ class Rendition {
    * Creates a Rendition#locationRange from location
    * passed by the Manager
    * @param {object} location Location sections
-   * @returns {displayedLocation}
+   * @returns {object}
    * @private
    */
   located(location) {
@@ -19774,6 +22351,25 @@ class Rendition {
       located.atEnd = true;
     }
     return located;
+  }
+
+  /**
+   * relocated event handler
+   * @fires relocated
+   * @private
+   */
+  relocated(location) {
+    const located = this.located(location);
+    if (!located || !located.start || !located.end) {
+      return;
+    }
+    this.location = located;
+    /**
+     * @event relocated
+     * @param {object} location
+     * @memberof Rendition
+     */
+    this.emit(EVENTS.RENDITION.RELOCATED, this.location);
   }
 
   /**
@@ -19875,45 +22471,41 @@ class Rendition {
   /**
    * Hook to adjust images to fit in columns
    * @param {Contents} contents
+   * @returns {Promise<Node|null>}
    * @private
    */
   adjustImages(contents) {
     if (this.layout.name === "pre-paginated") {
       return new Promise(resolve => {
-        resolve();
+        resolve(null);
       });
     }
-    const computed = contents.window.getComputedStyle(contents.content, null);
+    const content = contents.content;
     const padding = {
-      top: parseFloat(computed.paddingTop),
-      bottom: parseFloat(computed.paddingBottom),
-      left: parseFloat(computed.paddingLeft),
-      right: parseFloat(computed.paddingRight)
+      top: parseFloat(content.style["padding-top"]),
+      bottom: parseFloat(content.style["padding-bottom"]),
+      left: parseFloat(content.style["padding-left"]),
+      right: parseFloat(content.style["padding-right"])
     };
-    const height = (contents.content.offsetHeight - (padding.top + padding.bottom)) * .95;
-    const hPadding = padding.left + padding.right;
-    const maxWidth = (this.layout.columnWidth ? this.layout.columnWidth - hPadding + "px" : "100%") + "!important";
-    contents.appendStylesheetRules({
+    const paddingX = padding.left + padding.right;
+    const paddingY = padding.top + padding.bottom;
+    const width = (this.layout.columnWidth ? this.layout.columnWidth - paddingX + "px" : "100%") + " !important";
+    const height = content.offsetHeight - paddingY + "px !important";
+    return contents.appendStylesheet("images", {
       "img": {
-        "max-width": maxWidth,
-        "max-height": `${height}px !important`,
+        "max-width": width,
+        "max-height": height,
         "object-fit": "contain",
         "page-break-inside": "avoid",
         "break-inside": "avoid",
         "box-sizing": "border-box"
       },
       "svg": {
-        "max-width": maxWidth,
-        "max-height": `${height}px !important`,
+        "max-width": width,
+        "max-height": height,
         "page-break-inside": "avoid",
         "break-inside": "avoid"
       }
-    }, "images");
-    return new Promise((resolve, reject) => {
-      // Wait to apply
-      setTimeout(() => {
-        resolve();
-      }, 1);
     });
   }
 
@@ -19995,6 +22587,9 @@ class Rendition {
 event_emitter_default()(Rendition.prototype);
 /* harmony default export */ const rendition = (Rendition);
 ;// CONCATENATED MODULE: ./src/utils/request.js
+
+
+
 
 
 
@@ -20092,6 +22687,7 @@ const request = (url, type, withCredentials = false, headers = []) => {
 };
 /* harmony default export */ const utils_request = (request);
 ;// CONCATENATED MODULE: ./src/input.js
+
 
 
 
@@ -20346,6 +22942,7 @@ var external_localforage_default = /*#__PURE__*/__webpack_require__.n(external_l
 
 
 
+
 /**
  * Handles saving and requesting files from local storage
  * @extends {Input}
@@ -20568,7 +23165,17 @@ class Storage extends input {
 }
 event_emitter_default()(Storage.prototype);
 /* harmony default export */ const storage = (Storage);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.async-iterator.reduce.js
+var esnext_async_iterator_reduce = __webpack_require__(4905);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.reduce.js
+var esnext_iterator_reduce = __webpack_require__(8872);
 ;// CONCATENATED MODULE: ./src/section.js
+
+
+
+
+
+
 
 
 
@@ -20882,6 +23489,24 @@ class Section {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Sections class
  * @extends {Map}
@@ -21083,6 +23708,9 @@ class Sections extends Map {
 }
 /* harmony default export */ const sections = (Sections);
 ;// CONCATENATED MODULE: ./src/book.js
+
+
+
 
 
 
