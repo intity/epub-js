@@ -72,8 +72,7 @@ the section content.
 | [options.script] | <code>string</code> |  | url of script to be injected |
 | [options.snap] | <code>object</code> |  | use snap scrolling |
 | [options.hidden] | <code>boolean</code> | <code>false</code> | viewport hidden |
-| [options.allowPopups] | <code>boolean</code> | <code>false</code> | enable opening popup in content |
-| [options.allowScriptedContent] | <code>boolean</code> | <code>false</code> | enable running scripts in content |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="Rendition+setManager"></a>
 

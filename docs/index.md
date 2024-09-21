@@ -145,7 +145,7 @@
         - [Defer](API/utils/defer.md) `from ../../utils/defer`
         - [Mapping](API/mapping.md) `from ../../mapping`
         - [scrollType](API/utils/scrolltype.md) `from ../../utils/scrolltype`
-        - [Stage](API/managers/helpers/stage.md) `from ../helpers/stage`
+        - [Views](API/managers/helpers/views.md) `from ../helpers/views`
     - [Defer](API/utils/defer.md) `from ./utils/defer`
     - [EpubCFI](API/epubcfi.md)
     - [Hook](API/utils/hook.md)

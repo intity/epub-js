@@ -42,6 +42,7 @@ Constructor
 | [options.method] | <code>string</code> |  | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.view] | <code>string</code> \| <code>object</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="DefaultViewManager+render"></a>
 
@@ -113,7 +114,7 @@ Get array of visible views
 <a name="DefaultViewManager+scrolled"></a>
 
 ## defaultViewManager.scrolled(e)
-This event handler is used when the browser does not support the onscrollend event.
+scrolled
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 

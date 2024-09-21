@@ -38,7 +38,7 @@ IframeView class
         * [.writingMode](#IframeView.writingMode) : <code>string</code>
         * ["loaderror" (err)](#IframeView.event_loaderror)
         * ["rendered" (view)](#IframeView.event_rendered)
-        * ["resized" (size)](#IframeView.event_resized)
+        * ["resized" (rect)](#IframeView.event_resized)
         * ["displayed"](#IframeView.event_displayed)
         * ["shown" (view)](#IframeView.event_shown)
         * ["hidden" (view)](#IframeView.event_hidden)
@@ -58,8 +58,7 @@ Constructor
 | [options] | <code>object</code> |  |  |
 | [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
-| [options.allowPopups] | <code>boolean</code> | <code>false</code> |  |
-| [options.allowScriptedContent] | <code>boolean</code> | <code>false</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 | [options.forceRight] | <code>boolean</code> | <code>false</code> |  |
 
 <a name="IframeView+create"></a>
@@ -302,12 +301,12 @@ Load method
 
 <a name="IframeView.event_resized"></a>
 
-## "resized" (size)
+## "resized" (rect)
 **Kind**: event emitted by [<code>IframeView</code>](#IframeView)  
 
 | Param | Type |
 | --- | --- |
-| size | <code>object</code> | 
+| rect | <code>object</code> | 
 
 <a name="IframeView.event_displayed"></a>
 

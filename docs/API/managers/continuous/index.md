@@ -15,12 +15,9 @@ Continuous view manager
         * [.moveTo(offset)](#ContinuousViewManager+moveTo)
         * [.removeShownListeners(view)](#ContinuousViewManager+removeShownListeners)
         * [.update([offset])](#ContinuousViewManager+update) ⇒ <code>Promise.&lt;any&gt;</code>
-        * [.appendEventListeners()](#ContinuousViewManager+appendEventListeners)
-        * [.onscroll(e)](#ContinuousViewManager+onscroll)
-        * [.onscrollend(e)](#ContinuousViewManager+onscrollend)
         * [.scrolled(e)](#ContinuousViewManager+scrolled)
-        * [.next()](#ContinuousViewManager+next)
-        * [.prev()](#ContinuousViewManager+prev)
+        * [.next()](#ContinuousViewManager+next) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.prev()](#ContinuousViewManager+prev) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.destroy()](#ContinuousViewManager+destroy)
     * _static_
         * [.name](#ContinuousViewManager.name) : <code>string</code>
@@ -40,6 +37,7 @@ Constructor
 | [options.method] | <code>string</code> |  | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.view] | <code>string</code> \| <code>object</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="ContinuousViewManager+render"></a>
 
@@ -110,34 +108,6 @@ update
 | --- | --- |
 | [offset] | <code>number</code> | 
 
-<a name="ContinuousViewManager+appendEventListeners"></a>
-
-## continuousViewManager.appendEventListeners()
-appendEventListeners
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-<a name="ContinuousViewManager+onscroll"></a>
-
-## continuousViewManager.onscroll(e)
-onscroll
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-
-| Param | Type |
-| --- | --- |
-| e | <code>Event</code> | 
-
-<a name="ContinuousViewManager+onscrollend"></a>
-
-## continuousViewManager.onscrollend(e)
-onscrollend
-
-**Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-
-| Param | Type |
-| --- | --- |
-| e | <code>Event</code> | 
-
 <a name="ContinuousViewManager+scrolled"></a>
 
 ## continuousViewManager.scrolled(e)
@@ -151,13 +121,13 @@ scrolled
 
 <a name="ContinuousViewManager+next"></a>
 
-## continuousViewManager.next()
+## continuousViewManager.next() ⇒ <code>Promise.&lt;any&gt;</code>
 next
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 <a name="ContinuousViewManager+prev"></a>
 
-## continuousViewManager.prev()
+## continuousViewManager.prev() ⇒ <code>Promise.&lt;any&gt;</code>
 prev
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
