@@ -8,13 +8,11 @@ class Mapping {
 	/**
 	 * Constructor
 	 * @param {Layout} layout Layout to apply
-	 * @param {string} [axis="horizontal"] values: `"horizontal"` OR `"vertical"`
 	 * @param {boolean} [dev=false] toggle developer highlighting
 	 */
-	constructor(layout, axis = "horizontal", dev = false) {
+	constructor(layout, dev = false) {
 
 		this.layout = layout;
-		this.horizontal = axis === "horizontal";
 		this.devMode = dev;
 	}
 
@@ -146,6 +144,9 @@ class Mapping {
 	findStart(root, start, end) {
 
 		const stack = [root];
+		const hor = this.layout.axis === "horizontal";
+		const ltr = this.layout.direction === "ltr";
+		const rtl = this.layout.direction === "rtl";
 		let prev = root;
 
 		while (stack.length) {
@@ -156,10 +157,10 @@ class Mapping {
 				let left, right, top, bottom;
 				const elPos = nodeBounds(node);
 
-				if (this.horizontal && this.layout.direction === "ltr") {
+				if (hor && ltr) {
 
-					left = this.horizontal ? elPos.left : elPos.top;
-					right = this.horizontal ? elPos.right : elPos.bottom;
+					left = hor ? elPos.left : elPos.top;
+					right = hor ? elPos.right : elPos.bottom;
 
 					if (left >= start && left <= end) {
 						return node;
@@ -169,7 +170,7 @@ class Mapping {
 						prev = node;
 						stack.push(node);
 					}
-				} else if (this.horizontal && this.layout.direction === "rtl") {
+				} else if (hor && rtl) {
 
 					left = elPos.left;
 					right = elPos.right;
@@ -217,6 +218,9 @@ class Mapping {
 	findEnd(root, start, end) {
 
 		const stack = [root];
+		const hor = this.layout.axis === "horizontal";
+		const ltr = this.layout.direction === "ltr";
+		const rtl = this.layout.direction === "rtl";
 		let prev = root;
 
 		while (stack.length) {
@@ -227,7 +231,7 @@ class Mapping {
 				let left, right, top, bottom;
 				const elPos = nodeBounds(node);
 
-				if (this.horizontal && this.layout.direction === "ltr") {
+				if (hor && ltr) {
 
 					left = Math.round(elPos.left);
 					right = Math.round(elPos.right);
@@ -240,10 +244,10 @@ class Mapping {
 						prev = node;
 						stack.push(node);
 					}
-				} else if (this.horizontal && this.layout.direction === "rtl") {
+				} else if (hor && rtl) {
 
-					left = Math.round(this.horizontal ? elPos.left : elPos.top);
-					right = Math.round(this.horizontal ? elPos.right : elPos.bottom);
+					left = Math.round(hor ? elPos.left : elPos.top);
+					right = Math.round(hor ? elPos.right : elPos.bottom);
 
 					if (right < start && prev) {
 						return prev;
@@ -288,17 +292,20 @@ class Mapping {
 	findTextStartRange(node, start, end) {
 
 		const ranges = this.splitTextNodeIntoRanges(node);
+		const hor = this.layout.axis === "horizontal";
+		const ltr = this.layout.direction === "ltr";
+		const rtl = this.layout.direction === "rtl";
 
 		for (let i = 0; i < ranges.length; i++) {
 
 			const range = ranges[i];
 			const pos = range.getBoundingClientRect();
 
-			if (this.horizontal && this.layout.direction === "ltr") {
+			if (hor && ltr) {
 				if (pos.left >= start) {
 					return range;
 				}
-			} else if (this.horizontal && this.layout.direction === "rtl") {
+			} else if (hor && rtl) {
 				if (pos.right <= end) {
 					return range;
 				}
@@ -323,6 +330,9 @@ class Mapping {
 	findTextEndRange(node, start, end) {
 
 		const ranges = this.splitTextNodeIntoRanges(node);
+		const hor = this.layout.axis === "horizontal";
+		const ltr = this.layout.direction === "ltr";
+		const rtl = this.layout.direction === "rtl";
 		let prev;
 
 		for (let i = 0; i < ranges.length; i++) {
@@ -330,13 +340,13 @@ class Mapping {
 			const range = ranges[i];
 			const pos = range.getBoundingClientRect();
 
-			if (this.horizontal && this.layout.direction === "ltr") {
+			if (hor && ltr) {
 				if (pos.left > end && prev) {
 					return prev;
 				} else if (pos.right > end) {
 					return range;
 				}
-			} else if (this.horizontal && this.layout.direction === "rtl") {
+			} else if (hor && rtl) {
 				if (pos.right < start && prev) {
 					return prev;
 				} else if (pos.left < start) {
@@ -444,17 +454,6 @@ class Mapping {
 		}
 
 		return map;
-	}
-
-	/**
-	 * Set the axis for mapping
-	 * @param {string} value `"horizontal"` OR `"vertical"`
-	 * @return {boolean} is it horizontal?
-	 */
-	axis(value) {
-
-		this.horizontal = value === "horizontal";
-		return this.horizontal;
 	}
 }
 

@@ -13,19 +13,25 @@
 </head>
 
 <body>
-    <div id="content" dir="ltr">
-        <div id="viewer" class="paginated"></div>
+    <div id="content" class="ltr" dir="ltr">
+        <div id="viewer" class="paginated">
+            <div id="loader"></div>
+        </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
     </div>
     <script type="module">
         import { put, gen } from "./performance.js"
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
         const book = ePub("../assets/alice/", {
-            replacements: "blobUrl",
             store: "epub-js"
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         book.loaded.packaging.then((packaging) => {
 
@@ -44,8 +50,8 @@
             put("book.loaded.navigation")
         })
         const rendition = book.renderTo("viewer", {
-            width: "100%",
-            height: "100%",
+            width: 900,
+            height: 600,
             spread: "none"
         })
         const keybinding = (e) => {

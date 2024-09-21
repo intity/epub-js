@@ -13,7 +13,7 @@ export const EVENTS = {
     },
     CONTENTS: {
         EXPAND: "expand",
-        RESIZE: "resize",
+        RESIZED: "resized",
         SELECTED: "selected",
         SELECTED_RANGE: "selectedRange",
         LINK_CLICKED: "linkClicked"
@@ -29,6 +29,7 @@ export const EVENTS = {
         SCROLL: "scroll",
         SCROLLED: "scrolled",
         REMOVED: "removed",
+        RELOCATED: "relocated"
     },
     VIEWS: {
         AXIS: "axis",
@@ -66,5 +67,9 @@ export const EVENTS = {
         SELECTED: "selected",
         INJECTED: "injected",
         REJECTED: "rejected"
+    },
+    VIEWPORT: {
+        RESIZED: "resized",
+        ORIENTATION_CHANGE: "orientationchange"
     }
 }

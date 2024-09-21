@@ -156,11 +156,11 @@ class Themes extends Map {
 	append(key, theme, contents) {
 
 		if (theme.url) {
-			contents.appendStylesheet(theme.url, key);
+			contents.appendStylesheet(key, theme.url);
 			theme.injected = true;
 		}
 		if (theme.rules) {
-			contents.appendStylesheetRules(theme.rules, key);
+			contents.appendStylesheet(key, theme.rules);
 			theme.injected = true;
 		}
 		if (theme.injected) {
@@ -215,6 +215,8 @@ class Themes extends Map {
 	 */
 	inject(contents) {
 
+		if (!this.current) return;
+		
 		this.forEach((theme, key) => {
 
 			if (this.current === key) {

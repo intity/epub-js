@@ -6,23 +6,21 @@ Map text locations to CFI ranges
 **Kind**: global class  
 
 * [Mapping](#Mapping)
-    * [new Mapping(layout, [axis], [dev])](#new_Mapping_new)
+    * [new Mapping(layout, [dev])](#new_Mapping_new)
     * [.section(view)](#Mapping+section) ⇒ <code>Array.&lt;object&gt;</code>
     * [.page(contents, cfiBase, start, end)](#Mapping+page) ⇒ <code>Object</code>
     * [.findRanges(view)](#Mapping+findRanges) ⇒ <code>Array.&lt;object&gt;</code>
     * [.rangeListToCfiList(cfiBase, columns)](#Mapping+rangeListToCfiList) ⇒ <code>Array.&lt;object&gt;</code>
-    * [.axis(value)](#Mapping+axis) ⇒ <code>boolean</code>
 
 <a name="new_Mapping_new"></a>
 
-## new Mapping(layout, [axis], [dev])
+## new Mapping(layout, [dev])
 Constructor
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | layout | <code>Layout</code> |  | Layout to apply |
-| [axis] | <code>string</code> | <code>&quot;\&quot;horizontal\&quot;&quot;</code> | values: `"horizontal"` OR `"vertical"` |
 | [dev] | <code>boolean</code> | <code>false</code> | toggle developer highlighting |
 
 <a name="Mapping+section"></a>
@@ -73,16 +71,4 @@ rangeListToCfiList
 | --- | --- |
 | cfiBase | <code>string</code> | 
 | columns | <code>Array.&lt;object&gt;</code> | 
-
-<a name="Mapping+axis"></a>
-
-## mapping.axis(value) ⇒ <code>boolean</code>
-Set the axis for mapping
-
-**Kind**: instance method of [<code>Mapping</code>](#Mapping)  
-**Returns**: <code>boolean</code> - is it horizontal?  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| value | <code>string</code> | `"horizontal"` OR `"vertical"` |
 

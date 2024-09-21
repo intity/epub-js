@@ -1,13 +1,16 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Mapping from "./mapping";
+import Defer from "./utils/defer";
 import { replaceLinks } from "./utils/replacements";
-import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";
+import { EVENTS, DOM_EVENTS } from "./utils/constants";
 import { isNumber, prefixed, borders, defaults } from "./utils/core";
 
 const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
+const AXIS_H = "horizontal";
+const AXIS_V = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -27,9 +30,8 @@ class Contents {
 		 */
 		this.epubcfi = new EpubCFI();
 		this.document = doc;
-		this.documentElement = this.document.documentElement;
 		/**
-		 * @member {object} content document.body by current location
+		 * @member {Element} content document.body by current location
 		 * @memberof Contents
 		 * @readonly
 		 */
@@ -59,17 +61,13 @@ class Contents {
 		this.styles = new Map();
 		this.active = true;
 		this.window = this.document.defaultView;
-
-		this.epubReadingSystem("epub.js", EPUBJS_VERSION);
-		this.listeners();
-	}
-
-	/**
-	 * Get DOM events that are listened for and passed along
-	 */
-	static get listenedEvents() {
-
-		return DOM_EVENTS;
+		/**
+		 * @member {string} mode writing-mode
+		 * @memberof Contents
+		 * @readonly
+		 */
+		this.mode = this.writingMode();
+		this.appendListeners();
 	}
 
 	/**
@@ -113,68 +111,17 @@ class Contents {
 	}
 
 	/**
-	 * Get or Set width of the contents
-	 * @param {number} [w]
-	 * @returns {number} width
-	 */
-	contentWidth(w) {
-
-		const content = this.content || this.document.body;
-
-		if (w && isNumber(w)) {
-			w = w + "px";
-		}
-
-		if (w) {
-			content.style.width = w;
-		}
-
-		return parseInt(this.window.getComputedStyle(content)["width"]);
-	}
-
-	/**
-	 * Get or Set height of the contents
-	 * @param {number} [h]
-	 * @returns {number} height
-	 */
-	contentHeight(h) {
-
-		const content = this.content;
-
-		if (h && isNumber(h)) {
-			h = h + "px";
-		}
-
-		if (h) {
-			content.style.height = h;
-		}
-
-		return parseInt(this.window.getComputedStyle(content)["height"]);
-	}
-
-	/**
 	 * Get size of the text using Range
 	 * @returns {{ width: number, height: number }}
 	 */
 	textSize() {
 
 		const range = this.document.createRange();
-		const content = this.content;
-		// Select the contents of frame
-		range.selectNodeContents(content);
-		// get rect of the text content
+		range.selectNodeContents(this.content);
 		const rect = range.getBoundingClientRect();
-		const border = borders(content);
-		let width = rect.width;
-		let height = rect.height;
-		if (border) {
-			if (border.width) {
-				width += border.width;
-			}
-			if (border.height) {
-				height += border.height;
-			}
-		}
+		const border = borders(this.content);
+		const width = rect.width + border.width;
+		const height = this.content.clientHeight;
 
 		return {
 			width: Math.round(width),
@@ -188,7 +135,7 @@ class Contents {
 	 */
 	scrollWidth() {
 
-		return this.documentElement.scrollWidth;
+		return this.document.documentElement.scrollWidth;
 	}
 
 	/**
@@ -197,46 +144,55 @@ class Contents {
 	 */
 	scrollHeight() {
 
-		return this.documentElement.scrollHeight;
+		return this.document.documentElement.scrollHeight;
 	}
 
 	/**
 	 * Set overflow css style of the contents
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflow(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflow = overflow;
+			elt.style.overflow = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflow"];
+		return this.window.getComputedStyle(elt)["overflow"];
 	}
 
 	/**
 	 * Set overflowX css style of the documentElement
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflowX(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflowX = overflow;
+			elt.style.overflowX = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflowX"];
+		return this.window.getComputedStyle(elt)["overflowX"];
 	}
 
 	/**
 	 * Set overflowY css style of the documentElement
 	 * @param {string} [overflow]
+	 * @returns {string}
 	 */
 	overflowY(overflow) {
 
+		const elt = this.document.documentElement;
+		
 		if (overflow) {
-			this.documentElement.style.overflowY = overflow;
+			elt.style.overflowY = overflow;
 		}
 
-		return this.window.getComputedStyle(this.documentElement)["overflowY"];
+		return this.window.getComputedStyle(elt)["overflowY"];
 	}
 
 	/**
@@ -244,6 +200,7 @@ class Contents {
 	 * @param {string} property
 	 * @param {string} value
 	 * @param {boolean} [priority] set as "important"
+	 * @returns {any}
 	 */
 	css(property, value, priority) {
 
@@ -267,6 +224,7 @@ class Contents {
 	 * @param {string} [options.minimum]
 	 * @param {string} [options.maximum]
 	 * @param {string} [options.scalable]
+	 * @returns {object}
 	 */
 	viewport(options) {
 
@@ -352,7 +310,7 @@ class Contents {
 			if (viewport === null) {
 				viewport = this.document.createElement("meta");
 				viewport.setAttribute("name", "viewport");
-				this.document.querySelector("head").appendChild(viewport);
+				this.document.head.appendChild(viewport);
 			}
 
 			viewport.setAttribute("content", newContent.join(", "));
@@ -380,13 +338,15 @@ class Contents {
 
 		let changed = false;
 		const cmp = (rect) => Object.keys(this.contentRect).forEach(p => {
+			if (!rect) return;
 			if (this.contentRect[p] !== rect[p] && rect[p] !== void 0) {
 				this.contentRect[p] = rect[p];
 				changed = true;
 			}
 		});
-		entries.forEach(entry => entry.contentRect && cmp(entry.contentRect));
-		changed && this.emit(EVENTS.CONTENTS.RESIZE, this.contentRect);
+		entries.forEach((entry) => cmp(entry.contentRect));
+		if (!changed) return;
+		this.emit(EVENTS.CONTENTS.RESIZED, this.contentRect);
 	}
 
 	/**
@@ -494,59 +454,95 @@ class Contents {
 	}
 
 	/**
-	 * Get injected stylesheet node
+	 * Create stylesheet link
 	 * @param {string} key 
-	 * @returns {Node}
+	 * @param {string} src 
+	 * @returns {Promise<Node>}
 	 * @private
 	 */
-	getStylesheetNode(key) {
+	createLink(key, src) {
 
-		if (!this.document) return null;
-
-		const id = `epubjs-injected-css-${key}`;
-		let node = this.styles.get(id);
-		if (typeof node === "undefined") {
-			node = this.document.createElement("style");
-			node.id = id;
+		return new Promise((resolve, reject) => {
+			const id = `epubjs-injected-css-${key}`;
+			let node = this.styles.get(id);
+			if (node) {
+				this.document.head.removeChild(node);
+			}
+			node = this.document.createElement("link");
+			node.rel = "stylesheet";
+			node.type = "text/css";
+			node.href = src;
+			node.onload = () => {
+				resolve(node);
+			};
+			node.onerror = () => {
+				reject(new Error(`Failed to load source: ${src}`));
+			};
 			this.document.head.appendChild(node);
-		}
-		return node;
+			this.styles.set(id, node);
+		});
 	}
 
 	/**
-	 * Append a stylesheet link to the document head
-	 * @param {string} src url
+	 * Create stylesheet rules
 	 * @param {string} key 
-	 * @example appendStylesheet("/pach/to/stylesheet.css", "common")
-	 * @example appendStylesheet("https://example.com/to/stylesheet.css", "common")
+	 * @param {object} rules 
 	 * @returns {Promise<Node>}
+	 * @private
 	 */
-	appendStylesheet(src, key) {
+	createStyle(key, rules) {
 
-		return new Promise((resolve, reject) => {
-
-			if (!this.document) {
-				reject(new Error("Document cannot be null"));
-				return;
-			}
-
+		return new Promise((resolve) => {
 			const id = `epubjs-injected-css-${key}`;
 			let node = this.styles.get(id);
-			if (typeof node === "undefined") {
-				node = this.document.createElement("link");
-				node.rel = "stylesheet";
-				node.type = "text/css";
-				node.href = src;
-				node.onload = () => {
-					resolve(node);
-				};
-				node.onerror = () => {
-					reject(new Error(`Failed to load source: ${src}`));
-				};
-				this.document.head.appendChild(node);
+			if (node) {
+				this.document.head.removeChild(node);
 			}
+			node = this.document.createElement("style");
+			node.id = id;
+			this.document.head.appendChild(node);
+			Object.keys(rules).forEach((selector) => {
+				const value = rules[selector];
+				const index = node.sheet.cssRules.length;
+				const items = Object.keys(value).map((k) => {
+					return `${k}:${value[k]}`;
+				}).join(";");
+				node.sheet.insertRule(`${selector}{${items}}`, index);
+			});
 			this.styles.set(id, node);
+			resolve(node);
 		});
+	}
+
+	/**
+	 * Append a stylesheet link/rules to the document head
+	 * @param {string} key
+	 * @param {string|object} input url or rules 
+	 * @returns {Promise<Node>}
+	 * @example appendStylesheet("common", "/pach/to/stylesheet.css")
+	 * @example appendStylesheet("common", "https://example.com/to/stylesheet.css")
+	 * @example appendStylesheet("common", { h1: { "font-size": "1.5em" }})
+	 */
+	appendStylesheet(key, input) {
+
+		const def = new Defer();
+
+		if (!this.document) {
+			def.reject(new Error("Document cannot be null"));
+			return def.promise;
+		}
+
+		if (typeof input === "string") {
+			this.createLink(key, input).then((node) => {
+				def.resolve(node);
+			});
+		} else {
+			this.createStyle(key, input).then((node) => {
+				def.resolve(node);
+			});
+		}
+
+		return def.promise;
 	}
 
 	/**
@@ -580,56 +576,14 @@ class Contents {
 	}
 
 	/**
-	 * Append serialized stylesheet
-	 * @param {string} css
-	 * @param {string} key
-	 * @example appendSerializedCSS("h1 { font-size: 32px; color: magenta; }", "common")
-	 * @description If the key is the same, the CSS will be replaced instead of inserted
-	 */
-	appendSerializedCSS(css, key) {
-
-		if (!this.document) return;
-
-		const node = this.getStylesheetNode(key);
-		node.innerHTML = css;
-		this.styles.set(node.id, node);
-	}
-
-	/**
-	 * Append stylesheet rules to a generate stylesheet
-	 * @link https://github.com/desirable-objects/json-to-css
-	 * @param {object} rules
-	 * @param {string} key
-	 * @example appendStylesheetRules({ h1: { "font-size": "1.5em" }}, "common")
-	 * @description If the key is the same, the CSS will be replaced instead of inserted
-	 */
-	appendStylesheetRules(rules, key) {
-
-		if (!this.document) return;
-
-		const node = this.getStylesheetNode(key);
-
-		Object.keys(rules).forEach((selector) => {
-			const value = rules[selector];
-			const index = node.sheet.cssRules.length;
-			const items = Object.keys(value).map((k) => {
-				return `${k}:${value[k]}`;
-			}).join(";");
-			node.sheet.insertRule(`${selector}{${items}}`, index);
-		});
-
-		this.styles.set(node.id, node);
-	}
-
-	/**
 	 * Append a script node to the document head
-	 * @param {string} src url
-	 * @param {string} key 
-	 * @example appendScript("/path/to/script.js", "common")
-	 * @example appendScript("https://examples.com/to/script.js", "common")
+	 * @param {string} key
+	 * @param {string} src url 
+	 * @example appendScript("common", "/path/to/script.js")
+	 * @example appendScript("common", "https://examples.com/to/script.js")
 	 * @returns {Promise<Node>} loaded
 	 */
-	appendScript(src, key) {
+	appendScript(key, src) {
 
 		return new Promise((resolve, reject) => {
 
@@ -732,7 +686,7 @@ class Contents {
 	 * Get an EpubCFI from a Dom Range
 	 * @param {Range} range
 	 * @param {string} [ignoreClass]
-	 * @returns {EpubCFI} cfi
+	 * @returns {string} EpubCFI
 	 */
 	cfiFromRange(range, ignoreClass) {
 
@@ -743,7 +697,7 @@ class Contents {
 	 * Get an EpubCFI from a Dom node
 	 * @param {Node} node
 	 * @param {string} [ignoreClass]
-	 * @returns {EpubCFI} cfi
+	 * @returns {string} EpubCFI
 	 */
 	cfiFromNode(node, ignoreClass) {
 
@@ -753,8 +707,8 @@ class Contents {
 	/**
 	 * map
 	 * @param {Layout} layout 
-	 * @todo TODO: find where this is used - remove?
-	 * @returns {Array}
+	 * @todo find where this is used - remove?
+	 * @returns {object[]}
 	 */
 	map(layout) {
 
@@ -763,28 +717,47 @@ class Contents {
 	}
 
 	/**
-	 * Size the contents to a given width and height
-	 * @param {number} [width]
-	 * @param {number} [height]
-	 * @param {string} [dir]
+	 * Apply Css to a Document
+	 * @param {Layout} layout 
+	 * @param {Section} section 
 	 */
-	size(width, height, dir) {
+	format(layout, section) {
 
+		if (layout.name === "pre-paginated") {
+			this.fit(layout, section);
+		} else if (layout.flow === "paginated") {
+			this.columns(layout);
+		} else {
+			this.size(layout);
+		}
+	}
+
+	/**
+	 * Size the contents to a given width and height
+	 * @param {Layout} layout
+	 * @private
+	 */
+	size(layout) {
+
+		const doc = layout.flow === "scrolled-doc";
+		const szw = doc ? layout.pageWidth : layout.width;
+		const szh = layout.height;
+		const dir = layout.direction;
 		const viewport = { scale: 1.0, scalable: "no" };
 
-		this.setLayoutStyle("scrolling");
-
-		if (width >= 0) {
-			this.width(width);
-			viewport.width = width;
-			this.css("padding", "0 " + (width / 12) + "px");
+		if (layout.axis === AXIS_V) {
+			this.width(szw);
+			viewport.width = szw;
+			this.css("height", "auto");
+			this.css("padding", "20px " + (szw / 12) + "px");
+		} else {
+			this.height(szh);
+			viewport.height = szh;
+			this.css("width", "auto");
+			this.css("padding", (szw / 17) + "px 20px");
 		}
 
-		if (height >= 0) {
-			this.height(height);
-			viewport.height = height;
-		}
-
+		this.css("overflow", "hidden");
 		this.css("margin", "0");
 		this.css("box-sizing", "border-box");
 		this.viewport(viewport);
@@ -793,63 +766,49 @@ class Contents {
 
 	/**
 	 * Apply columns to the contents for pagination
-	 * @param {number} width
-	 * @param {number} height
-	 * @param {number} columnWidth
-	 * @param {number} gap
-	 * @param {string} dir
+	 * @param {Layout} layout
+	 * @private
 	 */
-	columns(width, height, columnWidth, gap, dir) {
+	columns(layout) {
 
-		const COLUMN_AXIS = prefixed("column-axis");
-		const COLUMN_GAP = prefixed("column-gap");
-		const COLUMN_WIDTH = prefixed("column-width");
-		const COLUMN_FILL = prefixed("column-fill");
+		const szw = layout.width;
+		const szh = layout.height;
+		const clw = layout.columnWidth;
+		const dir = layout.direction;
+		const gap = layout.gap;
 
-		const AXIS_H = "horizontal";
-		const AXIS_V = "vertical";
-		const writingMode = this.writingMode();
-		const axis = (writingMode.indexOf(AXIS_V) === 0) ? AXIS_V : AXIS_H;
-
-		this.setLayoutStyle("paginated");
 		this.direction(dir);
-		this.width(width);
-		this.height(height);
-
-		// Deal with Mobile trying to scale to viewport
+		this.width(szw);
+		this.height(szh);
 		this.viewport({
-			width: width,
-			height: height,
+			width: szw,
+			height: szh,
 			scale: 1.0,
 			scalable: "no"
 		});
 
-		// TODO: inline-block needs more testing
-		// Fixes Safari column cut offs, but causes RTL issues
-		// this.css("display", "inline-block");
-
-		this.css("overflow-y", "hidden");
+		this.css("overflow", "hidden");
 		this.css("margin", "0", true);
+		this.css("box-sizing", "border-box");
+		this.css("max-height", "inherit");
 
-		if (axis === AXIS_V) {
+		if (layout.axis === AXIS_V) {
+			this.css("display", "flex");
 			this.css("padding-top", (gap / 2) + "px", true);
 			this.css("padding-bottom", (gap / 2) + "px", true);
 			this.css("padding-left", "20px");
 			this.css("padding-right", "20px");
-			this.css(COLUMN_AXIS, AXIS_V);
 		} else {
+			this.css("display", "block");
 			this.css("padding-top", "20px");
 			this.css("padding-bottom", "20px");
 			this.css("padding-left", (gap / 2) + "px", true);
 			this.css("padding-right", (gap / 2) + "px", true);
-			this.css(COLUMN_AXIS, AXIS_H);
 		}
 
-		this.css("box-sizing", "border-box");
-		this.css("max-width", "inherit");
-		this.css(COLUMN_FILL, "auto");
-		this.css(COLUMN_GAP, gap + "px");
-		this.css(COLUMN_WIDTH, columnWidth + "px");
+		this.css("column-gap", gap + "px");
+		this.css("column-fill", "auto");
+		this.css("column-width", clw + "px");
 
 		// Fix glyph clipping in WebKit
 		// https://github.com/futurepress/epub.js/issues/983
@@ -866,7 +825,7 @@ class Contents {
 
 		const scaleStr = "scale(" + scale + ")";
 		let translateStr = "";
-		// this.css("position", "absolute"));
+
 		this.css("transform-origin", "top left");
 
 		if (offsetX >= 0 || offsetY >= 0) {
@@ -878,26 +837,20 @@ class Contents {
 
 	/**
 	 * Fit contents into a fixed width and height
-	 * @param {number} width
-	 * @param {number} height
+	 * @param {Layout} layout
+	 * @param {Section} section
+	 * @private
 	 */
-	fit(width, height, section) {
+	fit(layout, section) {
 
+		const clw = layout.columnWidth;
+		const szh = layout.height;
 		const viewport = this.viewport();
 		const viewportWidth = parseInt(viewport.width);
 		const viewportHeight = parseInt(viewport.height);
-		const widthScale = width / viewportWidth;
-		const heightScale = height / viewportHeight;
+		const widthScale = clw / viewportWidth;
+		const heightScale = szh / viewportHeight;
 		const scale = widthScale < heightScale ? widthScale : heightScale;
-
-		// the translate does not work as intended, elements can end up unaligned
-		// var offsetY = (height - (viewportHeight * scale)) / 2;
-		// var offsetX = 0;
-		// if (this.section.index % 2 === 1) {
-		// 	offsetX = width - (viewportWidth * scale);
-		// }
-
-		this.setLayoutStyle("paginated");
 
 		// scale needs width and height to be set
 		this.width(viewportWidth);
@@ -906,7 +859,6 @@ class Contents {
 
 		// Scale to the correct size
 		this.scaler(scale, 0, 0);
-		// this.scaler(scale, offsetX > 0 ? offsetX : 0, offsetY);
 
 		// background images are not scaled by transform
 		this.css("background-size", viewportWidth * scale + "px " + viewportHeight * scale + "px");
@@ -914,7 +866,7 @@ class Contents {
 		this.css("background-color", "transparent");
 		if (section && section.properties.includes("page-spread-left")) {
 			// set margin since scale is weird
-			const marginLeft = width - (viewportWidth * scale);
+			const marginLeft = clw - (viewportWidth * scale);
 			this.css("margin-left", marginLeft + "px");
 		}
 	}
@@ -925,9 +877,7 @@ class Contents {
 	 */
 	direction(dir = "ltr") {
 
-		if (this.documentElement) {
-			this.documentElement.dir = dir;
-		}
+		this.document.documentElement.dir = dir;
 	}
 
 	/**
@@ -951,75 +901,12 @@ class Contents {
 	 */
 	writingMode(mode = "horizontal-tb") {
 
+		if (this.mode === mode) return this.mode;
 		const WRITING_MODE = prefixed("writing-mode");
-
-		if (this.documentElement) {
-			this.documentElement.style[WRITING_MODE] = mode;
-		}
-
-		return this.window.getComputedStyle(this.documentElement)[WRITING_MODE] || "";
-	}
-
-	/**
-	 * Set the layout style of the content
-	 * @param {string} [value='paginated'] values: `"paginated"` OR `"scrolling"`
-	 * @private
-	 */
-	setLayoutStyle(value = "paginated") {
-
-		this.layoutStyle = value;
-		navigator.epubReadingSystem.layoutStyle = value;
-		return value;
-	}
-
-	/**
-	 * Add the epubReadingSystem object to the navigator
-	 * @param {string} name
-	 * @param {string} version
-	 * @private
-	 */
-	epubReadingSystem(name, version) {
-
-		navigator.epubReadingSystem = {
-			name: name,
-			version: version,
-			layoutStyle: "paginated",
-			hasFeature: feature => {
-				switch (feature) {
-					case "dom-manipulation":
-						return true;
-					case "layout-changes":
-						return true;
-					case "touch-events":
-						return true;
-					case "mouse-events":
-						return true;
-					case "keyboard-events":
-						return true;
-					case "spine-scripting":
-						return false;
-					default:
-						return false;
-				}
-			}
-		};
-		return navigator.epubReadingSystem;
-	}
-
-	//-- events --//
-
-	/**
-	 * Add DOM listeners
-	 * @private
-	 */
-	listeners() {
-
-		this.appendListeners();
-		// this.imageLoadListeners();
-		// this.mediaQueryListeners();
-		// this.fontLoadListeners();
-		// this.transitionListeners();
-		// this.mutationListener();
+		const elt = this.document.documentElement;
+		elt.style[WRITING_MODE] = mode;
+		this.mode = this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+		return this.mode;
 	}
 
 	/**

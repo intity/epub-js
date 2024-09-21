@@ -11,12 +11,7 @@ IframeView class
         * [.create()](#IframeView+create) ⇒ <code>Element</code>
         * [.render(request)](#IframeView+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.reset()](#IframeView+reset)
-        * [.setAxis([value])](#IframeView+setAxis)
-        * [.setWritingMode(mode)](#IframeView+setWritingMode)
-        * [.size([width], [height])](#IframeView+size)
-        * [.lock(what, width, height)](#IframeView+lock)
-        * [.expand()](#IframeView+expand)
-        * [.reframe(width, height)](#IframeView+reframe)
+        * [.update()](#IframeView+update)
         * [.load(contents)](#IframeView+load) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.onLoad(event, defer)](#IframeView+onLoad)
         * [.display(request)](#IframeView+display) ⇒ <code>Promise.&lt;view&gt;</code>
@@ -35,15 +30,15 @@ IframeView class
         * [.settings](#IframeView.settings) : <code>object</code>
         * [.id](#IframeView.id) : <code>string</code>
         * [.section](#IframeView.section) : <code>Section</code>
-        * [.axis](#IframeView.axis) : <code>string</code>
         * [.contents](#IframeView.contents) : <code>Contents</code>
         * [.epubcfi](#IframeView.epubcfi) : <code>EpubCFI</code>
         * [.layout](#IframeView.layout) : <code>Layout</code>
         * [.marks](#IframeView.marks) : <code>Marks</code>
         * [.method](#IframeView.method) : <code>string</code>
+        * [.writingMode](#IframeView.writingMode) : <code>string</code>
         * ["loaderror" (err)](#IframeView.event_loaderror)
         * ["rendered" (view)](#IframeView.event_rendered)
-        * ["resized" (size)](#IframeView.event_resized)
+        * ["resized" (rect)](#IframeView.event_resized)
         * ["displayed"](#IframeView.event_displayed)
         * ["shown" (view)](#IframeView.event_shown)
         * ["hidden" (view)](#IframeView.event_hidden)
@@ -61,11 +56,9 @@ Constructor
 | layout | <code>Layout</code> |  |  |
 | section | <code>Section</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.axis] | <code>string</code> |  | values: `"horizontal"` OR `"vertical"` |
 | [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
-| [options.allowPopups] | <code>boolean</code> | <code>false</code> |  |
-| [options.allowScriptedContent] | <code>boolean</code> | <code>false</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 | [options.forceRight] | <code>boolean</code> | <code>false</code> |  |
 
 <a name="IframeView+create"></a>
@@ -93,74 +86,12 @@ render
 reset
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-<a name="IframeView+setAxis"></a>
+<a name="IframeView+update"></a>
 
-## iframeView.setAxis([value])
-Set axis
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| [value] | <code>string</code> | 
-
-<a name="IframeView+setWritingMode"></a>
-
-## iframeView.setWritingMode(mode)
-Set writing mode
+## iframeView.update()
+Update view
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| mode | <code>string</code> | 
-
-<a name="IframeView+size"></a>
-
-## iframeView.size([width], [height])
-size
-Determine locks base on settings
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| [width] | <code>number</code> | 
-| [height] | <code>number</code> | 
-
-<a name="IframeView+lock"></a>
-
-## iframeView.lock(what, width, height)
-lock
-Lock an axis to element dimensions, taking borders into account
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| what | <code>string</code> | 
-| width | <code>number</code> | 
-| height | <code>number</code> | 
-
-<a name="IframeView+expand"></a>
-
-## iframeView.expand()
-expand
-Resize a single axis based on content dimensions
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-<a name="IframeView+reframe"></a>
-
-## iframeView.reframe(width, height)
-reframe
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type |
-| --- | --- |
-| width | <code>number</code> | 
-| height | <code>number</code> | 
-
 <a name="IframeView+load"></a>
 
 ## iframeView.load(contents) ⇒ <code>Promise.&lt;any&gt;</code>
@@ -316,11 +247,6 @@ destroy
 ## IframeView.section : <code>Section</code>
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
-<a name="IframeView.axis"></a>
-
-## IframeView.axis : <code>string</code>
-**Kind**: static property of [<code>IframeView</code>](#IframeView)  
-**Read only**: true  
 <a name="IframeView.contents"></a>
 
 ## IframeView.contents : <code>Contents</code>
@@ -350,6 +276,11 @@ Load method
 
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
+<a name="IframeView.writingMode"></a>
+
+## IframeView.writingMode : <code>string</code>
+**Kind**: static property of [<code>IframeView</code>](#IframeView)  
+**Read only**: true  
 <a name="IframeView.event_loaderror"></a>
 
 ## "loaderror" (err)
@@ -370,12 +301,12 @@ Load method
 
 <a name="IframeView.event_resized"></a>
 
-## "resized" (size)
+## "resized" (rect)
 **Kind**: event emitted by [<code>IframeView</code>](#IframeView)  
 
 | Param | Type |
 | --- | --- |
-| size | <code>object</code> | 
+| rect | <code>object</code> | 
 
 <a name="IframeView.event_displayed"></a>
 

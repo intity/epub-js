@@ -6,52 +6,43 @@ Default View Manager
 **Kind**: global class  
 
 * [DefaultViewManager](#DefaultViewManager)
-    * [new DefaultViewManager(book, layout, [options])](#new_DefaultViewManager_new)
+    * [new DefaultViewManager(book, [options])](#new_DefaultViewManager_new)
     * _instance_
         * [.render(element, size)](#DefaultViewManager+render)
-        * [.destroy()](#DefaultViewManager+destroy)
-        * [.resize([width], [height], [epubcfi])](#DefaultViewManager+resize)
         * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
-        * [.add(section, [forceRight])](#DefaultViewManager+add) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
         * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
         * [.current()](#DefaultViewManager+current) ⇒ <code>view</code> \| <code>null</code>
         * [.clear()](#DefaultViewManager+clear)
         * [.currentLocation()](#DefaultViewManager+currentLocation) ⇒ <code>Array.&lt;object&gt;</code>
         * [.visible()](#DefaultViewManager+visible) ⇒ <code>Array.&lt;object&gt;</code>
-        * [.bounds()](#DefaultViewManager+bounds) ⇒ <code>DOMRect</code>
-        * [.updateLayout()](#DefaultViewManager+updateLayout)
+        * [.scrolled(e)](#DefaultViewManager+scrolled)
         * [.getContents()](#DefaultViewManager+getContents) ⇒ <code>Array.&lt;Contents&gt;</code>
         * [.isRendered()](#DefaultViewManager+isRendered) ⇒ <code>boolean</code>
+        * [.destroy()](#DefaultViewManager+destroy)
     * _static_
         * [.name](#DefaultViewManager.name) : <code>string</code>
-        * [.layout](#DefaultViewManager.layout) : <code>Layout</code>
         * [.paginated](#DefaultViewManager.paginated) : <code>boolean</code>
         * [.location](#DefaultViewManager.location) : <code>Array.&lt;object&gt;</code>
-        * [.rendered](#DefaultViewManager.rendered) : <code>boolean</code>
-        * [.scrollType](#DefaultViewManager.scrollType) : <code>string</code>
-        * [.writingMode](#DefaultViewManager.writingMode) : <code>string</code>
-        * [.stage](#DefaultViewManager.stage) : <code>Stage</code>
-        * [.container](#DefaultViewManager.container) : <code>Element</code>
-        * [.views](#DefaultViewManager.views) : <code>Views</code>
-        * [.stageSize](#DefaultViewManager.stageSize) : <code>object</code>
         * [.mapping](#DefaultViewManager.mapping) : <code>Mapping</code>
+        * [.rendered](#DefaultViewManager.rendered) : <code>boolean</code>
+        * [.views](#DefaultViewManager.views) : <code>Views</code>
+        * [.writingMode](#DefaultViewManager.writingMode) : <code>string</code>
 
 <a name="new_DefaultViewManager_new"></a>
 
-## new DefaultViewManager(book, layout, [options])
+## new DefaultViewManager(book, [options])
 Constructor
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | book | <code>Book</code> |  |  |
-| layout | <code>Layout</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.axis] | <code>string</code> |  |  |
 | [options.method] | <code>string</code> |  | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.view] | <code>string</code> \| <code>object</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="DefaultViewManager+render"></a>
 
@@ -60,31 +51,12 @@ render
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 
-| Param | Type |
-| --- | --- |
-| element | <code>Element</code> | 
-| size | <code>object</code> | 
-| size.width | <code>string</code> \| <code>number</code> | 
-| size.height | <code>string</code> \| <code>number</code> | 
-
-<a name="DefaultViewManager+destroy"></a>
-
-## defaultViewManager.destroy()
-destroy
-
-**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-<a name="DefaultViewManager+resize"></a>
-
-## defaultViewManager.resize([width], [height], [epubcfi])
-resize
-
-**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-
-| Param | Type |
-| --- | --- |
-| [width] | <code>number</code> | 
-| [height] | <code>number</code> | 
-| [epubcfi] | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| element | <code>Element</code> \| <code>string</code> | viewport element |
+| size | <code>object</code> |  |
+| size.width | <code>string</code> \| <code>number</code> |  |
+| size.height | <code>string</code> \| <code>number</code> |  |
 
 <a name="DefaultViewManager+display"></a>
 
@@ -98,18 +70,6 @@ display
 | --- | --- |
 | section | <code>Section</code> | 
 | [target] | <code>string</code> \| <code>number</code> | 
-
-<a name="DefaultViewManager+add"></a>
-
-## defaultViewManager.add(section, [forceRight]) ⇒ <code>Promise.&lt;any&gt;</code>
-append
-
-**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| section | <code>Section</code> | Section object |
-| [forceRight] | <code>boolean</code> |  |
 
 <a name="DefaultViewManager+next"></a>
 
@@ -151,18 +111,17 @@ Get array of visible views
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Returns**: <code>Array.&lt;object&gt;</code> - array of visible views  
-<a name="DefaultViewManager+bounds"></a>
+<a name="DefaultViewManager+scrolled"></a>
 
-## defaultViewManager.bounds() ⇒ <code>DOMRect</code>
-Get bounds
-
-**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-<a name="DefaultViewManager+updateLayout"></a>
-
-## defaultViewManager.updateLayout()
-Update Layout
+## defaultViewManager.scrolled(e)
+scrolled
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+
+| Param | Type |
+| --- | --- |
+| e | <code>Event</code> | 
+
 <a name="DefaultViewManager+getContents"></a>
 
 ## defaultViewManager.getContents() ⇒ <code>Array.&lt;Contents&gt;</code>
@@ -176,16 +135,17 @@ Get contents array from views
 isRendered
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+<a name="DefaultViewManager+destroy"></a>
+
+## defaultViewManager.destroy()
+destroy
+
+**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager.name"></a>
 
 ## DefaultViewManager.name : <code>string</code>
 Manager name
 
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.layout"></a>
-
-## DefaultViewManager.layout : <code>Layout</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
 <a name="DefaultViewManager.paginated"></a>
@@ -198,41 +158,14 @@ Manager name
 ## DefaultViewManager.location : <code>Array.&lt;object&gt;</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
+<a name="DefaultViewManager.mapping"></a>
+
+## DefaultViewManager.mapping : <code>Mapping</code>
+**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+**Read only**: true  
 <a name="DefaultViewManager.rendered"></a>
 
 ## DefaultViewManager.rendered : <code>boolean</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.scrollType"></a>
-
-## DefaultViewManager.scrollType : <code>string</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.writingMode"></a>
-
-## DefaultViewManager.writingMode : <code>string</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.stage"></a>
-
-## DefaultViewManager.stage : <code>Stage</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-**Properties**
-
-| Name | Type |
-| --- | --- |
-| axis | <code>string</code> | 
-| width | <code>string</code> \| <code>number</code> | 
-| height | <code>string</code> \| <code>number</code> | 
-| hidden | <code>boolean</code> | 
-| fullsize | <code>boolean</code> | 
-
-<a name="DefaultViewManager.container"></a>
-
-## DefaultViewManager.container : <code>Element</code>
-Stage container
-
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
 <a name="DefaultViewManager.views"></a>
@@ -240,13 +173,8 @@ Stage container
 ## DefaultViewManager.views : <code>Views</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
-<a name="DefaultViewManager.stageSize"></a>
+<a name="DefaultViewManager.writingMode"></a>
 
-## DefaultViewManager.stageSize : <code>object</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.mapping"></a>
-
-## DefaultViewManager.mapping : <code>Mapping</code>
+## DefaultViewManager.writingMode : <code>string</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  

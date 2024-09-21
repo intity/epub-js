@@ -28,6 +28,14 @@ module.exports = (config) => {
             }
         ],
         frameworks: ["mocha", "webpack"],
+        plugins: [
+            "karma-chrome-launcher",
+            "karma-firefox-launcher",
+            "karma-mocha",
+            "karma-sourcemap-loader",
+            "karma-spec-reporter",
+            "karma-webpack"
+        ],
         preprocessors: {
             "test/*.js": ["webpack", "sourcemap"],
         },

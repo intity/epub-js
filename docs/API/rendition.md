@@ -16,7 +16,7 @@ the section content.
         * [.attachTo(element)](#Rendition+attachTo) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.display([target])](#Rendition+display) ⇒ <code>Promise.&lt;Section&gt;</code>
         * [.moveTo(offset)](#Rendition+moveTo)
-        * [.resize([width], [height], [epubcfi])](#Rendition+resize)
+        * [.resize([width], [height])](#Rendition+resize) ⇒ <code>Object</code>
         * [.clear()](#Rendition+clear)
         * [.next()](#Rendition+next) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.prev()](#Rendition+prev) ⇒ <code>Promise.&lt;any&gt;</code>
@@ -32,16 +32,18 @@ the section content.
         * [.annotations](#Rendition.annotations) : <code>Annotations</code>
         * [.themes](#Rendition.themes) : <code>Themes</code>
         * [.started](#Rendition.started) : <code>Promise.&lt;any&gt;</code>
+        * [.layout](#Rendition.layout) : <code>Layout</code>
+        * [.viewport](#Rendition.viewport) : <code>Viewport</code>
         * ["layout" (props, changed)](#Rendition.event_layout)
+        * ["resized" (rect)](#Rendition.event_resized)
+        * ["orientationchange" (target)](#Rendition.event_orientationchange)
         * ["started"](#Rendition.event_started)
         * ["attached"](#Rendition.event_attached)
         * ["displayed" (section)](#Rendition.event_displayed)
         * ["displayError" (err)](#Rendition.event_displayError)
         * ["rendered" (view)](#Rendition.event_rendered)
         * ["removed" (view)](#Rendition.event_removed)
-        * ["resized" (size, [epubcfi])](#Rendition.event_resized)
-        * ["orientationchange" (orientation)](#Rendition.event_orientationchange)
-        * ["relocated"](#Rendition.event_relocated)
+        * ["relocated" (location)](#Rendition.event_relocated)
         * ["selected" (cfirange, contents)](#Rendition.event_selected)
         * ["markClicked" (cfiRange, data, contents)](#Rendition.event_markClicked)
         * [.location](#Rendition.location) : <code>object</code>
@@ -54,23 +56,23 @@ the section content.
 | --- | --- | --- | --- |
 | book | <code>Book</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.width] | <code>number</code> |  |  |
-| [options.height] | <code>number</code> |  |  |
+| [options.axis] | <code>string</code> |  | viewport axis |
+| [options.width] | <code>string</code> \| <code>number</code> |  | viewport width |
+| [options.height] | <code>string</code> \| <code>number</code> |  | viewport height |
 | [options.ignoreClass] | <code>string</code> |  | class for the cfi parser to ignore |
-| [options.manager] | <code>string</code> \| <code>function</code> \| <code>object</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | string values: default / continuous |
-| [options.view] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
+| [options.manager] | <code>string</code> \| <code>class</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | string values: default / continuous |
+| [options.view] | <code>string</code> \| <code>class</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
 | [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"write"` OR `"srcdoc"` |
 | [options.layout] | <code>string</code> |  | layout to force |
 | [options.spread] | <code>string</code> |  | force spread value |
 | [options.direction] | <code>string</code> |  | direction `"ltr"` OR `"rtl"` |
+| [options.pageWidth] | <code>number</code> |  | page width for scrolled-doc flow |
 | [options.minSpreadWidth] | <code>number</code> |  | overridden by spread: none (never) / both (always) |
 | [options.stylesheet] | <code>string</code> |  | url of stylesheet to be injected |
 | [options.script] | <code>string</code> |  | url of script to be injected |
 | [options.snap] | <code>object</code> |  | use snap scrolling |
-| [options.fullsize] | <code>boolean</code> | <code>false</code> |  |
-| [options.allowPopups] | <code>boolean</code> | <code>false</code> | enable opening popup in content |
-| [options.allowScriptedContent] | <code>boolean</code> | <code>false</code> | enable running scripts in content |
-| [options.resizeOnOrientationChange] | <code>boolean</code> | <code>true</code> | false to disable orientation events |
+| [options.hidden] | <code>boolean</code> | <code>false</code> | viewport hidden |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="Rendition+setManager"></a>
 
@@ -110,7 +112,7 @@ Container must be attached before rendering can begin
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Element</code> | to attach to |
+| element | <code>Element</code> \| <code>string</code> | viewport element |
 
 <a name="Rendition+display"></a>
 
@@ -160,17 +162,24 @@ Usually you would be better off calling display()
 
 <a name="Rendition+resize"></a>
 
-## rendition.resize([width], [height], [epubcfi])
-Trigger a resize of the views
+## rendition.resize([width], [height]) ⇒ <code>Object</code>
+Resize viewport container
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
 | Param | Type |
 | --- | --- |
-| [width] | <code>number</code> | 
-| [height] | <code>number</code> | 
-| [epubcfi] | <code>string</code> | 
+| [width] | <code>number</code> \| <code>string</code> | 
+| [height] | <code>number</code> \| <code>string</code> | 
 
+**Example**  
+```js
+rendition.resize(800, 600)
+```
+**Example**  
+```js
+rendition.resize("90%", 600)
+```
 <a name="Rendition+clear"></a>
 
 ## rendition.clear()
@@ -275,6 +284,16 @@ Adds Hook methods to the Rendition prototype
 returns after the rendition has started
 
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
+<a name="Rendition.layout"></a>
+
+## Rendition.layout : <code>Layout</code>
+**Kind**: static property of [<code>Rendition</code>](#Rendition)  
+**Read only**: true  
+<a name="Rendition.viewport"></a>
+
+## Rendition.viewport : <code>Viewport</code>
+**Kind**: static property of [<code>Rendition</code>](#Rendition)  
+**Read only**: true  
 <a name="Rendition.event_layout"></a>
 
 ## "layout" (props, changed)
@@ -286,6 +305,26 @@ Emit of updated the Layout state
 | --- | --- |
 | props | <code>Layout</code> | 
 | changed | <code>object</code> | 
+
+<a name="Rendition.event_resized"></a>
+
+## "resized" (rect)
+Emit that the rendition has been resized
+
+**Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
+
+| Param | Type |
+| --- | --- |
+| rect | <code>object</code> | 
+
+<a name="Rendition.event_orientationchange"></a>
+
+## "orientationchange" (target)
+**Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
+
+| Param | Type |
+| --- | --- |
+| target | <code>object</code> | 
 
 <a name="Rendition.event_started"></a>
 
@@ -343,35 +382,15 @@ Emit that a section has been removed
 | --- | --- |
 | view | <code>View</code> | 
 
-<a name="Rendition.event_resized"></a>
-
-## "resized" (size, [epubcfi])
-Emit that the rendition has been resized
-
-**Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
-
-| Param | Type |
-| --- | --- |
-| size | <code>object</code> | 
-| size.width | <code>number</code> | 
-| size.height | <code>number</code> | 
-| [epubcfi] | <code>string</code> | 
-
-<a name="Rendition.event_orientationchange"></a>
-
-## "orientationchange" (orientation)
-Emit that the rendition has been rotated
-
-**Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
-
-| Param | Type |
-| --- | --- |
-| orientation | <code>ScreenOrientation</code> | 
-
 <a name="Rendition.event_relocated"></a>
 
-## "relocated"
+## "relocated" (location)
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
+
+| Param | Type |
+| --- | --- |
+| location | <code>object</code> | 
+
 <a name="Rendition.event_selected"></a>
 
 ## "selected" (cfirange, contents)

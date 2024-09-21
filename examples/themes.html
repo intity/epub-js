@@ -26,19 +26,25 @@
         </div>
     </div>
     <div id="content" dir="ltr">
-        <div id="viewer" class="scrolled"></div>
+        <div id="viewer" class="scrolled">
+            <div id="loader"></div>
+        </div>
     </div>
     <script>
         const theme = document.getElementById("theme")
+        const loader = document.getElementById("loader")
         const fontSize = document.getElementById("font-size")
         const book = ePub("../assets/alice/")
         const rendition = book.renderTo("viewer", {
             manager: "continuous",
             flow: "scrolled",
-            width: "100%",
-            height: "100%"
+            width: 800,
+            height: window.innerHeight - 40
         })
-        rendition.display()
+        book.opened.then(() => {
+
+            loader.style.display = "none"
+        })
         theme.onchange = (e) => {
 
             let name = e.target.value
@@ -52,7 +58,7 @@
 
             rendition.themes.fontSize(e.target.value + "%")
         }
-        rendition.on("displayed", (section) => {
+        rendition.display().then((section) => {
 
             rendition.themes.select("light")
             rendition.themes.fontSize("100%")

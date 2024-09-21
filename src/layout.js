@@ -8,18 +8,26 @@ class Layout {
 	/**
 	 * Constructor
 	 * @param {object} [options] 
+	 * @param {string} [options.axis='horizontal'] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.name='reflowable'] values: `"reflowable"` OR `"pre-paginated"`
 	 * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
 	 * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
 	 * @param {string} [options.direction='ltr'] values: `"ltr"` OR `"rtl"`
 	 * @param {string} [options.orientation='auto'] values: `"auto"` OR `"landscape"` OR `"portrait"`
 	 * @param {number} [options.minSpreadWidth=800]
+	 * @param {number} [options.pageWidth] page width for scrolled-doc flow
 	 */
 	constructor(options) {
 		/**
+		 * @member {string} axis
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.axis = "horizontal";
+		/**
 		 * @member {string} name Layout name
 		 * @memberof Layout
-		 * @protected
+		 * @readonly
 		 */
 		this.name = "reflowable";
 		/**
@@ -71,6 +79,18 @@ class Layout {
 		 */
 		this.height = 0;
 		/**
+		 * @member {number} pageWidth
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.pageWidth = 0;
+		/**
+		 * @member {number} pageHeight
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.pageHeight = 0;
+		/**
 		 * @member {number} spreadWidth Spread width
 		 * @memberof Layout
 		 * @readonly
@@ -100,15 +120,7 @@ class Layout {
 		 * @readonly
 		 */
 		this.divisor = 1;
-
-		this.set({
-			name: options && options.name,
-			flow: options && options.flow,
-			spread: options && options.spread,
-			direction: options && options.direction,
-			orientation: options && options.orientation,
-			minSpreadWidth: options && options.minSpreadWidth
-		});
+		this.set(options || {});
 	}
 
 	/**
@@ -122,7 +134,11 @@ class Layout {
 			const value = options[opt];
 			if (this[opt] === value || typeof value === "undefined") {
 				delete options[opt];
-			} else if (opt === "name" || opt === "direction" || opt === "orientation") {
+			} else if (
+				opt === "axis" ||
+				opt === "name" ||
+				opt === "direction" ||
+				opt === "orientation") {
 				if (typeof value === "string") {
 					this[opt] = options[opt];
 				} else error(opt);
@@ -132,14 +148,17 @@ class Layout {
 						case "scrolled":
 						case "scrolled-continuous":
 							this.flow = "scrolled";
+							this.axis = options["axis"] || "vertical";
 							this.spread = "none"; // autocomplete
 							break;
 						case "scrolled-doc":
 							this.flow = value;
+							this.axis = options["axis"] || "vertical";
 							this.spread = "none"; // autocomplete
 							break;
 						default:
 							this.flow = "paginated";
+							this.axis = "horizontal"; // autocomplete
 							break;
 					}
 				} else error(opt);
@@ -157,8 +176,10 @@ class Layout {
 				} else error(opt);
 			} else if (
 				opt === "width" ||
-				opt === "height" || 
-				opt === "gap" || 
+				opt === "height" ||
+				opt === "pageWidth" ||
+				opt === "pageHeight" ||
+				opt === "gap" ||
 				opt === "minSpreadWidth") {
 				if (typeof value === "number") {
 					if (value >= 0) {
@@ -183,14 +204,20 @@ class Layout {
 	 */
 	calculate(width, height, gap) {
 
-		if (typeof width === "undefined") {
-			width = this.width;
-		}
-		if (typeof height === "undefined") {
-			height = this.height;
-		}
+		if (!width) width = this.width;
+		if (!height) height = this.height;
 
-		//-- Check the width and create even width columns
+		if (this.name === "reflowable" && !(gap >= 0)) {
+			let section;
+			if (this.axis === "horizontal") {
+				section = Math.floor(width / 12);
+			} else {
+				section = Math.floor(height / 17);
+			}
+			gap = ((section % 2 === 0) ? section : section - 1);
+		} else {
+			gap = 0;
+		}
 
 		let divisor;
 		if (this.spread === "auto" && width >= this.minSpreadWidth) {
@@ -199,21 +226,8 @@ class Layout {
 			divisor = 1;
 		}
 
-		const section = Math.floor(width / 12);
-
-		if (this.name === "reflowable" && this.flow === "paginated" && !(gap >= 0)) {
-			gap = ((section % 2 === 0) ? section : section - 1);
-		}
-		if (this.name === "pre-paginated") {
-			gap = 0;
-		}
-		if (typeof gap === "undefined") {
-			gap = 0;
-		}
-
-		let columnWidth;
 		let pageWidth;
-		//-- Double Page
+		let columnWidth;
 		if (divisor > 1) {
 			columnWidth = (width / divisor) - gap;
 			pageWidth = columnWidth + gap;
@@ -226,43 +240,20 @@ class Layout {
 			width = columnWidth;
 		}
 
-		this.width = width;
-		this.height = height;
-		this.spreadWidth = (columnWidth * divisor) + gap;
-		this.pageWidth = pageWidth;
-		this.delta = width;
-		this.columnWidth = columnWidth;
-		this.gap = gap;
-		this.divisor = divisor;
-	}
-
-	/**
-	 * Apply Css to a Document
-	 * @param {Contents} contents
-	 * @param {Section} [section] 
-	 * @param {string} [axis] 
-	 * @return {void|Promise<any>}
-	 */
-	format(contents, section, axis) {
-
-		let formating;
-		if (this.name === "pre-paginated") {
-			formating = contents.fit(this.columnWidth, this.height, section);
-		} else if (this.flow === "paginated") {
-			formating = contents.columns(
-				this.width,
-				this.height,
-				this.columnWidth,
-				this.gap,
-				this.direction
-			);
-		} else if (axis && axis === "horizontal") {
-			formating = contents.size(null, this.height, this.direction);
-		} else {
-			formating = contents.size(this.width, null, this.direction);
+		if (this.flow === "scrolled-doc" && this.pageWidth) {
+			columnWidth = this.pageWidth;
+			pageWidth = this.pageWidth;
 		}
 
-		return formating; // might be a promise in some View Managers
+		this.gap = gap;
+		this.delta = width;
+		this.width = width;
+		this.height = height;
+		this.divisor = divisor;
+		this.pageWidth = pageWidth;
+		this.pageHeight = (height - gap);
+		this.columnWidth = columnWidth;
+		this.spreadWidth = (columnWidth * divisor) + gap;
 	}
 
 	/**

@@ -12,9 +12,10 @@
 </head>
 
 <body>
-    <div id="content">
+    <div id="content" class="ltr" dir="ltr">
         <div id="viewer" class="paginated">
             <div id="divider"></div>
+            <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
@@ -24,13 +25,18 @@
         const uri = url.searchParams.get("bookPath") || "../assets/alice/"
         const content = document.getElementById("content")
         const divider = document.getElementById("divider")
+        const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const time = Date.now()
         const book = ePub(uri)
         const rendition = book.renderTo("viewer", {
-            width: "100%",
-            height: "100%"
+            width: 900,
+            height: 600
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
         })
         prev.onclick = (e) => {
 
@@ -42,14 +48,14 @@
             rendition.next()
             e.preventDefault()
         }
-        const update = (location) => {
+        const update = (loc) => {
 
             const dir = rendition.layout.direction
             const div = rendition.layout.divisor
-            const loc = location || rendition.currentLocation()
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
             divider.style.display = div === 1 ? "none" : "block"
+            content.className = dir
             content.dir = dir
         }
         const keybinding = (e) => {
@@ -80,7 +86,7 @@
             console.log(`displayed: ${Date.now() - time} ms`)
         })
         rendition.on("displayerror", (err) => {
-            
+
             console.log(err)
         })
     </script>

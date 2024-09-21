@@ -2,14 +2,10 @@ const CopyPlugin = require("copy-webpack-plugin")
 const webpack = require("webpack")
 const path = require("path")
 const PROD = (process.env.NODE_ENV === "production")
-const LEGACY = (process.env.LEGACY)
 const MINIMIZE = (process.env.MINIMIZE === "true")
 let filename = "[name]"
 let sourceMapFilename = "[name]"
-if (LEGACY) {
-	filename += ".legacy"
-	sourceMapFilename += ".legacy"
-}
+
 if (MINIMIZE) {
 	filename += ".min.js"
 	sourceMapFilename += ".min.js.map"
@@ -81,12 +77,15 @@ module.exports = {
 					loader: "babel-loader",
 					options: {
 						presets: [["@babel/preset-env", {
-							targets: LEGACY ? "defaults" : "last 2 Chrome versions, last 2 Safari versions, last 2 ChromeAndroid versions, last 2 iOS versions, last 2 Firefox versions, last 2 Edge versions",
-							corejs: "3.37",
-							useBuiltIns: "usage",
+							corejs: { version: "3.38", proposals: true },
+							modules: false,
+							targets: "defaults",
 							bugfixes: true,
-							modules: false
-						}]]
+							useBuiltIns: "usage"
+						}]],
+						plugins: [
+							"@babel/plugin-proposal-export-default-from"
+						]
 					}
 				}
 			}

@@ -23,11 +23,9 @@
     "start": "NODE_ENV=development webpack serve",
     "build": "NODE_ENV=production webpack --progress",
     "minify": "NODE_ENV=production MINIMIZE=true webpack --progress",
-    "legacy": "NODE_ENV=production LEGACY=true webpack --progress",
-    "productionLegacy": "NODE_ENV=production MINIMIZE=true LEGACY=true webpack --progress",
     "compile": "babel -d lib/ src/",
     "watch": "babel --watch -d lib/ src/",
-    "prepare": "npm run compile && npm run build && npm run minify && npm run legacy && npm run productionLegacy"
+    "prepare": "npm run compile && npm run build && npm run minify"
   },
   "author": "fchasen@gmail.com",
   "license": "BSD-2-Clause",

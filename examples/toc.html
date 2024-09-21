@@ -16,18 +16,25 @@
 		<select id="toc"></select>
 	</div>
 	<div id="content">
-		<div id="viewer" class="scrolled"></div>
+		<div id="viewer" class="paginated">
+			<div id="loader"></div>
+		</div>
 	</div>
 	<script>
+		const loader = document.getElementById("loader")
 		const list = document.getElementById("toc")
 		const book = ePub("../assets/alice/")
 		const rendition = book.renderTo("viewer", {
 			flow: "scrolled",
-			width: "100%",
-			height: "100%"
+			width: 800,
+			height: window.innerHeight - 80
+		})
+		book.opened.then(() => {
+
+			loader.style.display = "none"
 		})
 		book.loaded.navigation.then((toc) => {
-			
+
 			const fragment = document.createDocumentFragment()
 
 			toc.forEach((chapter) => {
@@ -46,9 +53,10 @@
 				rendition.display(url)
 			}
 		})
-		rendition.display().then(() => {
+		rendition.display()
+		rendition.on("attached", () => {
 
-			console.log(book)
+			console.log(rendition)
 		})
 		rendition.on("relocated", (location) => {
 

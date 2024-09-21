@@ -9,8 +9,7 @@ export interface ViewSettings {
     forceRight?: boolean,
     forceEvenPages?: boolean,
     ignoreClass?: string,
-    allowPopups?: boolean,
-    allowScriptedContent?: boolean
+    sandbox: string[]
 }
 
 export default class View {

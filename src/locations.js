@@ -4,7 +4,7 @@ import Location from "./location";
 import Defer from "./utils/defer";
 import Queue from "./utils/queue";
 import { EVENTS } from "./utils/constants";
-import { qs, sprint, locationOf } from "./utils/core";
+import { qs, locationOf } from "./utils/core";
 
 /**
  * Find Locations for a Book
@@ -36,7 +36,6 @@ class Locations extends Map {
 		 * @readonly
 		 */
 		this.generated = this.processing.promise;
-		this.processingTimeout = undefined;
 		this.q = new Queue(this);
 	}
 
@@ -101,15 +100,7 @@ class Locations extends Map {
 	async process(section) {
 
 		return section.load(this.request).then((contents) => {
-			const completed = new Defer();
-			const locations = this.parse(contents, section.cfiBase);
-
-			section.unload();
-
-			this.processingTimeout = setTimeout(() => {
-				completed.resolve(locations);
-			}, this.pause);
-			return completed.promise;
+			return this.parse(contents, section.cfiBase);
 		});
 	}
 
@@ -118,9 +109,9 @@ class Locations extends Map {
 	 * @param {Element} contents 
 	 * @param {string} cfiBase 
 	 * @param {number} [chars]
-	 * @returns {Locations}
+	 * @returns {Promise<Locations>}
 	 */
-	parse(contents, cfiBase, chars) {
+	async parse(contents, cfiBase, chars) {
 
 		chars = chars || this.break;
 
@@ -129,8 +120,11 @@ class Locations extends Map {
 		let prev;
 		const parser = (node) => {
 
+			const def = new Defer();
+
 			if (node.textContent.trim().length === 0) {
-				return false; // continue
+				def.resolve(false);
+				return def.promise; // continue
 			}
 
 			// Start range
@@ -181,24 +175,45 @@ class Locations extends Map {
 					counter = 0;
 				}
 			}
+
 			prev = node;
+			def.resolve(true);
+			return def.promise;
 		};
 
 		const doc = contents.ownerDocument;
 		const body = qs(doc, "body");
-		sprint(body, parser.bind(this));
 
-		// Close remaining
-		if (range && range.startContainer && prev) {
-			range.endContainer = prev;
-			range.endOffset = prev.length;
-			const cfi = new EpubCFI(range, cfiBase).toString();
-			const loc = new Location().set({ cfi });
-			this.set(cfi, loc);
-			counter = 0;
+		return this.treeWalker(body, parser).then(() => {
+			// Close remaining
+			if (range && range.startContainer && prev) {
+				range.endContainer = prev;
+				range.endOffset = prev.length;
+				const cfi = new EpubCFI(range, cfiBase).toString();
+				const loc = new Location().set({ cfi });
+				this.set(cfi, loc);
+				counter = 0;
+			}
+			return this;
+		});
+	}
+
+	/**
+	 * treeWalker
+	 * @param {Node} root 
+	 * @param {function} func 
+	 * @returns {Promise<any>}
+	 * @private
+	 */
+	treeWalker(root, func) {
+
+		const what = NodeFilter.SHOW_TEXT;
+		const task = document.createTreeWalker(root, what);
+		const tasks = [];
+		while (task.nextNode()) {
+			tasks.push(func(task.currentNode));
 		}
-
-		return this;
+		return Promise.all(tasks);
 	}
 
 	/**
@@ -411,7 +426,6 @@ class Locations extends Map {
 		this.q = undefined;
 		this.sections = undefined;
 		this.generated = undefined;
-		clearTimeout(this.processingTimeout);
 	}
 }
 

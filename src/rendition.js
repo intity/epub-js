@@ -5,6 +5,7 @@ import Layout from "./layout";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
+import Viewport from "./viewport";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";
@@ -19,23 +20,23 @@ import ContinuousViewManager from "./managers/continuous/index";
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {number} [options.width]
- * @param {number} [options.height]
+ * @param {string} [options.axis] viewport axis
+ * @param {string|number} [options.width] viewport width
+ * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|Function|object} [options.manager='default'] string values: default / continuous
- * @param {string|Function} [options.view='iframe']
+ * @param {string|class} [options.manager='default'] string values: default / continuous
+ * @param {string|class} [options.view='iframe']
  * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
  * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
+ * @param {number} [options.pageWidth] page width for scrolled-doc flow
  * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
- * @param {boolean} [options.fullsize=false]
- * @param {boolean} [options.allowPopups=false] enable opening popup in content
- * @param {boolean} [options.allowScriptedContent=false] enable running scripts in content
- * @param {boolean} [options.resizeOnOrientationChange=true] false to disable orientation events
+ * @param {boolean} [options.hidden=false] viewport hidden
+ * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
  */
 class Rendition {
 	constructor(book, options) {
@@ -45,11 +46,13 @@ class Rendition {
 		 * @readonly
 		 */
 		this.settings = extend({
+			axis: undefined,
 			width: null,
 			height: null,
 			manager: "default",
 			view: "iframe",
 			flow: null,
+			hidden: false,
 			method: "write", // the 'baseUrl' value is set from the 'book.settings.replacements' property
 			layout: null,
 			spread: null,
@@ -58,11 +61,8 @@ class Rendition {
 			snap: false,
 			direction: null, // TODO: implement to 'auto' detection
 			ignoreClass: "",
-			stylesheet: null,
-			fullsize: false,
-			allowPopups: false,
-			allowScriptedContent: false,
-			resizeOnOrientationChange: true,
+			sandbox: [],
+			stylesheet: null
 		}, options || {});
 
 		if (typeof this.settings.manager === "object") {
@@ -114,11 +114,7 @@ class Rendition {
 		 * @readonly
 		 */
 		this.themes = new Themes(this);
-
 		this.epubcfi = new EpubCFI();
-
-		this.q = new Queue(this);
-
 		/**
 		 * A Rendered Location Range
 		 * @typedef location
@@ -146,10 +142,6 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.location = undefined;
-
-		// Hold queue until book is opened
-		this.q.enqueue(this.book.opened);
-
 		this.starting = new Defer();
 		/**
 		 * returns after the rendition has started
@@ -157,7 +149,9 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.started = this.starting.promise;
-
+		this.q = new Queue(this);
+		// Hold queue until book is opened
+		this.q.enqueue(this.book.opened);
 		// Block the queue until rendering is started
 		this.q.enqueue(this.start.bind(this));
 	}
@@ -198,10 +192,12 @@ class Rendition {
 	 */
 	start() {
 
-		// Parse metadata to get layout props
 		const props = this.determineLayoutProperties();
-		this.settings.layout = props.name;
-
+		/**
+		 * @member {Layout} layout
+		 * @memberof Rendition
+		 * @readonly
+		 */
 		this.layout = new Layout(props);
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
 			/**
@@ -213,50 +209,78 @@ class Rendition {
 			 */
 			this.emit(EVENTS.RENDITION.LAYOUT, props, changed);
 		});
+		/**
+		 * @member {Viewport} viewport
+		 * @memberof Rendition
+		 * @readonly
+		 */
+		this.viewport = new Viewport(this.layout, {
+			hidden: this.settings.hidden
+		});
+		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
 
-		if (this.manager === undefined) {
+			if (this.layout.flow === "paginated") {
+				this.layout.set({
+					width: rect.width,
+					height: rect.height
+				});
+			} else if (this.layout.axis === "horizontal") {
+				this.layout.set({
+					height: rect.height
+				});
+			} else if (this.layout.axis === "vertical") {
+				this.layout.set({
+					width: rect.width,
+				});
+			}
+			if (!this.location) return;
+			/**
+			 * Emit that the rendition has been resized
+			 * @event resized
+			 * @param {object} rect
+			 * @memberof Rendition
+			 */
+			this.emit(EVENTS.RENDITION.RESIZED, rect);
+			this.display(this.location.start.cfi);
+		});
+		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
+			/**
+			 * @event orientationchange
+			 * @param {object} target
+			 * @memberof Rendition
+			 */
+			this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, target);
+		});
+
+		if (!this.manager) {
 			const manager = this.requireManager(this.settings.manager);
 			const options = {
 				snap: this.settings.snap,
 				view: this.settings.view,
 				method: this.settings.method,
-				fullsize: this.settings.fullsize,
-				ignoreClass: this.settings.ignoreClass,
-				allowPopups: this.settings.allowPopups,
-				allowScriptedContent: this.settings.allowScriptedContent,
-				resizeOnOrientationChange: this.settings.resizeOnOrientationChange,
+				sandbox: this.settings.sandbox,
+				ignoreClass: this.settings.ignoreClass
 			};
-			this.manager = new manager(this.book, this.layout, options);
+			this.manager = new manager(this.book, options);
 		}
 
-		// Listen for displayed views
 		this.manager.on(EVENTS.MANAGERS.ADDED, this.afterDisplayed.bind(this));
 		this.manager.on(EVENTS.MANAGERS.REMOVED, this.afterRemoved.bind(this));
-
-		// Listen for resizing
 		this.manager.on(EVENTS.MANAGERS.RESIZED, this.onResized.bind(this));
-
-		// Listen for rotation
-		this.manager.on(EVENTS.MANAGERS.ORIENTATION_CHANGE, this.onOrientationChange.bind(this));
-
-		// Listen for scroll changes
-		this.manager.on(EVENTS.MANAGERS.SCROLLED, this.reportLocation.bind(this));
-
+		this.manager.on(EVENTS.MANAGERS.RELOCATED, this.relocated.bind(this));
 		/**
 		 * Emit that rendering has started
 		 * @event started
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.STARTED);
-
-		// Start processing queue
 		this.starting.resolve();
 	}
 
 	/**
 	 * Call to attach the container to an element in the dom
 	 * Container must be attached before rendering can begin
-	 * @param {Element} element to attach to
+	 * @param {Element|string} element viewport element
 	 * @return {Promise<any>}
 	 */
 	attachTo(element) {
@@ -273,7 +297,7 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.ATTACHED);
-		})
+		});
 	}
 
 	/**
@@ -339,7 +363,9 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.DISPLAY_ERROR, err);
-		}).then(this.reportLocation.bind(this));
+		}).then(() => {
+			this.viewport.update();
+		});
 
 		return displaying.promise;
 	}
@@ -392,42 +418,12 @@ class Rendition {
 
 	/**
 	 * Report resize events and display the last seen location
-	 * @param {object} size 
-	 * @param {number} size.width
-	 * @param {number} size.height
-	 * @param {string} [epubcfi]
+	 * @param {object} view 
 	 * @private
 	 */
-	onResized(size, epubcfi) {
-		/**
-		 * Emit that the rendition has been resized
-		 * @event resized
-		 * @param {object} size
-		 * @param {number} size.width
-		 * @param {number} size.height
-		 * @param {string} [epubcfi]
-		 * @memberof Rendition
-		 */
-		this.emit(EVENTS.RENDITION.RESIZED, size, epubcfi);
+	onResized(view) {
 
-		if (this.location && this.location.start) {
-			this.display(epubcfi || this.location.start.cfi);
-		}
-	}
-
-	/**
-	 * Report orientation events and display the last seen location
-	 * @param {ScreenOrientation} orientation 
-	 * @private
-	 */
-	onOrientationChange(orientation) {
-		/**
-		 * Emit that the rendition has been rotated
-		 * @event orientationchange
-		 * @param {ScreenOrientation} orientation
-		 * @memberof Rendition
-		 */
-		this.emit(EVENTS.RENDITION.ORIENTATION_CHANGE, orientation);
+		return this.adjustImages(view.contents);
 	}
 
 	/**
@@ -441,20 +437,16 @@ class Rendition {
 	}
 
 	/**
-	 * Trigger a resize of the views
-	 * @param {number} [width]
-	 * @param {number} [height]
-	 * @param {string} [epubcfi]
+	 * Resize viewport container
+	 * @param {number|string} [width]
+	 * @param {number|string} [height]
+	 * @returns {{ width: number, height: number }}
+	 * @example rendition.resize(800, 600)
+	 * @example rendition.resize("90%", 600)
 	 */
-	resize(width, height, epubcfi) {
+	resize(width, height) {
 
-		if (width) {
-			this.settings.width = width;
-		}
-		if (height) {
-			this.settings.height = height;
-		}
-		this.manager.resize(width, height, epubcfi);
+		return this.viewport.size(width, height);
 	}
 
 	/**
@@ -471,9 +463,7 @@ class Rendition {
 	 */
 	next() {
 
-		return this.q.enqueue(
-			this.manager.next.bind(this.manager)
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this.manager.next.bind(this.manager));
 	}
 
 	/**
@@ -482,9 +472,7 @@ class Rendition {
 	 */
 	prev() {
 
-		return this.q.enqueue(
-			this.manager.prev.bind(this.manager)
-		).then(this.reportLocation.bind(this));
+		return this.q.enqueue(this.manager.prev.bind(this.manager));
 	}
 
 	/**
@@ -498,13 +486,15 @@ class Rendition {
 		const metadata = this.book.packaging.metadata;
 		const direction = this.book.packaging.direction;
 		return {
-			name: this.settings.layout || metadata.get("layout") || "reflowable",
-			flow: this.settings.flow || metadata.get("flow") || "paginated",
-			spread: this.settings.spread || metadata.get("spread") || "auto",
-			viewport: metadata.get("viewport") || "",
+			axis: this.settings.axis,
+			name: this.settings.layout || metadata.get("layout"),
+			flow: this.settings.flow || metadata.get("flow"),
+			spread: this.settings.spread || metadata.get("spread"),
+			viewport: metadata.get("viewport"),
 			direction: this.settings.direction || direction || "ltr",
-			orientation: this.settings.orientation || metadata.get("orientation") || "auto",
-			minSpreadWidth: this.settings.minSpreadWidth || 800
+			orientation: this.settings.orientation || metadata.get("orientation"),
+			minSpreadWidth: this.settings.minSpreadWidth,
+			pageWidth: this.settings.pageWidth
 		}
 	}
 
@@ -516,43 +506,6 @@ class Rendition {
 
 		this.layout.set(options);
 		this.display(this.location.start.cfi);
-	}
-
-	/**
-	 * Report the current location
-	 * @fires relocated
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	reportLocation() {
-
-		const report = (location) => {
-			const located = this.located(location);
-			if (!located || !located.start || !located.end) {
-				return;
-			}
-			this.location = located;
-			/**
-			 * @event relocated
-			 * @type {displayedLocation}
-			 * @memberof Rendition
-			 */
-			this.emit(EVENTS.RENDITION.RELOCATED, this.location);
-		}
-
-		const animate = () => {
-			const location = this.manager.currentLocation();
-			if (!location) return;
-			if (typeof location["then"] === "function") {
-				location.then((result) => report(result));
-			} else {
-				report(location);
-			}
-		}
-
-		return this.q.enqueue(() => {
-			requestAnimationFrame(animate);
-		});
 	}
 
 	/**
@@ -575,7 +528,7 @@ class Rendition {
 	 * Creates a Rendition#locationRange from location
 	 * passed by the Manager
 	 * @param {object} location Location sections
-	 * @returns {displayedLocation}
+	 * @returns {object}
 	 * @private
 	 */
 	located(location) {
@@ -648,6 +601,26 @@ class Rendition {
 		}
 
 		return located;
+	}
+
+	/**
+	 * relocated event handler
+	 * @fires relocated
+	 * @private
+	 */
+	relocated(location) {
+
+		const located = this.located(location);
+		if (!located || !located.start || !located.end) {
+			return;
+		}
+		this.location = located;
+		/**
+		 * @event relocated
+		 * @param {object} location
+		 * @memberof Rendition
+		 */
+		this.emit(EVENTS.RENDITION.RELOCATED, this.location);
 	}
 
 	/**
@@ -756,49 +729,44 @@ class Rendition {
 	/**
 	 * Hook to adjust images to fit in columns
 	 * @param {Contents} contents
+	 * @returns {Promise<Node|null>}
 	 * @private
 	 */
 	adjustImages(contents) {
 
 		if (this.layout.name === "pre-paginated") {
 			return new Promise((resolve) => {
-				resolve();
+				resolve(null);
 			});
 		}
 
-		const computed = contents.window.getComputedStyle(contents.content, null);
+		const content = contents.content;
 		const padding = {
-			top: parseFloat(computed.paddingTop),
-			bottom: parseFloat(computed.paddingBottom),
-			left: parseFloat(computed.paddingLeft),
-			right: parseFloat(computed.paddingRight)
-		}
-		const height = (contents.content.offsetHeight - (padding.top + padding.bottom)) * .95;
-		const hPadding = padding.left + padding.right;
-		const maxWidth = (this.layout.columnWidth ? (this.layout.columnWidth - hPadding) + "px" : "100%") + "!important";
+			top: parseFloat(content.style["padding-top"]),
+			bottom: parseFloat(content.style["padding-bottom"]),
+			left: parseFloat(content.style["padding-left"]),
+			right: parseFloat(content.style["padding-right"])
+		};
+		const paddingX = padding.left + padding.right;
+		const paddingY = padding.top + padding.bottom;
+		const width = (this.layout.columnWidth ? (this.layout.columnWidth - paddingX) + "px" : "100%") + " !important";
+		const height = (content.offsetHeight - paddingY) + "px !important";
 
-		contents.appendStylesheetRules({
+		return contents.appendStylesheet("images", {
 			"img": {
-				"max-width": maxWidth,
-				"max-height": `${height}px !important`,
+				"max-width": width,
+				"max-height": height,
 				"object-fit": "contain",
 				"page-break-inside": "avoid",
 				"break-inside": "avoid",
 				"box-sizing": "border-box"
 			},
 			"svg": {
-				"max-width": maxWidth,
-				"max-height": `${height}px !important`,
+				"max-width": width,
+				"max-height": height,
 				"page-break-inside": "avoid",
 				"break-inside": "avoid"
 			}
-		}, "images");
-
-		return new Promise((resolve, reject) => {
-			// Wait to apply
-			setTimeout(() => {
-				resolve();
-			}, 1);
 		});
 	}
 

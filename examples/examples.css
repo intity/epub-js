@@ -70,19 +70,29 @@ body {
     overflow: auto;
 }
 
-#content:dir(ltr) #prev {
+#viewport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#viewport.ltr #prev,
+#content.ltr #prev {
     left: 0;
 }
 
-#content:dir(rtl) #prev {
+#viewport.rtl #prev,
+#content.rtl #prev {
     right: 0;
 }
 
-#content:dir(ltr) #next {
+#viewport.ltr #next,
+#content.ltr #next {
     right: 0;
 }
 
-#content:dir(rtl) #next {
+#viewport.rtl #next,
+#content.rtl #next {
     left: 0;
 }
 
@@ -112,35 +122,72 @@ body {
     color: #777;
 }
 
-#viewer {
-    padding: 0;
-    position: relative;
-    overflow: hidden;
+#viewport.scrolled,
+#viewport.paginated {
+    background: white;
+}
+
+#viewport.scrolled-doc .views-container {
+    row-gap: 40px;
+    justify-content: center;
+}
+
+#viewport.scrolled-doc .view-container {
     background: white;
     box-shadow: 0 0 4px #ccc;
     border-radius: 5px;
 }
 
-#viewer .epub-view>iframe {
+#viewport.scrolled-doc .view-container:first-of-type {
+    margin-top: 40px;
+}
+
+#viewport.scrolled-doc .view-container:last-of-type {
+    margin-bottom: 40px;
+}
+
+#viewer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    padding: 0;
+    overflow: hidden;
+    justify-content: center;
+}
+
+#viewer .view-container {
     background: white;
 }
 
+#viewer.scrolled .viewport-container,
+#viewer.paginated .viewport-container {
+    margin: 40px 0;
+    background: white;
+    box-shadow: 0 0 4px #ccc;
+    border-radius: 5px;
+}
+
 #viewer.paginated {
-    width: 900px;
-    height: 600px;
-    margin: 0 auto;
+    align-items: center;
 }
 
 #viewer.scrolled {
-    width: 800px;
-    height: calc(100vh - 80px);
-    margin: 40px auto;
+    align-items: start;
 }
 
 #viewer.scrolled-doc {
-    width: 800px;
-    height: auto;
-    margin: 40px auto;
+    width: 100%;
+    height: 100vh;
+}
+
+#viewer.scrolled-doc .views-container {
+    justify-content: center;
+}
+
+#viewer.scrolled-doc .view-container {
+    box-shadow: 0 0 4px #ccc;
+    border-radius: 5px;
+    margin: 40px 0;
 }
 
 #divider {
@@ -148,10 +195,9 @@ body {
     position: absolute;
     width: 1px;
     border-right: 1px #000 dashed;
-    height: 90%;
+    height: 560px;
     z-index: 1;
     left: 50%;
-    top: 5%;
     opacity: .15;
 }
 
@@ -163,10 +209,9 @@ body {
     font-family: arial, sans-serif;
     font-weight: bold;
     cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
     user-select: none;
     text-decoration: none;
+    z-index: 10;
 }
 
 .navlink {
@@ -433,5 +478,27 @@ only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: la
         margin: 0;
         box-shadow: none;
         border-radius: 0;
+    }
+}
+
+#loader {
+    align-self: center;
+    animation: spin 1s linear infinite;
+    border: 10px solid #E2E2E2;
+    border-top: 10px solid #777;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    z-index: 10;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }

@@ -20,11 +20,9 @@ class IframeView {
 	 * @param {Layout} layout
 	 * @param {Section} section
 	 * @param {object} [options]
-	 * @param {string} [options.axis] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
-	 * @param {boolean} [options.allowPopups=false]
-	 * @param {boolean} [options.allowScriptedContent=false]
+	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
 	 * @param {boolean} [options.forceRight=false]
 	 */
 	constructor(layout, section, options) {
@@ -34,13 +32,11 @@ class IframeView {
 		 * @readonly
 		 */
 		this.settings = extend({
-			axis: null,
 			method: null,
+			sandbox: [],
 			forceRight: false,
 			forceEvenPages: false,
 			ignoreClass: "",
-			allowPopups: false,
-			allowScriptedContent: false,
 		}, options || {});
 		/**
 		 * @member {string} id
@@ -54,12 +50,6 @@ class IframeView {
 		 * @readonly
 		 */
 		this.section = section;
-		/**
-		 * @member {string} axis
-		 * @memberof IframeView
-		 * @readonly
-		 */
-		this.axis = null;
 		/**
 		 * @member {Contents} contents
 		 * @memberof IframeView
@@ -83,9 +73,6 @@ class IframeView {
 		 * @readonly
 		 */
 		this.layout = layout;
-		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
-			this.updateLayout();
-		});
 		/**
 		 * @member {Marks} marks
 		 * @memberof IframeView
@@ -99,6 +86,12 @@ class IframeView {
 		 * @readonly
 		 */
 		this.method = this.settings.method || "write";
+		/**
+		 * @member {string} writingMode
+		 * @memberof IframeView
+		 * @readonly
+		 */
+		this.writingMode = "";
 	}
 
 	/**
@@ -109,7 +102,7 @@ class IframeView {
 	container() {
 
 		const element = document.createElement("div");
-		element.classList.add("epub-view");
+		element.classList.add("view-container");
 		element.style.height = "0";
 		element.style.width = "0";
 		element.style.overflow = "hidden";
@@ -131,13 +124,8 @@ class IframeView {
 		this.iframe.style.width = "0";
 		this.iframe.style.height = "0";
 
-		// sandbox
-		this.iframe.sandbox = "allow-same-origin";
-		if (this.settings.allowPopups) {
-			this.iframe.sandbox += " allow-popups";
-		}
-		if (this.settings.allowScriptedContent) {
-			this.iframe.sandbox += " allow-scripts";
+		for (const p of this.settings.sandbox) {
+			if (p) this.iframe.sandbox.add(p);
 		}
 
 		this.iframe.setAttribute("enable-annotation", "true");
@@ -169,37 +157,9 @@ class IframeView {
 		this.section.render(request).then((contents) => {
 			return this.load(contents);
 		}).then((output) => {
-			// find and report the writingMode axis
-			const writingMode = this.contents.writingMode();
-			const hasVertical = writingMode.indexOf(AXIS_V) === 0;
 
-			// Set the axis based on the flow and writing mode
-			let axis;
-			if (this.layout.flow === "scrolled" ||
-				this.layout.flow === "scrolled-doc") {
-				axis = hasVertical ? AXIS_H : AXIS_V;
-			} else {
-				axis = hasVertical ? AXIS_V : AXIS_H;
-			}
-
-			if (hasVertical && this.layout.flow === "paginated") {
-				this.layout.delta = this.layout.height;
-			}
-
-			this.setAxis(axis);
-			this.emit(EVENTS.VIEWS.AXIS, axis);
-
-			this.setWritingMode(writingMode);
-			this.emit(EVENTS.VIEWS.WRITING_MODE, writingMode);
-
-			// apply the layout function to the contents
-			this.layout.format(this.contents, this.section, this.axis);
-
-			// Listen for events that require an expansion of the iframe
-			this.addListeners();
-
-			// Expand the iframe to the full size of the content
-			this.expand();
+			this.setWritingMode(this.contents.mode);
+			this.update();
 
 			if (this.settings.forceRight) {
 				this.element.style.marginLeft = this.width + "px";
@@ -241,106 +201,69 @@ class IframeView {
 			this.contentWidth = undefined; // unused
 			this.contentHeight = undefined; // unused
 		}
-		this.needsReframe = true;
 	}
 
 	/**
-	 * Set axis
-	 * @param {string} [value] 
+	 * Update view
 	 */
-	setAxis(value) {
+	update() {
 
-		if (value === null) {
-			value = this.layout.flow === "paginated" ? AXIS_H : AXIS_V;
-		}
+		this.contents.format(this.layout, this.section);
+		this.axis();
+		this.size();
+		this.expand();
+	}
 
-		if (value === AXIS_H) {
+	/**
+	 * update axis
+	 * @private
+	 */
+	axis() {
+
+		if (this.layout.axis === AXIS_H) {
 			this.element.style.flex = "none";
 		} else {
 			this.element.style.flex = "initial";
 		}
-
-		this.axis = value;
-		this.size();
 	}
 
 	/**
 	 * Set writing mode
 	 * @param {string} mode 
+	 * @private
 	 */
 	setWritingMode(mode) {
 
-		this.writingMode = mode;
+		if (this.writingMode !== mode) {
+			this.writingMode = mode;
+			this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
+		}
 	}
 
 	/**
-	 * size
-	 * Determine locks base on settings
-	 * @param {number} [width] 
-	 * @param {number} [height] 
+	 * update size
+	 * @private
 	 */
-	size(width, height) {
+	size() {
 
-		width = width || this.layout.width;
-		height = height || this.layout.height;
+		const elb = borders(this.element);
+		const ifb = borders(this.iframe);
+		const szw = this.layout.width;
+		const szh = this.layout.height;
 
-		let what;
 		if (this.layout.name === "pre-paginated") {
-			what = "both";
-		} else if (this.axis === AXIS_H) {
-			what = "height";
+			this.lockedWidth = szw - elb.width - ifb.width;
+			this.lockedHeight = szh - elb.height - ifb.height;
+		} else if (this.layout.axis === AXIS_V) {
+			this.lockedWidth = szw - elb.width - ifb.width;
 		} else {
-			what = "width";
-		}
-
-		this.lock(what, width, height);
-	}
-
-	/**
-	 * lock
-	 * Lock an axis to element dimensions, taking borders into account
-	 * @param {string} what 
-	 * @param {number} width 
-	 * @param {number} height 
-	 */
-	lock(what, width, height) {
-
-		const elBorders = borders(this.element);
-
-		let iframeBorders;
-		if (this.iframe) {
-			iframeBorders = borders(this.iframe);
-		} else {
-			iframeBorders = { width: 0, height: 0 };
-		}
-
-		switch (what) {
-			case "both":
-				if (isNumber(width) && isNumber(height)) {
-					this.lockedWidth = width - elBorders.width - iframeBorders.width;
-					this.lockedHeight = height - elBorders.height - iframeBorders.height;
-				}
-				break;
-			case "width":
-				if (isNumber(width)) {
-					this.lockedWidth = width - elBorders.width - iframeBorders.width;
-				}
-				break;
-			case "height":
-				if (isNumber(height)) {
-					this.lockedHeight = height - elBorders.height - iframeBorders.height;
-				}
-				break;
-		}
-
-		if (this.displayed && this.iframe) {
-			this.expand();
+			this.lockedHeight = szh - elb.height - ifb.height;
 		}
 	}
 
 	/**
-	 * expand
 	 * Resize a single axis based on content dimensions
+	 * @private
 	 */
 	expand() {
 
@@ -354,7 +277,7 @@ class IframeView {
 		if (this.layout.name === "pre-paginated") {
 			width = this.layout.columnWidth;
 			height = this.layout.height;
-		} else if (this.axis === AXIS_H) {
+		} else if (this.layout.axis === AXIS_H) {
 			// Get the width of the text
 			width = this.contents.textSize().width;
 
@@ -371,9 +294,11 @@ class IframeView {
 					width += this.layout.pageWidth;
 				}
 			}
-		} else if (this.axis === AXIS_V) {
+		} else if (this.layout.axis === AXIS_V) {
 			// Expand Vertically
-			height = this.contents.textSize().height;
+			const size = this.contents.textSize();
+			width = size.width;
+			height = size.height;
 
 			if (this.layout.flow === "paginated" &&
 				height % this.layout.height > 0) {
@@ -381,11 +306,7 @@ class IframeView {
 			}
 		}
 
-		// Only Resize if dimensions have changed or
-		// if Frame is still hidden, so needs reframing
-		if (this.needsReframe ||
-			this.width !== width ||
-			this.height !== height) {
+		if (this.width !== width || this.height !== height) {
 			this.reframe(width, height);
 		}
 
@@ -396,6 +317,7 @@ class IframeView {
 	 * reframe
 	 * @param {number} width 
 	 * @param {number} height 
+	 * @private
 	 */
 	reframe(width, height) {
 
@@ -408,21 +330,7 @@ class IframeView {
 		this.width = width;
 		this.height = height;
 
-		const size = {
-			width: width,
-			height: height,
-			widthDelta: this.prevBounds ? width - this.prevBounds.width : width,
-			heightDelta: this.prevBounds ? height - this.prevBounds.height : height,
-		};
-
 		this.marks && this.marks.render();
-		/**
-		 * @event resized
-		 * @param {object} size
-		 * @memberof IframeView
-		 */
-		this.emit(EVENTS.VIEWS.RESIZED, size);
-		this.prevBounds = size;
 		this.elementBounds = bounds(this.element);
 	}
 
@@ -475,7 +383,6 @@ class IframeView {
 
 		this.window = this.iframe.contentWindow;
 		this.document = this.iframe.contentDocument;
-		this.document.body.style.overflow = "hidden";
 		this.contents = new Contents(this.document, this.document.body, this.section);
 		this.rendering = false;
 
@@ -489,45 +396,16 @@ class IframeView {
 			this.document.querySelector("head").appendChild(link);
 		}
 
-		this.contents.on(EVENTS.CONTENTS.EXPAND, () => {
-			if (this.displayed && this.iframe) {
-				this.expand();
-				if (this.contents) {
-					this.layout.format(this.contents);
-				}
-			}
-		});
-
-		this.contents.on(EVENTS.CONTENTS.RESIZE, (rect) => {
-			if (this.displayed && this.iframe) {
-				this.expand();
-				if (this.contents) {
-					this.layout.format(this.contents);
-				}
-			}
+		this.contents.on(EVENTS.CONTENTS.RESIZED, (rect) => {
+			/**
+			 * @event resized
+			 * @param {object} rect
+			 * @memberof IframeView
+			 */
+			this.emit(EVENTS.VIEWS.RESIZED, rect);
 		});
 
 		defer.resolve(this.contents);
-	}
-
-	/**
-	 * Update Layout
-	 * @private
-	 */
-	updateLayout() {
-
-		if (this.contents) {
-			this.layout.format(this.contents);
-			this.expand();
-		}
-	}
-
-	addListeners() {
-		//TODO: Add content listeners for expanding
-	}
-
-	removeListeners(layoutFunc) {
-		//TODO: remove content listeners for expanding
 	}
 
 	/**
@@ -539,8 +417,9 @@ class IframeView {
 
 		const displayed = new Defer();
 
-		if (this.displayed === false) {
-
+		if (this.displayed) {
+			displayed.resolve(this);
+		} else {
 			this.render(request).then(() => {
 				/**
 				 * @event displayed
@@ -550,11 +429,8 @@ class IframeView {
 				this.displayed = true;
 				displayed.resolve(this);
 			}, (err) => {
-				displayed.reject(err, this);
+				displayed.reject(err);
 			});
-
-		} else {
-			displayed.resolve(this);
 		}
 
 		return displayed.promise;
@@ -832,7 +708,6 @@ class IframeView {
 		if (this.displayed) {
 			this.displayed = false;
 
-			this.removeListeners();
 			this.contents.destroy();
 
 			this.stopExpanding = true;
@@ -843,7 +718,6 @@ class IframeView {
 				this.marks.clear();
 			}
 
-			this.axis = undefined;
 			this.iframe = undefined;
 			this.contents = undefined;
 			this.document = undefined;

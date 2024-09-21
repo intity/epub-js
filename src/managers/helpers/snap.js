@@ -57,21 +57,13 @@ class Snap {
 
 		this.manager = manager;
 		this.layout = this.manager.layout;
-		this.fullsize = this.manager.settings.fullsize;
-
-		if (this.fullsize) {
-			this.element = this.manager.stage.element;
-			this.scroller = window;
-			this.disableScroll();
-		} else {
-			this.element = this.manager.stage.container;
-			this.scroller = this.element;
-		}
+		this.element = this.manager.views.container;
+		this.scroller = this.element;
 
 		// set lookahead offset to page width
 		this.manager.settings.offset = this.layout.width;
 		this.manager.settings.afterScrolledTimeout = this.settings.duration * 2;
-		this.isVertical = this.manager.settings.axis === "vertical";
+		this.isVertical = this.manager.layout.axis === "vertical";
 
 		// disable snapping if not paginated or axis in not horizontal
 		if (!this.manager.paginated || this.isVertical) {
@@ -193,8 +185,8 @@ class Snap {
 	 */
 	onScroll(e) {
 
-		this.scrollLeft = this.fullsize ? window.scrollX : this.scroller.scrollLeft;
-		this.scrollTop = this.fullsize ? window.scrollY : this.scroller.scrollTop;
+		this.scrollLeft = this.scroller.scrollLeft;
+		this.scrollTop = this.scroller.scrollTop;
 	}
 
 	/**
@@ -215,10 +207,6 @@ class Snap {
 	onTouchStart(e) {
 
 		const { screenX, screenY } = e.touches[0];
-
-		if (this.fullsize) {
-			this.enableScroll();
-		}
 
 		this.touchCanceler = true;
 
@@ -245,7 +233,7 @@ class Snap {
 
 		this.touchCanceler = true;
 
-		if (!this.fullsize && deltaY < 10) {
+		if (deltaY < 10) {
 			this.element.scrollLeft -= screenX - this.endTouchX;
 		}
 
@@ -260,10 +248,6 @@ class Snap {
 	 * @private
 	 */
 	onTouchEnd(e) {
-
-		if (this.fullsize) {
-			this.disableScroll();
-		}
 
 		this.touchCanceler = false;
 		let swipped = this.wasSwiped();
@@ -384,12 +368,8 @@ class Snap {
 	 */
 	scrollTo(left = 0, top = 0) {
 
-		if (this.fullsize) {
-			window.scroll(left, top);
-		} else {
-			this.scroller.scrollLeft = left;
-			this.scroller.scrollTop = top;
-		}
+		this.scroller.scrollLeft = left;
+		this.scroller.scrollTop = top;
 	}
 
 	/**
@@ -400,10 +380,6 @@ class Snap {
 
 		if (typeof this.scroller === "undefined") {
 			return;
-		}
-
-		if (this.fullsize) {
-			this.enableScroll();
 		}
 
 		this.removeListeners();
