@@ -64,9 +64,10 @@
             const url = location.origin + "/examples/hooks.js";
             return Promise.all([
                 contents.appendScript("jquery", src),
-                contents.appendScript("jqtest", url),
                 contents.appendStylesheet("jquery", css)
-            ])
+            ]).then(() => {
+                contents.appendScript("jqtest", url)
+            })
         })
     </script>
 </body>
