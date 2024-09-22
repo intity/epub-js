@@ -61,7 +61,7 @@
 
             const src = "https://code.jquery.com/jquery-3.7.1.min.js"
             const css = "https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
-            const url = location.origin + "/examples/hooks.js";
+            const url = location.pathname.replace(".html", ".js");
             return Promise.all([
                 contents.appendScript("jquery", src),
                 contents.appendStylesheet("jquery", css)

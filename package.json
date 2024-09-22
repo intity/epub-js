@@ -16,7 +16,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "karma start --single-run --browsers ChromeHeadlessNoSandbox",
+    "test": "karma start --single-run --browsers ChromiumHeadless",
     "test:firefox": "karma start --single-run --browsers FirefoxHeadless",
     "docs": "node docsgen.js",
     "lint": "eslint src",
