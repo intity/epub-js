@@ -13,7 +13,7 @@ const assertion = (book, { archived, url }) => {
 	}
 }
 
-describe("Book(archived)", () => {
+describe("Book", () => {
 	describe("open book from epub file of local server", () => {
 		const book = new Book()
 		it("should open a archived epub", async () => {
@@ -25,7 +25,7 @@ describe("Book(archived)", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:9876\/[^\/]+$/.test(coverUrl))
+			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
 		})
 	})
 	describe("open book from epub file of remote server", () => {
@@ -39,7 +39,7 @@ describe("Book(archived)", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:9876\/[^\/]+$/.test(coverUrl))
+			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
 		})
 	})
 	describe("open book from array buffer", () => {
@@ -58,7 +58,7 @@ describe("Book(archived)", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:9876\/[^\/]+$/.test(coverUrl))
+			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
 		})
 	})
 	describe("open book from data URL in base64 encoding", () => {
@@ -86,7 +86,7 @@ describe("Book(archived)", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:9876\/[^\/]+$/.test(coverUrl))
+			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
 		})
 	})
 	describe("open book from epub file without cover", () => {
@@ -109,7 +109,7 @@ describe("Book(archived)", () => {
 			await book.open("/assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:9876/assets/alice/"
+				url: "http://localhost:8080/assets/alice/"
 			})
 		})
 	})
@@ -129,12 +129,12 @@ describe("Book(archived)", () => {
 			await book.open("/assets/alice/OPS/package.opf")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:9876/assets/alice/OPS/package.opf"
+				url: "http://localhost:8080/assets/alice/OPS/package.opf"
 			})
 		})
 		it("should have a local coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "http://localhost:9876/assets/alice/OPS/images/cover_th.jpg")
+			assert.equal(coverUrl, "http://localhost:8080/assets/alice/OPS/images/cover_th.jpg")
 		})
 	})
 	describe("open book from package.opf of remote server", () => {
@@ -157,12 +157,12 @@ describe("Book(archived)", () => {
 			await book.open("/assets/alice/OPS/package.json")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:9876/assets/alice/OPS/package.json"
+				url: "http://localhost:8080/assets/alice/OPS/package.json"
 			})
 		})
 		it("should have a local coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "http://localhost:9876/assets/alice/OPS/images/cover_th.jpg")
+			assert.equal(coverUrl, "http://localhost:8080/assets/alice/OPS/images/cover_th.jpg")
 		})
 	})
 	describe("open book from package.json of remote server", () => {

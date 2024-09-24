@@ -16,10 +16,10 @@ describe("Themes", () => {
         it("should register a theme by url", () => {
             rendition.themes.register("light", "/examples/themes.css")
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, "http://localhost:9876/examples/themes.css")
+            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
             rendition.themes.register("dark", "/examples/themes.css")
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, "http://localhost:9876/examples/themes.css")
+            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
             rendition.themes.clear()
             assert.equal(rendition.themes.size, 0)
         })
@@ -65,9 +65,9 @@ describe("Themes", () => {
                 dark: "/examples/themes.css"
             })
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, "http://localhost:9876/examples/themes.css")
+            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, "http://localhost:9876/examples/themes.css")
+            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
         })
     })
     describe("#select()", () => {
