@@ -127,21 +127,25 @@ body {
     background: white;
 }
 
+#viewer.scrolled-doc .views-container,
 #viewport.scrolled-doc .views-container {
     row-gap: 40px;
     justify-content: center;
 }
 
+#viewer.scrolled-doc .view-container,
 #viewport.scrolled-doc .view-container {
     background: white;
     box-shadow: 0 0 4px #ccc;
     border-radius: 5px;
 }
 
+#viewer.scrolled-doc .view-container:first-of-type,
 #viewport.scrolled-doc .view-container:first-of-type {
     margin-top: 40px;
 }
 
+#viewer.scrolled-doc .view-container:last-of-type,
 #viewport.scrolled-doc .view-container:last-of-type {
     margin-bottom: 40px;
 }
@@ -178,16 +182,6 @@ body {
 #viewer.scrolled-doc {
     width: 100%;
     height: 100vh;
-}
-
-#viewer.scrolled-doc .views-container {
-    justify-content: center;
-}
-
-#viewer.scrolled-doc .view-container {
-    box-shadow: 0 0 4px #ccc;
-    border-radius: 5px;
-    margin: 40px 0;
 }
 
 #divider {
