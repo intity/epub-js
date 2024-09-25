@@ -17,13 +17,13 @@ export default class Contents {
     content: Element;
     contentRect: object;
     document: Document;
-    documentElement: Element;
     epubcfi: EpubCFI;
     window: Window;
+    mode: string;
 
     appendClass(className: string): void;
     removeClass(className: string): void;
-    appendScript(src: string, key: string): Promise<Node>;
+    appendScript(key: string, src: string): Promise<Node>;
     removeScript(key: string): boolean;
     clearScripts(): void;
     appendStylesheet(key: string, input: string | object): Promise<Node>;
@@ -35,24 +35,23 @@ export default class Contents {
     css(property: string, value: string, priority?: boolean): string;
     destroy(): void;
     direction(dir?: string): void;
-    fit(width: number, height: number): void;
-    height(h: number): number;
     locationOf(target: string | EpubCFI, ignoreClass?: string): { left: number, top: number };
     map(layout: any): any;
+    format(contents: Contents): void;
     mapPage(cfiBase: string, layout: object, start: number, end: number, dev: boolean): any;
     overflow(overflow: string): string;
     overflowX(overflow: string): string;
     overflowY(overflow: string): string;
     range(cfi: string, ignoreClass?: string): Range;
     root(): Element;
-    scaler(scale: number, offsetX: number, offsetY: number): void;
+    scale(scale: number, offsetX: number, offsetY: number): void;
     scrollHeight(): number;
     scrollWidth(): number;
     size(width?: number, height?: number, dir?: string): void;
-    textHeight(): number;
-    textWidth(): number;
+    textSize(): { width: number, height: number };
     viewport(options: ViewportSettings): ViewportSettings;
     width(w: number): number;
+    height(h: number): number;
     writingMode(mode?: string): string;
     //-- event emitters
     emit(type: any, ...args: any[]): void;
@@ -60,7 +59,6 @@ export default class Contents {
     on(type: any, listener: any): any;
     once(type: any, listener: any, ...args: any[]): any;
     //-- listeners
-    private listeners(): void;
     private appendListeners(): void;
     private removeListeners(): void;
     private fontLoadListeners(): void;

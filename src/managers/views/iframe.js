@@ -23,7 +23,6 @@ class IframeView {
 	 * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
 	 * @param {string} [options.ignoreClass='']
 	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
-	 * @param {boolean} [options.forceRight=false]
 	 */
 	constructor(layout, section, options) {
 		/**
@@ -34,7 +33,6 @@ class IframeView {
 		this.settings = extend({
 			method: null,
 			sandbox: [],
-			forceRight: false,
 			forceEvenPages: false,
 			ignoreClass: "",
 		}, options || {});
@@ -161,10 +159,6 @@ class IframeView {
 			this.setWritingMode(this.contents.mode);
 			this.update();
 
-			if (this.settings.forceRight) {
-				this.element.style.marginLeft = this.width + "px";
-			}
-
 			def.resolve(output);
 		}, (err) => {
 			/**
@@ -208,7 +202,7 @@ class IframeView {
 	 */
 	update() {
 
-		this.contents.format(this.layout, this.section);
+		this.contents.format(this.layout);
 		this.axis();
 		this.size();
 		this.expand();
@@ -251,10 +245,7 @@ class IframeView {
 		const szw = this.layout.width;
 		const szh = this.layout.height;
 
-		if (this.layout.name === "pre-paginated") {
-			this.lockedWidth = szw - elb.width - ifb.width;
-			this.lockedHeight = szh - elb.height - ifb.height;
-		} else if (this.layout.axis === AXIS_V) {
+		if (this.layout.axis === AXIS_V) {
 			this.lockedWidth = szw - elb.width - ifb.width;
 		} else {
 			this.lockedHeight = szh - elb.height - ifb.height;
@@ -273,13 +264,10 @@ class IframeView {
 		if (!this.iframe || this.expanding) return;
 
 		this.expanding = true;
+		const size = this.contents.textSize();
 
-		if (this.layout.name === "pre-paginated") {
-			width = this.layout.columnWidth;
-			height = this.layout.height;
-		} else if (this.layout.axis === AXIS_H) {
-			// Get the width of the text
-			width = this.contents.textSize().width;
+		if (this.layout.axis === AXIS_H) {
+			width = size.width;
 
 			if (width % this.layout.pageWidth > 0) {
 				width = Math.ceil(width / this.layout.pageWidth) * this.layout.pageWidth;
@@ -295,8 +283,6 @@ class IframeView {
 				}
 			}
 		} else if (this.layout.axis === AXIS_V) {
-			// Expand Vertically
-			const size = this.contents.textSize();
 			width = size.width;
 			height = size.height;
 

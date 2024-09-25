@@ -717,15 +717,12 @@ class Contents {
 	}
 
 	/**
-	 * Apply Css to a Document
+	 * Apply CSS to a Document
 	 * @param {Layout} layout 
-	 * @param {Section} section 
 	 */
-	format(layout, section) {
+	format(layout) {
 
-		if (layout.name === "pre-paginated") {
-			this.fit(layout, section);
-		} else if (layout.flow === "paginated") {
+		if (layout.flow === "paginated") {
 			this.columns(layout);
 		} else {
 			this.size(layout);
@@ -771,21 +768,21 @@ class Contents {
 	 */
 	columns(layout) {
 
-		const szw = layout.width;
-		const szh = layout.height;
+		const pgw = layout.pageWidth;
+		const pgh = layout.pageHeight;
 		const clw = layout.columnWidth;
 		const dir = layout.direction;
 		const gap = layout.gap;
 
-		this.direction(dir);
-		this.width(szw);
-		this.height(szh);
+		this.width(pgw);
+		this.height(pgh);
 		this.viewport({
-			width: szw,
-			height: szh,
+			width: pgw,
+			height: pgh,
 			scale: 1.0,
 			scalable: "no"
 		});
+		this.direction(dir);
 
 		this.css("overflow", "hidden");
 		this.css("margin", "0", true);
@@ -821,54 +818,17 @@ class Contents {
 	 * @param {number} offsetX
 	 * @param {number} offsetY
 	 */
-	scaler(scale, offsetX, offsetY) {
+	scale(scale, offsetX, offsetY) {
 
-		const scaleStr = "scale(" + scale + ")";
-		let translateStr = "";
+		const value = "scale(" + scale + ")";
 
-		this.css("transform-origin", "top left");
-
+		let translate = "";
 		if (offsetX >= 0 || offsetY >= 0) {
-			translateStr = " translate(" + (offsetX || 0) + "px, " + (offsetY || 0) + "px )";
+			translate = " translate(" + (offsetX || 0) + "px, " + (offsetY || 0) + "px )";
 		}
 
-		this.css("transform", scaleStr + translateStr);
-	}
-
-	/**
-	 * Fit contents into a fixed width and height
-	 * @param {Layout} layout
-	 * @param {Section} section
-	 * @private
-	 */
-	fit(layout, section) {
-
-		const clw = layout.columnWidth;
-		const szh = layout.height;
-		const viewport = this.viewport();
-		const viewportWidth = parseInt(viewport.width);
-		const viewportHeight = parseInt(viewport.height);
-		const widthScale = clw / viewportWidth;
-		const heightScale = szh / viewportHeight;
-		const scale = widthScale < heightScale ? widthScale : heightScale;
-
-		// scale needs width and height to be set
-		this.width(viewportWidth);
-		this.height(viewportHeight);
-		this.overflow("hidden");
-
-		// Scale to the correct size
-		this.scaler(scale, 0, 0);
-
-		// background images are not scaled by transform
-		this.css("background-size", viewportWidth * scale + "px " + viewportHeight * scale + "px");
-
-		this.css("background-color", "transparent");
-		if (section && section.properties.includes("page-spread-left")) {
-			// set margin since scale is weird
-			const marginLeft = clw - (viewportWidth * scale);
-			this.css("margin-left", marginLeft + "px");
-		}
+		this.css("transform", value + translate);
+		this.css("transform-origin", "top left");
 	}
 
 	/**

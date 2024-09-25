@@ -70,12 +70,13 @@ class Viewport {
 	 * @param {object} options
 	 * @param {string|number} options.width viewport width
 	 * @param {string|number} options.height viewport height
-	 * @returns {Element}
+	 * @param {object} options.views
+	 * @returns {Element|null} attached element
 	 */
 	attachTo(input, options) {
 
 		const element = this.getElement(input);
-		if (!element) return;
+		if (!element) return null;
 
 		this.views = options.views;
 		this.container = this.create(options);

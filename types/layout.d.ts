@@ -1,18 +1,21 @@
 import Contents from "./contents";
 
 export interface LayoutOptions {
-    name?: string,
+    axis?: string,
     flow?: string,
     spread?: string,
     direction?: string,
     orientation?: string,
-    minSpreadWidth?: number
+    minSpreadWidth?: number,
+    pageWidth?: number,
+    pageHeight?: number
 }
 
 export default class Layout {
 
     constructor(options?: LayoutOptions);
 
+    readonly axis: string;
     readonly name: string;
     readonly flow: string;
     readonly spread: string;
@@ -22,6 +25,8 @@ export default class Layout {
     readonly minSpreadWidth: number;
     readonly width: number;
     readonly height: number;
+    readonly pageWidth: number;
+    readonly pageHeight: number;
     readonly spreadWidth: number;
     readonly delta: number;
     readonly columnWidth: number;
@@ -30,7 +35,6 @@ export default class Layout {
 
     set(options: LayoutOptions): void;
     calculate(width: number, height: number, gap?: number): void;
-    format(contents: Contents): void | Promise<any>;
     count(totalLength: number, pageLength: number): { spreads: number, pages: number };
     //-- event emitters
     emit(type: any, ...args: any[]): void;

@@ -30,7 +30,8 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
  * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
- * @param {number} [options.pageWidth] page width for scrolled-doc flow
+ * @param {number} [options.pageWidth] page width
+ * @param {number} [options.pageHeight] page height
  * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
@@ -494,7 +495,8 @@ class Rendition {
 			direction: this.settings.direction || direction || "ltr",
 			orientation: this.settings.orientation || metadata.get("orientation"),
 			minSpreadWidth: this.settings.minSpreadWidth,
-			pageWidth: this.settings.pageWidth
+			pageWidth: this.settings.pageWidth,
+			pageHeight: this.settings.pageHeight
 		}
 	}
 
@@ -733,12 +735,6 @@ class Rendition {
 	 * @private
 	 */
 	adjustImages(contents) {
-
-		if (this.layout.name === "pre-paginated") {
-			return new Promise((resolve) => {
-				resolve(null);
-			});
-		}
 
 		const content = contents.content;
 		const padding = {
