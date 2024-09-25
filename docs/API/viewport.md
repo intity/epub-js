@@ -8,7 +8,7 @@ viewport configuration class
 * [Viewport](#Viewport)
     * [new Viewport(layout, options)](#new_Viewport_new)
     * _instance_
-        * [.attachTo(input, options)](#Viewport+attachTo) ⇒ <code>Element</code>
+        * [.attachTo(input, options)](#Viewport+attachTo) ⇒ <code>Element</code> \| <code>null</code>
         * [.wrap(container)](#Viewport+wrap) ⇒ <code>Element</code>
         * [.size([width], [height])](#Viewport+size) ⇒ <code>object</code>
         * [.getSheet()](#Viewport+getSheet) ⇒ <code>CSSStyleSheet</code>
@@ -35,10 +35,11 @@ Constructor
 
 <a name="Viewport+attachTo"></a>
 
-## viewport.attachTo(input, options) ⇒ <code>Element</code>
+## viewport.attachTo(input, options) ⇒ <code>Element</code> \| <code>null</code>
 Attach to viewport element
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
+**Returns**: <code>Element</code> \| <code>null</code> - attached element  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -46,6 +47,7 @@ Attach to viewport element
 | options | <code>object</code> |  |
 | options.width | <code>string</code> \| <code>number</code> | viewport width |
 | options.height | <code>string</code> \| <code>number</code> | viewport height |
+| options.views | <code>object</code> |  |
 
 <a name="Viewport+wrap"></a>
 

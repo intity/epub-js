@@ -23,7 +23,7 @@ Find Locations for a Book
         * [.destroy()](#Locations+destroy)
     * _static_
         * [.current](#Locations.current) : <code>Location</code>
-        * [.generated](#Locations.generated) : <code>Promise</code>
+        * [.generated](#Locations.generated) : [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * ["changed" (current, changed)](#Locations.event_changed)
 
 <a name="new_Locations_new"></a>
@@ -187,7 +187,7 @@ Current Location
 **Read only**: true  
 <a name="Locations.generated"></a>
 
-## Locations.generated : <code>Promise</code>
+## Locations.generated : [<code>Promise.&lt;Locations&gt;</code>](#Locations)
 **Kind**: static property of [<code>Locations</code>](#Locations)  
 **Read only**: true  
 <a name="Locations.event_changed"></a>
