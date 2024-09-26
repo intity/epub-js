@@ -20,10 +20,10 @@ More specifically, the EPUB schema standardizes the table of contents, provides 
 
 ## Getting Started
 
-If using archived `.epub` files include JSZip (this must precede inclusion of epub.js):
+If using archived `.epub` files include [JSZip](https://stuk.github.io/jszip/) (this must precede inclusion of **epub.js**):
 
 ```html
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="../dist/jszip.min.js"></script>
 ```
 
 Get the minified code from the build folder:
@@ -42,28 +42,39 @@ Create the new ePub, and then render it to that element:
 
 ```html
 <script>
-    const book = ePub("url/to/book/package.opf")
-    const rendition = book.renderTo("viewer", {width: 600, height: 400})
+    const book = ePub("uri/to/book/package.opf")
+    const rendition = book.renderTo("viewer", {
+        width: 600,
+        height: 400
+    })
     const displayed = rendition.display()
 </script>
 ```
 
 ## Render manager
 
-### Default
+### default
 
 ```js
-book.renderTo("viewer", { manager: "default", width: "100%", height: "100%" })
+book.renderTo("viewer", {
+    manager: "default",
+    width: "100%",
+    height: "100%"
+})
 ```
 
 [View example](https://intity.github.io/epub-js/examples/paginated.html)
 
 The default manager only displays a single section at a time.
 
-### Continuous
+### continuous
 
 ```js
-book.renderTo("viewer", { manager: "continuous", width: "100%", height: "100%" })
+book.renderTo("viewer", {
+    manager: "continuous",
+    width: "100%",
+    height: "100%"
+})
 ```
 
 [View example](https://intity.github.io/epub-js/examples/scrolled-continuous.html)
@@ -72,26 +83,27 @@ The continuous manager will display as many sections as need to fill the screen,
 
 ## Flow Overrides
 
-### Auto (Default)
-
-```js
-book.renderTo("viewer", { flow: "auto", width: "900", height: "600" })
-```
+### paginated (default)
 
 Flow will be based on the settings in the OPF, defaults to `paginated`.
 
-### Paginated
-
 ```js
-book.renderTo("viewer", { flow: "paginated", width: "900", height: "600" })
+book.renderTo("viewer", {
+    flow: "paginated",
+    width: 900,
+    height: 600
+})
 ```
 
 [View example](https://intity.github.io/epub-js/examples/paginated.html)
 
-### Scrolled Doc
+### scrolled-doc
 
 ```js
-book.renderTo("viewer", { flow: "scrolled-doc" })
+book.renderTo("viewer", {
+    flow: "scrolled-doc",
+    pageWidth: 800
+})
 ```
 
 [View example](http://intity.github.io/epub-js/examples/scrolled-doc.html)
@@ -102,14 +114,14 @@ book.renderTo("viewer", { flow: "scrolled-doc" })
 
 This is done by sandboxing the iframe the content is rendered into, though it is still recommended to sanitize the ePub content server-side as well.
 
-If a trusted ePub contains interactivity, it can be enabled by passing `allowScriptedContent: true` to the `Rendition` settings.
+If a trusted ePub contains interactivity, it can be enabled by setting a `sandbox` option set in [Rendition](docs/API/rendition.md) settings.
 
 ```html
 <script>
     const rendition = book.renderTo("viewer", {
         width: 600,
         height: 400,
-        allowScriptedContent: true
+        sandbox: ["allow-same-origin", "allow-scripts"]
     })
 </script>
 ```
@@ -122,9 +134,9 @@ API documentation is available at [docs/index.md](docs/index.md)
 
 ## Running Locally
 
-install [node.js](https://nodejs.org/)
+install **node.js**
 
-Then install the project dependences with npm
+Then install the project dependences with `npm`
 
 ```js
 npm install
@@ -138,15 +150,19 @@ npm run start
 
 ## Examples
 
-[View All Examples](https://intity.github.io/epub-js/examples/)
+All source code for the examples is located in the [examples](examples/) subdirectory of this repository. However, not all examples are working. Some of them may be outdated. A list of working examples can be found in the [examples/index.html](https://intity.github.io/epub-js/examples/) document.
 
 ## Testing
 
-Test can be run by Karma from NPM
+The [mocha](https://mochajs.org/) framework is used for unit testing. All tests are performed in the browser console. First, you need to start the local server with the following command:
 
 ```js
-npm run test
+npm run start
 ```
+
+Then open the page in the browser at: http://localhost:8080/test/
+
+Finally, open the browser console to see the test results.
 
 ## Building for Distribution
 
@@ -166,7 +182,7 @@ npm run watch
 
 ## Hooks
 
-Similar to a plugins, Epub.js implements events that can be "hooked" into. Thus you can interact with and manipulate the contents of the book.
+Similar to a plugins, **epub.js** implements events that can be "hooked" into. Thus you can interact with and manipulate the contents of the book.
 
 Examples of this functionality is loading videos from YouTube links before displaying a chapter's contents or implementing annotation.
 
@@ -177,8 +193,7 @@ Example hook:
 ```js
 rendition.hooks.content.register((contents, view) => {
 
-    const elements = contents.document.querySelectorAll("[video]")
-    const items = Array.prototype.slice.call(elements)
+    const items = contents.document.querySelectorAll("[video]")
 
     items.forEach((item) => {
         // do something with the video item
