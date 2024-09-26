@@ -671,32 +671,38 @@ class Book {
 	 */
 	destroy() {
 
-		this.isOpen = false;
+		this.isOpen = undefined;
 		this.opened = undefined;
+		this.loaded = undefined;
 		this.opening = undefined;
 		this.loading = undefined;
-		this.loaded = undefined;
 
 		this.archive && this.archive.destroy();
+		this.storage && this.storage.destroy();
+		this.sections && this.sections.destroy();
 		this.locations && this.locations.destroy();
 		this.resources && this.resources.destroy();
 		this.container && this.container.destroy();
 		this.packaging && this.packaging.destroy();
 		this.rendition && this.rendition.destroy();
+		this.navigation && this.navigation.destroy();
 
 		this.archive = undefined;
+		this.storage = undefined;
+		this.archived = undefined;
+		this.sections = undefined;
 		this.locations = undefined;
 		this.resources = undefined;
 		this.container = undefined;
 		this.packaging = undefined;
 		this.rendition = undefined;
-
-		this.navigation.destroy();
 		this.navigation = undefined;
+
 		this.url = undefined;
 		this.path = undefined;
 		this.cover = undefined;
-		this.archived = false;
+		this.request = undefined;
+		this.settings = undefined;
 	}
 }
 
