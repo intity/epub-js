@@ -253,6 +253,14 @@ class Layout {
 		}
 		return { spreads, pages }
 	}
+
+	/**
+	 * destroty
+	 */
+	destroy() {
+
+		Object.keys(this).forEach(p => this[p] = undefined);
+	}
 }
 
 EventEmitter(Layout.prototype);
