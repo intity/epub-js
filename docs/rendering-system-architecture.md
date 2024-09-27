@@ -10,21 +10,25 @@ A(rendition)
 B(layout)
 C(viewport)
 D(manager)
-E(views)
-F(view)
-G(contents)
+E(mapping)
+F(views)
+G(view)
+H(contents)
 A --> B
 A --> C
 A --> D
 C --> B
-C --> E
+C --> F
+D --> B
 D --> C
 D --> E
-D --> B
-E --> F
+D --> F
+E --> B
 F --> B
 F --> G
 G --> B
+G --> H
+H --> B
 ```
 
 Most of the dependent objects rely on the `layout.updated` event to finish synchronizing with the current state of the `layout` object. The `layout` object itself depends on the `viewport.resized` event. This happens every time the **viewport-container** is resized. However, the `layout` object knows nothing about containers, since it is only intended for calculations. Containers are created and configured by the [Viewport](API/viewport.md) class. The following image should clarify the technical details.
