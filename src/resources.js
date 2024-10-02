@@ -96,6 +96,7 @@ class Resources extends Map {
 
 		section.output = substitute(
 			content,
+			section,
 			[...this.keys()],
 			[...this.values()]
 		);
