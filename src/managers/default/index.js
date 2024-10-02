@@ -43,7 +43,6 @@ class DefaultViewManager {
 		});
 		this.settings = extend({
 			view: "iframe",
-			hidden: false,
 			method: null,
 			sandbox: [],
 			ignoreClass: "",
@@ -79,7 +78,7 @@ class DefaultViewManager {
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
-		this.views = [];
+		this.views = new Views();
 		this.viewport = book.rendition.viewport;
 		/**
 		 * @member {string} writingMode
@@ -100,7 +99,6 @@ class DefaultViewManager {
 	render(element, size) {
 
 		this.scrollType = scrollType();
-		this.views = new Views();
 		this.viewport.attachTo(element, {
 			views: this.views,
 			width: size.width,
@@ -568,11 +566,9 @@ class DefaultViewManager {
 	 */
 	clear() {
 
-		if (this.views) {
-			this.views.hide();
-			this.scrollTo(0, 0, true);
-			this.views.clear();
-		}
+		this.views.hide();
+		this.scrollTo(0, 0, true);
+		this.views.clear();
 	}
 
 	/**
@@ -903,12 +899,13 @@ class DefaultViewManager {
 	 */
 	destroy() {
 
-		this.ignore = true;
-		this.clear();
 		this.removeEventListeners();
-		this.viewport.destroy();
-		this.viewport = undefined;
-		this.rendered = false;
+		this.views.destroy();
+		this.views = undefined;
+		this.ignore = undefined;
+		this.location = undefined;
+		this.rendered = undefined;
+		this.paginated = undefined;
 		this.scrollType = undefined;
 		this.writingMode = undefined;
 	}
