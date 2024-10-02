@@ -16,13 +16,13 @@ import Storage from "./storage";
 import { EPUBJS_VERSION, EVENTS } from "./utils/constants";
 import Sections from "./sections";
 
-const CONTAINER_PATH = "META-INF/container.xml";
+const CONTAINER_PATH_0 = "META-INF/container.xml";
+const CONTAINER_PATH_1 = "META-INF/container.json";
 const INPUT_TYPE = {
 	BINARY: "binary",
 	BASE64: "base64",
 	EPUB: "epub",
-	OPF: "opf",
-	MANIFEST: "json",
+	JSON: "json",
 	DIRECTORY: "directory"
 };
 
@@ -237,13 +237,13 @@ class Book {
 	/**
 	 * Open a epub or url
 	 * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
-	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"`
+	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"json"` OR `"directory"`
 	 * @returns {Promise<Book>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
-	 * @example book.open("/path/to/book/OPS/package.opf")
+	 * @example book.open("/path/to/book/", "json")
 	 * @example book.open("/path/to/book.epub")
 	 * @example book.open("https://example.com/book/")
-	 * @example book.open("https://example.com/book/OPS/package.opf")
+	 * @example book.open("https://example.com/book/", "json")
 	 * @example book.open("https://example.com/book.epub")
 	 * @example book.open([arraybuffer], "binary")
 	 */
@@ -272,17 +272,15 @@ class Book {
 				this.settings.request.withCredentials,
 				this.settings.request.headers
 			).then(this.openEpub.bind(this));
-		} else if (type === INPUT_TYPE.OPF) {
+		} else {
 			this.url = new Url(input);
-			const uri = this.url.path.toString();
-			opening = this.openPackaging(uri);
-		} else if (type === INPUT_TYPE.MANIFEST) {
-			this.url = new Url(input);
-			const uri = this.url.path.toString();
-			opening = this.openManifest(uri);
-		} else if (type === INPUT_TYPE.DIRECTORY) {
-			this.url = new Url(input);
-			opening = this.openDirectory();
+			let path;
+			if (type === INPUT_TYPE.DIRECTORY) {
+				path = CONTAINER_PATH_0;
+			} else {
+				path = CONTAINER_PATH_1;
+			}
+			opening = this.openContainer(path, type);
 		}
 
 		return opening;
@@ -300,72 +298,51 @@ class Book {
 		const type = encoding || this.settings.encoding;
 
 		return this.unarchive(input, type).then(() => {
-			return this.openContainer(CONTAINER_PATH);
-		}).then((url) => {
-			return this.openPackaging(url);
+			return this.openContainer(CONTAINER_PATH_0);
 		});
 	}
 
 	/**
 	 * Open the epub container
 	 * @param {string} url
+	 * @param {string} type 
 	 * @returns {Promise<string>}
 	 * @private
 	 */
-	async openContainer(url) {
+	async openContainer(url, type) {
 
-		return this.load(url).then((xml) => {
-			return this.container.parse(xml);
+		return this.load(url).then((data) => {
+			if (type === INPUT_TYPE.JSON) {
+				return this.container.load(data);
+			} else {
+				return this.container.parse(data);
+			}
 		}).then((container) => {
-			return this.resolve(container.fullPath);
+			const uri = this.resolve(container.fullPath);
+			return this.openPackaging(uri, type);
 		});
 	}
 
 	/**
 	 * Open the package.opf
 	 * @param {string} url
+	 * @param {string} [type] 
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openPackaging(url) {
+	async openPackaging(url, type) {
 
 		this.path = new Path(url);
-		return this.load(url).then((xml) => {
-			return this.packaging.parse(xml);
+		return this.load(url).then((data) => {
+			if (type === INPUT_TYPE.JSON) {
+				return this.packaging.load(data);
+			} else {
+				return this.packaging.parse(data);
+			}
 		}).then(() => {
 			return this.loadNavigation();
 		}).then(() => {
 			return this.unpack();
-		});
-	}
-
-	/**
-	 * Open the manifest JSON
-	 * @param {string} url
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	async openManifest(url) {
-
-		this.path = new Path(url);
-		return this.load(url).then((json) => {
-			return this.packaging.load(json);
-		}).then(() => {
-			return this.loadNavigation();
-		}).then(() => {
-			return this.unpack();
-		});
-	}
-
-	/**
-	 * Open book from directory
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	async openDirectory() {
-
-		return this.openContainer(CONTAINER_PATH).then((url) => {
-			return this.openPackaging(url);
 		});
 	}
 
@@ -457,20 +434,10 @@ class Book {
 			extension = extension.replace(/\?.*$/, "");
 		}
 
-		if (!extension) {
-			return INPUT_TYPE.DIRECTORY;
-		}
-
 		if (extension === "epub") {
 			return INPUT_TYPE.EPUB;
-		}
-
-		if (extension === "opf") {
-			return INPUT_TYPE.OPF;
-		}
-
-		if (extension === "json") {
-			return INPUT_TYPE.MANIFEST;
+		} else {
+			return INPUT_TYPE.DIRECTORY;
 		}
 	}
 
