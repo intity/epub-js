@@ -61,7 +61,7 @@ class Views extends Array {
 	 */
 	append(view) {
 
-		this.container.appendChild(view.element);
+		this.container.appendChild(view.container);
 		this.push(view);
 		return view;
 	}
@@ -73,7 +73,7 @@ class Views extends Array {
 	 */
 	prepend(view) {
 
-		this.container.insertBefore(view.element, this.container.firstChild);
+		this.container.insertBefore(view.container, this.container.firstChild);
 		this.unshift(view);
 		return view;
 	}
@@ -88,9 +88,9 @@ class Views extends Array {
 
 		const children = this.container.children;
 		if (index < children.length) {
-			this.container.insertBefore(view.element, children[index]);
+			this.container.insertBefore(view.container, children[index]);
 		} else {
-			this.container.appendChild(view.element);
+			this.container.appendChild(view.container);
 		}
 		this.splice(index, 0, view);
 		return view;
@@ -105,7 +105,7 @@ class Views extends Array {
 		
 		const index = i || this.indexOf(view);
 		if (index > -1) {
-			this.container.removeChild(view.element);
+			this.container.removeChild(view.container);
 			this.splice(index, 1);
 			view.destroy();
 		}

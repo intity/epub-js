@@ -1,9 +1,13 @@
 import EventEmitter from "event-emitter";
-import EpubCFI from "../../epubcfi";
 import Contents from "../../contents";
 import Defer from "../../utils/defer";
 import { EVENTS } from "../../utils/constants";
-import { extend, borders, uuid, isNumber, bounds, createBlobUrl, revokeBlobUrl } from "../../utils/core";
+import {
+	extend,
+	createBlobUrl,
+	revokeBlobUrl,
+	uuid
+} from "../../utils/core";
 import Marks from "../../marks-pane/marks";
 import Highlight from "../../marks-pane/highlight";
 import Underline from "../../marks-pane/underline";
@@ -25,11 +29,9 @@ class IframeView {
 	 * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
 	 */
 	constructor(layout, section, options) {
-		/**
-		 * @member {object} settings
-		 * @memberof IframeView
-		 * @readonly
-		 */
+
+		this.layout = layout;
+		this.section = section;
 		this.settings = extend({
 			method: null,
 			sandbox: [],
@@ -41,13 +43,7 @@ class IframeView {
 		 * @memberof IframeView
 		 * @readonly
 		 */
-		this.id = "epubjs-view-" + uuid();
-		/**
-		 * @member {Section} section
-		 * @memberof IframeView
-		 * @readonly
-		 */
-		this.section = section;
+		this.id = "vc-" + uuid();
 		/**
 		 * @member {Contents} contents
 		 * @memberof IframeView
@@ -55,22 +51,13 @@ class IframeView {
 		 */
 		this.contents = null;
 		this.document = null;
-		this.element = this.container();
-		this.added = false;
+		/**
+		 * @member {Element} container
+		 * @memberof IframeView
+		 * @readonly
+		 */
+		this.container = null;
 		this.displayed = false;
-		this.rendered = false;
-		/**
-		 * @member {EpubCFI} epubcfi Blank Cfi for Parsing
-		 * @memberof IframeView
-		 * @readonly
-		 */
-		this.epubcfi = new EpubCFI();
-		/**
-		 * @member {Layout} layout
-		 * @memberof IframeView
-		 * @readonly
-		 */
-		this.layout = layout;
 		/**
 		 * @member {Marks} marks
 		 * @memberof IframeView
@@ -90,27 +77,27 @@ class IframeView {
 		 * @readonly
 		 */
 		this.writingMode = "";
+		this.init();
 	}
 
 	/**
-	 * Create view container
-	 * @returns {Element} HTML element
+	 * create view-container
 	 * @private
 	 */
-	container() {
+	init() {
 
-		const element = document.createElement("div");
-		element.classList.add("view-container");
-		element.style.height = "0";
-		element.style.width = "0";
-		element.style.overflow = "hidden";
-		element.style.position = "relative";
-		return element;
+		this.container = document.createElement("div");
+		this.container.classList.add("view-container");
+		this.container.style.height = "0";
+		this.container.style.width = "0";
+		this.container.style.overflow = "hidden";
+		this.container.style.position = "relative";
 	}
 
 	/**
 	 * Create iframe element
 	 * @returns {Element} iframe
+	 * @private
 	 */
 	create() {
 
@@ -121,24 +108,13 @@ class IframeView {
 		this.iframe.style.border = "none";
 		this.iframe.style.width = "0";
 		this.iframe.style.height = "0";
-
-		for (const p of this.settings.sandbox) {
+		this.settings.sandbox.forEach(p => {
 			if (p) this.iframe.sandbox.add(p);
-		}
-
+		});
 		this.iframe.setAttribute("enable-annotation", "true");
-		this.element.setAttribute("ref", this.section.index);
-		this.elementBounds = bounds(this.element);
-
-		if (this.method === "srcdoc" && ("srcdoc" in this.iframe)) {
-			this.method = "srcdoc";
-		}
-
-		this.added = true;
-		this.resizing = true;
+		this.container.setAttribute("ref", this.section.index);
 		this.width = 0;
 		this.height = 0;
-
 		return this.iframe;
 	}
 
@@ -155,10 +131,7 @@ class IframeView {
 		this.section.render(request).then((contents) => {
 			return this.load(contents);
 		}).then((output) => {
-
-			this.setWritingMode(this.contents.mode);
 			this.update();
-
 			def.resolve(output);
 		}, (err) => {
 			/**
@@ -190,10 +163,6 @@ class IframeView {
 			this.iframe.style.height = "0";
 			this.width = 0;
 			this.height = 0;
-			this.textWidth = undefined;
-			this.textHeight = undefined;
-			this.contentWidth = undefined; // unused
-			this.contentHeight = undefined; // unused
 		}
 	}
 
@@ -204,7 +173,7 @@ class IframeView {
 
 		this.contents.format(this.layout);
 		this.axis();
-		this.size();
+		this.mode();
 		this.expand();
 	}
 
@@ -215,40 +184,24 @@ class IframeView {
 	axis() {
 
 		if (this.layout.axis === AXIS_H) {
-			this.element.style.flex = "none";
+			this.container.style.flex = "none";
 		} else {
-			this.element.style.flex = "initial";
+			this.container.style.flex = "initial";
 		}
 	}
 
 	/**
-	 * Set writing mode
-	 * @param {string} mode 
+	 * update writing mode
+	 * @param {string} value 
 	 * @private
 	 */
-	setWritingMode(mode) {
+	mode(value) {
+
+		const mode = value || this.contents.mode;
 
 		if (this.writingMode !== mode) {
 			this.writingMode = mode;
 			this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
-		}
-	}
-
-	/**
-	 * update size
-	 * @private
-	 */
-	size() {
-
-		const elb = borders(this.element);
-		const ifb = borders(this.iframe);
-		const szw = this.layout.width;
-		const szh = this.layout.height;
-
-		if (this.layout.axis === AXIS_V) {
-			this.lockedWidth = szw - elb.width - ifb.width;
-		} else {
-			this.lockedHeight = szh - elb.height - ifb.height;
 		}
 	}
 
@@ -258,42 +211,37 @@ class IframeView {
 	 */
 	expand() {
 
-		let width = this.lockedWidth;
-		let height = this.lockedHeight;
-
 		if (!this.iframe || this.expanding) return;
 
 		this.expanding = true;
-		const size = this.contents.textSize();
+		const sz = this.contents.textSize();
 
 		if (this.layout.axis === AXIS_H) {
-			width = size.width;
 
-			if (width % this.layout.pageWidth > 0) {
-				width = Math.ceil(width / this.layout.pageWidth) * this.layout.pageWidth;
+			if (sz.width % this.layout.pageWidth > 0) {
+				sz.width = Math.ceil(sz.width / this.layout.pageWidth) * this.layout.pageWidth;
 			}
 
 			if (this.settings.forceEvenPages) {
-				const columns = (width / this.layout.pageWidth);
+				const columns = (sz.width / this.layout.pageWidth);
 				if (this.layout.divisor > 1 &&
 					this.layout.name === "reflowable" &&
 					(columns % 2 > 0)) {
 					// add a blank page
-					width += this.layout.pageWidth;
+					sz.width += this.layout.pageWidth;
 				}
 			}
 		} else if (this.layout.axis === AXIS_V) {
-			width = size.width;
-			height = size.height;
 
 			if (this.layout.flow === "paginated" &&
-				height % this.layout.height > 0) {
-				height = Math.ceil(height / this.layout.height) * this.layout.height;
+				sz.height % this.layout.height > 0) {
+				sz.height = Math.ceil(sz.height / this.layout.height) * this.layout.height;
 			}
 		}
 
-		if (this.width !== width || this.height !== height) {
-			this.reframe(width, height);
+		if (this.width !== sz.width ||
+			this.height !== sz.height) {
+			this.reframe(sz.width, sz.height);
 		}
 
 		this.expanding = false;
@@ -307,8 +255,8 @@ class IframeView {
 	 */
 	reframe(width, height) {
 
-		this.element.style.width = width + "px";
-		this.element.style.height = height + "px";
+		this.container.style.width = width + "px";
+		this.container.style.height = height + "px";
 
 		this.iframe.style.width = width + "px";
 		this.iframe.style.height = height + "px";
@@ -317,7 +265,6 @@ class IframeView {
 		this.height = height;
 
 		this.marks && this.marks.render();
-		this.elementBounds = bounds(this.element);
 	}
 
 	/**
@@ -337,12 +284,12 @@ class IframeView {
 		if (this.method === "blobUrl") {
 			this.blobUrl = createBlobUrl(contents, "application/xhtml+xml");
 			this.iframe.src = this.blobUrl;
-			this.element.appendChild(this.iframe);
+			this.container.appendChild(this.iframe);
 		} else if (this.method === "srcdoc") {
 			this.iframe.srcdoc = contents;
-			this.element.appendChild(this.iframe);
+			this.container.appendChild(this.iframe);
 		} else {
-			this.element.appendChild(this.iframe);
+			this.container.appendChild(this.iframe);
 			this.document = this.iframe.contentDocument;
 
 			if (!this.document) {
@@ -367,10 +314,8 @@ class IframeView {
 	 */
 	onLoad(event, defer) {
 
-		this.window = this.iframe.contentWindow;
-		this.document = this.iframe.contentDocument;
+		this.document = event.target.contentDocument;
 		this.contents = new Contents(this.document, this.document.body, this.section);
-		this.rendering = false;
 
 		let link = this.document.querySelector("link[rel='canonical']");
 		if (link) {
@@ -379,7 +324,7 @@ class IframeView {
 			link = this.document.createElement("link");
 			link.setAttribute("rel", "canonical");
 			link.setAttribute("href", this.section.canonical);
-			this.document.querySelector("head").appendChild(link);
+			this.document.head.appendChild(link);
 		}
 
 		this.contents.on(EVENTS.CONTENTS.RESIZED, (rect) => {
@@ -427,16 +372,12 @@ class IframeView {
 	 */
 	show() {
 
-		this.element.style.visibility = "visible";
-
-		if (this.iframe) {
-			this.iframe.style.visibility = "visible";
-
-			// Remind Safari to redraw the iframe
-			this.iframe.style.transform = "translateZ(0)";
-			this.iframe.offsetWidth;
-			this.iframe.style.transform = null;
-		}
+		this.container.style.visibility = "visible";
+		this.iframe.style.visibility = "visible";
+		// Remind Safari to redraw the iframe
+		this.iframe.style.transform = "translateZ(0)";
+		this.iframe.offsetWidth;
+		this.iframe.style.transform = null;
 		/**
 		 * @event shown
 		 * @param {IframeView} view
@@ -450,9 +391,8 @@ class IframeView {
 	 */
 	hide() {
 
-		this.element.style.visibility = "hidden";
+		this.container.style.visibility = "hidden";
 		this.iframe.style.visibility = "hidden";
-		this.stopExpanding = true;
 		/**
 		 * @event hidden
 		 * @param {IframeView} view
@@ -468,8 +408,8 @@ class IframeView {
 	offset() {
 
 		return {
-			top: this.element.offsetTop,
-			left: this.element.offsetLeft
+			top: this.container.offsetTop,
+			left: this.container.offsetLeft
 		};
 	}
 
@@ -479,7 +419,7 @@ class IframeView {
 	 */
 	position() {
 
-		return this.element.getBoundingClientRect();
+		return this.container.getBoundingClientRect();
 	}
 
 	/**
@@ -500,20 +440,6 @@ class IframeView {
 	}
 
 	/**
-	 * bounds
-	 * @param {boolean} [force=false] 
-	 * @returns {{ height: number, width: number }}
-	 */
-	bounds(force = false) {
-
-		if (force || !this.elementBounds) {
-			this.elementBounds = bounds(this.element);
-		}
-
-		return this.elementBounds;
-	}
-
-	/**
 	 * highlight
 	 * @param {string} cfiRange 
 	 * @param {object} [data={}] 
@@ -531,7 +457,7 @@ class IframeView {
 		data["epubcfi"] = cfiRange;
 
 		if (this.marks === null) {
-			this.marks = new Marks(this.iframe, this.element);
+			this.marks = new Marks(this.iframe, this.container);
 		}
 
 		const attributes = Object.assign({
@@ -588,7 +514,7 @@ class IframeView {
 		data["epubcfi"] = cfiRange;
 
 		if (this.marks === null) {
-			this.marks = new Marks(this.iframe, this.element);
+			this.marks = new Marks(this.iframe, this.container);
 		}
 
 		const attributes = Object.assign({
@@ -689,29 +615,32 @@ class IframeView {
 
 		if (this.blobUrl) {
 			revokeBlobUrl(this.blobUrl);
+			this.blobUrl = undefined;
 		}
 
 		if (this.displayed) {
-			this.displayed = false;
-
+			this.displayed = undefined;
+			this.expanding = undefined;
+			this.document = undefined;
 			this.contents.destroy();
-
-			this.stopExpanding = true;
-			this.element.removeChild(this.iframe);
+			this.contents = undefined;
+			this.settings = undefined;
+			this.section = undefined;
+			this.container.removeChild(this.iframe);
+			this.container = undefined;
+			this.iframe = undefined;
+			this.layout = undefined;
+			this.method = undefined;
+			this.width = undefined;
+			this.height = undefined;
+			this.writingMode = undefined;
+			this.id = undefined;
 
 			if (this.marks) {
 				this.marks.element.remove();
 				this.marks.clear();
+				this.marks = undefined;
 			}
-
-			this.iframe = undefined;
-			this.contents = undefined;
-			this.document = undefined;
-
-			this.textWidth = null;
-			this.textHeight = null;
-			this.width = null;
-			this.height = null;
 		}
 	}
 }
