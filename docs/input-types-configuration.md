@@ -11,8 +11,6 @@ The **epub.js** library supports the following input types:
 | `binary`    | `object` | `ArrayBuffer` | auto      |
 | `base64`    | `string` |               | require   |
 | `epub`      | `string` |               | auto      |
-| `opf`       | `string` |               | auto      |
-| `json`      | `string` |               | auto      |
 | `directiry` | `string` |               | auto      |
 
 ## Open book from ArrayBuffer
@@ -106,34 +104,6 @@ const book = ePub("https://example.com/to/book.epub")
 <script src="jszip.min.js"></script>
 ```
 
-## Open book from package.opf
-
-**Input type:** `opf`
-
-**Resources.replacements:** `null`
-
-This input type is essentially a file as well. However, it is an XML file that describes the entire structure of subdirectories and files relative to the root directory of the package. For example, when entering:
-
-```js
-const book = ePub("/path/to/book/OPS/package.opf")
-```
-
-the root directory of the package is `/path/to/book/OPS/`
-
-## Open book from package.json
-
-**Input type:** `json`
-
-**Resources.replacements:** `null`
-
-This input type is similar to the `opf` type, only in JSON format. For example,
-
-```js
-const book = ePub("/path/to/book/OPS/package.json")
-```
-
-Note that this package format is not specified as a standard. The question of which format should be adopted as a reference is open to discussion (see the [package.json](../assets/alice/OPS/package.json) data format for more information).
-
 ## Open book from directory
 
 **Input type:** `directory`
@@ -158,3 +128,17 @@ const book = ePub("/path/to/book/", {
 ```
 
 Full example: [Storage when unarchive](../examples/storage-when-unarchive.html)
+
+### Container format extentsion
+
+The following configuration is experimental. In fact, this input type is an extension of the `directory` type. The difference is that we explicitly define the container format as JSON.
+
+```js
+const book = ePub("/path/to/book/", { format: "json" })
+```
+
+Note that this format is not specified as a standard. The question of which format should be adopted as a reference is open to discussion. The following files are used as examples:
+
+- [container.json](../assets/alice/META-INF/container.json)
+- [package.json](../assets/alice/OPS/package.json)
+- [nav.json](../assets/alice/OPS/nav.json)
