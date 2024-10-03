@@ -22,7 +22,6 @@ const INPUT_TYPE = {
 	BINARY: "binary",
 	BASE64: "base64",
 	EPUB: "epub",
-	JSON: "json",
 	DIRECTORY: "directory"
 };
 
@@ -35,6 +34,7 @@ class Book {
 	 * Constructor
 	 * @param {string|ArrayBuffer} [input] Url, Path or ArrayBuffer
 	 * @param {object} [options]
+	 * @param {string} [options.format='xml'] epub container format
 	 * @param {object} [options.request] object options to xhr request
 	 * @param {Function} [options.request.method] a request function to use instead of the default
 	 * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
@@ -44,7 +44,7 @@ class Book {
 	 * @param {Function} [options.canonical] optional function to determine canonical urls for a path
 	 * @param {string} [options.store=null] cache the contents in local storage, value should be the name of the reader
 	 * @example new Book()
-	 * @example new Book("/path/to/book/" { store: "epub-js" })
+	 * @example new Book("/path/to/book/", { store: "epub-js" })
 	 * @example new Book({ replacements: "base64", store: "epub-js" })
 	 */
 	constructor(input, options) {
@@ -240,10 +240,8 @@ class Book {
 	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"json"` OR `"directory"`
 	 * @returns {Promise<Book>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
-	 * @example book.open("/path/to/book/", "json")
 	 * @example book.open("/path/to/book.epub")
 	 * @example book.open("https://example.com/book/")
-	 * @example book.open("https://example.com/book/", "json")
 	 * @example book.open("https://example.com/book.epub")
 	 * @example book.open([arraybuffer], "binary")
 	 */
@@ -275,10 +273,10 @@ class Book {
 		} else {
 			this.url = new Url(input);
 			let path;
-			if (type === INPUT_TYPE.DIRECTORY) {
-				path = CONTAINER_PATH_0;
-			} else {
+			if (this.settings.format === "json") {
 				path = CONTAINER_PATH_1;
+			} else {
+				path = CONTAINER_PATH_0;
 			}
 			opening = this.openContainer(path, type);
 		}
@@ -289,15 +287,15 @@ class Book {
 	/**
 	 * Open an archived epub
 	 * @param {string|ArrayBuffer} input
-	 * @param {string} [encoding] input type: `"base64"`
+	 * @param {string} [type] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openEpub(input, encoding) {
+	async openEpub(input, type) {
 
-		const type = encoding || this.settings.encoding;
+		const encoding = type || this.settings.encoding;
 
-		return this.unarchive(input, type).then(() => {
+		return this.unarchive(input, encoding).then(() => {
 			return this.openContainer(CONTAINER_PATH_0);
 		});
 	}
@@ -305,36 +303,34 @@ class Book {
 	/**
 	 * Open the epub container
 	 * @param {string} url
-	 * @param {string} type 
 	 * @returns {Promise<string>}
 	 * @private
 	 */
-	async openContainer(url, type) {
+	async openContainer(url) {
 
 		return this.load(url).then((data) => {
-			if (type === INPUT_TYPE.JSON) {
+			if (this.settings.format === "json") {
 				return this.container.load(data);
 			} else {
 				return this.container.parse(data);
 			}
 		}).then((container) => {
 			const uri = this.resolve(container.fullPath);
-			return this.openPackaging(uri, type);
+			return this.openPackaging(uri);
 		});
 	}
 
 	/**
 	 * Open the package.opf
 	 * @param {string} url
-	 * @param {string} [type] 
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openPackaging(url, type) {
+	async openPackaging(url) {
 
 		this.path = new Path(url);
 		return this.load(url).then((data) => {
-			if (type === INPUT_TYPE.JSON) {
+			if (this.settings.format === "json") {
 				return this.packaging.load(data);
 			} else {
 				return this.packaging.parse(data);
