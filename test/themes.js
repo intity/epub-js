@@ -2,9 +2,9 @@ import assert from "assert"
 import Book from "../src/book"
 
 describe("Themes", () => {
-    let rendition, theme
+    let book, rendition, theme
     before(async () => {
-        const book = new Book("/assets/alice/")
+        book = new Book("../assets/alice/")
         rendition = book.renderTo(document.body, {
             width: "100%",
             height: "100%"
@@ -100,5 +100,11 @@ describe("Themes", () => {
             const rule = rendition.themes.rules["font-size"]
             assert.equal(rule, undefined)
         })
+    })
+    after(() => {
+        book.destroy()
+        book = undefined
+        rendition = undefined
+        theme = undefined
     })
 })

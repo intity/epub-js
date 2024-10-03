@@ -4,10 +4,7 @@ import Book from "../src/book"
 describe("Section", () => {
     let book, section1, section2
     before(async () => {
-        book = new Book("/assets/alice/", {
-            width: 400,
-            height: 400
-        })
+        book = new Book("../assets/alice/")
         await book.opened
         section1 = book.section("chapter_001.xhtml")
         section2 = book.section("chapter_010.xhtml")
@@ -95,5 +92,11 @@ describe("Section", () => {
             assert.equal(results[0].cfi, "epubcfi(/6/26!/4/2/6,/1:5,/3:12)")
             assert.equal(results[0].excerpt, "\"Oh, I beg your pardon!\" she exclaimed in a tone of great dismay.")
         })
+    })
+    after(() => {
+        book.destroy()
+        book = undefined
+        section1 = undefined
+        section2 = undefined
     })
 })

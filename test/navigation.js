@@ -53,4 +53,12 @@ describe("Navigation", () => {
             assert.equal(nav.toc.length, 0)
         })
     })
+    after(() => {
+        const len = items.length
+        for (let i = 0; i < len; ++i) {
+            items[i].doc = undefined
+            items[i].nav.destroy()
+            delete items[i]
+        }
+    })
 })
