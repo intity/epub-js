@@ -6,18 +6,17 @@ describe("Themes", () => {
     before(async () => {
         book = new Book("../assets/alice/")
         rendition = book.renderTo(document.body, {
-            width: "100%",
-            height: "100%"
+            spread: "none"
         })
         await book.opened
         await rendition.display()
     })
     describe("#register()", () => {
         it("should register a theme by url", () => {
-            rendition.themes.register("light", "/examples/themes.css")
+            rendition.themes.register("light", "../examples/themes.css")
             theme = rendition.themes.get("light")
             assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
-            rendition.themes.register("dark", "/examples/themes.css")
+            rendition.themes.register("dark", "../examples/themes.css")
             theme = rendition.themes.get("dark")
             assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
             rendition.themes.clear()
@@ -61,8 +60,8 @@ describe("Themes", () => {
         })
         it("should register a themes from object with urls", () => {
             rendition.themes.register({
-                light: "/examples/themes.css",
-                dark: "/examples/themes.css"
+                light: "../examples/themes.css",
+                dark: "../examples/themes.css"
             })
             theme = rendition.themes.get("light")
             assert.equal(theme.url, "http://localhost:8080/examples/themes.css")

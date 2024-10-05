@@ -14,9 +14,9 @@ describe("Navigation", () => {
                 }
             })
         }
-        tasks.push(task(0, "/assets/alice/OPS/nav.xhtml"))
-        tasks.push(task(1, "/assets/alice/OPS/nav.ncx"))
-        tasks.push(task(2, "/assets/alice/OPS/nav.json"))
+        tasks.push(task(0, "../assets/alice/OPS/nav.xhtml"))
+        tasks.push(task(1, "../assets/alice/OPS/nav.ncx"))
+        tasks.push(task(2, "../assets/alice/OPS/nav.json"))
         return Promise.all(tasks)
     })
     describe("#parse()", () => {
@@ -35,10 +35,10 @@ describe("Navigation", () => {
             assert.equal(nav.pageList.length, 48)
             assert.equal(nav.toc.links.size, 11)
         })
-        it("should parse navigation from nav.json object", async () => {
+        it("should load navigation from nav.json object", async () => {
             const nav = items[2].nav
             const doc = items[2].doc
-            await nav.parse(doc)
+            await nav.load(doc)
             assert.equal(nav.landmarks.size, 1)
             assert.equal(nav.pageList.length, 48)
             assert.equal(nav.toc.links.size, 11)

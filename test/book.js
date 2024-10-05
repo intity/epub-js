@@ -15,7 +15,7 @@ describe("Book", () => {
 	describe("open book from epub file of local server", () => {
 		const book = new Book()
 		it("should open a archived epub", async () => {
-			await book.open("/assets/alice.epub")
+			await book.open("../assets/alice.epub")
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -49,7 +49,7 @@ describe("Book", () => {
 	describe("open book from array buffer", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch("/assets/alice.epub")
+			const response = await fetch("../assets/alice.epub")
 			data = await response.arrayBuffer()
 			book = new Book()
 		})
@@ -73,7 +73,7 @@ describe("Book", () => {
 		let book, data
 		before(async () => {
 			book = new Book()
-			const response = await fetch("/assets/alice.epub")
+			const response = await fetch("../assets/alice.epub")
 			const blob = await response.blob()
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader()
@@ -104,7 +104,7 @@ describe("Book", () => {
 	describe("open book from epub file without cover", () => {
 		const book = new Book()
 		it("should open a archived epub", async () => {
-			await book.open("/assets/alice_without_cover.epub")
+			await book.open("../assets/alice_without_cover.epub")
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -121,7 +121,7 @@ describe("Book", () => {
 	describe("open book from directory of local server", () => {
 		const book = new Book()
 		it("should open a unarchived epub", async () => {
-			await book.open("/assets/alice/")
+			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
 				url: "http://localhost:8080/assets/alice/"
@@ -145,9 +145,9 @@ describe("Book", () => {
 		})
 	})
 	/*describe("open book from container.json of local server", () => {
-		const book = new Book()
+		const book = new Book({ format: "json" })
 		it("should open a unarchived epub", async () => {
-			await book.open("/assets/alice/", "json")
+			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
 				url: "http://localhost:8080/assets/alice/"
@@ -159,9 +159,9 @@ describe("Book", () => {
 		})
 	})
 	describe("open book from container.json of remote server", () => {
-		const book = new Book()
+		const book = new Book({ format: "json" })
 		it("should open a unarchived epub", async () => {
-			await book.open("https://intity.github.io/epub-js/assets/alice/", "json")
+			await book.open("https://intity.github.io/epub-js/assets/alice/")
 			assertion(book, {
 				archived: false,
 				url: "https://intity.github.io/epub-js/assets/alice/"
