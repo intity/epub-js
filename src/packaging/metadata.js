@@ -13,28 +13,33 @@ class Metadata extends Map {
      */
     parse(node) {
 
-        for (const item of node.children) {
+        const items = [...node.children];
+
+        items.forEach((item) => {
             if (item.nodeName === "meta") {
                 this.parseMeta(item);
             } else if (/dc:/.test(item.nodeName)) {
                 // dc:title
                 // dc:creator
+                // dc:coverage
+                // dc:contributor
                 // dc:description
                 // dc:publisher
                 // dc:identifier
                 // dc:language
+                // dc:relation
                 // dc:subject
+                // dc:format
                 // dc:rights
+                // dc:source
                 // dc:date
                 // dc:type
                 const key = item.nodeName.substring(3);
                 this.set(key, item.textContent);
             }
-        }
-
-        return new Promise((resolve, reject) => {
-            resolve(this);
         });
+
+        return Promise.resolve(this);
     }
 
     /**
@@ -79,12 +84,10 @@ class Metadata extends Map {
     load(metadata) {
 
         Object.keys(metadata).forEach((prop) => {
-			this.set(prop, metadata[prop]);
-		});
-
-        return new Promise((resolve, reject) => {
-            resolve(this);
+            this.set(prop, metadata[prop]);
         });
+
+        return Promise.resolve(this);
     }
 
     /**
