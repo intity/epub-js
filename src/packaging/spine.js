@@ -1,4 +1,4 @@
-import { qsa, indexOfNode } from "../utils/core";
+import { indexOfNode } from "../utils/core";
 
 /**
  * A collection of Spine Items
@@ -34,24 +34,23 @@ class Spine extends Map {
 	 */
 	parse(node) {
 
-		const items = qsa(node, "itemref");
-		items.forEach((item, index) => {
+		const items = [...node.children];
 
-			const props = item.getAttribute("properties") || "";
+		items.forEach((item, index) => {
 			const idref = item.getAttribute("idref");
-			this.set(idref, {
+			const props = item.getAttribute("properties");
+			const entry = {
 				id: item.getAttribute("id"),
 				idref: idref,
 				index: index,
 				linear: item.getAttribute("linear") || "yes",
-				properties: props.length ? props.split(" ") : []
-			})
+				properties: props ? props.split(" ") : []
+			};
+			this.set(idref, entry);
 		});
 		this.nodeIndex = indexOfNode(node, Node.ELEMENT_NODE);
 
-		return new Promise((resolve) => {
-            resolve(this);
-        });
+		return Promise.resolve(this);
 	}
 
 	/**
@@ -60,7 +59,7 @@ class Spine extends Map {
 	 * @returns {Promise<Spine>}
 	 */
 	load(spine) {
-		
+
 		spine.forEach((item, index) => {
 			this.set(item.idref, {
 				id: item.id || null,
@@ -72,9 +71,7 @@ class Spine extends Map {
 		});
 		this.nodeIndex = 0;
 
-		return new Promise((resolve) => {
-            resolve(this);
-        });
+		return Promise.resolve(this);
 	}
 
 	/**
