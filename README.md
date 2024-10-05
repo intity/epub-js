@@ -42,7 +42,7 @@ Create the new ePub, and then render it to that element:
 
 ```html
 <script>
-    const book = ePub("uri/to/book/package.opf")
+    const book = ePub("uri/to/book/")
     const rendition = book.renderTo("viewer", {
         width: 600,
         height: 400
