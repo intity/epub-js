@@ -4,11 +4,6 @@
 
 import { DOMParser as XMLDOMParser } from "@xmldom/xmldom";
 
-/**
- * Vendor prefixed requestAnimationFrame
- * @returns {function} requestAnimationFrame
- */
-export const requestAnimationFrame = (typeof window != "undefined") ? (window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame) : false;
 const _URL = typeof URL != "undefined" ? URL : (typeof window != "undefined" ? (window.URL || window.webkitURL || window.mozURL) : undefined);
 
 /**
