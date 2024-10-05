@@ -2,8 +2,6 @@
  * @module core
  */
 
-const _URL = typeof URL !== "undefined" ? URL : (typeof window !== "undefined" ? (window.URL || window.webkitURL || window.mozURL) : undefined);
-
 /**
  * Generates a UUID
  * @link https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
@@ -431,7 +429,7 @@ export const createBlob = (content, mime) => {
 export const createBlobUrl = (content, mime) => {
 
 	const blob = createBlob(content, mime);
-	return _URL.createObjectURL(blob);
+	return URL.createObjectURL(blob);
 }
 
 /**
@@ -440,7 +438,7 @@ export const createBlobUrl = (content, mime) => {
  */
 export const revokeBlobUrl = (url) => {
 
-	return _URL.revokeObjectURL(url);
+	return URL.revokeObjectURL(url);
 }
 
 /**
