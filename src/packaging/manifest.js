@@ -1,4 +1,4 @@
-import { qsa, qsp } from "../utils/core";
+import { qsp } from "../utils/core";
 
 /**
  * Manifest class
@@ -40,17 +40,16 @@ class Manifest extends Map {
      */
     parse(node) {
 
-        //-- Turn items into an array
-        const items = qsa(node, "item");
-        //-- Create an object with the id as key
+        const items = [...node.children];
+
         items.forEach((item) => {
-            const props = item.getAttribute("properties") || "";
+            const props = item.getAttribute("properties");
             const entry = {
                 "id": item.getAttribute("id"),
                 "href": item.getAttribute("href") || "",
                 "media-type": item.getAttribute("media-type") || "",
                 "media-overlay": item.getAttribute("media-overlay") || "",
-                "properties": props.length ? props.split(" ") : []
+                "properties": props ? props.split(" ") : []
             };
             this.set(entry.id, entry);
             if (this.navPath === null && (props === "nav" || entry["media-type"] === "application/x-dtbncx+xml")) {
@@ -65,9 +64,7 @@ class Manifest extends Map {
             this.coverPath = this.findCoverPath(node);
         }
 
-        return new Promise((resolve) => {
-            resolve(this);
-        });
+        return Promise.resolve(this);
     }
 
     /**
@@ -99,21 +96,19 @@ class Manifest extends Map {
 
         manifest.forEach((item) => {
             for (const prop of item.properties) {
-				switch (prop) {
-					case "nav":
+                switch (prop) {
+                    case "nav":
                         this.navPath = item.href;
-						break;
+                        break;
                     case "cover-image":
                         this.coverPath = item.href;
                         break;
-				}
-			}
+                }
+            }
             this.set(item.id, item);
         });
 
-        return new Promise((resolve) => {
-            resolve(this);
-        });
+        return Promise.resolve(this);
     }
 
     /**
