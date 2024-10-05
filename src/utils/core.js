@@ -2,9 +2,7 @@
  * @module core
  */
 
-import { DOMParser as XMLDOMParser } from "@xmldom/xmldom";
-
-const _URL = typeof URL != "undefined" ? URL : (typeof window != "undefined" ? (window.URL || window.webkitURL || window.mozURL) : undefined);
+const _URL = typeof URL !== "undefined" ? URL : (typeof window !== "undefined" ? (window.URL || window.webkitURL || window.mozURL) : undefined);
 
 /**
  * Generates a UUID
@@ -478,17 +476,9 @@ export const type = (obj) => {
  * Parse xml (or html) markup
  * @param {string} markup
  * @param {string} mime
- * @param {boolean} forceXMLDom force using xmlDom to parse instead of native parser
  * @returns {Document} document
  */
-export const parse = (markup, mime, forceXMLDom) => {
-
-	let Parser;
-	if (typeof DOMParser === "undefined" || forceXMLDom) {
-		Parser = XMLDOMParser;
-	} else {
-		Parser = DOMParser;
-	}
+export const parse = (markup, mime) => {
 
 	// Remove byte order mark before parsing
 	// https://www.w3.org/International/questions/qa-byte-order-mark
@@ -496,7 +486,8 @@ export const parse = (markup, mime, forceXMLDom) => {
 		markup = markup.slice(1);
 	}
 
-	return new Parser().parseFromString(markup, mime);
+	const parser = new DOMParser();
+	return parser.parseFromString(markup, mime);
 }
 
 /**
