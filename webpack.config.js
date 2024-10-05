@@ -46,9 +46,8 @@ module.exports = {
 		minimize: MINIMIZE
 	},
 	externals: {
-		"jszip/dist/jszip": "JSZip",
-		"localforage": "localforage",
-		"xmldom": "xmldom"
+		"jszip": "JSZip",
+		"localforage": "localforage"
 	},
 	plugins: [
 		new webpack.ProvidePlugin({

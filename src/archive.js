@@ -1,7 +1,7 @@
 import request from "./utils/request";
 import mime from "./utils/mime";
 import Input from "./input";
-import JSZip from "jszip/dist/jszip";
+import JSZip from "jszip";
 
 /**
  * Handles Unzipping a requesting files from an Epub Archive
