@@ -492,13 +492,15 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath).then((target) => {
-				return this.navigation.parse(target);
+			return this.load(navPath).then((data) => {
+				if (this.settings.format === "json") {
+					return this.navigation.load(data);
+				} else {
+					return this.navigation.parse(data);
+				}
 			});
 		} else {
-			return new Promise((resolve) => {
-				resolve(this.navigation);
-			});
+			return Promise.resolve(this.navigation);
 		}
 	}
 
