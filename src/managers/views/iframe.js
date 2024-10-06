@@ -281,29 +281,25 @@ class IframeView {
 			return loading.promise;
 		}
 
-		if (this.method === "blobUrl") {
+		this.container.appendChild(this.iframe);
+		this.document = this.iframe.contentDocument;
+		this.iframe.onload = (e) => this.onLoad(e, loading);
+
+		if (!this.document) {
+			loading.reject(new Error("No Document Available"));
+			return loading.promise;
+		} else if (this.method === "blobUrl") {
 			this.blobUrl = createBlobUrl(contents, "application/xhtml+xml");
 			this.iframe.src = this.blobUrl;
-			this.container.appendChild(this.iframe);
 		} else if (this.method === "srcdoc") {
 			this.iframe.srcdoc = contents;
-			this.container.appendChild(this.iframe);
 		} else {
-			this.container.appendChild(this.iframe);
-			this.document = this.iframe.contentDocument;
-
-			if (!this.document) {
-				loading.reject(new Error("No Document Available"));
-				return loading.promise;
-			}
-
 			this.document.open();
-			this.document.write("<!DOCTYPE html>"); // required in Firefox
+			this.document.write("<!DOCTYPE html>");
 			this.document.write(contents);
 			this.document.close();
 		}
 
-		this.iframe.onload = (e) => this.onLoad(e, loading);
 		return loading.promise;
 	}
 
