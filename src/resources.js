@@ -6,8 +6,6 @@ import {
 import Url from "./utils/url";
 import mime from "./utils/mime";
 
-const _URL = window.URL || window.webkitURL || window.mozURL;
-
 /**
  * Assets container for URL replacements
  * @extends {Map}
@@ -37,7 +35,7 @@ class Resources extends Map {
 
 		if (this.replacements === "blobUrl") {
 			this.forEach((value, key) => {
-				_URL.revokeObjectURL(value);
+				URL.revokeObjectURL(value);
 			});
 		}
 		super.clear();
@@ -58,7 +56,7 @@ class Resources extends Map {
 		if (this.archive) {
 			const type = base64 ? "base64" : "blob";
 			return this.archive.request(uri, type).then((data) => {
-				return base64 ? data : _URL.createObjectURL(data);
+				return base64 ? data : URL.createObjectURL(data);
 			});
 		} else if (base64) {
 			return this.request(uri, "blob").then((blob) => {
@@ -81,7 +79,7 @@ class Resources extends Map {
 		if (this.replacements === "blobUrl") {
 			const blobUrl = this.get(url);
 			if (blobUrl) {
-				_URL.revokeObjectURL(blobUrl);
+				URL.revokeObjectURL(blobUrl);
 			}
 		}
 	}
