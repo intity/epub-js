@@ -117,7 +117,9 @@ class Viewport {
 	 */
 	appendListeners() {
 		//-- ORIENTATION_CHANGE
-		screen.orientation.addEventListener("change", this.orientation.bind(this));
+		if (screen.orientation) {
+			screen.orientation.addEventListener("change", this.orientation.bind(this));
+		}
 		//-- RESIZED
 		this.resizeFunc = new ResizeObserver((e) => {
 			requestAnimationFrame(() => this.resized(e));
@@ -131,7 +133,9 @@ class Viewport {
 	 */
 	removeListeners() {
 		//-- ORIENTATION_CHANGE
-		screen.orientation.removeEventListener("change", this.orientation.bind(this));
+		if (screen.orientation) {
+			screen.orientation.removeEventListener("change", this.orientation.bind(this));
+		}
 		//-- RESIZE
 		if (this.resizeFunc) {
 			this.resizeFunc.disconnect();

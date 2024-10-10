@@ -23,7 +23,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:nodedata:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -40,7 +40,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:nodedata:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -49,7 +49,7 @@ describe("Book", () => {
 	describe("open book from array buffer", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch("../assets/alice.epub")
+			const response = await fetch("http://localhost:8080/assets/alice.epub")
 			data = await response.arrayBuffer()
 			book = new Book()
 		})
@@ -62,28 +62,20 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:nodedata:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
-			data = undefined;
 		})
 	})
 	describe("open book from data URL in base64 encoding", () => {
 		let book, data
 		before(async () => {
-			book = new Book()
-			const response = await fetch("../assets/alice.epub")
+			const response = await fetch("http://localhost:8080/assets/alice.epub")
 			const blob = await response.blob()
-			return new Promise((resolve, reject) => {
-				const reader = new FileReader()
-				reader.onload = (e) => {
-					data = e.target.result
-					resolve(data)
-				}
-				reader.onerror = (err) => reject(err)
-				reader.readAsDataURL(blob)
-			})
+			const buff = Buffer.from(await blob.arrayBuffer())
+			data = buff.toString("base64")
+			book = new Book()
 		})
 		it("should open a archived epub", async () => {
 			await book.open(data, "base64")
@@ -94,11 +86,10 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:nodedata:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
-			data = undefined;
 		})
 	})
 	describe("open book from epub file without cover", () => {
