@@ -34,6 +34,12 @@ class Container {
 		 * @readonly
 		 */
 		this.mediaType = "";
+		/**
+		 * @member {string} version
+		 * @memberof Container
+		 * @readonly
+		 */
+		this.version = "";
 	}
 
 	/**
@@ -45,36 +51,69 @@ class Container {
 		this.fullPath = "";
 		this.encoding = "";
 		this.mediaType = "";
+		this.version = "";
 	}
 
 	/**
 	 * Parse the Container XML
-	 * @param {Document} containerDocument
+	 * @param {Document} doc
 	 * @returns {Promise<Container>}
 	 */
-	parse(containerDocument) {
+	parse(doc) {
 
-		if (!containerDocument) {
+		if (!doc) {
 			throw new Error("Container File Not Found");
 		}
 
-		// <rootfile
-		//   full-path="OPS/package.opf" 
-		//   media-type="application/oebps-package+xml"/>
-		const rootfile = qs(containerDocument, "rootfile");
+		const container = qs(doc, "container");
+
+		if (!container) {
+			throw new Error("container node not found");
+		}
+
+		const rootfile = qs(doc, "rootfile");
 
 		if (!rootfile) {
-			throw new Error("No RootFile Found");
+			throw new Error("rootfile node not found");
 		}
 
 		this.fullPath = rootfile.getAttribute("full-path");
 		this.directory = Path.prototype.dirname(this.fullPath);
-		this.encoding = containerDocument.characterSet;
+		this.encoding = doc.characterSet;
 		this.mediaType = rootfile.getAttribute("media-type");
+		this.version = container.getAttribute("version");
 
-		return new Promise((resolve) => {
-			resolve(this);
+		return Promise.resolve(this);
+	}
+
+	/**
+	 * Load a container from JSON
+	 * @param {object} container 
+	 * @returns {Promise<Container>}
+	 */
+	load(container) {
+
+		Object.keys(container).forEach(p => {
+			switch (p) {
+				case "directory":
+					this.directory = container[p];
+					break;
+				case "encoding":
+					this.encoding = container[p];
+					break;
+				case "full-path":
+					this.fullPath = container[p];
+					break;
+				case "media-type":
+					this.mediaType = container[p];
+					break;
+				case "version":
+					this.version = container[p];
+					break;
+			}
 		});
+
+		return Promise.resolve(this);
 	}
 
 	/**
@@ -83,9 +122,10 @@ class Container {
 	destroy() {
 
 		this.directory = undefined;
-		this.fullPath = undefined;
 		this.encoding = undefined;
+		this.fullPath = undefined;
 		this.mediaType = undefined;
+		this.version = undefined;
 	}
 }
 

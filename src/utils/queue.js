@@ -1,5 +1,4 @@
 import Defer from "./defer";
-import { requestAnimationFrame } from "./core";
 
 /**
  * Queue for handling tasks one at a time
@@ -13,7 +12,6 @@ class Queue {
 
         this._q = [];
         this.context = context;
-        this.tick = requestAnimationFrame;
         this.running = false;
         this.paused = false;
     }
@@ -47,8 +45,6 @@ class Queue {
 
         // Wait to start queue flush
         if (this.paused === false && !this.running) {
-            // setTimeout(this.flush.bind(this), 0);
-            // this.tick.call(window, this.run.bind(this));
             this.run();
         }
 
@@ -111,7 +107,7 @@ class Queue {
             this.deferred = new Defer();
         }
 
-        this.tick.call(window, () => {
+        requestAnimationFrame(() => {
 
             if (this._q.length) {
                 this.dequeue().then(() => {

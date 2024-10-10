@@ -2,15 +2,6 @@
  * @module core
  */
 
-import { DOMParser as XMLDOMParser } from "@xmldom/xmldom";
-
-/**
- * Vendor prefixed requestAnimationFrame
- * @returns {function} requestAnimationFrame
- */
-export const requestAnimationFrame = (typeof window != "undefined") ? (window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame) : false;
-const _URL = typeof URL != "undefined" ? URL : (typeof window != "undefined" ? (window.URL || window.webkitURL || window.mozURL) : undefined);
-
 /**
  * Generates a UUID
  * @link https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
@@ -438,7 +429,7 @@ export const createBlob = (content, mime) => {
 export const createBlobUrl = (content, mime) => {
 
 	const blob = createBlob(content, mime);
-	return _URL.createObjectURL(blob);
+	return URL.createObjectURL(blob);
 }
 
 /**
@@ -447,7 +438,7 @@ export const createBlobUrl = (content, mime) => {
  */
 export const revokeBlobUrl = (url) => {
 
-	return _URL.revokeObjectURL(url);
+	return URL.revokeObjectURL(url);
 }
 
 /**
@@ -483,17 +474,9 @@ export const type = (obj) => {
  * Parse xml (or html) markup
  * @param {string} markup
  * @param {string} mime
- * @param {boolean} forceXMLDom force using xmlDom to parse instead of native parser
  * @returns {Document} document
  */
-export const parse = (markup, mime, forceXMLDom) => {
-
-	let Parser;
-	if (typeof DOMParser === "undefined" || forceXMLDom) {
-		Parser = XMLDOMParser;
-	} else {
-		Parser = DOMParser;
-	}
+export const parse = (markup, mime) => {
 
 	// Remove byte order mark before parsing
 	// https://www.w3.org/International/questions/qa-byte-order-mark
@@ -501,7 +484,8 @@ export const parse = (markup, mime, forceXMLDom) => {
 		markup = markup.slice(1);
 	}
 
-	return new Parser().parseFromString(markup, mime);
+	const parser = new DOMParser();
+	return parser.parseFromString(markup, mime);
 }
 
 /**

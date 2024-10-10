@@ -347,7 +347,7 @@ class Snap {
 			}
 
 			if (time < 1) {
-				window.requestAnimationFrame(tick.bind(this));
+				requestAnimationFrame(tick);
 				this.scrollTo(start + ((destination - start) * time), 0);
 			} else {
 				this.scrollTo(destination, 0);

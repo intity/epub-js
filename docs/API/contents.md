@@ -32,8 +32,8 @@ Handles DOM manipulation, queries and events for View contents
         * [.cfiFromRange(range, [ignoreClass])](#Contents+cfiFromRange) ⇒ <code>string</code>
         * [.cfiFromNode(node, [ignoreClass])](#Contents+cfiFromNode) ⇒ <code>string</code>
         * [.map(layout)](#Contents+map) ⇒ <code>Array.&lt;object&gt;</code>
-        * [.format(layout, section)](#Contents+format)
-        * [.scaler(scale, offsetX, offsetY)](#Contents+scaler)
+        * [.format(layout)](#Contents+format)
+        * [.scale(scale, offsetX, offsetY)](#Contents+scale)
         * [.direction([dir])](#Contents+direction)
         * [.mapPage(cfiBase, layout, start, end, dev)](#Contents+mapPage) ⇒ <code>any</code>
         * [.writingMode([mode])](#Contents+writingMode)
@@ -341,19 +341,18 @@ map
 
 <a name="Contents+format"></a>
 
-## contents.format(layout, section)
-Apply Css to a Document
+## contents.format(layout)
+Apply CSS to a Document
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type |
 | --- | --- |
 | layout | <code>Layout</code> | 
-| section | <code>Section</code> | 
 
-<a name="Contents+scaler"></a>
+<a name="Contents+scale"></a>
 
-## contents.scaler(scale, offsetX, offsetY)
+## contents.scale(scale, offsetX, offsetY)
 Scale contents from center
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  

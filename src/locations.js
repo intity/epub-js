@@ -31,7 +31,7 @@ class Locations extends Map {
 		this.current = new Location();
 		this.processing = new Defer();
 		/**
-		 * @member {Promise} generated
+		 * @member {Promise<Locations>} generated
 		 * @memberof Locations
 		 * @readonly
 		 */

@@ -66,7 +66,8 @@ the section content.
 | [options.layout] | <code>string</code> |  | layout to force |
 | [options.spread] | <code>string</code> |  | force spread value |
 | [options.direction] | <code>string</code> |  | direction `"ltr"` OR `"rtl"` |
-| [options.pageWidth] | <code>number</code> |  | page width for scrolled-doc flow |
+| [options.pageWidth] | <code>number</code> |  | page width |
+| [options.pageHeight] | <code>number</code> |  | page height |
 | [options.minSpreadWidth] | <code>number</code> |  | overridden by spread: none (never) / both (always) |
 | [options.stylesheet] | <code>string</code> |  | url of stylesheet to be injected |
 | [options.script] | <code>string</code> |  | url of script to be injected |

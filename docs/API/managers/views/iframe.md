@@ -59,7 +59,6 @@ Constructor
 | [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
-| [options.forceRight] | <code>boolean</code> | <code>false</code> |  |
 
 <a name="IframeView+create"></a>
 

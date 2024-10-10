@@ -16,13 +16,12 @@ import Storage from "./storage";
 import { EPUBJS_VERSION, EVENTS } from "./utils/constants";
 import Sections from "./sections";
 
-const CONTAINER_PATH = "META-INF/container.xml";
+const CONTAINER_PATH_0 = "META-INF/container.xml";
+const CONTAINER_PATH_1 = "META-INF/container.json";
 const INPUT_TYPE = {
 	BINARY: "binary",
 	BASE64: "base64",
 	EPUB: "epub",
-	OPF: "opf",
-	MANIFEST: "json",
 	DIRECTORY: "directory"
 };
 
@@ -35,6 +34,7 @@ class Book {
 	 * Constructor
 	 * @param {string|ArrayBuffer} [input] Url, Path or ArrayBuffer
 	 * @param {object} [options]
+	 * @param {string} [options.format='xml'] epub container format
 	 * @param {object} [options.request] object options to xhr request
 	 * @param {Function} [options.request.method] a request function to use instead of the default
 	 * @param {boolean} [options.request.withCredentials=false] send the xhr request withCredentials
@@ -44,7 +44,7 @@ class Book {
 	 * @param {Function} [options.canonical] optional function to determine canonical urls for a path
 	 * @param {string} [options.store=null] cache the contents in local storage, value should be the name of the reader
 	 * @example new Book()
-	 * @example new Book("/path/to/book/" { store: "epub-js" })
+	 * @example new Book("/path/to/book/", { store: "epub-js" })
 	 * @example new Book({ replacements: "base64", store: "epub-js" })
 	 */
 	constructor(input, options) {
@@ -237,13 +237,11 @@ class Book {
 	/**
 	 * Open a epub or url
 	 * @param {string|ArrayBuffer} input Url, Path or ArrayBuffer
-	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"`
+	 * @param {string} [openAs] input type: `"binary"` OR `"base64"` OR `"epub"` OR `"json"` OR `"directory"`
 	 * @returns {Promise<Book>} of when the book has been loaded
 	 * @example book.open("/path/to/book/")
-	 * @example book.open("/path/to/book/OPS/package.opf")
 	 * @example book.open("/path/to/book.epub")
 	 * @example book.open("https://example.com/book/")
-	 * @example book.open("https://example.com/book/OPS/package.opf")
 	 * @example book.open("https://example.com/book.epub")
 	 * @example book.open([arraybuffer], "binary")
 	 */
@@ -272,17 +270,15 @@ class Book {
 				this.settings.request.withCredentials,
 				this.settings.request.headers
 			).then(this.openEpub.bind(this));
-		} else if (type === INPUT_TYPE.OPF) {
+		} else {
 			this.url = new Url(input);
-			const uri = this.url.path.toString();
-			opening = this.openPackaging(uri);
-		} else if (type === INPUT_TYPE.MANIFEST) {
-			this.url = new Url(input);
-			const uri = this.url.path.toString();
-			opening = this.openManifest(uri);
-		} else if (type === INPUT_TYPE.DIRECTORY) {
-			this.url = new Url(input);
-			opening = this.openDirectory();
+			let path;
+			if (this.settings.format === "json") {
+				path = CONTAINER_PATH_1;
+			} else {
+				path = CONTAINER_PATH_0;
+			}
+			opening = this.openContainer(path, type);
 		}
 
 		return opening;
@@ -291,18 +287,16 @@ class Book {
 	/**
 	 * Open an archived epub
 	 * @param {string|ArrayBuffer} input
-	 * @param {string} [encoding] input type: `"base64"`
+	 * @param {string} [type] input type: `"base64"`
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	async openEpub(input, encoding) {
+	async openEpub(input, type) {
 
-		const type = encoding || this.settings.encoding;
+		const encoding = type || this.settings.encoding;
 
-		return this.unarchive(input, type).then(() => {
-			return this.openContainer(CONTAINER_PATH);
-		}).then((url) => {
-			return this.openPackaging(url);
+		return this.unarchive(input, encoding).then(() => {
+			return this.openContainer(CONTAINER_PATH_0);
 		});
 	}
 
@@ -314,10 +308,15 @@ class Book {
 	 */
 	async openContainer(url) {
 
-		return this.load(url).then((xml) => {
-			return this.container.parse(xml);
+		return this.load(url).then((data) => {
+			if (this.settings.format === "json") {
+				return this.container.load(data);
+			} else {
+				return this.container.parse(data);
+			}
 		}).then((container) => {
-			return this.resolve(container.fullPath);
+			const uri = this.resolve(container.fullPath);
+			return this.openPackaging(uri);
 		});
 	}
 
@@ -330,42 +329,16 @@ class Book {
 	async openPackaging(url) {
 
 		this.path = new Path(url);
-		return this.load(url).then((xml) => {
-			return this.packaging.parse(xml);
+		return this.load(url).then((data) => {
+			if (this.settings.format === "json") {
+				return this.packaging.load(data);
+			} else {
+				return this.packaging.parse(data);
+			}
 		}).then(() => {
 			return this.loadNavigation();
 		}).then(() => {
 			return this.unpack();
-		});
-	}
-
-	/**
-	 * Open the manifest JSON
-	 * @param {string} url
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	async openManifest(url) {
-
-		this.path = new Path(url);
-		return this.load(url).then((json) => {
-			return this.packaging.load(json);
-		}).then(() => {
-			return this.loadNavigation();
-		}).then(() => {
-			return this.unpack();
-		});
-	}
-
-	/**
-	 * Open book from directory
-	 * @returns {Promise<any>}
-	 * @private
-	 */
-	async openDirectory() {
-
-		return this.openContainer(CONTAINER_PATH).then((url) => {
-			return this.openPackaging(url);
 		});
 	}
 
@@ -457,20 +430,10 @@ class Book {
 			extension = extension.replace(/\?.*$/, "");
 		}
 
-		if (!extension) {
-			return INPUT_TYPE.DIRECTORY;
-		}
-
 		if (extension === "epub") {
 			return INPUT_TYPE.EPUB;
-		}
-
-		if (extension === "opf") {
-			return INPUT_TYPE.OPF;
-		}
-
-		if (extension === "json") {
-			return INPUT_TYPE.MANIFEST;
+		} else {
+			return INPUT_TYPE.DIRECTORY;
 		}
 	}
 
@@ -529,13 +492,15 @@ class Book {
 		const navPath = this.packaging.manifest.navPath;
 
 		if (navPath) {
-			return this.load(navPath).then((target) => {
-				return this.navigation.parse(target);
+			return this.load(navPath).then((data) => {
+				if (this.settings.format === "json") {
+					return this.navigation.load(data);
+				} else {
+					return this.navigation.parse(data);
+				}
 			});
 		} else {
-			return new Promise((resolve) => {
-				resolve(this.navigation);
-			});
+			return Promise.resolve(this.navigation);
 		}
 	}
 
@@ -671,32 +636,38 @@ class Book {
 	 */
 	destroy() {
 
-		this.isOpen = false;
+		this.isOpen = undefined;
 		this.opened = undefined;
+		this.loaded = undefined;
 		this.opening = undefined;
 		this.loading = undefined;
-		this.loaded = undefined;
 
 		this.archive && this.archive.destroy();
+		this.storage && this.storage.destroy();
+		this.sections && this.sections.destroy();
 		this.locations && this.locations.destroy();
 		this.resources && this.resources.destroy();
 		this.container && this.container.destroy();
 		this.packaging && this.packaging.destroy();
 		this.rendition && this.rendition.destroy();
+		this.navigation && this.navigation.destroy();
 
 		this.archive = undefined;
+		this.storage = undefined;
+		this.archived = undefined;
+		this.sections = undefined;
 		this.locations = undefined;
 		this.resources = undefined;
 		this.container = undefined;
 		this.packaging = undefined;
 		this.rendition = undefined;
-
-		this.navigation.destroy();
 		this.navigation = undefined;
+
 		this.url = undefined;
 		this.path = undefined;
 		this.cover = undefined;
-		this.archived = false;
+		this.request = undefined;
+		this.settings = undefined;
 	}
 }
 

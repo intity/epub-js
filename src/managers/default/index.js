@@ -43,7 +43,6 @@ class DefaultViewManager {
 		});
 		this.settings = extend({
 			view: "iframe",
-			hidden: false,
 			method: null,
 			sandbox: [],
 			ignoreClass: "",
@@ -79,7 +78,7 @@ class DefaultViewManager {
 		 * @memberof DefaultViewManager
 		 * @readonly
 		 */
-		this.views = [];
+		this.views = new Views();
 		this.viewport = book.rendition.viewport;
 		/**
 		 * @member {string} writingMode
@@ -100,7 +99,6 @@ class DefaultViewManager {
 	render(element, size) {
 
 		this.scrollType = scrollType();
-		this.views = new Views();
 		this.viewport.attachTo(element, {
 			views: this.views,
 			width: size.width,
@@ -121,16 +119,12 @@ class DefaultViewManager {
 
 		const displaying = new Defer();
 
-		// Check if moving to target is needed
 		if (target === section.href || isNumber(target)) {
 			target = undefined;
 		}
 
-		// Check to make sure the section we want isn't already shown
 		const view = this.views.find(section);
-
-		// View is already shown, just move to correct location in view
-		if (view && this.layout.name !== "pre-paginated") {
+		if (view) {
 			const offset = view.offset();
 			let x, y = offset.top;
 			if (this.layout.direction === "ltr") {
@@ -149,16 +143,8 @@ class DefaultViewManager {
 			return displaying.promise;
 		}
 
-		this.clear(); // Hide all current views
-
-		let forceRight = false;
-		if (this.layout.name === "pre-paginated" &&
-			this.layout.divisor === 2 &&
-			section.properties.includes("page-spread-right")) {
-			forceRight = true;
-		}
-
-		this.append(section, forceRight).then((view) => {
+		this.clear();
+		this.append(section).then((view) => {
 
 			// Move to correct place within the section, if needed
 			if (target) {
@@ -231,11 +217,10 @@ class DefaultViewManager {
 	/**
 	 * createView
 	 * @param {Section} section 
-	 * @param {boolean} [forceRight]
 	 * @returns {object} View (default: IframeView)
 	 * @private
 	 */
-	createView(section, forceRight) {
+	createView(section) {
 
 		const view = this.requireView(this.settings.view);
 		return new view(this.layout, section, {
@@ -243,7 +228,6 @@ class DefaultViewManager {
 			method: this.settings.method,
 			sandbox: this.settings.sandbox,
 			ignoreClass: this.settings.ignoreClass,
-			forceRight: forceRight,
 			forceEvenPages: this.settings.forceEvenPages
 		});
 	}
@@ -314,13 +298,12 @@ class DefaultViewManager {
 	/**
 	 * append
 	 * @param {Section} section Section object
-	 * @param {boolean} [forceRight] 
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	append(section, forceRight) {
+	append(section) {
 
-		const view = this.createView(section, forceRight);
+		const view = this.createView(section);
 
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
 			this.displayed(view);
@@ -342,13 +325,12 @@ class DefaultViewManager {
 	/**
 	 * prepend
 	 * @param {Section} section 
-	 * @param {boolean} [forceRight] 
 	 * @returns {Promise<any>}
 	 * @private
 	 */
-	prepend(section, forceRight) {
+	prepend(section) {
 
-		const view = this.createView(section, forceRight);
+		const view = this.createView(section);
 
 		view.on(EVENTS.VIEWS.DISPLAYED, () => {
 			this.displayed(view);
@@ -395,13 +377,14 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const vph = this.layout.axis === AXIS_H && this.paginated;
+		const ish = this.layout.axis === AXIS_H && this.paginated;
+		const isv = this.layout.axis === AXIS_V && this.paginated;
 		const lsc = this.views.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
-		} else if (vph && dir === "ltr") {
+		} else if (ish && dir === "ltr") {
 
 			this.scrollLeft = lsc.scrollLeft;
 			left = lsc.scrollLeft + lsc.offsetWidth + this.layout.delta;
@@ -411,7 +394,7 @@ class DefaultViewManager {
 			} else {
 				section = this.views.last().section.next();
 			}
-		} else if (vph && dir === "rtl") {
+		} else if (ish && dir === "rtl") {
 
 			this.scrollLeft = lsc.scrollLeft;
 
@@ -432,7 +415,7 @@ class DefaultViewManager {
 					section = this.views.last().section.next();
 				}
 			}
-		} else if (this.layout.axis === AXIS_V && this.paginated) {
+		} else if (isv) {
 
 			const top = lsc.scrollTop + lsc.offsetHeight;
 
@@ -451,18 +434,10 @@ class DefaultViewManager {
 			// writing-mode from the old section. 
 			// Thus, we need to update layout.
 			this.calculate();
-
-			let forceRight = false;
-			if (this.layout.name === "pre-paginated" &&
-				this.layout.divisor === 2 &&
-				section.properties.includes("page-spread-right")) {
-				forceRight = true;
-			}
-
-			this.append(section, forceRight).then((view) => {
+			this.append(section).then((view) => {
 
 				// Reset position to start for scrolled-doc vertical-rl in default mode
-				if (!vph && dir === "rtl" &&
+				if (!ish && dir === "rtl" &&
 					this.scrollType === "default") {
 					this.scrollTo(lsc.scrollWidth, 0, true);
 				}
@@ -488,13 +463,14 @@ class DefaultViewManager {
 		let left, section;
 		const def = new Defer();
 		const dir = this.layout.direction;
-		const vph = this.layout.axis === AXIS_H && this.paginated;
+		const ish = this.layout.axis === AXIS_H && this.paginated;
+		const isv = this.layout.axis === AXIS_V && this.paginated;
 		const lsc = this.views.container;
 
 		if (this.views.length === 0) {
 			def.resolve(null);
 			return def.promise;
-		} else if (vph && dir === "ltr") {
+		} else if (ish && dir === "ltr") {
 
 			this.scrollLeft = lsc.scrollLeft;
 			left = lsc.scrollLeft;
@@ -504,7 +480,7 @@ class DefaultViewManager {
 			} else {
 				section = this.views.first().section.prev();
 			}
-		} else if (vph && dir === "rtl") {
+		} else if (ish && dir === "rtl") {
 
 			this.scrollLeft = lsc.scrollLeft;
 
@@ -526,7 +502,7 @@ class DefaultViewManager {
 					section = this.views.first().section.prev();
 				}
 			}
-		} else if (this.layout.axis === AXIS_V && this.paginated) {
+		} else if (isv) {
 
 			const top = lsc.scrollTop;
 
@@ -545,17 +521,9 @@ class DefaultViewManager {
 			// writing-mode from the old section. 
 			// Thus, we need to update layout.
 			this.calculate();
+			this.prepend(section).then((view) => {
 
-			let forceRight = false;
-			if (this.layout.name === "pre-paginated" &&
-				this.layout.divisor === 2 &&
-				typeof section.prev() !== "object") {
-				forceRight = true;
-			}
-
-			this.prepend(section, forceRight).then((view) => {
-
-				if (vph) {
+				if (ish) {
 					if (dir === "rtl") {
 						if (this.scrollType === "default") {
 							this.scrollTo(0, 0, true);
@@ -598,11 +566,9 @@ class DefaultViewManager {
 	 */
 	clear() {
 
-		if (this.views) {
-			this.views.hide();
-			this.scrollTo(0, 0, true);
-			this.views.clear();
-		}
+		this.views.hide();
+		this.scrollTo(0, 0, true);
+		this.views.clear();
 	}
 
 	/**
@@ -933,12 +899,13 @@ class DefaultViewManager {
 	 */
 	destroy() {
 
-		this.ignore = true;
-		this.clear();
 		this.removeEventListeners();
-		this.viewport.destroy();
-		this.viewport = undefined;
-		this.rendered = false;
+		this.views.destroy();
+		this.views = undefined;
+		this.ignore = undefined;
+		this.location = undefined;
+		this.rendered = undefined;
+		this.paginated = undefined;
 		this.scrollType = undefined;
 		this.writingMode = undefined;
 	}

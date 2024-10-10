@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+
+<head>
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./node_modules/mocha/mocha.css" />
-    <script src="/test/test.build.js"></script>
-  </head>
-  <body>
-  </body>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <!-- <link rel="stylesheet" href="../node_modules/mocha/mocha.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../examples/examples.css">
+    <script src="../dist/jszip.min.js"></script>
+    <script src="../dist/localforage.min.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+</head>
+
+<body>
+    <div id="mocha"></div>
+    <script class="mocha-init">
+        mocha.setup({
+            bail: true,
+            color: true,
+            checkLeaks: true,
+            reporter: "spec",
+            ui: "bdd"
+        })
+    </script>
+    <script src="../dist/test.js"></script>
+    <script class="mocha-exec">
+        mocha.run()
+    </script>
+</body>
+
 </html>

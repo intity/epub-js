@@ -1,15 +1,14 @@
 import assert from "assert"
+import request from "../src/utils/request"
 import EpubCFI from "../src/epubcfi"
-import content1 from "../assets/chapter1.xhtml"
-import content2 from "../assets/chapter1-highlights.xhtml"
-import content3 from "../assets/highlight.xhtml"
-
-const parser = new DOMParser();
-const doc1 = parser.parseFromString(content1, "application/xhtml+xml")
-const doc2 = parser.parseFromString(content2, "application/xhtml+xml")
-const doc3 = parser.parseFromString(content3, "application/xhtml+xml")
 
 describe("EpubCFI", () => {
+	let doc1, doc2, doc3
+	before(async () => {
+		doc1 = await request("../assets/chapter1.xhtml")
+		doc2 = await request("../assets/chapter1-highlights.xhtml")
+		doc3 = await request("../assets/highlight.xhtml")
+	})
 	describe("#constructor()", () => {
 		it("should parse a cfi on init", () => {
 			const cfi = new EpubCFI("epubcfi(/6/2[cover]!/6)")

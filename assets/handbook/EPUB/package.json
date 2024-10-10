@@ -1,0 +1,61 @@
+{
+    "version": "3.0",
+    "direction": "ltr",
+    "metadata": {
+        "title": "epub-js library",
+        "identifier": "urn:uuid:8910d318-ad40-495e-8f31-e2af48cebdec",
+        "language": "en-US",
+        "creator": "epub-js community",
+        "date": "2024-08-21T00:00:00Z",
+        "description": "epub.js library handbook",
+        "rights": "cc-by, epub-js community",
+        "source": "https://github.com/intity/epub-js",
+        "modified": "2024-08-21T00:00:00Z"
+    },
+    "manifest": [
+        {
+            "id": "r0",
+            "href": "css/epub.css",
+            "media-type": "text/css",
+            "properties": []
+        },
+        {
+            "id": "s0",
+            "href": "xhtml/nav.xhtml",
+            "media-type": "application/xhtml+xml",
+            "properties": ["nav"]
+        },
+        {
+            "id": "s1",
+            "href": "xhtml/introduction.xhtml",
+            "media-type": "application/xhtml+xml",
+            "properties": []
+        },
+        {
+            "id": "s2",
+            "href": "xhtml/mathml.xhtml",
+            "media-type": "application/xhtml+xml",
+            "properties": ["mathml"]
+        }
+    ],
+    "spine": [
+        {
+            "id": "s0",
+            "idref": "s0",
+            "linear": "yes",
+            "properties": []
+        },
+        {
+            "id": "s1",
+            "idref": "s1",
+            "linear": "yes",
+            "properties": []
+        },
+        {
+            "id": "s2",
+            "idref": "s2",
+            "linear": "yes",
+            "properties": []
+        }
+    ]
+}

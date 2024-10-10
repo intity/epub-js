@@ -1,6 +1,6 @@
-import { isNumber, uuid } from "./utils/core";
-import { EVENTS } from "./utils/constants";
 import EventEmitter from "event-emitter";
+import { isNumber } from "./utils/core";
+import { EVENTS } from "./utils/constants";
 
 /**
  * viewport configuration class
@@ -9,10 +9,8 @@ class Viewport {
 	/**
 	 * Constructor
 	 * @param {Layout} layout
-	 * @param {object} options
-	 * @param {boolean} [options.hidden] viewport hidden
 	 */
-	constructor(layout, options) {
+	constructor(layout) {
 
 		this.layout = layout;
 		this.layout.on(EVENTS.LAYOUT.UPDATED, (props, changed) => {
@@ -24,14 +22,6 @@ class Viewport {
 				this.direction(props.direction);
 			}
 		});
-		this.settings = options || {};
-		/**
-		 * viewport id
-		 * @member {string} id
-		 * @memberof Viewport
-		 * @readonly
-		 */
-		this.id = "vp-" + uuid();
 		/**
 		 * viewport container
 		 * @member {Element} container
@@ -68,27 +58,19 @@ class Viewport {
 	 * Attach to viewport element
 	 * @param {Element|string} input viewport element
 	 * @param {object} options
-	 * @param {string|number} options.width viewport width
-	 * @param {string|number} options.height viewport height
-	 * @returns {Element}
+	 * @param {string|number} options.width viewport container width
+	 * @param {string|number} options.height viewport container height
+	 * @param {object} options.views
+	 * @returns {Element|null} attached element
 	 */
 	attachTo(input, options) {
 
 		const element = this.getElement(input);
-		if (!element) return;
-
+		if (!element) return null;
 		this.views = options.views;
 		this.container = this.create(options);
 		this.container.appendChild(this.views.container);
-
-		let base;
-		if (this.settings.hidden) {
-			base = this.wrapper;
-		} else {
-			base = this.container;
-		}
-
-		element.appendChild(base);
+		element.appendChild(this.container);
 		this.target = element;
 		this.appendListeners();
 		return element;
@@ -126,27 +108,7 @@ class Viewport {
 		container.style.width = szw || "100%";
 		container.style.height = szh || "100%";
 		container.style.overflow = "hidden";
-
-		if (this.settings.hidden) {
-			this.wrapper = this.wrap(container);
-		}
 		return container;
-	}
-
-	/**
-	 * wrap
-	 * @param {Element} container 
-	 * @returns {Element} wrapper
-	 */
-	wrap(container) {
-
-		const wrapper = document.createElement("div");
-		wrapper.style.visibility = "hidden";
-		wrapper.style.overflow = "hidden";
-		wrapper.style.width = "0";
-		wrapper.style.height = "0";
-		wrapper.appendChild(container);
-		return wrapper;
 	}
 
 	/**
@@ -156,9 +118,9 @@ class Viewport {
 	appendListeners() {
 		//-- ORIENTATION_CHANGE
 		screen.orientation.addEventListener("change", this.orientation.bind(this));
-		//-- RESIZE
+		//-- RESIZED
 		this.resizeFunc = new ResizeObserver((e) => {
-			requestAnimationFrame(() => this.resize(e));
+			requestAnimationFrame(() => this.resized(e));
 		});
 		this.resizeFunc.observe(this.container);
 	}
@@ -206,11 +168,11 @@ class Viewport {
 	}
 
 	/**
-	 * resize
+	 * resized event handler
 	 * @param {object} entries 
 	 * @private
 	 */
-	resize(entries) {
+	resized(entries) {
 
 		let changed = false;
 		const cmp = (rect) => Object.keys(this.rect).forEach(p => {
@@ -262,45 +224,6 @@ class Viewport {
 			width: this.rect.width,
 			height: this.rect.height
 		};
-	}
-
-	/**
-	 * getSheet
-	 * @returns {CSSStyleSheet}
-	 */
-	getSheet() {
-
-		const style = document.createElement("style");
-		// WebKit hack --> https://davidwalsh.name/add-rules-stylesheets
-		style.appendChild(document.createTextNode(""));
-
-		document.head.appendChild(style);
-		return style.sheet;
-	}
-
-	/**
-	 * addStyleRules
-	 * @param {string} selector 
-	 * @param {object[]} rulesArray 
-	 */
-	addStyleRules(selector, rulesArray) {
-
-		let scope = "#" + this.id + " ";
-		let rules = "";
-
-		if (!this.sheet) {
-			this.sheet = this.getSheet();
-		}
-
-		rulesArray.forEach(set => {
-			for (const prop in set) {
-				if (set.hasOwnProperty(prop)) {
-					rules += prop + ":" + set[prop] + ";";
-				}
-			}
-		});
-
-		this.sheet.insertRule(scope + selector + " {" + rules + "}", 0);
 	}
 
 	/**
@@ -373,19 +296,12 @@ class Viewport {
 	destroy() {
 
 		if (this.target) {
-
-			let base;
-			if (this.settings.hidden) {
-				base = this.wrapper;
-			} else {
-				base = this.container;
-			}
-
-			if (this.target.contains(base)) {
-				this.target.removeChild(base);
-			}
-
 			this.removeListeners();
+			this.target.removeChild(this.container);
+			this.container.removeChild(this.views.container);
+			this.container = undefined;
+			this.target = undefined;
+			this.rect = undefined;
 		}
 	}
 }

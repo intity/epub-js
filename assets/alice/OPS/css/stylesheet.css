@@ -2,6 +2,8 @@ body {
   font-family: Georgia, serif;
   font-size: 1em;
   line-height: 1.33em;
+  margin: 0;
+  padding: 20px;
 }
 
 /* Book Title */
@@ -29,13 +31,13 @@ h4 {
 }
 
 /* Chapter Container */
-section {
+/* section {
   
 }
 
 section > p {
     
-}
+} */
 
 /* Drop Cap */
 section > p:first-of-type:first-letter { 
@@ -46,7 +48,7 @@ section > p:first-of-type:first-letter {
   font-family: Georgia;
 }
 
-figure.small {
+/* figure.small {
   
 }
 
@@ -64,7 +66,7 @@ figcaption {
 
 figcaption > p {
 
-}
+} */
 
 /* More specific Kindle Eink queries at: http://epubsecrets.com/media-queries-for-kindle-devices.php */
 

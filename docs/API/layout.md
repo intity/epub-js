@@ -40,13 +40,13 @@ Constructor
 | --- | --- | --- | --- |
 | [options] | <code>object</code> |  |  |
 | [options.axis] | <code>string</code> | <code>&quot;&#x27;horizontal&#x27;&quot;</code> | values: `"horizontal"` OR `"vertical"` |
-| [options.name] | <code>string</code> | <code>&quot;&#x27;reflowable&#x27;&quot;</code> | values: `"reflowable"` OR `"pre-paginated"` |
 | [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"` |
 | [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"none"` |
 | [options.direction] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | values: `"ltr"` OR `"rtl"` |
 | [options.orientation] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"landscape"` OR `"portrait"` |
 | [options.minSpreadWidth] | <code>number</code> | <code>800</code> |  |
-| [options.pageWidth] | <code>number</code> |  | page width for scrolled-doc flow |
+| [options.pageWidth] | <code>number</code> |  | page width |
+| [options.pageHeight] | <code>number</code> |  | page height |
 
 <a name="Layout+set"></a>
 

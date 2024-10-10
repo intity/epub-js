@@ -259,18 +259,10 @@ class ContinuousViewManager extends DefaultViewManager {
 		if (this.views.length === 0) {
 			return Promise.resolve(null);
 		}
-		
-		let delta;
-		if (this.layout.name === "pre-paginated" &&
-			this.layout.spread === "auto") {
-			delta = this.layout.delta * 2;
-		} else {
-			delta = this.layout.delta;
-		}
 
 		if (this.paginated &&
 			this.layout.axis === AXIS_H) {
-			this.scrollBy(delta, 0, true);
+			this.scrollBy(this.layout.delta, 0, true);
 		} else {
 			this.scrollBy(0, this.layout.height, true);
 		}
@@ -290,18 +282,10 @@ class ContinuousViewManager extends DefaultViewManager {
 		if (this.views.length === 0) {
 			return Promise.resolve(null);
 		}
-		
-		let delta;
-		if (this.layout.name === "pre-paginated" &&
-			this.layout.spread === "auto") {
-			delta = this.layout.delta * 2;
-		} else {
-			delta = this.layout.delta;
-		}
 
 		if (this.paginated &&
 			this.layout.axis === AXIS_H) {
-			this.scrollBy(-delta, 0, true);
+			this.scrollBy(-this.layout.delta, 0, true);
 		} else {
 			this.scrollBy(0, -this.layout.height, true);
 		}

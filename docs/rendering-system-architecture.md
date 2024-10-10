@@ -10,26 +10,30 @@ A(rendition)
 B(layout)
 C(viewport)
 D(manager)
-E(views)
-F(view)
-G(contents)
+E(mapping)
+F(views)
+G(view)
+H(contents)
 A --> B
 A --> C
 A --> D
 C --> B
-C --> E
+C --> F
+D --> B
 D --> C
 D --> E
-D --> B
-E --> F
+D --> F
+E --> B
 F --> B
 F --> G
 G --> B
+G --> H
+H --> B
 ```
 
 Most of the dependent objects rely on the `layout.updated` event to finish synchronizing with the current state of the `layout` object. The `layout` object itself depends on the `viewport.resized` event. This happens every time the **viewport-container** is resized. However, the `layout` object knows nothing about containers, since it is only intended for calculations. Containers are created and configured by the [Viewport](API/viewport.md) class. The following image should clarify the technical details.
 
-<img src="../assets/rendition-viewport.svg" width=440 />
+<img src="../assets/rendition-viewport.svg" width=1000 />
 
 First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will fire the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
 

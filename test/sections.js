@@ -4,7 +4,7 @@ import Book from "../src/book"
 describe("Sections", () => {
     let book
     before(async () => {
-        book = new Book("/assets/alice/")
+        book = new Book("../assets/alice/")
         await book.opened
     })
     describe("#get()", () => {
@@ -75,5 +75,9 @@ describe("Sections", () => {
             assert.equal(section.url, "/assets/alice/OPS/chapter_010.xhtml")
             assert.equal(section.cfiBase, "/6/26")
         })
+    })
+    after(() => {
+        book.destroy()
+        book = undefined
     })
 })

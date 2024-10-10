@@ -1,7 +1,7 @@
 import Landmarks from "./navigation/landmarks";
 import PageList from "./navigation/pagelist";
 import Toc from "./navigation/toc";
-import { qs, qsa } from "./utils/core";
+import { qsa } from "./utils/core";
 
 /**
  * Navigation Parser
@@ -46,49 +46,61 @@ class Navigation {
 	}
 
 	/**
-	 * Parse navigation
-	 * @param {Document|object} target navigation html OR xhtml OR ncx OR json
+	 * Parse navigation document
+	 * @param {Document} doc html OR xhtml OR ncx
 	 * @returns {Promise<Navigation>}
 	 */
-	async parse(target) {
+	async parse(doc) {
 
 		const tasks = [];
+		const element = doc.documentElement;
 
-		if (target.nodeType === Node.DOCUMENT_NODE) {
-			let items, ncx;
-			if (target.body && (items = qsa(target, "nav"))) {
-				items.forEach((nav) => {
-					const type = nav.getAttribute("epub:type");
-					switch (type) {
-						case "landmarks":
-							tasks.push(this.landmarks.parse(nav));
-							break;
-						case "page-list":
-							tasks.push(this.pageList.parse(nav));
-							break;
-						case "toc":
-							tasks.push(this.toc.parse(nav));
-							break;
-					}
-				});
-			} else if ((ncx = qs(target, "ncx"))) {
-				for (const ch of ncx.children) {
-					switch (ch.nodeName) {
-						case "navMap":
-							tasks.push(this.toc.parse(ch));
-							break;
-						case "pageList":
-							tasks.push(this.pageList.parse(ch));
-							break;
-					}
+		if (element.tagName === "html") {
+			const items = qsa(doc, "nav")
+			items.forEach((nav) => {
+				const type = nav.getAttribute("epub:type");
+				switch (type) {
+					case "landmarks":
+						tasks.push(this.landmarks.parse(nav));
+						break;
+					case "page-list":
+						tasks.push(this.pageList.parse(nav));
+						break;
+					case "toc":
+						tasks.push(this.toc.parse(nav));
+						break;
 				}
-			}
-		} else if (typeof target === "object") {
-			tasks.push(this.landmarks.parse(target["landmarks"] || []));
-			tasks.push(this.pageList.parse(target["page-list"] || []));
-			tasks.push(this.toc.parse(target["toc"] || []));
+			});
+		} else if (element.tagName === "ncx") {
+			const items = [...element.children];
+			items.forEach((item) => {
+				switch (item.tagName) {
+					case "navMap":
+						tasks.push(this.toc.parse(item));
+						break;
+					case "pageList":
+						tasks.push(this.pageList.parse(item));
+						break;
+				}
+			});
 		}
 
+		return Promise.all(tasks).then(() => {
+			return this;
+		});
+	}
+
+	/**
+	 * Load navigation object from JSON
+	 * @param {object} data 
+	 * @returns {Promise<Navigation>}
+	 */
+	async load(data) {
+
+		const tasks = [];
+		tasks.push(this.landmarks.parse(data["landmarks"] || []));
+		tasks.push(this.pageList.parse(data["page-list"] || []));
+		tasks.push(this.toc.parse(data["toc"] || []));
 		return Promise.all(tasks).then(() => {
 			return this;
 		});

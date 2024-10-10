@@ -30,12 +30,12 @@ import ContinuousViewManager from "./managers/continuous/index";
  * @param {string} [options.layout] layout to force
  * @param {string} [options.spread] force spread value
  * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
- * @param {number} [options.pageWidth] page width for scrolled-doc flow
+ * @param {number} [options.pageWidth] page width
+ * @param {number} [options.pageHeight] page height
  * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
  * @param {string} [options.stylesheet] url of stylesheet to be injected
  * @param {string} [options.script] url of script to be injected
  * @param {object} [options.snap] use snap scrolling
- * @param {boolean} [options.hidden=false] viewport hidden
  * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
  */
 class Rendition {
@@ -52,13 +52,12 @@ class Rendition {
 			manager: "default",
 			view: "iframe",
 			flow: null,
-			hidden: false,
 			method: "write", // the 'baseUrl' value is set from the 'book.settings.replacements' property
 			layout: null,
 			spread: null,
 			minSpreadWidth: 800,
 			script: null,
-			snap: false,
+			snap: null,
 			direction: null, // TODO: implement to 'auto' detection
 			ignoreClass: "",
 			sandbox: [],
@@ -214,9 +213,7 @@ class Rendition {
 		 * @memberof Rendition
 		 * @readonly
 		 */
-		this.viewport = new Viewport(this.layout, {
-			hidden: this.settings.hidden
-		});
+		this.viewport = new Viewport(this.layout);
 		this.viewport.on(EVENTS.VIEWPORT.RESIZED, (rect) => {
 
 			if (this.layout.flow === "paginated") {
@@ -494,7 +491,8 @@ class Rendition {
 			direction: this.settings.direction || direction || "ltr",
 			orientation: this.settings.orientation || metadata.get("orientation"),
 			minSpreadWidth: this.settings.minSpreadWidth,
-			pageWidth: this.settings.pageWidth
+			pageWidth: this.settings.pageWidth,
+			pageHeight: this.settings.pageHeight
 		}
 	}
 
@@ -630,10 +628,10 @@ class Rendition {
 
 		this.q.clear();
 		this.q = undefined;
-
-		this.manager && this.manager.destroy();
-		this.book = undefined;
-
+		this.layout.destroy();
+		this.themes.destroy();
+		this.viewport.destroy();
+		this.manager.destroy();
 		this.hooks.display.clear();
 		this.hooks.content.clear();
 		this.hooks.layout.clear();
@@ -641,11 +639,13 @@ class Rendition {
 		this.hooks.show.clear();
 		this.hooks.unloaded.clear();
 		this.hooks = undefined;
-		this.themes.destroy();
+		this.layout = undefined;
 		this.themes = undefined;
+		this.manager = undefined;
 		this.epubcfi = undefined;
-		this.starting = undefined;
 		this.started = undefined;
+		this.starting = undefined;
+		this.viewport = undefined;
 	}
 
 	/**
@@ -733,12 +733,6 @@ class Rendition {
 	 * @private
 	 */
 	adjustImages(contents) {
-
-		if (this.layout.name === "pre-paginated") {
-			return new Promise((resolve) => {
-				resolve(null);
-			});
-		}
 
 		const content = contents.content;
 		const padding = {

@@ -111,18 +111,29 @@ export const replaceLinks = (contents, fn) => {
 	}
 }
 
+const relative = (p1, p2) => {
+
+	const arr = p1.split("/");
+	let result = "";
+	for (let i = 1; i < arr.length; ++i) {
+		result += "../"
+	}
+	return result + p2;
+};
+
 /**
  * substitute
  * @param {string} content 
  * @param {string[]} urls 
  * @param {string[]} replacements 
  */
-export const substitute = (content, urls, replacements) => {
+export const substitute = (content, section, urls, replacements) => {
 
 	urls.forEach((url, i) => {
 		if (url && replacements[i]) {
 			// Account for special characters in the file name.
 			// See https://stackoverflow.com/a/6318729.
+			url = relative(section.href, url);
 			url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 			content = content.replace(new RegExp(url, "g"), replacements[i]);
 		}

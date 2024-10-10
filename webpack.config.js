@@ -18,6 +18,19 @@ module.exports = {
 	mode: process.env.NODE_ENV,
 	entry: {
 		"epub": "./src/epub.js",
+		"test": [
+			"./test/book.js",
+			"./test/epubcfi.js",
+			"./test/locations.js",
+			"./test/navigation.js",
+			"./test/packaging.js",
+			"./test/path.js",
+			"./test/rendition.js",
+			"./test/section.js",
+			"./test/sections.js",
+			"./test/themes.js",
+			"./test/url.js"
+		]
 	},
 	devtool: PROD ? "source-map" : "eval-source-map",
 	output: {
@@ -33,9 +46,8 @@ module.exports = {
 		minimize: MINIMIZE
 	},
 	externals: {
-		"jszip/dist/jszip": "JSZip",
-		"localforage": "localforage",
-		"xmldom": "xmldom"
+		"jszip": "JSZip",
+		"localforage": "localforage"
 	},
 	plugins: [
 		new webpack.ProvidePlugin({

@@ -4,11 +4,11 @@ import Book from "../src/book"
 describe("Rendition", () => {
     let book, rendition
     before(async () => {
-        book = new Book("/assets/handbook/")
+        book = new Book("../assets/handbook/")
         await book.opened
         rendition = book.renderTo(document.body, {
             width: "100%",
-            height: "100%"
+			height: "100%"
         })
     })
     describe("#display()", () => {
@@ -47,5 +47,10 @@ describe("Rendition", () => {
             assert.equal(section.href, "xhtml/mathml.xhtml")
             assert.equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml")
         })
+    })
+    after(() => {
+        book.destroy()
+        book = undefined
+        rendition = undefined
     })
 })
