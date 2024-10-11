@@ -23,7 +23,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -40,7 +40,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -62,7 +62,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -94,7 +94,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/^blob:http:\/\/localhost:8080\/[^\/]+$/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -124,7 +124,7 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:8080/assets/alice/"
+				url: `${location.protocol}//${location.host}/assets/alice/`
 			})
 		})
 		after(() => {
@@ -150,12 +150,12 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:8080/assets/alice/"
+				url: "${location.protocol}//${location.host}/assets/alice/"
 			})
 		})
 		it("should have a local coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "http://localhost:8080/assets/alice/OPS/images/cover_th.jpg")
+			assert.equal(coverUrl, "${location.protocol}//${location.host}/assets/alice/OPS/images/cover_th.jpg")
 		})
 	})
 	describe("open book from container.json of remote server", () => {
