@@ -1,6 +1,8 @@
 import assert from "assert"
 import Book from "../src/book"
 
+const url = () => `${location.href.replace("/test/", "")}/examples/themes.css`
+
 describe("Themes", () => {
     let book, rendition, theme
     before(async () => {
@@ -15,10 +17,10 @@ describe("Themes", () => {
         it("should register a theme by url", () => {
             rendition.themes.register("light", "../examples/themes.css")
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
+            assert.equal(theme.url, url())
             rendition.themes.register("dark", "../examples/themes.css")
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
+            assert.equal(theme.url, url())
             rendition.themes.clear()
             assert.equal(rendition.themes.size, 0)
         })
@@ -64,9 +66,9 @@ describe("Themes", () => {
                 dark: "../examples/themes.css"
             })
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
+            assert.equal(theme.url, url())
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, "http://localhost:8080/examples/themes.css")
+            assert.equal(theme.url, url())
         })
     })
     describe("#select()", () => {
