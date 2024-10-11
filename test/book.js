@@ -124,7 +124,7 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: `${location.protocol}//${location.host}/assets/alice/`
+				url: `${location.origin}/assets/alice/`
 			})
 		})
 		after(() => {
@@ -144,32 +144,4 @@ describe("Book", () => {
 			book.destroy()
 		})
 	})
-	/*describe("open book from container.json of local server", () => {
-		const book = new Book({ format: "json" })
-		it("should open a unarchived epub", async () => {
-			await book.open("../assets/alice/")
-			assertion(book, {
-				archived: false,
-				url: "${location.protocol}//${location.host}/assets/alice/"
-			})
-		})
-		it("should have a local coverUrl", async () => {
-			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "${location.protocol}//${location.host}/assets/alice/OPS/images/cover_th.jpg")
-		})
-	})
-	describe("open book from container.json of remote server", () => {
-		const book = new Book({ format: "json" })
-		it("should open a unarchived epub", async () => {
-			await book.open("https://intity.github.io/epub-js/assets/alice/")
-			assertion(book, {
-				archived: false,
-				url: "https://intity.github.io/epub-js/assets/alice/"
-			})
-		})
-		it("should have a local coverUrl", async () => {
-			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "https://intity.github.io/epub-js/assets/alice/OPS/images/cover_th.jpg")
-		})
-	})*/
 })
