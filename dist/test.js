@@ -24935,7 +24935,7 @@ describe("Book", () => {
       await book.open("../assets/alice/");
       assertion(book, {
         archived: false,
-        url: `${location.origin}/assets/alice/`
+        url: `${location.origin + location.pathname.replace("/test/", "")}/assets/alice/`
       });
     });
     after(() => {
