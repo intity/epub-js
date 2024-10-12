@@ -24,6 +24,7 @@ describe("Themes", () => {
             theme = rendition.themes.get("dark")
             assert.equal(theme.url, url())
             rendition.themes.clear()
+            await rendition.hooks.content
             assert.equal(rendition.themes.size, 0)
         })
         it("should register a theme by rules", async () => {
@@ -93,19 +94,22 @@ describe("Themes", () => {
             await rendition.hooks.content
             assert.equal(rendition.themes.current, "dark")
             rendition.themes.select(null)
+            await rendition.hooks.content
             assert.equal(rendition.themes.current, null)
         })
     })
     describe("#appendRule()", () => {
-        it("should inject css rule into contents", () => {
+        it("should inject css rule into contents", async () => {
             rendition.themes.appendRule("font-size", "100%")
+            await rendition.hooks.content
             const rule = rendition.themes.rules["font-size"]
             assert.equal(rule.value, "100%")
         })
     })
     describe("#removeRule()", () => {
-        it("should reject css rule into contents", () => {
+        it("should reject css rule into contents", async () => {
             rendition.themes.removeRule("font-size")
+            await rendition.hooks.content
             const rule = rendition.themes.rules["font-size"]
             assert.equal(rule, undefined)
         })
