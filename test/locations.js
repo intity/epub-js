@@ -148,8 +148,8 @@ describe("Locations", () => {
 	})
 	describe("#clear()", () => {
 		it("should clear locations", () => {
-			rendition.themes.clear()
-			assert.equal(rendition.themes.size, 0)
+			book.locations.clear()
+			assert.equal(book.locations.size, 0)
 		})
 	})
 	after(() => {
