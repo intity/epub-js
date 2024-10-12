@@ -146,6 +146,12 @@ describe("Locations", () => {
 			})
 		})
 	})
+	describe("#clear()", () => {
+		it("should clear locations", () => {
+			rendition.themes.clear()
+			assert.equal(rendition.themes.size, 0)
+		})
+	})
 	after(() => {
 		book.destroy()
 		book = undefined
