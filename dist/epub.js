@@ -11682,7 +11682,7 @@ class Themes extends Map {
 
   /**
    * Select a theme
-   * @param {string} name Theme name
+   * @param {string} [name] Theme name
    * @description Use null to reject the current selected theme
    */
   select(name) {

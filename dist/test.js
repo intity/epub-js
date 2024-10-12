@@ -12829,7 +12829,7 @@ class Themes extends Map {
 
   /**
    * Select a theme
-   * @param {string} name Theme name
+   * @param {string} [name] Theme name
    * @description Use null to reject the current selected theme
    */
   select(name) {
@@ -25261,17 +25261,14 @@ describe("Locations", () => {
     sections = {};
   before(async () => {
     book = new _src_book__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A("../assets/alice/");
-    rendition = book.renderTo(document.body, {
-      width: "100%",
-      height: "100%"
-    });
+    await book.opened;
+    rendition = book.renderTo(document.body);
     const set = (index, section) => {
       sections[index] = {
         cfi: rendition.currentLocation().start.cfi,
         sec: section
       };
     };
-    await book.opened;
     const tasks = [];
     for (let i = 2; i < 13; ++i) {
       tasks.push(rendition.display(i).then(s => set(i, s)));
@@ -25462,6 +25459,12 @@ describe("Locations", () => {
         const percentage = index / (locs.size - 1);
         assert__WEBPACK_IMPORTED_MODULE_4___default().equal(key, locs.cfiFromPercentage(percentage));
       });
+    });
+  });
+  describe("#clear()", () => {
+    it("should clear locations", () => {
+      rendition.themes.clear();
+      assert__WEBPACK_IMPORTED_MODULE_4___default().equal(rendition.themes.size, 0);
     });
   });
   after(() => {
@@ -25974,6 +25977,7 @@ describe("Sections", () => {
 /* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6561);
 
 
+const url = () => `${location.href.replace("/test/", "")}/examples/themes.css`;
 describe("Themes", () => {
   let book, rendition, theme;
   before(async () => {
@@ -25985,21 +25989,24 @@ describe("Themes", () => {
     await rendition.display();
   });
   describe("#register()", () => {
-    it("should register a theme by url", () => {
-      rendition.themes.register("light", "../examples/themes.css");
+    it("should register a theme by url", async () => {
+      rendition.themes.register("light", url());
+      await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, "http://localhost:8080/examples/themes.css");
-      rendition.themes.register("dark", "../examples/themes.css");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, url());
+      rendition.themes.register("dark", url());
+      await rendition.hooks.content;
       theme = rendition.themes.get("dark");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, "http://localhost:8080/examples/themes.css");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, url());
       rendition.themes.clear();
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.size, 0);
     });
-    it("should register a theme by rules", () => {
+    it("should register a theme by rules", async () => {
       rendition.themes.register("light", {
         background: "#fff",
         color: "#000"
       });
+      await rendition.hooks.content;
       theme = rendition.themes.get("light");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.background, "#fff");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.color, "#000");
@@ -26007,13 +26014,14 @@ describe("Themes", () => {
         background: "#000",
         color: "#fff"
       });
+      await rendition.hooks.content;
       theme = rendition.themes.get("dark");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.background, "#000");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.color, "#fff");
       rendition.themes.clear();
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.size, 0);
     });
-    it("should register a themes from object with rules", () => {
+    it("should register a themes from object with rules", async () => {
       rendition.themes.register({
         light: {
           body: {
@@ -26028,6 +26036,7 @@ describe("Themes", () => {
           }
         }
       });
+      await rendition.hooks.content;
       theme = rendition.themes.get("light");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.body.background, "#fff");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.rules.body.color, "#000");
@@ -26037,19 +26046,20 @@ describe("Themes", () => {
       rendition.themes.clear();
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.size, 0);
     });
-    it("should register a themes from object with urls", () => {
+    it("should register a themes from object with urls", async () => {
       rendition.themes.register({
-        light: "../examples/themes.css",
-        dark: "../examples/themes.css"
+        light: url(),
+        dark: url()
       });
+      await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, "http://localhost:8080/examples/themes.css");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, url());
       theme = rendition.themes.get("dark");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, "http://localhost:8080/examples/themes.css");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.url, url());
     });
   });
   describe("#select()", () => {
-    it("switching theme using select method", () => {
+    it("switching theme using select method", async () => {
       rendition.themes.on("selected", (key, theme) => {
         if (key === null) {
           assert__WEBPACK_IMPORTED_MODULE_0___default().equal(theme.injected, false);
@@ -26058,8 +26068,10 @@ describe("Themes", () => {
         }
       });
       rendition.themes.select("light");
+      await rendition.hooks.content;
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.current, "light");
       rendition.themes.select("dark");
+      await rendition.hooks.content;
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.current, "dark");
       rendition.themes.select(null);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.current, null);
@@ -26077,6 +26089,13 @@ describe("Themes", () => {
       rendition.themes.removeRule("font-size");
       const rule = rendition.themes.rules["font-size"];
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rule, undefined);
+    });
+  });
+  describe("#clear()", () => {
+    it("should clear all themes", async () => {
+      rendition.themes.clear();
+      await rendition.hooks.content;
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(rendition.themes.size, 0);
     });
   });
   after(() => {
