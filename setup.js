@@ -22,6 +22,7 @@ global.cancelAnimationFrame = window.cancelAnimationFrame = (id) => {
 //-- JSDOM
 global.window = window
 global.document = window.document
+global.location = window.location
 global.navigator = window.navigator
 global.screen = window.screen
 global.DOMParser = window.DOMParser
