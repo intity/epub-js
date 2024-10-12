@@ -9,7 +9,6 @@ import { isNumber, prefixed, borders, defaults } from "./utils/core";
 const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const AXIS_H = "horizontal";
 const AXIS_V = "vertical";
 
 /**
@@ -23,12 +22,7 @@ class Contents {
 	 * @param {Section} section Section object reference
 	 */
 	constructor(doc, content, section) {
-		/**
-		 * @member {EpubCFI} epubcfi Blank Cfi for Parsing
-		 * @memberof Contents
-		 * @readonly
-		 */
-		this.epubcfi = new EpubCFI();
+
 		this.document = doc;
 		/**
 		 * @member {Element} content document.body by current location
@@ -371,7 +365,7 @@ class Contents {
 
 		if (!this.document) return targetPos;
 		let position;
-		if (this.epubcfi.isCfiString(target)) {
+		if (EpubCFI.prototype.isCfiString(target)) {
 
 			const range = new EpubCFI(target).toRange(this.document, ignoreClass);
 
@@ -1066,6 +1060,7 @@ class Contents {
 		this.styles = undefined;
 		this.clearScripts();
 		this.scripts = undefined;
+		this.section = undefined;
 	}
 }
 

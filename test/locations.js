@@ -6,17 +6,14 @@ describe("Locations", () => {
 	let book, rendition, sections = {}
 	before(async () => {
 		book = new Book("../assets/alice/")
-		rendition = book.renderTo(document.body, {
-			width: "100%",
-			height: "100%"
-		})
+		await book.opened
+		rendition = book.renderTo(document.body)
 		const set = (index, section) => {
 			sections[index] = {
 				cfi: rendition.currentLocation().start.cfi,
-				sec: section
+				idx: section.index
 			}
 		}
-		await book.opened
 		const tasks = []
 		for (let i = 2; i < 13; ++i) {
 			tasks.push(rendition.display(i).then((s) => set(i, s)))
@@ -25,7 +22,7 @@ describe("Locations", () => {
 	})
 	describe("#parse()", () => {
 		it("should parse locations from a document", async () => {
-			const sec = sections[2].sec
+			const sec = book.section(sections[2].idx)
 			const lcs = new Locations()
 			await lcs.parse(sec.contents, sec.cfiBase, 549)
 			const loc = [...lcs.values()][0]
@@ -147,6 +144,12 @@ describe("Locations", () => {
 				const percentage = index / (locs.size - 1)
 				assert.equal(key, locs.cfiFromPercentage(percentage))
 			})
+		})
+	})
+	describe("#clear()", () => {
+		it("should clear locations", () => {
+			book.locations.clear()
+			assert.equal(book.locations.size, 0)
 		})
 	})
 	after(() => {

@@ -23,7 +23,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/blob:nodedata:/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -40,7 +40,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/blob:nodedata:/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -62,7 +62,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/blob:nodedata:/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -86,7 +86,7 @@ describe("Book", () => {
 		})
 		it("should have a blob coverUrl", async () => {
 			const coverUrl = await book.coverUrl()
-			assert(/blob:nodedata:/.test(coverUrl))
+			assert(/blob:/.test(coverUrl))
 		})
 		after(() => {
 			book.destroy()
@@ -115,7 +115,7 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:8080/assets/alice/"
+				url: `${location.origin + location.pathname.replace("/test/", "")}/assets/alice/`
 			})
 		})
 		after(() => {
@@ -135,32 +135,4 @@ describe("Book", () => {
 			book.destroy()
 		})
 	})
-	/*describe("open book from container.json of local server", () => {
-		const book = new Book({ format: "json" })
-		it("should open a unarchived epub", async () => {
-			await book.open("../assets/alice/")
-			assertion(book, {
-				archived: false,
-				url: "http://localhost:8080/assets/alice/"
-			})
-		})
-		it("should have a local coverUrl", async () => {
-			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "http://localhost:8080/assets/alice/OPS/images/cover_th.jpg")
-		})
-	})
-	describe("open book from container.json of remote server", () => {
-		const book = new Book({ format: "json" })
-		it("should open a unarchived epub", async () => {
-			await book.open("https://intity.github.io/epub-js/assets/alice/")
-			assertion(book, {
-				archived: false,
-				url: "https://intity.github.io/epub-js/assets/alice/"
-			})
-		})
-		it("should have a local coverUrl", async () => {
-			const coverUrl = await book.coverUrl()
-			assert.equal(coverUrl, "https://intity.github.io/epub-js/assets/alice/OPS/images/cover_th.jpg")
-		})
-	})*/
 })
