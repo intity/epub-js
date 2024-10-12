@@ -1,6 +1,8 @@
 import assert from "assert"
 import Book from "../src/book"
 
+const url = () => /epub-js/.test(location.href) ? "/epub-js" : ""
+
 describe("Section", () => {
     let book, section1, section2
     before(async () => {
@@ -15,7 +17,7 @@ describe("Section", () => {
             assert.equal(section1.linear, true)
             assert.equal(section1.index, 3)
             assert.equal(section1.href, "chapter_001.xhtml")
-            assert.equal(section1.url, "/assets/alice/OPS/chapter_001.xhtml")
+            assert.equal(section1.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`)
             assert.equal(section1.cfiBase, "/6/8")
             await section1.load(book.request)
             assert.equal(section1.document instanceof Document, true)
@@ -26,7 +28,7 @@ describe("Section", () => {
             assert.equal(section2.linear, true)
             assert.equal(section2.index, 12)
             assert.equal(section2.href, "chapter_010.xhtml")
-            assert.equal(section2.url, "/assets/alice/OPS/chapter_010.xhtml")
+            assert.equal(section2.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`)
             assert.equal(section2.cfiBase, "/6/26")
             await section2.load(book.request)
             assert.equal(section2.document instanceof Document, true)
