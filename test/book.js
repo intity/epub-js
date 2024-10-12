@@ -115,7 +115,7 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: `${location.origin + location.pathname.replace("/test/", "")}/assets/alice/`
+				url: "http://localhost:8080/assets/alice/"
 			})
 		})
 		after(() => {
