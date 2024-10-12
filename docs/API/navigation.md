@@ -10,7 +10,8 @@ Navigation Parser
     * [new Navigation()](#new_Navigation_new)
     * _instance_
         * [.clear()](#Navigation+clear)
-        * [.parse(target)](#Navigation+parse) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
+        * [.parse(doc)](#Navigation+parse) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
+        * [.load(data)](#Navigation+load) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
         * [.forEach(...args)](#Navigation+forEach)
         * [.destroy()](#Navigation+destroy)
     * _static_
@@ -31,14 +32,25 @@ Clear all navigation parts
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation+parse"></a>
 
-## navigation.parse(target) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
-Parse navigation
+## navigation.parse(doc) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
+Parse navigation document
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| target | <code>Document</code> \| <code>object</code> | navigation html OR xhtml OR ncx OR json |
+| doc | <code>Document</code> | html OR xhtml OR ncx |
+
+<a name="Navigation+load"></a>
+
+## navigation.load(data) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
+Load navigation object from JSON
+
+**Kind**: instance method of [<code>Navigation</code>](#Navigation)  
+
+| Param | Type |
+| --- | --- |
+| data | <code>object</code> | 
 
 <a name="Navigation+forEach"></a>
 

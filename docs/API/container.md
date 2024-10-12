@@ -10,13 +10,15 @@ Parsing the Epub Container
     * [new Container()](#new_Container_new)
     * _instance_
         * [.clear()](#Container+clear)
-        * [.parse(containerDocument)](#Container+parse) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
+        * [.parse(doc)](#Container+parse) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
+        * [.load(container)](#Container+load) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
         * [.destroy()](#Container+destroy)
     * _static_
         * [.directory](#Container.directory) : <code>string</code>
         * [.fullPath](#Container.fullPath) : <code>string</code>
         * [.encoding](#Container.encoding) : <code>string</code>
         * [.mediaType](#Container.mediaType) : <code>string</code>
+        * [.version](#Container.version) : <code>string</code>
 
 <a name="new_Container_new"></a>
 
@@ -31,14 +33,25 @@ Clear parts
 **Kind**: instance method of [<code>Container</code>](#Container)  
 <a name="Container+parse"></a>
 
-## container.parse(containerDocument) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
+## container.parse(doc) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
 Parse the Container XML
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
 
 | Param | Type |
 | --- | --- |
-| containerDocument | <code>Document</code> | 
+| doc | <code>Document</code> | 
+
+<a name="Container+load"></a>
+
+## container.load(container) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
+Load a container from JSON
+
+**Kind**: instance method of [<code>Container</code>](#Container)  
+
+| Param | Type |
+| --- | --- |
+| container | <code>object</code> | 
 
 <a name="Container+destroy"></a>
 
@@ -72,5 +85,10 @@ Encoding
 ## Container.mediaType : <code>string</code>
 Media type
 
+**Kind**: static property of [<code>Container</code>](#Container)  
+**Read only**: true  
+<a name="Container.version"></a>
+
+## Container.version : <code>string</code>
 **Kind**: static property of [<code>Container</code>](#Container)  
 **Read only**: true  

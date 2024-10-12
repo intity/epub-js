@@ -12,7 +12,7 @@ Themes to apply to displayed content
         * [.registerThemes(themes)](#Themes+registerThemes)
         * [.registerUrl(name, input)](#Themes+registerUrl)
         * [.registerRules(name, rules)](#Themes+registerRules)
-        * [.select(name)](#Themes+select)
+        * [.select([name])](#Themes+select)
         * [.clear()](#Themes+clear)
         * [.appendRule(name, value, [priority])](#Themes+appendRule)
         * [.removeRule(name)](#Themes+removeRule)
@@ -113,14 +113,14 @@ registerRules("light", { body: { color: "purple"}})
 ```
 <a name="Themes+select"></a>
 
-## themes.select(name)
+## themes.select([name])
 Use null to reject the current selected theme
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>string</code> | Theme name |
+| [name] | <code>string</code> | Theme name |
 
 <a name="Themes+clear"></a>
 

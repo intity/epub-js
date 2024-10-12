@@ -6,32 +6,26 @@ viewport configuration class
 **Kind**: global class  
 
 * [Viewport](#Viewport)
-    * [new Viewport(layout, options)](#new_Viewport_new)
+    * [new Viewport(layout)](#new_Viewport_new)
     * _instance_
         * [.attachTo(input, options)](#Viewport+attachTo) ⇒ <code>Element</code> \| <code>null</code>
-        * [.wrap(container)](#Viewport+wrap) ⇒ <code>Element</code>
         * [.size([width], [height])](#Viewport+size) ⇒ <code>object</code>
-        * [.getSheet()](#Viewport+getSheet) ⇒ <code>CSSStyleSheet</code>
-        * [.addStyleRules(selector, rulesArray)](#Viewport+addStyleRules)
         * [.update()](#Viewport+update)
         * [.destroy()](#Viewport+destroy)
     * _static_
-        * [.id](#Viewport.id) : <code>string</code>
         * [.container](#Viewport.container) : <code>Element</code>
         * [.target](#Viewport.target) : <code>Element</code>
         * [.rect](#Viewport.rect) : <code>object</code>
 
 <a name="new_Viewport_new"></a>
 
-## new Viewport(layout, options)
+## new Viewport(layout)
 Constructor
 
 
-| Param | Type | Description |
-| --- | --- | --- |
-| layout | <code>Layout</code> |  |
-| options | <code>object</code> |  |
-| [options.hidden] | <code>boolean</code> | viewport hidden |
+| Param | Type |
+| --- | --- |
+| layout | <code>Layout</code> | 
 
 <a name="Viewport+attachTo"></a>
 
@@ -45,21 +39,9 @@ Attach to viewport element
 | --- | --- | --- |
 | input | <code>Element</code> \| <code>string</code> | viewport element |
 | options | <code>object</code> |  |
-| options.width | <code>string</code> \| <code>number</code> | viewport width |
-| options.height | <code>string</code> \| <code>number</code> | viewport height |
+| options.width | <code>string</code> \| <code>number</code> | viewport container width |
+| options.height | <code>string</code> \| <code>number</code> | viewport container height |
 | options.views | <code>object</code> |  |
-
-<a name="Viewport+wrap"></a>
-
-## viewport.wrap(container) ⇒ <code>Element</code>
-wrap
-
-**Kind**: instance method of [<code>Viewport</code>](#Viewport)  
-**Returns**: <code>Element</code> - wrapper  
-
-| Param | Type |
-| --- | --- |
-| container | <code>Element</code> | 
 
 <a name="Viewport+size"></a>
 
@@ -73,24 +55,6 @@ size
 | [width] | <code>string</code> \| <code>number</code> | 
 | [height] | <code>string</code> \| <code>number</code> | 
 
-<a name="Viewport+getSheet"></a>
-
-## viewport.getSheet() ⇒ <code>CSSStyleSheet</code>
-getSheet
-
-**Kind**: instance method of [<code>Viewport</code>](#Viewport)  
-<a name="Viewport+addStyleRules"></a>
-
-## viewport.addStyleRules(selector, rulesArray)
-addStyleRules
-
-**Kind**: instance method of [<code>Viewport</code>](#Viewport)  
-
-| Param | Type |
-| --- | --- |
-| selector | <code>string</code> | 
-| rulesArray | <code>Array.&lt;object&gt;</code> | 
-
 <a name="Viewport+update"></a>
 
 ## viewport.update()
@@ -103,13 +67,6 @@ Update viewport container
 destroy
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
-<a name="Viewport.id"></a>
-
-## Viewport.id : <code>string</code>
-viewport id
-
-**Kind**: static property of [<code>Viewport</code>](#Viewport)  
-**Read only**: true  
 <a name="Viewport.container"></a>
 
 ## Viewport.container : <code>Element</code>
