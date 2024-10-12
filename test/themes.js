@@ -15,10 +15,10 @@ describe("Themes", () => {
     })
     describe("#register()", () => {
         it("should register a theme by url", () => {
-            rendition.themes.register("light", "../examples/themes.css")
+            rendition.themes.register("light", url())
             theme = rendition.themes.get("light")
             assert.equal(theme.url, url())
-            rendition.themes.register("dark", "../examples/themes.css")
+            rendition.themes.register("dark", url())
             theme = rendition.themes.get("dark")
             assert.equal(theme.url, url())
             rendition.themes.clear()
@@ -62,8 +62,8 @@ describe("Themes", () => {
         })
         it("should register a themes from object with urls", () => {
             rendition.themes.register({
-                light: "../examples/themes.css",
-                dark: "../examples/themes.css"
+                light: url(),
+                dark: url()
             })
             theme = rendition.themes.get("light")
             assert.equal(theme.url, url())
