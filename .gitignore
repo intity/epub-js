@@ -6,3 +6,5 @@ node_modules
 bower_components
 books
 lib
+dist
+types/*.js
