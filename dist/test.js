@@ -25883,6 +25883,7 @@ describe("Section", () => {
 /* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6561);
 
 
+const url = () => /epub-js/.test(location.href) ? "/epub-js" : "";
 describe("Sections", () => {
   let book;
   before(async () => {
@@ -25896,7 +25897,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "titlepage.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/titlepage.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/titlepage.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/6");
     });
     it("should get section from index", () => {
@@ -25905,7 +25906,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, false);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 1);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "nav.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/nav.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/nav.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/4");
     });
     it("should get section from id", () => {
@@ -25914,7 +25915,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 12);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "chapter_010.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/chapter_010.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/26");
     });
     it("should get section from href", () => {
@@ -25923,7 +25924,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 3);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "chapter_001.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/chapter_001.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/8");
     });
     it("should get section from epubcfi", () => {
@@ -25932,7 +25933,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 3);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "chapter_001.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/chapter_001.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/8");
     });
   });
@@ -25943,7 +25944,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "titlepage.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/titlepage.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/titlepage.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/6");
     });
   });
@@ -25954,7 +25955,7 @@ describe("Sections", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 12);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "chapter_010.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/alice/OPS/chapter_010.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.cfiBase, "/6/26");
     });
   });
