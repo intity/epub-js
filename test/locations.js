@@ -11,7 +11,7 @@ describe("Locations", () => {
 		const set = (index, section) => {
 			sections[index] = {
 				cfi: rendition.currentLocation().start.cfi,
-				sec: section
+				idx: section.index
 			}
 		}
 		const tasks = []
@@ -22,7 +22,7 @@ describe("Locations", () => {
 	})
 	describe("#parse()", () => {
 		it("should parse locations from a document", async () => {
-			const sec = sections[2].sec
+			const sec = book.section(sections[2].idx)
 			const lcs = new Locations()
 			await lcs.parse(sec.contents, sec.cfiBase, 549)
 			const loc = [...lcs.values()][0]
