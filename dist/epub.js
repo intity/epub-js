@@ -12885,7 +12885,6 @@ class Views extends Array {
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const AXIS_H = "horizontal";
 const AXIS_V = "vertical";
 
 /**
@@ -12899,12 +12898,6 @@ class Contents {
    * @param {Section} section Section object reference
    */
   constructor(doc, content, section) {
-    /**
-     * @member {EpubCFI} epubcfi Blank Cfi for Parsing
-     * @memberof Contents
-     * @readonly
-     */
-    this.epubcfi = new src_epubcfi();
     this.document = doc;
     /**
      * @member {Element} content document.body by current location
@@ -13207,7 +13200,7 @@ class Contents {
     };
     if (!this.document) return targetPos;
     let position;
-    if (this.epubcfi.isCfiString(target)) {
+    if (src_epubcfi.prototype.isCfiString(target)) {
       const range = new src_epubcfi(target).toRange(this.document, ignoreClass);
       if (range) {
         try {
@@ -13843,6 +13836,7 @@ class Contents {
     this.styles = undefined;
     this.clearScripts();
     this.scripts = undefined;
+    this.section = undefined;
   }
 }
 event_emitter_default()(Contents.prototype);
@@ -14264,7 +14258,7 @@ class Underline extends highlight {
 
 
 
-const iframe_AXIS_H = "horizontal";
+const AXIS_H = "horizontal";
 const iframe_AXIS_V = "vertical";
 
 /**
@@ -14426,7 +14420,7 @@ class IframeView {
    * @private
    */
   axis() {
-    if (this.layout.axis === iframe_AXIS_H) {
+    if (this.layout.axis === AXIS_H) {
       this.container.style.flex = "none";
     } else {
       this.container.style.flex = "initial";
@@ -14454,7 +14448,7 @@ class IframeView {
     if (!this.iframe || this.expanding) return;
     this.expanding = true;
     const sz = this.contents.textSize();
-    if (this.layout.axis === iframe_AXIS_H) {
+    if (this.layout.axis === AXIS_H) {
       if (sz.width % this.layout.pageWidth > 0) {
         sz.width = Math.ceil(sz.width / this.layout.pageWidth) * this.layout.pageWidth;
       }

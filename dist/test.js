@@ -3118,7 +3118,6 @@ class Container {
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const AXIS_H = "horizontal";
 const AXIS_V = "vertical";
 
 /**
@@ -3132,12 +3131,6 @@ class Contents {
    * @param {Section} section Section object reference
    */
   constructor(doc, content, section) {
-    /**
-     * @member {EpubCFI} epubcfi Blank Cfi for Parsing
-     * @memberof Contents
-     * @readonly
-     */
-    this.epubcfi = new _epubcfi__WEBPACK_IMPORTED_MODULE_21__/* ["default"] */ .A();
     this.document = doc;
     /**
      * @member {Element} content document.body by current location
@@ -3440,7 +3433,7 @@ class Contents {
     };
     if (!this.document) return targetPos;
     let position;
-    if (this.epubcfi.isCfiString(target)) {
+    if (_epubcfi__WEBPACK_IMPORTED_MODULE_21__/* ["default"] */ .A.prototype.isCfiString(target)) {
       const range = new _epubcfi__WEBPACK_IMPORTED_MODULE_21__/* ["default"] */ .A(target).toRange(this.document, ignoreClass);
       if (range) {
         try {
@@ -4076,6 +4069,7 @@ class Contents {
     this.styles = undefined;
     this.clearScripts();
     this.scripts = undefined;
+    this.section = undefined;
   }
 }
 event_emitter__WEBPACK_IMPORTED_MODULE_20___default()(Contents.prototype);
@@ -25266,7 +25260,7 @@ describe("Locations", () => {
     const set = (index, section) => {
       sections[index] = {
         cfi: rendition.currentLocation().start.cfi,
-        sec: section
+        idx: section.index
       };
     };
     const tasks = [];
@@ -25277,7 +25271,7 @@ describe("Locations", () => {
   });
   describe("#parse()", () => {
     it("should parse locations from a document", async () => {
-      const sec = sections[2].sec;
+      const sec = book.section(sections[2].idx);
       const lcs = new _src_locations__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .A();
       await lcs.parse(sec.contents, sec.cfiBase, 549);
       const loc = [...lcs.values()][0];
