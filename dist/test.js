@@ -25463,8 +25463,8 @@ describe("Locations", () => {
   });
   describe("#clear()", () => {
     it("should clear locations", () => {
-      rendition.themes.clear();
-      assert__WEBPACK_IMPORTED_MODULE_4___default().equal(rendition.themes.size, 0);
+      book.locations.clear();
+      assert__WEBPACK_IMPORTED_MODULE_4___default().equal(book.locations.size, 0);
     });
   });
   after(() => {
@@ -25779,6 +25779,7 @@ describe("Rendition", () => {
 
 
 
+const url = () => /epub-js/.test(location.href) ? "/epub-js" : "";
 describe("Section", () => {
   let book, section1, section2;
   before(async () => {
@@ -25793,7 +25794,7 @@ describe("Section", () => {
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.index, 3);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.href, "chapter_001.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.url, "/assets/alice/OPS/chapter_001.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.cfiBase, "/6/8");
       await section1.load(book.request);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section1.document instanceof Document, true);
@@ -25804,7 +25805,7 @@ describe("Section", () => {
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.linear, true);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.index, 12);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.href, "chapter_010.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.url, "/assets/alice/OPS/chapter_010.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.cfiBase, "/6/26");
       await section2.load(book.request);
       assert__WEBPACK_IMPORTED_MODULE_3___default().equal(section2.document instanceof Document, true);
