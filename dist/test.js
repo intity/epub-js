@@ -25706,6 +25706,7 @@ describe("Path", () => {
 /* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6561);
 
 
+const url = () => /epub-js/.test(location.href) ? "/epub-js" : "";
 describe("Rendition", () => {
   let book, rendition;
   before(async () => {
@@ -25722,35 +25723,35 @@ describe("Rendition", () => {
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 0);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.idref, "s0");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "xhtml/nav.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/handbook/EPUB/xhtml/nav.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/handbook/EPUB/xhtml/nav.xhtml`);
     });
     it("should be displayed by index", async () => {
       const section = await rendition.display(2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.idref, "s2");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/handbook/EPUB/xhtml/mathml.xhtml`);
     });
     it("should be displayed by idref", async () => {
       const section = await rendition.display("#s2");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.idref, "s2");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/handbook/EPUB/xhtml/mathml.xhtml`);
     });
     it("should be displayed by href", async () => {
       const section = await rendition.display("xhtml/mathml.xhtml");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.idref, "s2");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/handbook/EPUB/xhtml/mathml.xhtml`);
     });
     it("should be displayed by EpubCFI", async () => {
       const section = await rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.index, 2);
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.idref, "s2");
       assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, "/assets/handbook/EPUB/xhtml/mathml.xhtml");
+      assert__WEBPACK_IMPORTED_MODULE_0___default().equal(section.url, `${url()}/assets/handbook/EPUB/xhtml/mathml.xhtml`);
     });
   });
   after(() => {
