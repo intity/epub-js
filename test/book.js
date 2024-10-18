@@ -1,6 +1,16 @@
 import assert from "assert"
 import Book from "../src/book"
 
+const arrayBufferToBase64 = (buffer) => {
+	let binary = ""
+	let bytes = new Uint8Array(buffer)
+	let len = bytes.byteLength
+	for (let i = 0; i < len; i++) {
+		binary += String.fromCharCode(bytes[i])
+	}
+	return window.btoa(binary)
+}
+
 const assertion = (book, { archived, url }) => {
 	assert.equal(book.isOpen, true)
 	assert.equal(book.archived, archived)
@@ -74,18 +84,11 @@ describe("Book", () => {
 	describe("open book from data URL in base64 encoding", () => {
 		let book, data
 		before(async () => {
-			book = new Book()
 			const response = await fetch(url("assets/alice.epub"))
 			const blob = await response.blob()
-			return new Promise((resolve, reject) => {
-				const reader = new FileReader()
-				reader.onload = (e) => {
-					data = e.target.result
-					resolve(data)
-				}
-				reader.onerror = (err) => reject(err)
-				reader.readAsDataURL(blob)
-			})
+			const buff = await blob.arrayBuffer()
+			data = arrayBufferToBase64(buff)
+			book = new Book()
 		})
 		it("should open a archived epub", async () => {
 			await book.open(data, "base64")
