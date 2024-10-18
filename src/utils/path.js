@@ -129,7 +129,7 @@ class Path {
 			if (i >= 0) {
 				path = arguments[i];
 			} else {
-				path = process ? process.cwd() : "/";
+				path = "/";
 			}
 
 			if (path.length === 0) {
