@@ -18,7 +18,7 @@
   "scripts": {
     "docs": "node docsgen.js",
     "lint": "eslint src",
-    "test": "mocha tests/book.js",
+    "test": "mocha tests/**/*.js",
     "start": "NODE_ENV=development webpack serve",
     "build": "NODE_ENV=production webpack --progress",
     "minify": "NODE_ENV=production MINIMIZE=true webpack --progress",
