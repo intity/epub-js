@@ -72,7 +72,6 @@ the section content.
 | [options.stylesheet] | <code>string</code> |  | url of stylesheet to be injected |
 | [options.script] | <code>string</code> |  | url of script to be injected |
 | [options.snap] | <code>object</code> |  | use snap scrolling |
-| [options.hidden] | <code>boolean</code> | <code>false</code> | viewport hidden |
 | [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
 <a name="Rendition+setManager"></a>

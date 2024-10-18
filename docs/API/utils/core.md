@@ -3,7 +3,6 @@
 # core
 
 * [core](#module_core)
-    * [.requestAnimationFrame](#module_core.requestAnimationFrame) ⇒ <code>function</code>
     * [.uuid](#module_core.uuid) ⇒ <code>string</code>
     * [.documentHeight](#module_core.documentHeight) ⇒ <code>number</code>
     * [.isElement](#module_core.isElement) ⇒ <code>boolean</code>
@@ -42,13 +41,6 @@
     * [.filterChildren](#module_core.filterChildren) ⇒ <code>Array.&lt;Element&gt;</code>
     * [.getParentByTagName](#module_core.getParentByTagName) ⇒ <code>Array.&lt;Node&gt;</code>
 
-<a name="module_core.requestAnimationFrame"></a>
-
-## core.requestAnimationFrame ⇒ <code>function</code>
-Vendor prefixed requestAnimationFrame
-
-**Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>function</code> - requestAnimationFrame  
 <a name="module_core.uuid"></a>
 
 ## core.uuid ⇒ <code>string</code>
@@ -337,11 +329,10 @@ Parse xml (or html) markup
 **Kind**: static constant of [<code>core</code>](#module_core)  
 **Returns**: <code>Document</code> - document  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| markup | <code>string</code> |  |
-| mime | <code>string</code> |  |
-| forceXMLDom | <code>boolean</code> | force using xmlDom to parse instead of native parser |
+| Param | Type |
+| --- | --- |
+| markup | <code>string</code> | 
+| mime | <code>string</code> | 
 
 <a name="module_core.qs"></a>
 

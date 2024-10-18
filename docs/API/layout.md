@@ -11,6 +11,7 @@ Figures out the CSS values to apply for a layout
         * [.set(options)](#Layout+set)
         * [.calculate([width], [height], [gap])](#Layout+calculate)
         * [.count(totalLength, [pageLength])](#Layout+count) ⇒ <code>Object</code>
+        * [.destroy()](#Layout+destroy)
     * _static_
         * [.axis](#Layout.axis) : <code>string</code>
         * [.name](#Layout.name) : <code>string</code>
@@ -84,6 +85,12 @@ Count number of pages
 | totalLength | <code>number</code> | 
 | [pageLength] | <code>number</code> | 
 
+<a name="Layout+destroy"></a>
+
+## layout.destroy()
+destroty
+
+**Kind**: instance method of [<code>Layout</code>](#Layout)  
 <a name="Layout.axis"></a>
 
 ## Layout.axis : <code>string</code>

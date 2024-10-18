@@ -39,7 +39,6 @@ Handles DOM manipulation, queries and events for View contents
         * [.writingMode([mode])](#Contents+writingMode)
         * [.destroy()](#Contents+destroy)
     * _static_
-        * [.epubcfi](#Contents.epubcfi) : <code>EpubCFI</code>
         * [.content](#Contents.content) : <code>Element</code>
         * [.contentRect](#Contents.contentRect) : <code>object</code>
         * [.section](#Contents.section) : <code>Section</code>
@@ -406,13 +405,6 @@ Set the writingMode of the text
 destroy
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-<a name="Contents.epubcfi"></a>
-
-## Contents.epubcfi : <code>EpubCFI</code>
-Blank Cfi for Parsing
-
-**Kind**: static property of [<code>Contents</code>](#Contents)  
-**Read only**: true  
 <a name="Contents.content"></a>
 
 ## Contents.content : <code>Element</code>

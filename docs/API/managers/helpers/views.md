@@ -14,17 +14,16 @@ Views
         * [.append(view)](#Views+append) ⇒ <code>object</code>
         * [.prepend(view)](#Views+prepend) ⇒ <code>object</code>
         * [.insert(view, index)](#Views+insert) ⇒ <code>object</code>
-        * [.remove(view)](#Views+remove)
-        * [.destroy(view)](#Views+destroy)
-        * [.clear()](#Views+clear) ⇒ <code>void</code>
+        * [.remove(view, [i])](#Views+remove)
+        * [.clear()](#Views+clear)
         * [.find(section)](#Views+find) ⇒ <code>object</code>
         * [.displayed()](#Views+displayed) ⇒ <code>Array.&lt;object&gt;</code>
         * [.show()](#Views+show)
         * [.hide()](#Views+hide)
         * [.update()](#Views+update)
+        * [.destroy()](#Views+destroy)
     * _static_
         * [.container](#Views.container) : <code>Element</code>
-        * [.hidden](#Views.hidden) : <code>boolean</code>
 
 <a name="new_Views_new"></a>
 
@@ -96,29 +95,19 @@ insert
 
 <a name="Views+remove"></a>
 
-## views.remove(view)
+## views.remove(view, [i])
 remove
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 
-| Param | Type |
-| --- | --- |
-| view | <code>object</code> | 
-
-<a name="Views+destroy"></a>
-
-## views.destroy(view)
-destroy
-
-**Kind**: instance method of [<code>Views</code>](#Views)  
-
-| Param | Type |
-| --- | --- |
-| view | <code>object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| view | <code>object</code> |  |
+| [i] | <code>number</code> | index |
 
 <a name="Views+clear"></a>
 
-## views.clear() ⇒ <code>void</code>
+## views.clear()
 clear
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
@@ -158,13 +147,14 @@ hide
 update
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
+<a name="Views+destroy"></a>
+
+## views.destroy()
+destroy
+
+**Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views.container"></a>
 
 ## Views.container : <code>Element</code>
-**Kind**: static property of [<code>Views</code>](#Views)  
-**Read only**: true  
-<a name="Views.hidden"></a>
-
-## Views.hidden : <code>boolean</code>
 **Kind**: static property of [<code>Views</code>](#Views)  
 **Read only**: true  

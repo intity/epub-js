@@ -51,6 +51,7 @@ Constructor
 | --- | --- | --- | --- |
 | [input] | <code>string</code> \| <code>ArrayBuffer</code> |  | Url, Path or ArrayBuffer |
 | [options] | <code>object</code> |  |  |
+| [options.format] | <code>string</code> | <code>&quot;&#x27;xml&#x27;&quot;</code> | epub container format |
 | [options.request] | <code>object</code> |  | object options to xhr request |
 | [options.request.method] | <code>function</code> |  | a request function to use instead of the default |
 | [options.request.withCredentials] | <code>boolean</code> | <code>false</code> | send the xhr request withCredentials |
@@ -66,7 +67,7 @@ new Book()
 ```
 **Example**  
 ```js
-new Book("/path/to/book/" { store: "epub-js" })
+new Book("/path/to/book/", { store: "epub-js" })
 ```
 **Example**  
 ```js
@@ -89,15 +90,11 @@ Open a epub or url
 | Param | Type | Description |
 | --- | --- | --- |
 | input | <code>string</code> \| <code>ArrayBuffer</code> | Url, Path or ArrayBuffer |
-| [openAs] | <code>string</code> | input type: `"binary"` OR `"base64"` OR `"epub"` OR `"opf"` OR `"json"` OR `"directory"` |
+| [openAs] | <code>string</code> | input type: `"binary"` OR `"base64"` OR `"epub"` OR `"json"` OR `"directory"` |
 
 **Example**  
 ```js
 book.open("/path/to/book/")
-```
-**Example**  
-```js
-book.open("/path/to/book/OPS/package.opf")
 ```
 **Example**  
 ```js
@@ -106,10 +103,6 @@ book.open("/path/to/book.epub")
 **Example**  
 ```js
 book.open("https://example.com/book/")
-```
-**Example**  
-```js
-book.open("https://example.com/book/OPS/package.opf")
 ```
 **Example**  
 ```js

@@ -8,7 +8,6 @@ IframeView class
 * [IframeView](#IframeView)
     * [new IframeView(layout, section, [options])](#new_IframeView_new)
     * _instance_
-        * [.create()](#IframeView+create) ⇒ <code>Element</code>
         * [.render(request)](#IframeView+render) ⇒ <code>Promise.&lt;string&gt;</code>
         * [.reset()](#IframeView+reset)
         * [.update()](#IframeView+update)
@@ -20,19 +19,15 @@ IframeView class
         * [.offset()](#IframeView+offset) ⇒ <code>Object</code>
         * [.position()](#IframeView+position) ⇒ <code>DOMRect</code>
         * [.locationOf(target)](#IframeView+locationOf) ⇒ <code>Object</code>
-        * [.bounds([force])](#IframeView+bounds) ⇒ <code>Object</code>
         * [.highlight(cfiRange, [data], [cb], [className], [styles])](#IframeView+highlight) ⇒ <code>object</code>
         * [.underline(cfiRange, [data], [cb], [className], [styles])](#IframeView+underline) ⇒ <code>object</code>
         * [.unhighlight(cfiRange)](#IframeView+unhighlight) ⇒ <code>boolean</code>
         * [.ununderline(cfiRange)](#IframeView+ununderline) ⇒ <code>boolean</code>
         * [.destroy()](#IframeView+destroy)
     * _static_
-        * [.settings](#IframeView.settings) : <code>object</code>
         * [.id](#IframeView.id) : <code>string</code>
-        * [.section](#IframeView.section) : <code>Section</code>
         * [.contents](#IframeView.contents) : <code>Contents</code>
-        * [.epubcfi](#IframeView.epubcfi) : <code>EpubCFI</code>
-        * [.layout](#IframeView.layout) : <code>Layout</code>
+        * [.container](#IframeView.container) : <code>Element</code>
         * [.marks](#IframeView.marks) : <code>Marks</code>
         * [.method](#IframeView.method) : <code>string</code>
         * [.writingMode](#IframeView.writingMode) : <code>string</code>
@@ -60,13 +55,6 @@ Constructor
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
-<a name="IframeView+create"></a>
-
-## iframeView.create() ⇒ <code>Element</code>
-Create iframe element
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-**Returns**: <code>Element</code> - iframe  
 <a name="IframeView+render"></a>
 
 ## iframeView.render(request) ⇒ <code>Promise.&lt;string&gt;</code>
@@ -162,17 +150,6 @@ locationOf
 | --- | --- |
 | target | <code>string</code> \| <code>EpubCFI</code> | 
 
-<a name="IframeView+bounds"></a>
-
-## iframeView.bounds([force]) ⇒ <code>Object</code>
-bounds
-
-**Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| [force] | <code>boolean</code> | <code>false</code> | 
-
 <a name="IframeView+highlight"></a>
 
 ## iframeView.highlight(cfiRange, [data], [cb], [className], [styles]) ⇒ <code>object</code>
@@ -231,19 +208,9 @@ ununderline
 destroy
 
 **Kind**: instance method of [<code>IframeView</code>](#IframeView)  
-<a name="IframeView.settings"></a>
-
-## IframeView.settings : <code>object</code>
-**Kind**: static property of [<code>IframeView</code>](#IframeView)  
-**Read only**: true  
 <a name="IframeView.id"></a>
 
 ## IframeView.id : <code>string</code>
-**Kind**: static property of [<code>IframeView</code>](#IframeView)  
-**Read only**: true  
-<a name="IframeView.section"></a>
-
-## IframeView.section : <code>Section</code>
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
 <a name="IframeView.contents"></a>
@@ -251,16 +218,9 @@ destroy
 ## IframeView.contents : <code>Contents</code>
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
-<a name="IframeView.epubcfi"></a>
+<a name="IframeView.container"></a>
 
-## IframeView.epubcfi : <code>EpubCFI</code>
-Blank Cfi for Parsing
-
-**Kind**: static property of [<code>IframeView</code>](#IframeView)  
-**Read only**: true  
-<a name="IframeView.layout"></a>
-
-## IframeView.layout : <code>Layout</code>
+## IframeView.container : <code>Element</code>
 **Kind**: static property of [<code>IframeView</code>](#IframeView)  
 **Read only**: true  
 <a name="IframeView.marks"></a>
