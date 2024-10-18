@@ -29,8 +29,10 @@ global.DOMParser = window.DOMParser
 global.Element = window.Element
 global.Node = window.Node
 global.NodeList = window.NodeList
+global.Range = window.Range
 global.XMLHttpRequest = window.XMLHttpRequest
 global.XMLSerializer = window.XMLSerializer
+global.XPathResult = window.XPathResult
 //-- DEPS
 global.JSZip = JSZip
 global.localforage = localforage
