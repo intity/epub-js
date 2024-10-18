@@ -14181,7 +14181,6 @@ const lookup = filename => {
 /* harmony import */ var core_js_modules_web_url_search_params_has_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_url_search_params_has_js__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_web_url_search_params_size_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8721);
 /* harmony import */ var core_js_modules_web_url_search_params_size_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_url_search_params_size_js__WEBPACK_IMPORTED_MODULE_3__);
-/* provided dependency */ var process = __webpack_require__(5606);
 
 
 
@@ -14307,7 +14306,7 @@ class Path {
       if (i >= 0) {
         path = arguments[i];
       } else {
-        path = process ? process.cwd() : "/";
+        path = "/";
       }
       if (path.length === 0) {
         continue;
@@ -24816,6 +24815,7 @@ const assertion = (book, {
   assert__WEBPACK_IMPORTED_MODULE_0___default().equal(book.container.encoding, "UTF-8");
   assert__WEBPACK_IMPORTED_MODULE_0___default().equal(book.container.mediaType, "application/oebps-package+xml");
 };
+const url = path => location.href.replace("test/", "") + path;
 describe("Book", () => {
   describe("open book from epub file of local server", () => {
     const book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A();
@@ -24854,7 +24854,7 @@ describe("Book", () => {
   describe("open book from array buffer", () => {
     let book, data;
     before(async () => {
-      const response = await fetch("../assets/alice.epub");
+      const response = await fetch(url("assets/alice.epub"));
       data = await response.arrayBuffer();
       book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A();
     });
@@ -24878,7 +24878,7 @@ describe("Book", () => {
     let book, data;
     before(async () => {
       book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A();
-      const response = await fetch("../assets/alice.epub");
+      const response = await fetch(url("assets/alice.epub"));
       const blob = await response.blob();
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -24929,7 +24929,7 @@ describe("Book", () => {
       await book.open("../assets/alice/");
       assertion(book, {
         archived: false,
-        url: `${location.origin + location.pathname.replace("/test/", "")}/assets/alice/`
+        url: url("assets/alice/")
       });
     });
     after(() => {
