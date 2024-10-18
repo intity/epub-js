@@ -11,6 +11,8 @@ const assertion = (book, { archived, url }) => {
 	assert.equal(book.container.mediaType, "application/oebps-package+xml")
 }
 
+const url = (path) => location.href.replace("test/", "") + path
+
 describe("Book", () => {
 	describe("open book from epub file of local server", () => {
 		const book = new Book()
@@ -49,7 +51,7 @@ describe("Book", () => {
 	describe("open book from array buffer", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch("http://localhost:8080/assets/alice.epub")
+			const response = await fetch(url("assets/alice.epub"))
 			data = await response.arrayBuffer()
 			book = new Book()
 		})
@@ -71,7 +73,8 @@ describe("Book", () => {
 	describe("open book from data URL in base64 encoding", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch("http://localhost:8080/assets/alice.epub")
+			book = new Book()
+			const response = await fetch(url("assets/alice.epub"))
 			const blob = await response.blob()
 			const buff = Buffer.from(await blob.arrayBuffer())
 			data = buff.toString("base64")
@@ -115,7 +118,7 @@ describe("Book", () => {
 			await book.open("../assets/alice/")
 			assertion(book, {
 				archived: false,
-				url: "http://localhost:8080/assets/alice/"
+				url: url("assets/alice/")
 			})
 		})
 		after(() => {
