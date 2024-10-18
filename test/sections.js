@@ -1,7 +1,7 @@
 import assert from "assert"
 import Book from "../src/book"
 
-const url = () => /epub-js/.test(location.href) ? "/epub-js" : ""
+const url = (path) => (/epub-js/.test(location.href) ? "/epub-js" : "") + path
 
 describe("Sections", () => {
     let book
@@ -16,7 +16,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 2)
             assert.equal(section.href, "titlepage.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/titlepage.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/titlepage.xhtml"))
             assert.equal(section.cfiBase, "/6/6")
         })
         it("should get section from index", () => {
@@ -25,7 +25,7 @@ describe("Sections", () => {
             assert.equal(section.linear, false)
             assert.equal(section.index, 1)
             assert.equal(section.href, "nav.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/nav.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/nav.xhtml"))
             assert.equal(section.cfiBase, "/6/4")
         })
         it("should get section from id", () => {
@@ -34,7 +34,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 12)
             assert.equal(section.href, "chapter_010.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/chapter_010.xhtml"))
             assert.equal(section.cfiBase, "/6/26")
         })
         it("should get section from href", () => {
@@ -43,7 +43,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 3)
             assert.equal(section.href, "chapter_001.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/chapter_001.xhtml"))
             assert.equal(section.cfiBase, "/6/8")
         })
         it("should get section from epubcfi", () => {
@@ -52,7 +52,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 3)
             assert.equal(section.href, "chapter_001.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/chapter_001.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/chapter_001.xhtml"))
             assert.equal(section.cfiBase, "/6/8")
         })
     })
@@ -63,7 +63,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 2)
             assert.equal(section.href, "titlepage.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/titlepage.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/titlepage.xhtml"))
             assert.equal(section.cfiBase, "/6/6")
         })
     })
@@ -74,7 +74,7 @@ describe("Sections", () => {
             assert.equal(section.linear, true)
             assert.equal(section.index, 12)
             assert.equal(section.href, "chapter_010.xhtml")
-            assert.equal(section.url, `${url()}/assets/alice/OPS/chapter_010.xhtml`)
+            assert.equal(section.url, url("/assets/alice/OPS/chapter_010.xhtml"))
             assert.equal(section.cfiBase, "/6/26")
         })
     })
