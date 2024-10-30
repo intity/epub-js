@@ -2,7 +2,7 @@
 
 **Document status:** draft
 
-The architecture of the rendering system contains many abstractions that help solve complex problems. In particular, customizing the layout of pages in different views. The central place in the rendering system is occupied by the [Layout](API/layout.md) class, which provides the basic infrastructure for performing derivative calculations. Below is a graph of dependencies on the **layout** object.
+The architecture of the rendering system contains many abstractions that help to solve complex problems. In particular, customizing the layout of pages in different views. The central place in the rendering system is occupied by the [Layout](API/layout.md) class, which provides the basic infrastructure for performing derivative calculations. Below is the graph of dependencies on the **layout** object.
 
 ```mermaid
 graph LR
@@ -35,7 +35,7 @@ Most of the dependent objects rely on the `layout.updated` event to finish synch
 
 <img src="../assets/rendition-viewport.svg" width=1000 />
 
-First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will fire the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
+First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will run the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
 
 ## Horizontal axis
 
