@@ -2,7 +2,7 @@
 
 ### global function
 
-- [ePub](epub.md)
+- [ePub](API/epub.md)
 
 ### global classes (dependencies graph)
 
