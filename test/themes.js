@@ -123,8 +123,5 @@ describe("Themes", () => {
     })
     after(() => {
         book.destroy()
-        book = undefined
-        rendition = undefined
-        theme = undefined
     })
 })
