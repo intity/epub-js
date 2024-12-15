@@ -248,9 +248,9 @@ class Viewport {
 		const axis = value || this.layout.axis;
 		
 		if (axis === "horizontal") {
-			this.views.container.style["flex-wrap"] = "nowrap";
+			this.views.container.style["display"] = "flex";
 		} else {
-			this.views.container.style["flex-wrap"] = "wrap";
+			this.views.container.style["display"] = "grid";
 		}
 	}
 
@@ -264,17 +264,17 @@ class Viewport {
 		const flow = value || this.layout.flow;
 
 		if (flow === "paginated") {
+			this.views.container.style["display"] = "flex";
 			this.views.container.style["overflow-y"] = "hidden";
 			this.views.container.style["overflow-x"] = "hidden";
-			this.views.container.style["flex-wrap"] = "nowrap";
 		} else if (this.layout.axis === "horizontal") {
+			this.views.container.style["display"] = "flex";
 			this.views.container.style["overflow-y"] = "hidden";
 			this.views.container.style["overflow-x"] = "auto";
-			this.views.container.style["flex-wrap"] = "nowrap";
 		} else if (this.layout.axis === "vertical") {
+			this.views.container.style["display"] = "grid";
 			this.views.container.style["overflow-y"] = "auto";
 			this.views.container.style["overflow-x"] = "hidden";
-			this.views.container.style["flex-wrap"] = "wrap";
 		}
 
 		this.target.className = flow;
