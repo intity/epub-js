@@ -9,7 +9,6 @@ import { isNumber, prefixed, borders, defaults } from "./utils/core";
 const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const AXIS_V = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -149,7 +148,7 @@ class Contents {
 	overflow(overflow) {
 
 		const elt = this.document.documentElement;
-		
+
 		if (overflow) {
 			elt.style.overflow = overflow;
 		}
@@ -165,7 +164,7 @@ class Contents {
 	overflowX(overflow) {
 
 		const elt = this.document.documentElement;
-		
+
 		if (overflow) {
 			elt.style.overflowX = overflow;
 		}
@@ -181,7 +180,7 @@ class Contents {
 	overflowY(overflow) {
 
 		const elt = this.document.documentElement;
-		
+
 		if (overflow) {
 			elt.style.overflowY = overflow;
 		}
@@ -732,27 +731,21 @@ class Contents {
 
 		const doc = layout.flow === "scrolled-doc";
 		const szw = doc ? layout.pageWidth : layout.width;
-		const szh = layout.height;
 		const dir = layout.direction;
-		const viewport = { scale: 1.0, scalable: "no" };
 
-		if (layout.axis === AXIS_V) {
-			this.width(szw);
-			viewport.width = szw;
-			this.css("height", "auto");
-			this.css("padding", "20px " + (szw / 12) + "px");
-		} else {
-			this.height(szh);
-			viewport.height = szh;
-			this.css("width", "auto");
-			this.css("padding", (szw / 17) + "px 20px");
-		}
+		this.width(szw);
+		this.viewport({
+			width: szw,
+			scale: 1.0,
+			scalable: "no"
+		});
+		this.direction(dir);
 
+		this.css("height", "auto");
+		this.css("padding", "20px " + (szw / 12) + "px");
 		this.css("overflow", "hidden");
 		this.css("margin", "0");
 		this.css("box-sizing", "border-box");
-		this.viewport(viewport);
-		this.direction(dir);
 	}
 
 	/**
@@ -782,21 +775,11 @@ class Contents {
 		this.css("margin", "0", true);
 		this.css("box-sizing", "border-box");
 		this.css("max-height", "inherit");
-
-		if (layout.axis === AXIS_V) {
-			this.css("display", "flex");
-			this.css("padding-top", (gap / 2) + "px", true);
-			this.css("padding-bottom", (gap / 2) + "px", true);
-			this.css("padding-left", "20px");
-			this.css("padding-right", "20px");
-		} else {
-			this.css("display", "block");
-			this.css("padding-top", "20px");
-			this.css("padding-bottom", "20px");
-			this.css("padding-left", (gap / 2) + "px", true);
-			this.css("padding-right", (gap / 2) + "px", true);
-		}
-
+		this.css("display", "block");
+		this.css("padding-top", "20px");
+		this.css("padding-bottom", "20px");
+		this.css("padding-left", (gap / 2) + "px", true);
+		this.css("padding-right", (gap / 2) + "px", true);
 		this.css("column-gap", gap + "px");
 		this.css("column-fill", "auto");
 		this.css("column-width", clw + "px");
