@@ -20,7 +20,6 @@ import ContinuousViewManager from "./managers/continuous/index";
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {string} [options.axis] viewport axis
  * @param {string|number} [options.width] viewport width
  * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
@@ -483,7 +482,6 @@ class Rendition {
 		const metadata = this.book.packaging.metadata;
 		const direction = this.book.packaging.direction;
 		return {
-			axis: this.settings.axis,
 			name: this.settings.layout || metadata.get("layout"),
 			flow: this.settings.flow || metadata.get("flow"),
 			spread: this.settings.spread || metadata.get("spread"),
