@@ -21,13 +21,24 @@ const assertion = (book, { archived, url }) => {
 	assert.equal(book.container.mediaType, "application/oebps-package+xml")
 }
 
-const url = (path) => location.href.replace("test/", "") + path
+const url = (path) => {
+	let result = location.origin
+	if (/localhost/.test(result)) {
+		result += path
+	} else {
+		result += "epub-js"
+		result += path
+	}
+	return result
+}
 
 describe("Book", () => {
 	describe("open book from epub file of local server", () => {
 		const book = new Book()
+		const path = url("/assets/alice.epub")
 		it("should open a archived epub", async () => {
-			await book.open("../assets/alice.epub")
+			await book.open(path)
+			await book.opened
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -43,8 +54,10 @@ describe("Book", () => {
 	})
 	describe("open book from epub file of remote server", () => {
 		const book = new Book()
+		const path = url("/assets/alice.epub")
 		it("should open a archived epub", async () => {
-			await book.open("https://intity.github.io/epub-js/assets/alice.epub")
+			await book.open(path)
+			await book.opened
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -61,12 +74,13 @@ describe("Book", () => {
 	describe("open book from array buffer", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch(url("assets/alice.epub"))
+			const response = await fetch(url("/assets/alice.epub"))
 			data = await response.arrayBuffer()
 			book = new Book()
 		})
 		it("should open a archived epub", async () => {
 			await book.open(data)
+			await book.opened
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -78,13 +92,12 @@ describe("Book", () => {
 		})
 		after(() => {
 			book.destroy()
-			data = undefined;
 		})
 	})
 	describe("open book from data URL in base64 encoding", () => {
 		let book, data
 		before(async () => {
-			const response = await fetch(url("assets/alice.epub"))
+			const response = await fetch(url("/assets/alice.epub"))
 			const blob = await response.blob()
 			const buff = await blob.arrayBuffer()
 			data = arrayBufferToBase64(buff)
@@ -92,6 +105,7 @@ describe("Book", () => {
 		})
 		it("should open a archived epub", async () => {
 			await book.open(data, "base64")
+			await book.opened
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -103,13 +117,14 @@ describe("Book", () => {
 		})
 		after(() => {
 			book.destroy()
-			data = undefined;
 		})
 	})
 	describe("open book from epub file without cover", () => {
 		const book = new Book()
+		const path = url("/assets/alice_without_cover.epub")
 		it("should open a archived epub", async () => {
-			await book.open("../assets/alice_without_cover.epub")
+			await book.open(path)
+			await book.opened
 			assertion(book, {
 				archived: true,
 				url: "/"
@@ -125,11 +140,13 @@ describe("Book", () => {
 	})
 	describe("open book from directory of local server", () => {
 		const book = new Book()
+		const path = url("/assets/alice/")
 		it("should open a unarchived epub", async () => {
-			await book.open("../assets/alice/")
+			await book.open(path)
+			await book.opened
 			assertion(book, {
 				archived: false,
-				url: url("assets/alice/")
+				url: path
 			})
 		})
 		after(() => {
@@ -138,11 +155,13 @@ describe("Book", () => {
 	})
 	describe("open book from directory of remote server", () => {
 		const book = new Book()
+		const path = url("/assets/alice/")
 		it("should open a unarchived epub", async () => {
-			await book.open("https://intity.github.io/epub-js/assets/alice/")
+			await book.open(path)
+			await book.opened
 			assertion(book, {
 				archived: false,
-				url: "https://intity.github.io/epub-js/assets/alice/"
+				url: path
 			})
 		})
 		after(() => {
