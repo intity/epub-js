@@ -44,7 +44,7 @@ describe("Book", () => {
 				url: "/"
 			})
 		})
-		it("should have a blob coverUrl", async () => {
+		it("should have a blob cover url", async () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
@@ -63,7 +63,7 @@ describe("Book", () => {
 				url: "/"
 			})
 		})
-		it("should have a blob coverUrl", async () => {
+		it("should have a blob cover url", async () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
@@ -86,7 +86,7 @@ describe("Book", () => {
 				url: "/"
 			})
 		})
-		it("should have a blob coverUrl", async () => {
+		it("should have a blob cover url", async () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
@@ -111,7 +111,7 @@ describe("Book", () => {
 				url: "/"
 			})
 		})
-		it("should have a blob coverUrl", async () => {
+		it("should have a blob cover url", async () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
@@ -130,7 +130,7 @@ describe("Book", () => {
 				url: "/"
 			})
 		})
-		it("should have a empty coverUrl", async () => {
+		it("should have a empty cover url", async () => {
 			const coverUrl = await book.coverUrl()
 			assert.equal(coverUrl, null)
 		})
