@@ -2,25 +2,37 @@
 <html lang="en">
 
 <head>
-    <title>Mocha</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js, epub-js, test, testing">
+    <meta name="description" content="epub-js tests">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="stylesheet" href="../dist/mocha.css" />
+    <link rel="stylesheet" type="text/css" href="../assets/css/mocha.css">
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <!-- <link rel="stylesheet" href="../node_modules/mocha/mocha.css" /> -->
-    <link rel="stylesheet" type="text/css" href="../examples/examples.css">
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
-    <script src="https://unpkg.com/mocha/mocha.js"></script>
+    <script src="../dist/mocha.js"></script>
+    <title>epub-js: testing to the mocha-browser model</title>
+    <style>
+        #main {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
-<body>
+<body id="main">
     <div id="mocha"></div>
     <script class="mocha-init">
         mocha.setup({
             bail: true,
             color: true,
             checkLeaks: true,
-            reporter: "spec",
+            // reporter: "spec",
             ui: "bdd"
         })
     </script>
