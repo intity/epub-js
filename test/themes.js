@@ -1,12 +1,22 @@
 import assert from "assert"
 import Book from "../src/book"
 
-const url = () => `${location.href.replace("/test/", "")}/examples/themes.css`
+const url = (path) => {
+	let result = location.origin
+	if (/localhost/.test(result)) {
+		result += path
+	} else {
+		result += "epub-js"
+		result += path
+	}
+	return result
+}
 
 describe("Themes", () => {
-    let book, rendition, theme
+    let book, rendition, theme, path
     before(async () => {
         book = new Book("../assets/alice/")
+        path = url("/examples/themes.css")
         rendition = book.renderTo(document.body, {
             spread: "none"
         })
@@ -15,14 +25,14 @@ describe("Themes", () => {
     })
     describe("#register()", () => {
         it("should register a theme by url", async () => {
-            rendition.themes.register("light", url())
+            rendition.themes.register("light", path)
             await rendition.hooks.content
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, url())
-            rendition.themes.register("dark", url())
+            assert.equal(theme.url, path)
+            rendition.themes.register("dark", path)
             await rendition.hooks.content
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, url())
+            assert.equal(theme.url, path)
             rendition.themes.clear()
             await rendition.hooks.content
             assert.equal(rendition.themes.size, 0)
@@ -68,14 +78,14 @@ describe("Themes", () => {
         })
         it("should register a themes from object with urls", async () => {
             rendition.themes.register({
-                light: url(),
-                dark: url()
+                light: path,
+                dark: path
             })
             await rendition.hooks.content
             theme = rendition.themes.get("light")
-            assert.equal(theme.url, url())
+            assert.equal(theme.url, path)
             theme = rendition.themes.get("dark")
-            assert.equal(theme.url, url())
+            assert.equal(theme.url, path)
         })
     })
     describe("#select()", () => {
