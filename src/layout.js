@@ -36,6 +36,12 @@ class Layout {
 		 */
 		this.flow = "paginated";
 		/**
+		 * @member {string} style
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.style = "paginated";
+		/**
 		 * @member {boolean} spread
 		 * @memberof Layout
 		 * @readonly
@@ -146,16 +152,19 @@ class Layout {
 						case "scrolled-continuous":
 							this.flow = "scrolled";
 							this.axis = "vertical"; // autocomplete
+							this.style = "scrolling"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						case "scrolled-doc":
 							this.flow = value;
 							this.axis = "vertical"; // autocomplete
+							this.style = "scrolling"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						default:
 							this.flow = "paginated";
 							this.axis = "horizontal"; // autocomplete
+							this.style = "paginated"; // autocomplete
 							break;
 					}
 				} else error(opt);
