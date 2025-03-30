@@ -16,6 +16,7 @@ Figures out the CSS values to apply for a layout
         * [.axis](#Layout.axis) : <code>string</code>
         * [.name](#Layout.name) : <code>string</code>
         * [.flow](#Layout.flow) : <code>string</code>
+        * [.style](#Layout.style) : <code>string</code>
         * [.spread](#Layout.spread) : <code>boolean</code>
         * [.direction](#Layout.direction) : <code>string</code>
         * [.orientation](#Layout.orientation) : <code>string</code>
@@ -105,6 +106,11 @@ Layout name
 <a name="Layout.flow"></a>
 
 ## Layout.flow : <code>string</code>
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
+<a name="Layout.style"></a>
+
+## Layout.style : <code>string</code>
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
 <a name="Layout.spread"></a>
