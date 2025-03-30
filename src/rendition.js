@@ -8,7 +8,7 @@ import Hook from "./utils/hook";
 import Viewport from "./viewport";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
-import { EVENTS, DOM_EVENTS } from "./utils/constants";
+import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";
 
 // Default View Managers
 import DefaultViewManager from "./managers/default/index";
@@ -270,6 +270,29 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.STARTED);
+		navigator.epubReadingSystem = {
+			name: "epub-js",
+			version: EPUBJS_VERSION,
+			layoutStyle: this.layout.style,
+			hasFeature: (name) => {
+				switch (name) {
+					case "dom-manipulation":
+						return true;
+					case "layout-changes":
+						return true;
+					case "touch-events":
+						return true;
+					case "mouse-events":
+						return true;
+					case "keyboard-events":
+						return true;
+					case "spine-scripting":
+						return false;
+					default:
+						return false;
+				}
+			}
+		};
 		this.starting.resolve();
 	}
 
