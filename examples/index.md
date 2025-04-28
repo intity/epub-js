@@ -32,7 +32,7 @@ Metadata property: `rendition:flow`
 
     Metadata value: `scrolled-doc`
 
-    Displays each **section** or **chapter** of the ebook in its entirety as a single page of variable height that you can scroll up and down. The difference from example (3) is that the width and height of **views-container** is 100%, and the `pageWidth` option is 800. In addition, the `manager` option is set to `continuous`. This way, when a document reaches the end of the scroll, the next document will be added to the **views-container**, and so on until the end of the book.
+    Displays each **section** or **chapter** of the ebook in its entirety as a single page of variable height that you can scroll up and down. The difference from example (3) is that the width and height of `views-container` is 100%, and the `pageWidth` option is 800.
 
 5. [Continuous scrolling of documents (mobile)](scrolled-continuous.html)
 
@@ -100,14 +100,15 @@ Metadata property: `rendition:flow`
 
     You can't just run a script on the outer page to change things inside the rendered ebook because the ebook is rendered inside an `iframe`. This mechanism lets you inject things into the `iframe` and run them after the book is rendered.
 
-17. [Open book from search options](open-book-from-searchoptions.html)
+17. [Open book from search options](path.html)
 
-    Use the `bookPath` search option to override the path from the remote server.
+    Use the `URI` search option to override the path from the remote server.
 
-    Input examples (add to the end of the URL):
+    Input example (add to the end of the URL):
 
-    - `?bookPath=https://s3.amazonaws.com/moby-dick/`
-    - `?bookPath=https://s3.amazonaws.com/moby-dick/moby-dick.epub`
+    ```
+    localhost/examples/path.html?URI=url/to/book.epub
+    ```
 
     By default, the relative path to the **Alice** book located on the local server is used.
 
