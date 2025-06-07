@@ -4,29 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js, epub-js, test, testing">
-    <meta name="description" content="epub-js tests">
+    <meta name="keywords" content="epub.js,epub-js,test,testing">
+    <meta name="description" content="testing epub-js library with mocha-browser">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <link rel="stylesheet" href="../dist/mocha.css" />
-    <link rel="stylesheet" type="text/css" href="../assets/css/mocha.css">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <link rel="stylesheet" type="text/css" href="../dist/mocha.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/test.css">
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/mocha.js"></script>
-    <title>epub-js: testing to the mocha-browser model</title>
-    <style>
-        #main {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-    </style>
+    <!-- <script type="module">
+        import func "../assets/js/test.js"
+    </script> -->
+    <title>epub-js-test : testing to the mocha-browser model</title>
 </head>
 
-<body id="main">
-    <div id="mocha"></div>
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="../">Home</a></li>
+                <li class="l-item"><a href="../docs/">Docs</a></li>
+                <li class="l-item"><a href="./" class="active">Test</a></li>
+                <li class="l-item"><a href="../examples/">Examples</a></li>
+                <li class="r-item"><a href="https://github.com/intity/epub-js" id="gh-link" target="_blank"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="mocha"></div>
     <script class="mocha-init">
         mocha.setup({
             bail: true,
