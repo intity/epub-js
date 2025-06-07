@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,library">
+    <meta name="description" content="epub-js library home page">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+    <script src="dist/marked.min.js"></script>
+    <script type="module">
+        import load from "./assets/js/main.js"
+        window.onload = (e) => load(e, "./README.md")
+    </script>
+    <title>epub-js library</title>
+</head>
+
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./" class="active">Home</a></li>
+                <li class="l-item"><a href="./docs/">Docs</a></li>
+                <li class="l-item"><a href="./test/">Test</a></li>
+                <li class="l-item"><a href="./examples/">Examples</a></li>
+                <li class="r-item"><a href="https://github.com/intity/epub-js" id="gh-link" target="_blank"></a></li>
+            </ul>
+        </nav>
+        <div class="box">
+            <a href="/" id="h-logo" title="epub-js library"></a>
+        </div>
+    </header>
+    <main id="content"></main>
+    <footer>
+        <div class="box">
+            <p>&copy; 2025 epub-js community</p>
+        </div>
+    </footer>
+</body>
+
+</html>
