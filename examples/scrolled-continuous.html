@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,scrolled-continuous,example,mobile">
+    <meta name="description" content="continuous scrolling of documents example for mobile devices">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="description" content="continuous scrolling of documents example for mobile devices">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Continuous scrolling of documents (mobile) - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/viewport.css">
     <script src="../dist/epub.js"></script>
     <script>
         window.onload = (e) => {
@@ -39,9 +39,10 @@
             })
         }
     </script>
+    <title>epub-js-examples : Continuous scrolling of documents (mobile)</title>
 </head>
 
-<body id="viewport" class="scrolled">
+<body id="viewport" class="scrolled ltr" dir="ltr">
     <div id="loader"></div>
 </body>
 

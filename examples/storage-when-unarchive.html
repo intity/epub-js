@@ -4,22 +4,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,storage,indexdb,unarchive,example">
+    <meta name="description" content="example of loading an unarchive book from storage">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Storage when unarchive - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Storage when unarchive</title>
 </head>
 
-<body>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/storage-when-unarchive.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated ltr" dir="ltr">
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
+    <footer></footer>
     <script>
         const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
@@ -40,8 +53,8 @@
 
             console.log(book.storage)
         })
-        const rendition = book.renderTo("viewer", {
-            width: 900,
+        const rendition = book.renderTo("viewport", {
+            width: 908,
             height: 600,
             spread: "none"
         })

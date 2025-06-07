@@ -4,26 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,input,example">
+    <meta name="description" content="example of open book from file">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Open book from File - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Open book from File</title>
 </head>
 
-<body>
-    <div id="toolbar">
-        <input type="file" id="openbook" accept=".epub">
-    </div>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <input type="file" id="openbook" accept=".epub">
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/input.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content">
+        <div id="viewport" class="paginated">
             <div id="divider"></div>
             <div id="loader" style="display: none;"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
+    <footer></footer>
     <script>
         const openbook = document.getElementById("openbook")
         const content = document.getElementById("content")
@@ -81,11 +94,14 @@
                 document.onkeyup = keybinding
                 loader.style.display = "none"
             })
-            rendition = book.renderTo("viewer", {
-                width: 900,
+            rendition = book.renderTo("viewport", {
+                width: 908,
                 height: 600
             })
-            rendition.display()
+            rendition.display().then((section) => {
+
+                console.log(section)
+            })
             rendition.on("relocated", (location) => {
 
                 update(location)

@@ -4,29 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,renderless,example">
+    <meta name="description" content="example of renderless">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Renderless - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Renderless</title>
 </head>
 
-<body>
-    <div id="toolbar">
-        <div class="box">
-            <label for="toc">Table of Contents:</label>
-            <select id="toc" style="width: 218px;"></select>
-        </div>
-    </div>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="scrolled">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <label for="toc">Table of Contents:</label>
+                    <select id="toc" style="width: 218px;"></select>
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/renderless.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="scrolled ltr" dir="ltr">
             <div id="loader"></div>
         </div>
         <div id="prev" class="arrow"></div>
         <div id="next" class="arrow"></div>
-    </div>
+    </main>
+    <footer></footer>
     <script>
-        const viewer = document.getElementById("viewer")
+        const viewer = document.getElementById("viewport")
         const loader = document.getElementById("loader")
         const list = document.getElementById("toc")
         const prev = document.getElementById("prev")
@@ -48,8 +59,8 @@
             lsc.style.width = "100%"
             lsc.style.height = "100%"
             vpc.className = "viewport-container"
-            vpc.style.width = "800px"
-            vpc.style.height = (window.innerHeight - 80) + "px"
+            vpc.style.width = "908px"
+            vpc.style.height = (window.innerHeight - 100) + "px"
             vpc.style.display = "flex"
             vpc.style.overflow = "hidden"
             vpc.style.position = "relative"

@@ -4,31 +4,43 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="keywords" content="epub.js,epub-js,outline,example">
+	<meta name="description" content="table of contents example">
 	<meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-	<title>EPUB.JS: Table of Contents - Example</title>
 	<link rel="icon" type="image/png" href="../assets/favicon.png">
-	<link rel="stylesheet" type="text/css" href="examples.css">
+	<link rel="stylesheet" type="text/css" href="../assets/css/main.css">
 	<script src="../dist/epub.js"></script>
+	<title>epub-js-examples : Table of Contents</title>
 </head>
 
-<body>
-	<div id="toolbar">
-		<label for="toc">Table of Contents:</label>
-		<select id="toc"></select>
-	</div>
-	<div id="content">
-		<div id="viewer" class="paginated">
+<body id="app">
+	<header>
+		<nav>
+			<ul>
+				<li class="l-item"><a href="./">Examples</a></li>
+				<li class="l-item">
+					<label for="toc">Toc:</label>
+					<select id="toc"></select>
+				</li>
+				<li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/toc.html" id="gh-link" target="_blank"></a>
+                </li>
+			</ul>
+		</nav>
+	</header>
+	<main id="content" class="ltr" dir="ltr">
+		<div id="viewport" class="scrolled ltr" dir="ltr">
 			<div id="loader"></div>
 		</div>
-	</div>
+	</main>
 	<script>
 		const loader = document.getElementById("loader")
 		const list = document.getElementById("toc")
 		const book = ePub("../assets/alice/")
-		const rendition = book.renderTo("viewer", {
+		const rendition = book.renderTo("viewport", {
 			flow: "scrolled",
-			width: 800,
-			height: window.innerHeight - 80
+			width: 908,
+			height: window.innerHeight - 100
 		})
 		book.opened.then(() => {
 
@@ -45,7 +57,6 @@
 				option.ref = chapter.href
 				fragment.appendChild(option)
 			})
-
 			list.appendChild(fragment)
 			list.onchange = (e) => {
 
@@ -64,6 +75,7 @@
 			console.log(location)
 		})
 	</script>
+	<footer></footer>
 </body>
 
 </html>

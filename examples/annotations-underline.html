@@ -4,32 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,annotations,underline,example">
+    <meta name="description" content="example of annotation for underlining">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Underline - Example</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Underline</title>
 </head>
 
-<body>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+            </ul>
+            <li class="r-item">
+                <a href="https://github.com/intity/epub-js/blob/master/examples/annotations-underline.html" id="gh-link" target="_blank"></a>
+            </li>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated ltr" dir="ltr">
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
-    <div id="annotations">
+    </main>
+    <footer id="annotations">
         <ul id="list"></ul>
-    </div>
+    </footer>
     <script>
         const loader = document.getElementById("loader")
         const list = document.getElementById("list")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
-            width: 900,
+        const rendition = book.renderTo("viewport", {
+            width: 908,
             height: 600,
             spread: "none"
         })

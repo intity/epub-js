@@ -4,22 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPUB.JS: Archived - Example</title>
+    <meta name="keywords" content="epub.js,epub-js,performance,example">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
     <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Performance</title>
 </head>
 
-<body>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated ltr" dir="ltr">
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
+    <footer></footer>
     <script type="module">
         import { put, gen } from "./performance.js"
         const loader = document.getElementById("loader")
@@ -49,8 +59,8 @@
 
             put("book.loaded.navigation")
         })
-        const rendition = book.renderTo("viewer", {
-            width: 900,
+        const rendition = book.renderTo("viewport", {
+            width: 908,
             height: 600,
             spread: "none"
         })
