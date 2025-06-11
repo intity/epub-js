@@ -1,39 +1,16 @@
-# Rendering system architecture
+# Rendering System Architecture
 
-**Document status:** draft
+>Document status: draft
 
-The architecture of the rendering system contains many abstractions that help to solve complex problems. In particular, customizing the layout of pages in different views. The central place in the rendering system is occupied by the [Layout](API/layout.md) class, which provides the basic infrastructure for performing derivative calculations. Below is the graph of dependencies on the **layout** object.
+The architecture of the rendering system contains many abstractions that help to solve complex problems. In particular, customizing the layout of pages in different views. The central place in the rendering system is occupied by the [Layout](API/layout.md) class, which provides the basic infrastructure for performing derivative calculations.
 
-```mermaid
-graph LR
-A(rendition)
-B(layout)
-C(viewport)
-D(manager)
-E(mapping)
-F(views)
-G(view)
-H(contents)
-A --> B
-A --> C
-A --> D
-C --> B
-C --> F
-D --> B
-D --> C
-D --> E
-D --> F
-E --> B
-F --> B
-F --> G
-G --> B
-G --> H
-H --> B
-```
+Below is the graph of dependencies on the **layout** object.
+
+<img src="../assets/img/deps.svg" width=908 />
 
 Most of the dependent objects rely on the `layout.updated` event to finish synchronizing with the current state of the `layout` object. The `layout` object itself depends on the `viewport.resized` event. This happens every time the **viewport-container** is resized. However, the `layout` object knows nothing about containers, since it is only intended for calculations. Containers are created and configured by the [Viewport](API/viewport.md) class. The following image should clarify the technical details.
 
-<img src="../assets/rendition-viewport.svg" width=1000 />
+<img src="../assets/img/rendition-viewport.svg" width=908 />
 
 First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will run the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
 
@@ -47,10 +24,10 @@ Configuration
 var rendition = book.renderTo("viewport", {
     axis: "horizontal", // default
     flow: "paginated", // default
-    layout: "reflowable", // default
-    spread: "none",
     width: "100%", // default
     height: "100%", // default
+    layout: "reflowable", // default
+    spread: "none",
     manager: "default"
 })
 ```
@@ -66,7 +43,7 @@ PW:layout.pageWidth = CW
 PH:layout.pageHeight = CH
 ```
 
-<img src="../assets/rendition-flow-painated.svg" width=920 />
+<img src="../assets/img/rendition-flow-painated.svg" width=908 />
 
 ## Vertical axis
 
@@ -78,10 +55,10 @@ Configuration
 var rendition = book.renderTo("viewport", {
     axis: "vertical", // autocomplete
     flow: "scrolled-doc",
-    layout: "reflowable", // default
-    spread: "none", // autocomplete
     width: "100%", // default
     height: "100%", // default
+    layout: "reflowable", // default
+    spread: "none", // autocomplete
     manager: "continuous",
     pageWidth: 800
 })
@@ -100,7 +77,7 @@ GL:layout.gap
 VH:view.contents.content.clientHeight
 ```
 
-<img src="../assets/rendition-flow-scrolled-doc.svg" width=400 />
+<img src="../assets/img/rendition-flow-scrolled-doc.svg" width=380 />
 
 ### rendition-flow-scrolled-continuous
 
@@ -110,11 +87,11 @@ Configuration
 var rendition = book.renderTo("viewport", {
     axis: "vertical", // autocomplete
     flow: "scrolled-continuous",
+    width: "100%", // default
+    height: "100%", // default
     layout: "reflowable", // default
     spread: "none", // autocomplete
-    manager: "continuous",
-    width: "100%", // default
-    height: "100%" // default
+    manager: "continuous"
 })
 ```
 
@@ -130,4 +107,4 @@ PH:layout.pageHeight = CH
 VH:view.contents.content.clientHeight
 ```
 
-<img src="../assets/rendition-flow-scrolled-continuous.svg" width=400 />
+<img src="../assets/img/rendition-flow-scrolled-continuous.svg" width=380 />
