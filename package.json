@@ -1,5 +1,5 @@
 {
-  "name": "epub-js",
+  "name": "@intity/epub-js",
   "version": "0.3.96",
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
@@ -7,7 +7,7 @@
   "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/intity/epub-js.git"
+    "url": "git+https://github.com/intity/epub-js.git"
   },
   "bugs": {
     "url": "https://github.com/intity/epub-js/issues"

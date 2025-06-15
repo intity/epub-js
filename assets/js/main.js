@@ -3,6 +3,9 @@ const renderer = {
         let target = "" 
         if (/https:/.test(href)) {
             target = `target="_blank"`
+        } else if (/.md/.test(href)) {
+            const sub = /API/.test(window.location.href) ? "API/" : ""
+            href = href.replace(href, `?q=${sub}${href}`)
         }
         return `<a href="${href}" ${target}>${text}</a>`
     },

@@ -16,7 +16,7 @@
         import load from "../assets/js/main.js"
         const url = new URL(window.location)
         const val = url.searchParams.get("q")
-        const uri = val === null ? "./index.md" : "./" + val + ".md"
+        const uri = val === null ? "./index.md" : `./${val}`
         window.onload = (e) => load(e, uri)
     </script>
     <title>epub-js-docs</title>
