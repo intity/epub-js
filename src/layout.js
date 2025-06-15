@@ -8,7 +8,6 @@ class Layout {
 	/**
 	 * Constructor
 	 * @param {object} [options] 
-	 * @param {string} [options.axis='horizontal'] values: `"horizontal"` OR `"vertical"`
 	 * @param {string} [options.flow='paginated'] values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"`
 	 * @param {string} [options.spread='auto'] values: `"auto"` OR `"none"`
 	 * @param {string} [options.direction='ltr'] values: `"ltr"` OR `"rtl"`
@@ -36,6 +35,12 @@ class Layout {
 		 * @readonly
 		 */
 		this.flow = "paginated";
+		/**
+		 * @member {string} style
+		 * @memberof Layout
+		 * @readonly
+		 */
+		this.style = "paginated";
 		/**
 		 * @member {boolean} spread
 		 * @memberof Layout
@@ -135,7 +140,6 @@ class Layout {
 			if (this[opt] === value || typeof value === "undefined") {
 				delete options[opt];
 			} else if (
-				opt === "axis" ||
 				opt === "direction" ||
 				opt === "orientation") {
 				if (typeof value === "string") {
@@ -147,17 +151,20 @@ class Layout {
 						case "scrolled":
 						case "scrolled-continuous":
 							this.flow = "scrolled";
-							this.axis = options["axis"] || "vertical";
+							this.axis = "vertical"; // autocomplete
+							this.style = "scrolling"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						case "scrolled-doc":
 							this.flow = value;
-							this.axis = options["axis"] || "vertical";
+							this.axis = "vertical"; // autocomplete
+							this.style = "scrolling"; // autocomplete
 							this.spread = "none"; // autocomplete
 							break;
 						default:
 							this.flow = "paginated";
 							this.axis = "horizontal"; // autocomplete
+							this.style = "paginated"; // autocomplete
 							break;
 					}
 				} else error(opt);

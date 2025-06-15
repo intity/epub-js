@@ -8,7 +8,7 @@ import Hook from "./utils/hook";
 import Viewport from "./viewport";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
-import { EVENTS, DOM_EVENTS } from "./utils/constants";
+import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";
 
 // Default View Managers
 import DefaultViewManager from "./managers/default/index";
@@ -20,7 +20,6 @@ import ContinuousViewManager from "./managers/continuous/index";
  * the section content.
  * @param {Book} book
  * @param {object} [options]
- * @param {string} [options.axis] viewport axis
  * @param {string|number} [options.width] viewport width
  * @param {string|number} [options.height] viewport height
  * @param {string} [options.ignoreClass] class for the cfi parser to ignore
@@ -271,6 +270,29 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.STARTED);
+		navigator.epubReadingSystem = {
+			name: "epub-js",
+			version: EPUBJS_VERSION,
+			layoutStyle: this.layout.style,
+			hasFeature: (name) => {
+				switch (name) {
+					case "dom-manipulation":
+						return true;
+					case "layout-changes":
+						return true;
+					case "touch-events":
+						return true;
+					case "mouse-events":
+						return true;
+					case "keyboard-events":
+						return true;
+					case "spine-scripting":
+						return false;
+					default:
+						return false;
+				}
+			}
+		};
 		this.starting.resolve();
 	}
 
@@ -483,7 +505,6 @@ class Rendition {
 		const metadata = this.book.packaging.metadata;
 		const direction = this.book.packaging.direction;
 		return {
-			axis: this.settings.axis,
 			name: this.settings.layout || metadata.get("layout"),
 			flow: this.settings.flow || metadata.get("flow"),
 			spread: this.settings.spread || metadata.get("spread"),

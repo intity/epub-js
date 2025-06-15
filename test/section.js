@@ -97,8 +97,5 @@ describe("Section", () => {
     })
     after(() => {
         book.destroy()
-        book = undefined
-        section1 = undefined
-        section2 = undefined
     })
 })

@@ -1,12 +1,38 @@
 /**
+ * Global constants
  * @module constants
  */
 
-export const EPUBJS_VERSION = "0.3";
+/**
+ * epub-js library version
+ * @constant
+ * @type {string}
+ */
+export const EPUBJS_VERSION = "0.3.96";
 
-// Dom events to listen for
-export const DOM_EVENTS = ["keydown", "keyup", "keypressed", "mouseup", "mousedown", "mousemove", "click", "touchend", "touchstart", "touchmove"];
+/**
+ * The DOM events to listen for ...
+ * @constant
+ * @type {Array}
+ */
+export const DOM_EVENTS = [
+    "keydown",
+    "keyup",
+    "keypressed",
+    "mouseup",
+    "mousedown",
+    "mousemove",
+    "click",
+    "touchend",
+    "touchstart",
+    "touchmove"
+];
 
+/**
+ * Events
+ * @constant
+ * @type {object}
+ */
 export const EVENTS = {
     BOOK: {
         OPEN_FAILED: "openFailed"

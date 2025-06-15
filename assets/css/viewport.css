@@ -1,0 +1,111 @@
+@import url("loader.css");
+
+#viewport {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#viewport.scrolled,
+#viewport.paginated {
+    border: #ccc solid 1px;
+    background: white;
+    align-items: center;
+}
+
+#viewport.scrolled {
+    min-height: calc(100vh - 160px);
+}
+
+#viewport.scrolled-doc {
+    top: 50px;
+    width: 100%;
+    height: calc(100vh - 100px);
+    position: absolute;
+    align-items: baseline;
+    background-color: #ccc;
+}
+
+#viewport.scrolled-doc .views-container {
+    row-gap: 50px;
+    justify-content: center;
+}
+
+#viewport.scrolled-doc .view-container {
+    border: #ccc solid 1px;
+    background: white;
+}
+
+.ltr #prev,
+.rtl #next {
+    left: 0;
+}
+
+.rtl #prev,
+.ltr #next {
+    right: 0;
+}
+
+.arrow {
+    position: fixed;
+    margin: 0 20px;
+    font-size: 64px;
+    color: #E2E2E2;
+    font-family: arial, sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    z-index: 10;
+}
+
+.arrow:hover {
+    color: #777;
+}
+
+.arrow:active {
+    color: #000;
+}
+
+#prev, #next {
+    top: calc(50vh - 37px);
+}
+
+#prev::before {
+    content: '<';
+}
+
+#next::before {
+    content: '>';
+}
+
+#divider {
+    left: 50%;
+    width: 1px;
+    height: 560px;
+    display: none;
+    opacity: .15;
+    z-index: 1;
+    position: absolute;
+    border-right: 1px #000 dashed;
+}
+
+/**
+ * iPhone 5             : 320 x 568
+ * iPhone 6/7/8         : 375 x 667
+ * iPhone 11 Pro        : 375 x 812
+ * Pixel 7              : 412 x 915
+ * iPhone 6/7/8 Plus    : 414 x 736
+ * iPhone 11            : 414 x 896
+ * iPhone 12/14         : 390 x 844
+ * iPhone 14/15 Pro Max : 430 x 932
+ */
+@media
+only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
+only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
+    #viewport.scrolled {
+        border: none;
+        height: 100vh;
+        min-height: 100vh;
+    }
+}

@@ -12,9 +12,6 @@ import Marks from "../../marks-pane/marks";
 import Highlight from "../../marks-pane/highlight";
 import Underline from "../../marks-pane/underline";
 
-const AXIS_H = "horizontal";
-const AXIS_V = "vertical";
-
 /**
  * IframeView class
  */
@@ -183,7 +180,7 @@ class IframeView {
 	 */
 	axis() {
 
-		if (this.layout.axis === AXIS_H) {
+		if (this.layout.axis === "horizontal") {
 			this.container.style.flex = "none";
 		} else {
 			this.container.style.flex = "initial";
@@ -215,27 +212,22 @@ class IframeView {
 
 		this.expanding = true;
 		const sz = this.contents.textSize();
+		const pw = this.layout.pageWidth;
 
-		if (this.layout.axis === AXIS_H) {
+		if (this.layout.flow === "paginated") {
 
-			if (sz.width % this.layout.pageWidth > 0) {
-				sz.width = Math.ceil(sz.width / this.layout.pageWidth) * this.layout.pageWidth;
+			if (sz.width % pw > 0) {
+				sz.width = Math.ceil(sz.width / pw) * pw;
 			}
 
 			if (this.settings.forceEvenPages) {
-				const columns = (sz.width / this.layout.pageWidth);
+				const columns = (sz.width / pw);
 				if (this.layout.divisor > 1 &&
 					this.layout.name === "reflowable" &&
 					(columns % 2 > 0)) {
 					// add a blank page
-					sz.width += this.layout.pageWidth;
+					sz.width += pw;
 				}
-			}
-		} else if (this.layout.axis === AXIS_V) {
-
-			if (this.layout.flow === "paginated" &&
-				sz.height % this.layout.height > 0) {
-				sz.height = Math.ceil(sz.height / this.layout.height) * this.layout.height;
 			}
 		}
 

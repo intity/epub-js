@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub-js,documentation,API">
+    <meta name="description" content="epub-js library documentation">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <script src="../dist/marked.min.js"></script>
+    <script type="module">
+        import load from "../assets/js/main.js"
+        const url = new URL(window.location)
+        const val = url.searchParams.get("q")
+        const uri = val === null ? "./index.md" : "./" + val + ".md"
+        window.onload = (e) => load(e, uri)
+    </script>
+    <title>epub-js-docs</title>
+</head>
+
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="../">Home</a></li>
+                <li class="l-item"><a href="./" class="active">Docs</a></li>
+                <li class="l-item"><a href="../test/">Test</a></li>
+                <li class="l-item"><a href="../examples/">Examples</a></li>
+                <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/docs" id="gh-link" target="_blank"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content"></main>
+    <footer>
+        <div class="box">
+            <p>&copy; 2025 epub-js community</p>
+        </div>
+    </footer>
+</body>
+
+</html>

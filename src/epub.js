@@ -11,7 +11,7 @@ import ContinuousViewManager from "./managers/continuous";
 
 /**
  * Create a new Book instance
- * @param {string|ArrayBuffer} inpit URL, Path or ArrayBuffer
+ * @param {string|ArrayBuffer} input URL, Path or ArrayBuffer
  * @param {object} [options] to pass to the book
  * @returns {Book} a new Book object
  * @example ePub()
@@ -20,9 +20,9 @@ import ContinuousViewManager from "./managers/continuous";
  * @example ePub("/path/to/book.epub")
  * @example ePub("https://example.com/to/book.epub")
  */
-function ePub(inpit, options) {
+function ePub(input, options) {
 
-	return new Book(inpit, options);
+	return new Book(input, options);
 }
 
 ePub.VERSION = EPUBJS_VERSION;

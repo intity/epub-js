@@ -1,22 +1,30 @@
-# Epub.js v0.3
+# Introduction to the epub-js library
 
-![FuturePress Views](assets/fp.png)
+The **epub-js** is an open-source JavaScript library for rendering [EPUB](https://en.wikipedia.org/wiki/EPUB) documents in the browser on many devices. Essentially, this library provides an interface for common ebook features (such as rendering, persistence and pagination) without the need to develop a dedicated application or plugin.
 
-Epub.js is a JavaScript library for rendering ePub documents in the browser, across many devices.
+In addition, some components of the **epub-js** library can also be used in **commonjs** projects on the server.
 
-Epub.js provides an interface for common ebook functions (such as rendering, persistence and pagination) without the need to develop a dedicated application or plugin. Importantly, it has an incredibly permissive [Free BSD](https://en.wikipedia.org/wiki/BSD_licenses) license.
+## Why was this fork created
 
-[Try it while reading Moby Dick](https://intity.github.io/epubreader-js/)
+Initially, the main reason for creating the [intity/epub-js](https://github.com/intity/epub-js) fork (hereinafter **epub-js**) was to fix the problems of the deprecated API.
+
+However, upon closer examination of the source code of the [futurepress/epub.js](https://github.com/futurepress/epub.js) library, architectural problems related to dynamic layout rebuilding were discovered. As a result, the architecture of the **epub-js** library was significantly reworked, which led to a violation of the backward compatibility of the API.
 
 ## Why EPUB
-
-![Why EPUB](assets/whyepub.png)
 
 The [EPUB standard](https://www.w3.org/TR/epub/) is a widely used and easily convertible format. Many books are currently in this format, and it is convertible to many other formats (such as PDF, Mobi and iBooks).
 
 An unzipped EPUB3 is a collection of HTML5 files, CSS, images and other media – just like any other website. However, it enforces a schema of book components, which allows us to render a book and its parts based on a controlled vocabulary.
 
 More specifically, the EPUB schema standardizes the table of contents, provides a manifest that enables the caching of the entire book, and separates the storage of the content from how it’s displayed.
+
+## Development goals
+
+The new stage of development of the **epub-js** library assumes a higher quality level of optimization and API testing. To achieve this goal, a deep understanding of the specifics of the application of technologies that form the basis of this library is required. The main task of development is to reach the optimization limit through unit testing.
+
+In addition, it is necessary to develop a scheme that will allow configuring library components at the build stage, excluding unused code.
+
+A secondary goal is to develop documentation that should make it easier for the community to learn the API, which includes a detailed description of the architecture and various methods for configuring the **epub-js** library.
 
 ## Getting Started
 
@@ -35,104 +43,142 @@ Get the minified code from the build folder:
 Set up a element to render to:
 
 ```html
-<div id="viewer"></div>
+<div id="viewport"></div>
 ```
 
 Create the new ePub, and then render it to that element:
 
 ```html
 <script>
-    const book = ePub("uri/to/book/")
-    const rendition = book.renderTo("viewer", {
-        width: 600,
-        height: 400
-    })
-    const displayed = rendition.display()
+  const book = ePub("uri/to/book.epub")
+  const rend = book.renderTo("viewport", {
+    width: 600,
+    height: 400
+  })
+  rend.display().then((section) => {
+    console.log(section)
+  })
 </script>
 ```
 
-## Render manager
+## Setting up the render manager
 
-### default
+A rendering manager is an entity that defines the base class of content generation. Preloaded documents from the EPUB container are added to the DOM structure to be rendered during the rendering stage. The **epub-js** library provides two rendering managers: `default` and `continuous`.
+
+Default configuration:
 
 ```js
-book.renderTo("viewer", {
-    manager: "default",
-    width: "100%",
-    height: "100%"
+book.renderTo("viewport", {
+  manager: "default"
+})
+```
+The `default` manager renders one section at a time, using minimal device resources. The default configuration is more suitable for devices where navigation is controlled only by a keyboard or mouse.
+
+Example: [examples/paginated.html](examples/paginated.html)
+
+Configuration with continuous rendering manager:
+
+```js
+book.renderTo("viewport", {
+  manager: "continuous"
 })
 ```
 
-[View example](https://intity.github.io/epub-js/examples/paginated.html)
+The `continuous` manager creates a continuous flow of scrollable area composed of a set of sections.
 
-The default manager only displays a single section at a time.
+Examples (for mobile devices):
 
-### continuous
+- [examples/paginated-continuous.html](examples/paginated-continuous.html)
+- [examples/scrolled-continuous.html](examples/scrolled-continuous.html)
+
+## Setting up the flow
+
+Flow is a layout property that determines how pages are reflowed. The **epub-js** library provides the following types for the `flow` property:
+
+- `paginated`
+- `scrolled`
+- `scrolled-doc`
+
+Default configuration:
 
 ```js
-book.renderTo("viewer", {
-    manager: "continuous",
-    width: "100%",
-    height: "100%"
+book.renderTo("viewport", {
+  flow: "paginated"
 })
 ```
 
-[View example](https://intity.github.io/epub-js/examples/scrolled-continuous.html)
+The `paginated` type defines a method for rearranging the document content into columns. Each column represents a page that moves along the horizontal axis within the visible portion of the `viewport` container. Pages that extend beyond the visible portion of the container are always hidden. In fact, the entire `viewport` container moves. However, the horizontal scrolling mechanism is hidden from the user so that only a quick change of frames is displayed on the visible portion of the container.
 
-The continuous manager will display as many sections as need to fill the screen, and preload the next section offscreen. This enables seamless swiping / scrolling between pages on mobile and desktop, but is less performant than the default method.
+Example: [examples/paginated.html](examples/paginated.html)
 
-## Flow Overrides
-
-### paginated (default)
-
-Flow will be based on the settings in the OPF, defaults to `paginated`.
+Configuration of a `scrolled` flow:
 
 ```js
-book.renderTo("viewer", {
-    flow: "paginated",
-    width: 900,
-    height: 600
+book.renderTo("viewport", {
+  flow: "scrolled"
 })
 ```
 
-[View example](https://intity.github.io/epub-js/examples/paginated.html)
+The `scrolled` type defines a method for reflowing the document's content across the width of the `viewport` container, with the scrollable area hidden along the vertical axis.
 
-### scrolled-doc
+Example: [examples/scrolled.html](examples/scrolled.html)
+
+Configuration of a `scrolled-doc` flow:
 
 ```js
-book.renderTo("viewer", {
-    flow: "scrolled-doc",
-    pageWidth: 800
+book.renderTo("viewport", {
+  flow: "scrolled-doc",
+  pageWidth: 800
 })
 ```
 
-[View example](http://intity.github.io/epub-js/examples/scrolled-doc.html)
+The `scrolled-doc` type is an extension of the `scrolled` type. This type makes it easy to customize the layout of pages within the boundaries defined by the `pageWidth` property.
 
-## Scripted Content
+Example: [examples/scrolled-doc.html](examples/scrolled-doc.html)
 
-[Scripted content](https://www.w3.org/TR/epub/#sec-scripted-content), JavasScript the ePub HTML content, is disabled by default due to the potential for executing malicious content. 
+## Embedded Scripts
 
-This is done by sandboxing the iframe the content is rendered into, though it is still recommended to sanitize the ePub content server-side as well.
+[Scripted content](https://www.w3.org/TR/epub/#sec-scripted-content) (or embedded JavaScript) is disabled by default due to the potential for malicious code execution. However, if needed, you can configure sandbox permissions in the rendering configuration, for example:
 
-If a trusted ePub contains interactivity, it can be enabled by setting a `sandbox` option set in [Rendition](docs/API/rendition.md) settings.
-
-```html
-<script>
-    const rendition = book.renderTo("viewer", {
-        width: 600,
-        height: 400,
-        sandbox: ["allow-same-origin", "allow-scripts"]
-    })
-</script>
+```js
+book.renderTo("viewport", {
+  sandbox: [
+    "allow-same-origin",
+    "allow-scripts"
+  ]
+})
 ```
 
-This will allow the sandboxed content to run scripts, but currently makes the sandbox insecure.
+This will thus allow sandboxed content to run scripts.
+
+>Technically, this is done by sandboxing the `iframe` element in which the content is rendered. It is also recommended to clean the server-side of the EPUB content.
+
+## Hooks
+
+Similar to a plugins, **epub.js** implements events that can be "hooked" into. Thus you can interact with and manipulate the contents of the book.
+
+Examples of this functionality is loading videos from YouTube links before displaying a chapter's contents or implementing annotation.
+
+Hooks require an event to register to and a can return a promise to block until they are finished.
+
+Example hook:
+
+```js
+rendition.hooks.content.register((contents, view) => {
+  const items = contents.document.querySelectorAll("[video]")
+  items.forEach((item) => {
+    // do something with the video item
+  })
+})
+```
+
+For more details, see the related section of the [Hooks](docs/index.html?q=hooks) documentation.
 
 ## Documentation
 
-API documentation is available at [docs/index.md](docs/index.md)
+All documentation is available at [docs/index.md](docs/).
 
-## Running Locally
+## Running a local server
 
 install **node.js**
 
@@ -150,7 +196,13 @@ npm run start
 
 ## Examples
 
-All source code for the examples is located in the [examples](examples/) subdirectory of this repository. However, not all examples are working. Some of them may be outdated. A list of working examples can be found in the [examples/index.html](https://intity.github.io/epub-js/examples/) document.
+You can find all the source code for the examples in the [epub-js/examples](examples/) subsection of the repository.
+
+>Please note: not all examples work; some may be outdated.
+
+You can find a list of working examples on the [Examples](https://intity.github.io/epub-js/examples/) page.
+
+There is also a project [epubreader-js](https://github.com/intity/epubreader-js/), which implements the main features of the library [futurepress/epub.js](https://github.com/futurepress/epub.js).
 
 ## Testing
 
@@ -160,11 +212,11 @@ The [mocha](https://mochajs.org/) framework is used for unit testing. All tests 
 npm run start
 ```
 
-Then open the page in the browser at: http://localhost:8080/test/
+Then open the page in the browser at: [/test/](http://localhost:8080/test/)
 
 Finally, open the browser console to see the test results.
 
-## Building for Distribution
+## Building and distribution
 
 Builds are concatenated and minified using [webpack](https://webpack.js.org/) and [babel](https://babeljs.io/)
 
@@ -180,36 +232,8 @@ or to continuously build run
 npm run watch
 ```
 
-## Hooks
+## License
 
-Similar to a plugins, **epub.js** implements events that can be "hooked" into. Thus you can interact with and manipulate the contents of the book.
-
-Examples of this functionality is loading videos from YouTube links before displaying a chapter's contents or implementing annotation.
-
-Hooks require an event to register to and a can return a promise to block until they are finished.
-
-Example hook:
-
-```js
-rendition.hooks.content.register((contents, view) => {
-
-    const items = contents.document.querySelectorAll("[video]")
-
-    items.forEach((item) => {
-        // do something with the video item
-    })
-})
 ```
-
-The parts of the rendering process that can be hooked into are below.
-
-```js
-book.spine.hooks.serialize // Section is being converted to text
-book.spine.hooks.content // Section has been loaded and parsed
-rendition.hooks.render // Section is rendered to the screen
-rendition.hooks.content // Section contents have been loaded
-rendition.hooks.unloaded // Section contents are being unloaded
+URL: https://opensource.org/license/bsd-2-clause
 ```
-
-## Reader
-The reader has moved to its own repo at: [epubreader-js](https://github.com/intity/epubreader-js/)

@@ -66,6 +66,24 @@ module.exports = {
 					to: "localforage.min.js",
 					toType: "file",
 					force: true
+				},
+				{
+					from: "node_modules/mocha/mocha.js",
+					to: "mocha.js",
+					toType: "file",
+					force: true
+				},
+				{
+					from: "node_modules/mocha/mocha.css",
+					to: "mocha.css",
+					toType: "file",
+					force: true
+				},
+				{
+					from: "node_modules/marked/marked.min.js",
+					to: "marked.min.js",
+					toType: "file",
+					force: true
 				}
 			]
 		})

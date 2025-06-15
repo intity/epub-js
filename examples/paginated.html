@@ -4,31 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,spread,example">
+    <meta name="description" content="spreading a dociment into pages">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Spreading a document into pages - Example</title>
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Spreading a document into pages</title>
 </head>
 
-<body>
-    <div id="toolbar">
-        <div class="box">
-            <label for="spread">Spread:</label>
-            <select name="spread" id="spread">
-                <option value="auto">auto</option>
-                <option value="none">none</option>
-            </select>
-        </div>
-    </div>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <label for="spread">Spread:</label>
+                    <select name="spread" id="spread">
+                        <option value="auto">auto</option>
+                        <option value="none">none</option>
+                    </select>
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/paginated.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated ltr" dir="ltr">
             <div id="divider"></div>
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
+    <footer></footer>
     <script>
         const divider = document.getElementById("divider")
         const loader = document.getElementById("loader")
@@ -36,8 +47,8 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
-            width: 900,
+        const rendition = book.renderTo("viewport", {
+            width: 908,
             height: 600
         })
         book.opened.then(() => {

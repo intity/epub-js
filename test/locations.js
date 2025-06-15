@@ -39,7 +39,7 @@ describe("Locations", () => {
 		})
 	})
 	describe("#set()", () => {
-		it("should set current location by EpubCFI", async () => {
+		it("should set current location by epubcfi", async () => {
 			const locs = book.locations
 			const curr = book.locations.current
 			locs.set({ cfi: sections[3].cfi })
@@ -137,7 +137,7 @@ describe("Locations", () => {
 		})
 	})
 	describe("#cfiFromPercentage()", () => {
-		it("should get EpubCFI from percentage", () => {
+		it("should get epubcfi from percentage", () => {
 			const locs = book.locations
 			const keys = [...locs.keys()]
 			keys.forEach((key, index) => {
@@ -154,8 +154,5 @@ describe("Locations", () => {
 	})
 	after(() => {
 		book.destroy()
-		book = undefined
-		rendition = undefined
-		sections = undefined
 	})
 })
