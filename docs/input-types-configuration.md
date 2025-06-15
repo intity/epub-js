@@ -2,7 +2,7 @@
 
 This section of the documentation describes the specifics of the configuration when opening a digital book in various contexts.
 
-## Determinate types
+## Definition of types
 
 The **epub.js** library supports the following input types:
 
@@ -14,10 +14,10 @@ The **epub.js** library supports the following input types:
 | `directiry` | `string` |               | auto      |
 
 ## Open book from ArrayBuffer
-
-**Input type:** `binary`
-
-**Resources.replacements:** `blobUrl`
+```
+Input[type]        : binary
+Utils.replacements : blobUrl
+```
 
 This input type is mainly used when opening a file via the **readAsArrayBuffer** method of the [FileReader](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) interface. Typically, the resulting `ArrayBuffer` is stored in the browser's IndexedDB database. For example,
 
@@ -48,9 +48,10 @@ Full example: [Open from File with storage](../examples/input-with-storage.html)
 
 ## Open book from data URL in base64 encoding
 
-**Input type:** `base64`
-
-**Resources.replacements:** `blobUrl`
+```
+Input[type]        : base64
+Utils.replacements : blobUrl
+```
 
 This input type has a similar configuration to the `binary` type. The only difference is that the data received via the **readAsDataURL** method is **base64** encoded. However, the input type must be explicitly defined. For example,
 
@@ -81,9 +82,10 @@ book.storage.set(0, input).then((data) => {
 
 ## Open book from epub File
 
-**Input type:** `epub`
-
-**Resources.replacements:** `blobUrl`
+```
+Input[type]        : epub
+Utils.replacements : blobUrl
+```
 
 According to the specification, an epub file is a ZIP container (see [OCF ZIP container](https://www.w3.org/TR/epub/#sec-container-zip)). Reading the contents of a ZIP container is done using the third-party library [JSZip](https://github.com/Stuk/jszip).
 
