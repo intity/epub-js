@@ -172,7 +172,7 @@ rendition.hooks.content.register((contents, view) => {
 })
 ```
 
-For more details, see the related section of the [Hooks](docs/index.html?q=hooks) documentation.
+For more details, see the related section of the [Hooks](docs/hooks.md) documentation.
 
 ## Documentation
 
