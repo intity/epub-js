@@ -4,8 +4,14 @@ const renderer = {
         if (/https:/.test(href)) {
             target = `target="_blank"`
         } else if (/.md/.test(href)) {
-            const sub = /API/.test(window.location.href) ? "API/" : ""
-            href = href.replace(href, `?q=${sub}${href}`)
+            const loc = window.location
+            const sub = /API/.test(loc.href) ? "API/" : ""
+            if (/docs/.test(href)) {
+                const arr = href.split('/')
+                href = href.replace(href, `docs/?q=${sub}${arr[arr.length - 1]}`)
+            } else {
+                href = href.replace(href, `?q=${sub}${href}`)
+            }
         }
         return `<a href="${href}" ${target}>${text}</a>`
     },
