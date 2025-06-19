@@ -54,7 +54,7 @@ th {
     align-content: center;
 }
 
-#annotations {
+#notes {
     width: 960px;
     height: calc((100% - 600px)/2 - 52px);
     margin: 0 auto;
@@ -65,7 +65,7 @@ th {
     justify-content: center;
 }
 
-#annotations ul {
+#notes ul {
     width: 600px;
     height: 100%;
     margin-left: 0;
@@ -73,13 +73,13 @@ th {
     overflow: auto;
 }
 
-#annotations li {
+#notes li {
     padding: 10px;
     list-style: none;
     border-top: 1px solid #ccc;
 }
 
-#annotations a {
+#notes a {
     display: block;
 }
 
