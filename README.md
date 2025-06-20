@@ -1,6 +1,8 @@
 # Introduction to the epub-js library
 
-The **epub-js** is an open-source JavaScript library for rendering [EPUB](https://en.wikipedia.org/wiki/EPUB) documents in the browser on many devices. Essentially, this library provides an interface for common ebook features (such as rendering, persistence and pagination) without the need to develop a dedicated application or plugin.
+The **epub-js** is an open-source JavaScript library for rendering [EPUB](https://en.wikipedia.org/wiki/EPUB) documents in the browser on many devices.
+
+Essentially, this library provides an interface for common ebook features (such as rendering, persistence and pagination) without the need to develop a dedicated application or plugin.
 
 In addition, some components of the **epub-js** library can also be used in **commonjs** projects on the server.
 
@@ -28,7 +30,7 @@ A secondary goal is to develop documentation that should make it easier for the 
 
 ## Getting Started
 
-If using archived `.epub` files include [JSZip](https://stuk.github.io/jszip/) (this must precede inclusion of **epub.js**):
+If using archived **.epub** files include [JSZip](https://stuk.github.io/jszip/) (this must precede inclusion of **epub.js**):
 
 ```html
 <script src="../dist/jszip.min.js"></script>
@@ -76,7 +78,7 @@ The `default` manager renders one section at a time, using minimal device resour
 
 Example: [examples/paginated.html](examples/paginated.html)
 
-Configuration with continuous rendering manager:
+Configuration with `continuous` rendering manager:
 
 ```js
 book.renderTo("viewport", {

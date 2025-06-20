@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="1000"
-   height="700"
-   viewBox="0 0 1000 700"
+   width="900"
+   height="660"
+   viewBox="0 0 900 660"
    version="1.1"
    id="svg1"
    xmlns="http://www.w3.org/2000/svg"
@@ -77,125 +77,125 @@
   <rect
      style="fill:#ffffff;stroke:#666666;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:normal"
      id="rect-rendition-viewport-canvas"
-     width="999.99994"
-     height="699.99994"
-     x="-5.2863807e-06"
-     y="9.1937263e-06" />
+     width="900"
+     height="660"
+     x="-4.7577428e-06"
+     y="8.6683713e-06" />
   <rect
      style="fill:#f2f2f2;stroke:#666666;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6, 6;stroke-dashoffset:0;paint-order:normal"
      id="rect-rendition-viewport-axis-x"
-     width="440"
+     width="420"
      height="300"
-     x="480"
+     x="440"
      y="20" />
   <rect
      style="fill:#f2f2f2;stroke:#666666;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6, 6;stroke-dashoffset:0;paint-order:normal"
      id="rect-rendition-viewport-axis-y"
-     width="460"
+     width="420"
      height="300"
      x="20"
      y="320" />
   <rect
      style="fill:#aaffaa;fill-opacity:1;stroke:#008000;stroke-width:0;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      id="rect-views-container-axis-x"
-     width="400"
+     width="380"
      height="219.99998"
-     x="480"
+     x="440"
      y="60" />
   <rect
      style="fill:#aaffaa;fill-opacity:1;stroke:#008000;stroke-width:0;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      id="rect-views-container-axis-y"
-     width="380.00003"
+     width="340"
      height="260"
      x="60.000004"
      y="320" />
   <rect
      style="fill:#f2f2f2;stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:normal"
      id="rect-rendition-viewport-target"
-     width="459.99997"
+     width="420"
      height="300"
      x="20"
      y="20" />
   <rect
      style="opacity:1;fill:#cccccc;stroke:#ff0000;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-viewport"
-     width="420"
+     width="380"
      height="260"
      x="40"
      y="40" />
   <rect
      style="opacity:1;fill:#aaffaa;fill-opacity:1;stroke:#008000;stroke-width:0;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      id="rect-views-container"
-     width="380.00003"
+     width="340"
      height="220"
      x="60.000004"
      y="60" />
   <rect
      style="fill:#aaccff;stroke:#0000ff;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-container0"
-     width="340"
+     width="300"
      height="180"
      x="80"
      y="80" />
   <rect
      style="fill:#e6e6e6;stroke:#1a1a1a;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-iframe0"
-     width="300"
+     width="260"
      height="140"
      x="100"
      y="100" />
   <rect
      style="fill:#ffffff;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-contents0"
-     width="260"
+     width="220"
      height="100"
      x="120.00001"
      y="120" />
   <rect
      style="fill:#aaccff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      id="rect-view-container1"
-     width="320"
+     width="300"
      height="180"
-     x="540"
+     x="500"
      y="80" />
   <rect
      style="fill:#e6e6e6;stroke:#1a1a1a;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-iframe1"
-     width="280"
+     width="260"
      height="140"
-     x="560"
+     x="520"
      y="100" />
   <rect
      style="fill:#ffffff;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-contents1"
-     width="240"
+     width="220"
      height="100"
-     x="580"
+     x="540"
      y="120" />
   <rect
      style="fill:#aaccff;fill-opacity:1;stroke:#0000ff;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      id="rect-view-container2"
-     width="340"
+     width="300"
      height="180"
      x="80"
      y="380" />
   <rect
      style="fill:#e6e6e6;stroke:#1a1a1a;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-iframe2"
-     width="300"
+     width="260"
      height="140"
      x="100"
      y="400" />
   <rect
      style="fill:#ffffff;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-dasharray:none;paint-order:normal"
      id="rect-view-contents2"
-     width="260"
+     width="220"
      height="100"
      x="119.99999"
      y="420" />
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33329964px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      x="40"
      y="33"
      id="text-rendition-viewport-target">viewport.target[div#viewport]</text>
@@ -208,24 +208,24 @@
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.3333px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-     x="926"
+     x="886"
      y="13"
      id="text-x">X</text>
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.3333px;font-family:Monospace;-inkscape-font-specification:'Monospace, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      x="6"
-     y="630"
+     y="654"
      id="text-y">Y</text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33329964px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      x="60"
      y="53"
      id="text-viewport-container">viewport.container[div.viewport-container]</text>
   <text
      xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.33329964px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:13.3333px;font-family:Monospace;-inkscape-font-specification:'Monospace, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:1;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
      x="80"
      y="73"
      id="text-views-container">views.container[div.views-container]</text>
@@ -248,11 +248,11 @@
      y="133"
      id="text-view-contents0">view.contents[document]</text>
   <path
-     style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Triangle)"
-     d="m 20,20 c 960,0 960,0 960,0"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.999999;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Triangle)"
+     d="m 20,20 c 860,0 860,0 860,0"
      id="path-axis-x" />
   <path
-     style="fill:#ffffff;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Triangle)"
-     d="m 20,20 c 0,660 0,660 0,660"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.999996;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Triangle)"
+     d="m 20,20 c 0,620 0,620 0,620"
      id="path-axis-y" />
 </svg>
