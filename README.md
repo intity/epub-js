@@ -176,7 +176,7 @@ For more details, see the related section of the [Hooks](docs/hooks.md) document
 
 ## Documentation
 
-All documentation is available at [docs/index.md](docs/).
+All documentation is available at [epub-js/docs/](docs/).
 
 ## Running a local server
 
@@ -212,7 +212,7 @@ The [mocha](https://mochajs.org/) framework is used for unit testing. All tests 
 npm run start
 ```
 
-Then open the page in the browser at: [/test/](http://localhost:8080/test/)
+Then open the page in the browser at: [epub-js/test/](test/)
 
 Finally, open the browser console to see the test results.
 
