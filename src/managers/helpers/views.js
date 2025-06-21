@@ -120,7 +120,7 @@ class Views extends Array {
 
 		for (let i = 0; i < len; ++i) {
 			const view = this[i];
-			this.remove(view, i);
+			if (view) this.remove(view, i);
 		}
 	}
 
