@@ -21,7 +21,8 @@
                 manager: swipe ? "continuous" : "default",
                 flow: "paginated",
                 snap: swipe ? {} : null,
-                spread: "none"
+                spread: "none",
+                height: swipe ? "100vh" : "100%"
             })
             const keybinding = (e) => {
 
