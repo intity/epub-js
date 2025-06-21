@@ -17,6 +17,7 @@
             const loader = document.getElementById("loader")
             const book = ePub("../assets/alice/")
             const rendition = book.renderTo(document.body, {
+                height: "100vh",
                 manager: "continuous",
                 flow: "scrolled"
             })
