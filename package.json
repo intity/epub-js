@@ -3,6 +3,7 @@
   "version": "0.3.96",
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
+  "type": "module",
   "module": "src/index.js",
   "types": "types/index.d.ts",
   "repository": {
