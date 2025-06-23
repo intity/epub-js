@@ -93,12 +93,15 @@ module.exports = {
 							modules: false,
 							targets: "defaults",
 							bugfixes: true,
-							useBuiltIns: "usage"
+							useBuiltIns: false
 						}]],
 						plugins: [
 							"@babel/plugin-proposal-export-default-from"
 						]
 					}
+				},
+				resolve: {
+					fullySpecified: false
 				}
 			}
 		]

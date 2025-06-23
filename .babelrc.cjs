@@ -8,7 +8,7 @@ module.exports = (api) => {
                 useBuiltIns: false
             }
         ]
-    ];
+    ]
 
     return { presets }
 }

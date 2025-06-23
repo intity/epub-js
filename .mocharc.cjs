@@ -5,5 +5,6 @@ module.exports = {
     require: [
         "@babel/register",
         "setup.js"
-    ]
+    ],
+    exit: true
 }
