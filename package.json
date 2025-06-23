@@ -17,7 +17,7 @@
     "test": "test"
   },
   "scripts": {
-    "docs": "node docsgen.js",
+    "docs": "node docsgen.cjs",
     "lint": "eslint src",
     "start": "NODE_ENV=development webpack serve",
     "build": "NODE_ENV=production webpack --progress",
