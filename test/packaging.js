@@ -28,8 +28,4 @@ describe("Packaging", () => {
             assert.equal(packaging.spine.size, 13)
         })
     })
-    after(() => {
-        pkg1 = undefined
-        pkg2 = undefined
-    })
 })

@@ -4,30 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,scrolled,example">
+    <meta name="description" content="scrolling a document">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Scrolling a document - Example</title>
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Scrolling a document</title>
 </head>
 
-<body>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="scrolled">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/scrolled.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="scrolled">
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
+    <footer></footer>
     <script>
         const loader = document.getElementById("loader")
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
+        const rendition = book.renderTo("viewport", {
             flow: "scrolled",
-            width: 800,
-            height: window.innerHeight - 80
+            width: 908,
+            height: window.innerHeight - 160
         })
         book.opened.then(() => {
 

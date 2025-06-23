@@ -1,0 +1,15 @@
+a.anchor {
+    width: 30px;
+    opacity: 0;
+    position: absolute;
+    overflow: hidden;
+    text-indent: -60px;
+    text-decoration: none;
+    transform: translateX(-100%);
+    background: url("../img/l-icon.svg") center center no-repeat;
+    background-size: auto 72%;
+}
+
+:hover > a.anchor {
+    opacity: 1;
+}

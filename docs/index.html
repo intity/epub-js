@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js,epub-js,examples">
-    <meta name="description" content="epub-js example list">
+    <meta name="keywords" content="epub-js,documentation,API">
+    <meta name="description" content="epub-js library documentation">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
@@ -14,9 +14,12 @@
     <script src="../dist/marked.min.js"></script>
     <script type="module">
         import load from "../assets/js/main.js"
-        window.onload = (e) => load(e, "./index.md")
+        const url = new URL(window.location)
+        const val = url.searchParams.get("q")
+        const uri = val === null ? "./index.md" : `./${val}`
+        window.onload = (e) => load(e, uri)
     </script>
-    <title>epub-js-examples</title>
+    <title>epub-js-docs</title>
 </head>
 
 <body id="app">
@@ -24,10 +27,10 @@
         <nav>
             <ul>
                 <li class="l-item"><a href="../">Home</a></li>
-                <li class="l-item"><a href="../docs/">Docs</a></li>
+                <li class="l-item"><a href="./" class="active">Docs</a></li>
                 <li class="l-item"><a href="../test/">Test</a></li>
-                <li class="l-item"><a href="./" class="active">Examples</a></li>
-                <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/examples" id="gh-link" target="_blank"></a></li>
+                <li class="l-item"><a href="../examples/">Examples</a></li>
+                <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/docs" id="gh-link" target="_blank"></a></li>
             </ul>
         </nav>
     </header>

@@ -56,7 +56,6 @@ the section content.
 | --- | --- | --- | --- |
 | book | <code>Book</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.axis] | <code>string</code> |  | viewport axis |
 | [options.width] | <code>string</code> \| <code>number</code> |  | viewport width |
 | [options.height] | <code>string</code> \| <code>number</code> |  | viewport height |
 | [options.ignoreClass] | <code>string</code> |  | class for the cfi parser to ignore |

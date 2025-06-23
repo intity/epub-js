@@ -4,62 +4,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,layout,example">
+    <meta name="description" content="example of dynamic layout from the UI">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Layout - Example</title>
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Layout</title>
 </head>
 
-<body>
-    <div id="toolbar">
-        <div class="box">
-            <label for="layout">Layout:</label>
-            <select name="layout" id="layout">
-                <option value="reflowable">reflowable</option>
-                <!-- <option value="pre-paginated">pre-paginated</option> -->
-            </select>
-        </div>
-        <div class="box">
-            <label for="flow">Flow:</label>
-            <select name="flow" id="flow">
-                <option value="paginated">paginated</option>
-                <option value="scrolled">scrolled</option>
-                <option value="scrolled-doc">scrolled-doc</option>
-            </select>
-        </div>
-        <div class="box">
-            <label for="spread">Spread:</label>
-            <select name="spread" id="spread">
-                <option value="auto">auto</option>
-                <option value="none">none</option>
-            </select>
-        </div>
-        <div class="box">
-            <label for="minSpreadWidth">Min spread width:</label>
-            <input type="number" id="minSpreadWidth" value="800" min="0" max="9999" />
-        </div>
-        <div class="box">
-            <label for="direction">Direction:</label>
-            <select name="direction" id="direction">
-                <option value="ltr">ltr</option>
-                <option value="rtl">rtl</option>
-            </select>
-        </div>
-    </div>
-    <div id="content" class="ltr" dir="ltr">
-        <div id="viewer" class="paginated">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <label for="flow">Flow:</label>
+                    <select name="flow" id="flow">
+                        <option value="paginated">paginated</option>
+                        <option value="scrolled">scrolled</option>
+                        <option value="scrolled-doc">scrolled-doc</option>
+                    </select>
+                </li>
+                <li class="l-item">
+                    <label for="spread">Spread:</label>
+                    <select name="spread" id="spread">
+                        <option value="auto">auto</option>
+                        <option value="none">none</option>
+                    </select>
+                </li>
+                <li class="l-item">
+                    <label for="minSpreadWidth">Min spread width:</label>
+                    <input type="number" id="minSpreadWidth" value="800" min="0" max="9999" />
+                </li>
+                <li class="l-item">
+                    <label for="direction">Direction:</label>
+                    <select name="direction" id="direction">
+                        <option value="ltr">ltr</option>
+                        <option value="rtl">rtl</option>
+                    </select>
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/layout.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated">
             <div id="divider"></div>
             <div id="loader"></div>
         </div>
         <a id="prev" href="#prev" class="arrow"></a>
         <a id="next" href="#next" class="arrow"></a>
-    </div>
+    </main>
     <script>
         const content = document.getElementById("content")
         const loader = document.getElementById("loader")
-        const viewer = document.getElementById("viewer")
-        const layout = document.getElementById("layout")
         const flow = document.getElementById("flow")
         const spread = document.getElementById("spread")
         const minSpreadWidth = document.getElementById("minSpreadWidth")
@@ -68,35 +69,14 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
-            width: 900,
+        const rendition = book.renderTo("viewport", {
+            width: 908,
             height: 600
         })
         book.opened.then(() => {
 
             loader.style.display = "none"
         })
-        layout.onchange = (e) => {
-
-            const props = {
-                name: e.target.value
-            }
-            if (props.name === "pre-paginated") {
-                props.flow = "scrolled-doc"
-                props.spread = "none"
-                props.width = window.innerWidth
-                props.height = window.innerHeight
-                props.pageWidth = 800
-                spread.disabled = true
-                spread.value = "none"
-                flow.disabled = true
-                flow.value = "scrolled-doc"
-                rendition.resize("100%", props.height)
-            } else {
-                flow.disabled = false
-            }
-            rendition.updateLayout(props)
-        }
         flow.onchange = (e) => {
 
             const value = e.target.value
@@ -104,23 +84,23 @@
                 flow: value
             }
             if (value === "paginated") {
-                props.width = 900
+                props.width = 908
                 props.height = 600
                 spread.disabled = false
                 rendition.resize(props.width, props.height)
             } else if (value === "scrolled") {
-                props.width = 800
-                props.height = window.innerHeight - 80
+                props.width = 908
+                props.height = window.innerHeight - 160
                 spread.disabled = true
                 spread.value = "none"
                 rendition.resize(props.width, props.height)
             } else {
                 props.width = window.innerWidth
-                props.height = window.innerHeight
-                props.pageWidth = 800
+                props.height = window.innerHeight - 100
+                props.pageWidth = 908
                 spread.disabled = true
                 spread.value = "none"
-                rendition.resize("100%", props.height)
+                rendition.resize(props.width, props.height)
             }
             rendition.updateLayout(props)
         }
@@ -195,6 +175,7 @@
             update(location)
         })
     </script>
+    <footer></footer>
 </body>
 
 </html>

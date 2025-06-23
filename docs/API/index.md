@@ -1,0 +1,225 @@
+# API Reference
+
+### Global functions
+
+- [ePub](epub.md)
+
+### Global classes (dependencies graph)
+
+- [Annotation](annotation.md) `from ./annotation`
+    - [EpubCFI](epubcfi.md)
+- [Annotations](annotations.md) `from ./annotations`
+    - [Annotation](annotation.md)
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EVENTS
+- [Archive](archive.md) `from ./archive`
+    - [Input](input.md)
+    - JSZip
+    - [mime](utils/mime.md) `from ./utils/mime`
+    - [request](utils/request.md) `from ./utils/request`
+- [Book](book.md) `from ./book`
+    - [Archive](archive.md)
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EPUBJS_VERSION
+        - EVENTS
+    - [core](utils/core.md) `from ./utils/core`
+        - extend
+    - [Container](container.md)
+    - [Defer](utils/defer.md)
+    - [EpubCFI](epubcfi.md)
+    - [Locations](locations.md)
+    - [Navigation](navigation.md)
+    - [Packaging](packaging.md)
+    - [Path](utils/path.md)
+    - [Rendition](rendition.md)
+    - [Resources](resources.md)
+    - [request](utils/request.md) `from ./utils/request`
+    - [Sections](sections.md)
+    - [Storage](storage.md)
+    - [Url](utils/url.md)
+- [Contents](contents.md) `from ./contentss`
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - DOM_EVENTS
+        - EPUBJS_VERSION
+        - EVENTS
+    - [core](utils/core.md) `from ./utils/core`
+        - borders
+        - defaults
+        - isNumber
+        - prefixed
+    - [EpubCFI](epubcfi.md)
+    - [Mapping](mapping.md)
+    - [replacements](utils/replacements.md) `from ./utils/replacements`
+        - replaceLinks
+- [Input](input.md)
+    - [core](utils/core.md) `from ./utils/core`
+        - isXml
+        - parse
+    - [Defer](utils/defer.md)
+    - [Path](utils/path.md)
+- [EpubCFI](epubcfi.md) `from ./epubcfi`
+    - [core](utils/core.md) `from ./utils/core`
+        - extend
+        - findChildren
+        - isNumber
+        - RangeObject
+        - type
+- [Landmarks](navigation/landmarks.md) `from ./navigation/landmarks`
+    - [core](utils/core.md) `from ../utils/core`
+        - qsa
+        - filterChildren
+- [Layout](layout.md) `from ./layout`
+    - [core](utils/core.md) `from ./utils/core`
+        - extend
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EVENTS
+- [Location](location.md) `from ./location`
+    - [core](utils/core.md) `from ./utils/core`
+        - extend
+- [Locations](locations.md) `from ./locations`
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EVENTS
+    - [core](utils/core.md) `from ./utils/core`
+        - locationOf
+        - sprint
+        - qs
+    - [Defer](utils/defer.md) `from ./utils/defer`
+    - [EpubCFI](epubcfi.md)
+    - [Location](location.md)
+    - [Queue](utils/queue.md)
+- [Manifest](packaging/manifest.md) `from ./packaging/manifest`
+    - [core](utils/core.md) `from ../utils/core`
+        - qsa
+        - qsp
+- [Mapping](mapping.md) `from ./mapping`
+    - [core](utils/core.md) `from ./utils/core`
+        - nodeBounds
+    - [EpubCFI](epubcfi.md)
+- [Metadata](packaging/metadata.md) `from ./packaging/metadata`
+- [Navigation](navigation.md) `from ./navigation`
+    - [core](utils/core.md) `from ./utils/core`
+        - qs
+        - qsa
+    - [Landmarks](navigation/landmarks.md)
+    - [PageList](navigation/pagelist.md)
+    - [Toc](navigation/toc.md)
+- [Packaging](packaging.md) `from ./packaging`
+    - [core](utils/core.md) `from ./utils/core`
+        - qs
+        - qsp
+    - [Manifest](packaging/manifest.md)
+    - [Metadata](packaging/metadata.md)
+    - [Spine](packaging/spine.md)
+- [PageList](navigation/pagelist.md) `from ./navigation/pagelist`
+    - [core](utils/core.md) `from ../utils/core`
+        - indexOfSorted
+        - locationOf
+        - qs
+        - qsa
+    - [EpubCFI](epubcfi.md)
+- [Rendition](rendition.md) `from ./rendition`
+    - [Annotations](annotations.md)
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EVENTS
+        - DOM_EVENTS
+    - [Contents](contents.md)
+    - [core](utils/core.md) `from ./utils/core`
+        - extend
+        - isFloat
+    - [ContinuousViewManager](managers/continuous/index.md) `from ./managers/continuous/index`
+        - [constants](utils/constants.md) `from ../../utils/constants`
+            - EVENTS
+        - [core](utils/core.md) `from ../../utils/core`
+            - extend
+            - requestAnimationFrame
+        - DefaultViewManager `from ../default/index`
+        - [Defer](utils/defer.md) `from ../../utils/defer`
+        - [Snap](managers/helpers/snap.md) `from ../helpers/snap`
+    - [DefaultViewManager](managers/default/index.md) `from ./managers/default/index`
+        - [constants](utils/constants.md) `from ../../utils/constants`
+            - EVENTS
+        - [core](utils/core.md) `from ../../utils/core`
+            - extend
+            - isNumber
+            - windowBounds
+        - [Defer](utils/defer.md) `from ../../utils/defer`
+        - [Mapping](mapping.md) `from ../../mapping`
+        - [scrollType](utils/scrolltype.md) `from ../../utils/scrolltype`
+        - [Views](managers/helpers/views.md) `from ../helpers/views`
+    - [Defer](utils/defer.md) `from ./utils/defer`
+    - [EpubCFI](epubcfi.md)
+    - [Hook](utils/hook.md)
+    - [IframeView](managers/views/iframe.md) `from ./managers/views/iframe`
+        - [constants](utils/constants.md) `from ../../utils/constants`
+            - EVENTS
+        - [Contents](contents.md) `from ../../contents`
+        - [Marks](marks-pane/marks.md) `from ../../marks-pane/marks`
+            - [proxyMouse](marks-pane/events.md) `from ./events`
+        - [Highlight](marks-pane/highlight.md) `from ../../marks-pane/highlight`
+            - [Mark](marks-pane/mark.md) `from ./mark`
+        - [Underline](marks-pane/underline.md) `from ../../marks-pane/underline`
+            - [Highlight](marks-pane/highlight.md)
+        - [core](utils/core.md) `from ../../utils/core`
+            - createBlobUrl
+            - borders
+            - bounds
+            - extend
+            - isNumber
+            - revokeBlobUrl
+            - uuid
+        - [Defer](utils/defer.md) `from ../../utils/defer`
+        - [EpubCFI](epubcfi.md) `from ../../epubcfi`
+    - [Layout](layout.md)
+    - [Themes](themes.md)
+    - [Queue](utils/queue.md)
+- [Resources](resources.md) `from ./resources`
+    - [core](utils/core.md) `from ./utils/core`
+        - blob2base64
+        - createBase64Url
+        - createBlobUrl
+    - [mime](utils/mime.md) `from ./utils/mime`
+    - [Path](utils/path.md)
+    - [replacements](utils/replacements.md) `from ./utils/replacements`
+        - substitute
+    - [Url](utils/url.md)
+- [Section](section.md) `from ./section`
+    - [core](utils/core.md) `from ./utils/core`
+        - sprint
+    - [Defer](utils/defer.md) `from ./utils/defer`
+    - [EpubCFI](epubcfi.md)
+    - [Hook](utils/hook.md)
+    - [replacements](utils/replacements.md) `from ./utils/replacements`
+        - replaceBase
+    - [request](utils/request.md) `from ./utils/request`
+- [Sections](sections.md) `from ./sections`
+    - [EpubCFI](epubcfi.md)
+    - [Hook](utils/hook.md)
+    - [replacements](utils/replacements.md) `from ./utils/replacements`
+        - replaceBase
+        - replaceCanonical
+        - replaceMeta
+    - [Section](section.md)
+- [Spine](packaging/spine.md) `from ./packaging/spine`
+    - [core](utils/core.md) `from ../utils/core`
+        - indexOfNode
+        - qsa
+- [Storage](storage.md) `from ./storage`
+    - [Defer](utils/defer.md)
+    - [Input](input.md)
+    - localforage
+    - [mime](utils/mime.md) `from ./utils/mime`
+    - [request](utils/request.md) `from ./utils/request`
+- [Themes](themes.md) `from ./themes`
+    - [Url](utils/url.md)
+- [Toc](navigation/toc.md) `from ./navigation/toc`
+    - [core](utils/core.md) `from ../utils/core`
+        - filterChildren
+        - qs
+
+### Utils classes
+
+- [Defer](utils/defer.md) `from ./utils/defer`
+- [Hook](utils/hook.md) `from ./utils/hook`
+- [Path](utils/path.md) `from ./utils/path`
+- [Queue](utils/queue.md) `from ./utils/queue`
+- [Url](utils/url.md) `from ./utils/url`

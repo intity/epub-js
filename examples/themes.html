@@ -4,43 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,themes,example">
+    <meta name="description" content="example of themes">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-    <title>EPUB.JS: Themes - Example</title>
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
-    <link rel="stylesheet" type="text/css" href="examples.css">
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : Themes</title>
 </head>
 
-<body>
-    <div id="toolbar">
-        <div class="box">
-            <label for="theme">Theme:</label>
-            <select name="theme" id="theme">
-                <option value="light">light</option>
-                <option value="dark">dark</option>
-                <option value="none">none</option>
-            </select>
-        </div>
-        <div class="box">
-            <label for="font-size">Font size (%):</label>
-            <input type="number" value="100" min="1" max="999" id="font-size">
-        </div>
-    </div>
-    <div id="content" dir="ltr">
-        <div id="viewer" class="scrolled">
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <label for="theme">Theme:</label>
+                    <select name="theme" id="theme">
+                        <option value="light">light</option>
+                        <option value="dark">dark</option>
+                        <option value="none">none</option>
+                    </select>
+                </li>
+                <li class="l-item">
+                    <label for="font-size">Font size (%):</label>
+                    <input type="number" value="100" min="1" max="999" id="font-size">
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/themes.html" id="gh-link" target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="scrolled ltr" dir="ltr">
             <div id="loader"></div>
         </div>
-    </div>
+    </main>
+    <footer></footer>
     <script>
         const theme = document.getElementById("theme")
         const loader = document.getElementById("loader")
         const fontSize = document.getElementById("font-size")
         const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewer", {
+        const rendition = book.renderTo("viewport", {
             manager: "continuous",
             flow: "scrolled",
-            width: 800,
-            height: window.innerHeight - 40
+            width: 908,
+            height: window.innerHeight - 102
         })
         book.opened.then(() => {
 

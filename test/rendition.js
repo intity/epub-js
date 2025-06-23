@@ -39,7 +39,7 @@ describe("Rendition", () => {
             assert.equal(section.href, "xhtml/mathml.xhtml")
             assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"))
         })
-        it("should be displayed by EpubCFI", async () => {
+        it("should be displayed by epubcfi", async () => {
             const section = await rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)")
             assert.equal(section.index, 2)
             assert.equal(section.idref, "s2")
@@ -49,7 +49,5 @@ describe("Rendition", () => {
     })
     after(() => {
         book.destroy()
-        book = undefined
-        rendition = undefined
     })
 })

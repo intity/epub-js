@@ -16,6 +16,7 @@ Figures out the CSS values to apply for a layout
         * [.axis](#Layout.axis) : <code>string</code>
         * [.name](#Layout.name) : <code>string</code>
         * [.flow](#Layout.flow) : <code>string</code>
+        * [.style](#Layout.style) : <code>string</code>
         * [.spread](#Layout.spread) : <code>boolean</code>
         * [.direction](#Layout.direction) : <code>string</code>
         * [.orientation](#Layout.orientation) : <code>string</code>
@@ -40,7 +41,6 @@ Constructor
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>object</code> |  |  |
-| [options.axis] | <code>string</code> | <code>&quot;&#x27;horizontal&#x27;&quot;</code> | values: `"horizontal"` OR `"vertical"` |
 | [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"` |
 | [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"none"` |
 | [options.direction] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | values: `"ltr"` OR `"rtl"` |
@@ -106,6 +106,11 @@ Layout name
 <a name="Layout.flow"></a>
 
 ## Layout.flow : <code>string</code>
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
+<a name="Layout.style"></a>
+
+## Layout.style : <code>string</code>
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
 <a name="Layout.spread"></a>

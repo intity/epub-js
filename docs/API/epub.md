@@ -1,6 +1,6 @@
 <a name="ePub"></a>
 
-# ePub(inpit, [options]) ⇒ <code>Book</code>
+# ePub(input, [options]) ⇒ <code>Book</code>
 Create a new Book instance
 
 **Kind**: global function  
@@ -8,7 +8,7 @@ Create a new Book instance
 
 | Param | Type | Description |
 | --- | --- | --- |
-| inpit | <code>string</code> \| <code>ArrayBuffer</code> | URL, Path or ArrayBuffer |
+| input | <code>string</code> \| <code>ArrayBuffer</code> | URL, Path or ArrayBuffer |
 | [options] | <code>object</code> | to pass to the book |
 
 **Example**  

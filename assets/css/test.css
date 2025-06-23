@@ -1,0 +1,42 @@
+@import url("app.css");
+@import url("nav.css");
+
+#mocha {
+    height: calc(100% - 170px) !important;
+}
+
+#mocha-stats {
+    top: 55px !important;
+    right: calc((100% - 960px)/2 + 55px);
+}
+
+#mocha-stats .failures>em,
+#mocha-stats .duration>em,
+#mocha-stats .progress-text {
+    color: gray;
+}
+
+#mocha-report {
+    margin: 0 !important;
+    padding-left: 0px !important;
+    padding-right: 22px !important;
+    padding-bottom: 20px !important;
+}
+
+/**
+ * iPhone 5             : 320 x 568
+ * iPhone 6/7/8         : 375 x 667
+ * iPhone 11 Pro        : 375 x 812
+ * Pixel 7              : 412 x 915
+ * iPhone 6/7/8 Plus    : 414 x 736
+ * iPhone 11            : 414 x 896
+ * iPhone 12/14         : 390 x 844
+ * iPhone 14/15 Pro Max : 430 x 932
+ */
+@media
+only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
+only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
+    #mocha-stats {
+        right: 5px;
+    }
+}
