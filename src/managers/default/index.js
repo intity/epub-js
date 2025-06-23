@@ -899,6 +899,7 @@ class DefaultViewManager {
 	 */
 	destroy() {
 
+		if (!this.views) return;
 		this.removeEventListeners();
 		this.views.destroy();
 		this.views = undefined;
