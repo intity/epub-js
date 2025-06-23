@@ -755,17 +755,6 @@ module.exports = function (iters, kind, value) {
 
 /***/ }),
 
-/***/ 1454:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(1701);
-
-
-/***/ }),
-
 /***/ 1517:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -1306,17 +1295,6 @@ function baseGetTag(value) {
 }
 
 module.exports = baseGetTag;
-
-
-/***/ }),
-
-/***/ 2577:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(116);
 
 
 /***/ }),
@@ -1993,17 +1971,6 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ 3949:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(7588);
-
-
-/***/ }),
-
 /***/ 4055:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -2379,17 +2346,6 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
-
-
-/***/ }),
-
-/***/ 4520:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(2489);
 
 
 /***/ }),
@@ -3539,6 +3495,38 @@ module.exports = function (bitmap, value) {
 
 /***/ }),
 
+/***/ 7036:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aCallable = __webpack_require__(9306);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.getOrInsertComputed` method
+// https://github.com/tc39/proposal-upsert
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  getOrInsertComputed: function getOrInsertComputed(key, callbackfn) {
+    aMap(this);
+    aCallable(callbackfn);
+    if (has(this, key)) return get(this, key);
+    // CanonicalizeKeyedCollectionKey
+    if (key === 0 && 1 / key === -Infinity) key = 0;
+    var value = callbackfn(key);
+    set(this, key, value);
+    return value;
+  }
+});
+
+
+/***/ }),
+
 /***/ 7040:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -3590,6 +3578,32 @@ module.exports = function (value) {
 	if (!isValue(value)) throw new TypeError("Cannot use null or undefined");
 	return value;
 };
+
+
+/***/ }),
+
+/***/ 7254:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var aMap = __webpack_require__(6194);
+var MapHelpers = __webpack_require__(2248);
+
+var get = MapHelpers.get;
+var has = MapHelpers.has;
+var set = MapHelpers.set;
+
+// `Map.prototype.getOrInsert` method
+// https://github.com/tc39/proposal-upsert
+$({ target: 'Map', proto: true, real: true, forced: true }, {
+  getOrInsert: function getOrInsert(key, value) {
+    if (has(aMap(this), key)) return get(this, key);
+    set(this, key, value);
+    return value;
+  }
+});
 
 
 /***/ }),
@@ -5031,17 +5045,6 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 /***/ }),
 
-/***/ 8872:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(8237);
-
-
-/***/ }),
-
 /***/ 8981:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -5056,17 +5059,6 @@ var $Object = Object;
 module.exports = function (argument) {
   return $Object(requireObjectCoercible(argument));
 };
-
-
-/***/ }),
-
-/***/ 8992:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-// TODO: Remove from `core-js@4`
-__webpack_require__(8111);
 
 
 /***/ }),
@@ -5758,12 +5750,12 @@ var es_array_buffer_transfer_to_fixed_length = __webpack_require__(7936);
 var event_emitter = __webpack_require__(3068);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.push.js
 var es_array_push = __webpack_require__(4114);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.constructor.js
-var esnext_iterator_constructor = __webpack_require__(8992);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.filter.js
-var esnext_iterator_filter = __webpack_require__(4520);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.for-each.js
-var esnext_iterator_for_each = __webpack_require__(3949);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.constructor.js
+var es_iterator_constructor = __webpack_require__(8111);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.filter.js
+var es_iterator_filter = __webpack_require__(2489);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.for-each.js
+var es_iterator_for_each = __webpack_require__(7588);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-exception.stack.js
 var web_dom_exception_stack = __webpack_require__(4979);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/web.url-search-params.delete.js
@@ -6822,6 +6814,10 @@ var esnext_map_filter = __webpack_require__(4190);
 var esnext_map_find = __webpack_require__(2359);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.find-key.js
 var esnext_map_find_key = __webpack_require__(6097);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.get-or-insert.js
+var esnext_map_get_or_insert = __webpack_require__(7254);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.get-or-insert-computed.js
+var esnext_map_get_or_insert_computed = __webpack_require__(7036);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.includes.js
 var esnext_map_includes = __webpack_require__(7273);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.key-of.js
@@ -6838,8 +6834,8 @@ var esnext_map_reduce = __webpack_require__(230);
 var esnext_map_some = __webpack_require__(7268);
 // EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.map.update.js
 var esnext_map_update = __webpack_require__(9733);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.map.js
-var esnext_iterator_map = __webpack_require__(1454);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.map.js
+var es_iterator_map = __webpack_require__(1701);
 ;// ./src/utils/rangeobject.js
 
 
@@ -8241,6 +8237,8 @@ const EVENTS = {
 
 
 
+
+
 /**
  * Find Locations for a Book
  */
@@ -8776,6 +8774,8 @@ class Container {
 
 
 
+
+
 /**
  * Metadata class
  * @extends {Map}
@@ -8870,6 +8870,8 @@ class Metadata extends Map {
 }
 /* harmony default export */ const metadata = (Metadata);
 ;// ./src/packaging/manifest.js
+
+
 
 
 
@@ -9000,6 +9002,8 @@ class Manifest extends Map {
 }
 /* harmony default export */ const manifest = (Manifest);
 ;// ./src/packaging/spine.js
+
+
 
 
 
@@ -9278,6 +9282,8 @@ class Packaging {
 }
 /* harmony default export */ const packaging = (Packaging);
 ;// ./src/navigation/landmarks.js
+
+
 
 
 
@@ -9660,6 +9666,8 @@ class PageList extends Array {
 }
 /* harmony default export */ const pagelist = (PageList);
 ;// ./src/navigation/toc.js
+
+
 
 
 
@@ -10335,6 +10343,8 @@ const lookup = filename => {
 
 
 
+
+
 /**
  * Assets container for URL replacements
  * @extends {Map}
@@ -10580,6 +10590,8 @@ class Annotation {
 event_emitter(Annotation.prototype);
 /* harmony default export */ const src_annotation = (Annotation);
 ;// ./src/annotations.js
+
+
 
 
 
@@ -10960,6 +10972,8 @@ class Layout {
 event_emitter(Layout.prototype);
 /* harmony default export */ const layout = (Layout);
 ;// ./src/themes.js
+
+
 
 
 
@@ -11655,8 +11669,8 @@ class Viewport {
 }
 event_emitter(Viewport.prototype);
 /* harmony default export */ const viewport = (Viewport);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.find.js
-var esnext_iterator_find = __webpack_require__(2577);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.find.js
+var es_iterator_find = __webpack_require__(116);
 ;// ./src/mapping.js
 
 
@@ -12245,6 +12259,8 @@ class Views extends Array {
 }
 /* harmony default export */ const views = (Views);
 ;// ./src/contents.js
+
+
 
 
 
@@ -13299,6 +13315,8 @@ const proxyMouse = (target, marks) => {
 };
 /* harmony default export */ const events = (proxyMouse);
 ;// ./src/marks-pane/marks.js
+
+
 
 
 
@@ -17071,8 +17089,8 @@ class Storage extends input {
 }
 event_emitter(Storage.prototype);
 /* harmony default export */ const storage = (Storage);
-// EXTERNAL MODULE: ./node_modules/core-js/modules/esnext.iterator.reduce.js
-var esnext_iterator_reduce = __webpack_require__(8872);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.iterator.reduce.js
+var es_iterator_reduce = __webpack_require__(8237);
 ;// ./src/section.js
 
 
@@ -17386,6 +17404,8 @@ class Section {
 }
 /* harmony default export */ const src_section = (Section);
 ;// ./src/sections.js
+
+
 
 
 
