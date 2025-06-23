@@ -117,6 +117,9 @@ module.exports = {
 							"@babel/plugin-proposal-export-default-from"
 						]
 					}
+				},
+				resolve: {
+					fullySpecified: false
 				}
 			}
 		]
