@@ -107,7 +107,7 @@ module.exports = {
 					loader: "babel-loader",
 					options: {
 						presets: [["@babel/preset-env", {
-							corejs: { version: "3.38", proposals: true },
+							corejs: { version: "3.43", proposals: true },
 							modules: false,
 							targets: "defaults",
 							bugfixes: true,
