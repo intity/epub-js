@@ -27,8 +27,8 @@
                 <li class="l-item"><a href="./" class="active">Test</a></li>
                 <li class="l-item"><a href="../examples/">Examples</a></li>
                 <li class="l-item">
-                    <label for="reporter-value">Reporter:</label>
-                    <select name="rp-type" id="reporter-value">
+                    <label for="reporter-list">Reporter:</label>
+                    <select name="rp-type" id="reporter-list">
                         <option value="html">html</option>
                         <option value="spec">spec</option>
                     </select>
@@ -48,19 +48,19 @@
                 val = ((val << 5) - val) + chr
                 val |= 0    // convert to 32-bit integer
             }
-            return val
+            return Math.abs(val).toString()
         }
-        const name = "mocha-test-lib"
+        const name = "epub-js-test"
         const init = localforage.createInstance({
             name
         })
         const data = {
-            id: hash(name),
+            host: location.host,
             reporter: "html"
         }
-        const rpv = document.getElementById("reporter-value")
+        const rpv = document.getElementById("reporter-list")
         const val = rpv.value
-        const key = `test-${data.id}`
+        const key = hash(location.href)
         rpv.onchange = (e) => {
             data.reporter = e.target.value
             init.setItem(key, data).then(() => {
