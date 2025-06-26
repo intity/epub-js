@@ -70,8 +70,7 @@
         init.getItem(key).then((d) => {
             if (d === null) {
                 init.setItem(key, data) // default data
-            }
-            if (data.reporter !== d.reporter) {
+            } else if (data.reporter !== d.reporter) {
                 data.reporter = d.reporter
                 rpv.value = d.reporter
             }
