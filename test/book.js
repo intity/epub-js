@@ -1,6 +1,11 @@
 import assert from "assert"
 import Book from "../src/book"
 
+const ASSETRION_TYPE = {
+	OPEN: "open",
+	DESTROY: "destroy"
+}
+
 const arrayBufferToBase64 = (buffer) => {
 	let binary = ""
 	let bytes = new Uint8Array(buffer)
@@ -11,7 +16,7 @@ const arrayBufferToBase64 = (buffer) => {
 	return window.btoa(binary)
 }
 
-const assertion = (book, { archived, url }) => {
+const open = (book, { archived, url }) => {
 	assert.equal(book.isOpen, true)
 	assert.equal(book.archived, archived)
 	assert.equal(book.url.toString(), url)
@@ -19,6 +24,37 @@ const assertion = (book, { archived, url }) => {
 	assert.equal(book.container.fullPath, "OPS/package.opf")
 	assert.equal(book.container.encoding, "UTF-8")
 	assert.equal(book.container.mediaType, "application/oebps-package+xml")
+}
+
+const destroy = (book) => {
+	assert.equal(book.archive, undefined)
+	assert.equal(book.archived, undefined)
+	assert.equal(book.container, undefined)
+	assert.equal(book.cover, undefined)
+	assert.equal(book.isOpen, undefined)
+	assert.equal(book.loaded, undefined)
+	assert.equal(book.loading, undefined)
+	assert.equal(book.packaging, undefined)
+	assert.equal(book.path, undefined)
+	assert.equal(book.rendition, undefined)
+	assert.equal(book.request, undefined)
+	assert.equal(book.resources, undefined)
+	assert.equal(book.sections, undefined)
+	assert.equal(book.settings, undefined)
+	assert.equal(book.storage, undefined)
+	assert.equal(book.url, undefined)
+}
+
+const assertion = (book, type, opts) => {
+	switch (type) {
+		case ASSETRION_TYPE.OPEN:
+			open(book, opts)
+			break;
+		case ASSETRION_TYPE.DESTROY:
+			destroy(book)
+			break;
+
+	}
 }
 
 const url = (path) => {
@@ -39,7 +75,7 @@ describe("Book", () => {
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: true,
 				url: "/"
 			})
@@ -48,8 +84,9 @@ describe("Book", () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from epub file of remote server", () => {
@@ -58,7 +95,7 @@ describe("Book", () => {
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: true,
 				url: "/"
 			})
@@ -67,8 +104,9 @@ describe("Book", () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from array buffer", () => {
@@ -81,7 +119,7 @@ describe("Book", () => {
 		it("should open a archived epub", async () => {
 			await book.open(data)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: true,
 				url: "/"
 			})
@@ -90,8 +128,9 @@ describe("Book", () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from data URL in base64 encoding", () => {
@@ -106,7 +145,7 @@ describe("Book", () => {
 		it("should open a archived epub", async () => {
 			await book.open(data, "base64")
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: true,
 				url: "/"
 			})
@@ -115,8 +154,9 @@ describe("Book", () => {
 			const coverUrl = await book.coverUrl()
 			assert(/blob:/.test(coverUrl))
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from epub file without cover", () => {
@@ -125,7 +165,7 @@ describe("Book", () => {
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: true,
 				url: "/"
 			})
@@ -134,8 +174,9 @@ describe("Book", () => {
 			const coverUrl = await book.coverUrl()
 			assert.equal(coverUrl, null)
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from directory of local server", () => {
@@ -144,13 +185,14 @@ describe("Book", () => {
 		it("should open a unarchived epub", async () => {
 			await book.open(path)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: false,
 				url: path
 			})
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 	describe("open book from directory of remote server", () => {
@@ -159,13 +201,14 @@ describe("Book", () => {
 		it("should open a unarchived epub", async () => {
 			await book.open(path)
 			await book.opened
-			assertion(book, {
+			assertion(book, ASSETRION_TYPE.OPEN, {
 				archived: false,
 				url: path
 			})
 		})
-		after(() => {
+		it("should destroy book instance", async () => {
 			book.destroy()
+			assertion(book, ASSETRION_TYPE.DESTROY)
 		})
 	})
 })
