@@ -214,9 +214,7 @@ class Sections extends Map {
             }
         }
 
-        return new Promise((resolve) => {
-            resolve(this);
-        });
+        return Promise.resolve(this);
     }
 
     /**
