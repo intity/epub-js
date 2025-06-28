@@ -10,13 +10,15 @@ Metadata property: `rendition:flow`
 
 1. [Spreading a document into pages](paginated.html)
 
-    Metadata value: `paginated`
+    >Metadata value: `paginated`
     
     Display an ebook two pages at a time. Sections of the ebook are displayed separately so if a section has a single page or an odd number of pages it will display with a blank page on the right.
 
+    >To navigate between sections, use the left and right arrows, as well as key bindings.
+
 2. [Continuous swiping of pages (mobile)](paginated-continuous.html)
 
-    Metadata value: `paginated`
+    >Metadata value: `paginated`
 
     This example is for devices that support the touch events API (see [Using Touch Events](https://developer.mozilla.org/en-US/docs/Web/API/Touch_events/Using_Touch_Events)).
 
@@ -24,19 +26,19 @@ Metadata property: `rendition:flow`
 
 3. [Scrolling a document](scrolled.html)
 
-    Metadata value: `scrolled-doc`
+    >Metadata value: `scrolled-doc`
 
-    In this example, the `flow` option is defined as `scrolled`. Each section of the book is displayed within the bounds of the `views-container`, with a scrollable hidden area. To navigate between sections, use the left and right arrows, as well as key bindings.
+    In this example, the `flow` option is defined as `scrolled`. Each section of the book is displayed within the bounds of the `views-container`, with a scrollable hidden area.
 
 4. [Continuous scrolling of documents](scrolled-doc.html)
 
-    Metadata value: `scrolled-doc`
+    >Metadata value: `scrolled-doc`
 
     Displays each **section** or **chapter** of the ebook in its entirety as a single page of variable height that you can scroll up and down. The difference from example (3) is that the width and height of `views-container` is 100%, and the `pageWidth` option is 800.
 
 5. [Continuous scrolling of documents (mobile)](scrolled-continuous.html)
 
-    Metadata value: `scrolled-continuous`
+    >Metadata value: `scrolled-continuous`
 
     The view is the same as in example (2). However, the documents are not divided into pages, but scrolled along the vertical axis.
 
@@ -44,7 +46,7 @@ Metadata property: `rendition:flow`
 
     This example combines examples (1,3,4) in one. Basically, this example is needed to test layout features.
 
->Note: Although the `rendition:flow` property value is defined as `scrolled-doc` for the (3) and (4) examples, they are different at the layout level.
+>Although the `rendition:flow` property value is defined as `scrolled-doc` for the (3) and (4) examples, they are different at the layout level.
 
 ## Navigation controls
 
