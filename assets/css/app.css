@@ -24,11 +24,11 @@ header {
 }
 
 footer {
-    justify-content: center;
+    max-height: 50px;
 }
 
 footer p {
-    margin: 18px 0;
+    margin: 17px 0;
     font-size: small;
 }
 

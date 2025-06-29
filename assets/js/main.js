@@ -28,8 +28,15 @@ const renderer = {
 
 marked.use({ renderer })
 
-const load = async (e, url) => {
-    return fetch(url).then((r) => r.text()).then((data) => {
+const load = async (e, uri) => {
+    //--gh-link replacement
+    const ghl = document.getElementById("gh-link")
+    const prt = uri.replace("./", "")
+    if (ghl) {
+        const href = `${ghl.href}/${prt}`
+        ghl.href = href
+    }
+    return fetch(uri).then((r) => r.text()).then((data) => {
         const main = document.getElementById("content")
         const page = document.createElement("div")
         page.className = "page"

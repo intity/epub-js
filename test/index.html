@@ -15,9 +15,6 @@
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/mocha.js"></script>
-    <!-- <script type="module">
-        import func "../assets/js/test.js"
-    </script> -->
     <title>epub-js-test : testing to the mocha-browser model</title>
 </head>
 
@@ -27,20 +24,63 @@
             <ul>
                 <li class="l-item"><a href="../">Home</a></li>
                 <li class="l-item"><a href="../docs/">Docs</a></li>
-                <li class="l-item"><a href="./" class="active">Test</a></li>
+                <!-- <li class="l-item"><a href="./" class="active">Test</a></li> -->
                 <li class="l-item"><a href="../examples/">Examples</a></li>
+                <li class="l-item">
+                    <label for="reporter-list">Reporter:</label>
+                    <select name="rp-type" id="reporter-list">
+                        <option value="html">html</option>
+                        <option value="spec">spec</option>
+                    </select>
+                </li>
                 <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/test" id="gh-link" target="_blank"></a></li>
             </ul>
         </nav>
     </header>
     <main id="mocha"></div>
     <script class="mocha-init">
-        mocha.setup({
-            bail: true,
-            color: true,
-            checkLeaks: true,
-            // reporter: "spec",
-            ui: "bdd"
+        const hash = (input) => {
+            let val = 0, i, chr
+            const len = input.length
+            if (len === 0) return val
+            for (i = 0; i < len; i++) {
+                chr = input.charCodeAt(i)
+                val = ((val << 5) - val) + chr
+                val |= 0    // convert to 32-bit integer
+            }
+            return Math.abs(val).toString()
+        }
+        const name = "epub-js-test"
+        const init = localforage.createInstance({
+            name
+        })
+        const data = {
+            host: location.host,
+            reporter: "html"
+        }
+        const rpv = document.getElementById("reporter-list")
+        const val = rpv.value
+        const key = hash(location.href)
+        rpv.onchange = (e) => {
+            data.reporter = e.target.value
+            init.setItem(key, data).then(() => {
+                location.reload()
+            })
+        }
+        init.getItem(key).then((d) => {
+            if (d === null) {
+                init.setItem(key, data) // default data
+            } else if (data.reporter !== d.reporter) {
+                data.reporter = d.reporter
+                rpv.value = d.reporter
+            }
+            mocha.setup({
+                bail: true,
+                color: true,
+                checkLeaks: true,
+                reporter: data.reporter,
+                ui: "bdd"
+            })
         })
     </script>
     <script src="../dist/test.js"></script>

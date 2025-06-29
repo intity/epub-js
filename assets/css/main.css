@@ -50,8 +50,11 @@ th {
 
 #toolbar {
     height: 50px;
-    padding: 0 26px;
     align-content: center;
+}
+
+#toolbar .box {
+    padding: 0 26px;
 }
 
 #notes {
