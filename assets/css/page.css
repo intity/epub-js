@@ -53,4 +53,7 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
     .page h2 {
         font-size: 1.2em;
     }
+    .page img {
+        width: 100% !important;
+    }
 }
