@@ -15045,6 +15045,7 @@ class DefaultViewManager {
    * destroy
    */
   destroy() {
+    if (!this.views) return;
     this.removeEventListeners();
     this.views.destroy();
     this.views = undefined;
@@ -17611,9 +17612,7 @@ class Sections extends Map {
         prevIndex -= 1;
       }
     }
-    return new Promise(resolve => {
-      resolve(this);
-    });
+    return Promise.resolve(this);
   }
 
   /**
