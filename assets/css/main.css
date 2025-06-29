@@ -59,9 +59,9 @@ th {
 
 #notes {
     width: 960px;
-    height: calc((100% - 600px)/2 - 52px);
+    height: calc((100% - 600px)/2 - 50px);
     margin: 0 auto;
-    bottom: 26px;
+    bottom: 0;
     display: flex;
     position: absolute;
     align-items: center;
