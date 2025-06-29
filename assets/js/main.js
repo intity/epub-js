@@ -32,7 +32,7 @@ const load = async (e, uri) => {
     //--gh-link replacement
     const ghl = document.getElementById("gh-link")
     const prt = uri.replace("./", "")
-    if (ghl) {
+    if (ghl && uri !== "./README.md") {
         const href = `${ghl.href}/${prt}`
         ghl.href = href
     }
