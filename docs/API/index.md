@@ -171,6 +171,7 @@
         - [EpubCFI](epubcfi.md) `from ../../epubcfi`
     - [Layout](layout.md)
     - [Themes](themes.md)
+    - [Viewport](viewport.md)
     - [Queue](utils/queue.md)
 - [Resources](resources.md) `from ./resources`
     - [core](utils/core.md) `from ./utils/core`
@@ -215,6 +216,10 @@
     - [core](utils/core.md) `from ../utils/core`
         - filterChildren
         - qs
+- [Viewport](viewport.md) `from ./viewport`
+    - [core](utils/core.md) `from ./utils/core`
+    - [constants](utils/constants.md) `from ./utils/constants`
+        - EVENTS
 
 ### Utils classes
 
