@@ -14,9 +14,10 @@ The **epub.js** library supports the following input types:
 | `directiry` | `string` |               | auto      |
 
 ## Open book from ArrayBuffer
+
 ```
-Input[type]        : binary
-Utils.replacements : blobUrl
+Input[type]            : binary
+Resources.replacements : blobUrl
 ```
 
 This input type is mainly used when opening a file via the **readAsArrayBuffer** method of the [FileReader](https://developer.mozilla.org/en-US/docs/Web/API/FileReader) interface. Typically, the resulting `ArrayBuffer` is stored in the browser's IndexedDB database. For example,
@@ -49,8 +50,8 @@ Full example: [Open from File with storage](../examples/input-with-storage.html)
 ## Open book from data URL in base64 encoding
 
 ```
-Input[type]        : base64
-Utils.replacements : blobUrl
+Input[type]            : base64
+Resources.replacements : blobUrl
 ```
 
 This input type has a similar configuration to the `binary` type. The only difference is that the data received via the **readAsDataURL** method is **base64** encoded. However, the input type must be explicitly defined. For example,
@@ -83,8 +84,8 @@ book.storage.set(0, input).then((data) => {
 ## Open book from epub File
 
 ```
-Input[type]        : epub
-Utils.replacements : blobUrl
+Input[type]            : epub
+Resources.replacements : blobUrl
 ```
 
 According to the specification, an epub file is a ZIP container (see [OCF ZIP container](https://www.w3.org/TR/epub/#sec-container-zip)). Reading the contents of a ZIP container is done using the third-party library [JSZip](https://github.com/Stuk/jszip).
@@ -108,9 +109,10 @@ const book = ePub("https://example.com/to/book.epub")
 
 ## Open book from directory
 
-**Input type:** `directory`
-
-**Resources.replacements:** `null`
+```
+Input[type]            : directory
+Resources.replacements : null
+```
 
 Following W3C recommendations, the container root directory can be determined from the location of the `META-INF/container.xml` file. This path should not change. For example, the following input:
 
@@ -139,7 +141,9 @@ The following configuration is experimental. In fact, this input type is an exte
 const book = ePub("/path/to/book/", { format: "json" })
 ```
 
-Note that this format is not specified as a standard. The question of which format should be adopted as a reference is open to discussion. The following files are used as examples:
+>Note that this format is not specified as a standard. The question of which format should be adopted as a reference is open to [discussion](https://github.com/intity/epub-js/discussions/3).
+
+The following files are used as examples:
 
 - [container.json](../assets/alice/META-INF/container.json)
 - [package.json](../assets/alice/OPS/package.json)
