@@ -266,7 +266,7 @@ class Layout {
 	 */
 	destroy() {
 
-		Object.keys(this).forEach(p => this[p] = undefined);
+		Object.keys(this).forEach(p => (this[p] = undefined));
 	}
 }
 
