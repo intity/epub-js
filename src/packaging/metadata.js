@@ -54,7 +54,7 @@ class Metadata extends Map {
 
         if (typeof prop === "undefined" ||
             typeof prop !== "string") {
-            return;
+            console.warn("parseMeta:undefined property");
         } else if (/rendition:/.test(prop)) {
             // rendition:layout
             // rendition:spread
