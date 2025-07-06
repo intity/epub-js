@@ -4,7 +4,16 @@
  */
 class Metadata extends Map {
 
-    constructor() { super(); }
+    constructor() {
+        super();
+        /**
+         * Legacy spec (2.x) support
+         * @member {Node} cover
+         * @memberof Metadata
+         * @readonly
+         */
+        this.cover = null;
+    }
 
     /**
      * Parse the metadata node
@@ -50,11 +59,14 @@ class Metadata extends Map {
      */
     parseMeta(item) {
 
+        const name = item.getAttribute("name");
         const prop = item.getAttribute("property");
 
         if (typeof prop === "undefined" ||
             typeof prop !== "string") {
-            console.warn("parseMeta:undefined property");
+            if (name === "cover") {
+                this.cover = item;
+            }
         } else if (/rendition:/.test(prop)) {
             // rendition:layout
             // rendition:spread
@@ -96,6 +108,7 @@ class Metadata extends Map {
     destroy() {
 
         this.clear();
+        this.cover = undefined;
     }
 }
 
