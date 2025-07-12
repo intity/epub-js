@@ -160,6 +160,17 @@ class Queue {
         this.running = false;
         this.paused = true;
     }
+
+    /**
+     * destroy queue object
+     */
+    destroy() {
+
+        this.stop()
+        this._q = undefined;
+        this.running = undefined;
+        this.paused = undefined;
+    }
 }
 
 export default Queue;
