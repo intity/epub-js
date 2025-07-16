@@ -12,6 +12,21 @@
     <link rel="stylesheet" type="text/css" href="../dist/mocha.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/test.css">
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <script type="module">
+        const menu = document.getElementById("b-menu")
+        const list = document.getElementById("m-list")
+        window.onload = (e) => {
+
+            menu.onclick = (e) => {
+
+                if (e.target.checked) {
+                    list.style["display"] = "grid"
+                } else {
+                    list.style["display"] = "none"
+                }
+            }
+        }
+    </script>
     <script src="../dist/jszip.min.js"></script>
     <script src="../dist/localforage.min.js"></script>
     <script src="../dist/mocha.js"></script>
@@ -21,7 +36,13 @@
 <body id="app">
     <header>
         <nav>
-            <ul>
+            <ul class="l-menu">
+                <li class="l-item">
+                    <input type="checkbox" id="b-menu">
+                    <label for="b-menu"></label>
+                </li>
+            </ul>
+            <ul class="c-menu" id="m-list">
                 <li class="l-item"><a href="../">Home</a></li>
                 <li class="l-item"><a href="../docs/">Docs</a></li>
                 <!-- <li class="l-item"><a href="./" class="active">Test</a></li> -->
@@ -33,60 +54,71 @@
                         <option value="spec">spec</option>
                     </select>
                 </li>
-                <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/test" id="gh-link" target="_blank"></a></li>
             </ul>
+            <ul class="r-menu">
+                <li class="r-item">
+                    <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/test" target="_blank"></a>
+                </li>
+            </div>
         </nav>
     </header>
-    <main id="mocha"></div>
-    <script class="mocha-init">
-        const hash = (input) => {
-            let val = 0, i, chr
-            const len = input.length
-            if (len === 0) return val
-            for (i = 0; i < len; i++) {
-                chr = input.charCodeAt(i)
-                val = ((val << 5) - val) + chr
-                val |= 0    // convert to 32-bit integer
+    <main id="mocha">
+        <script class="mocha-init">
+            const hash = (input) => {
+
+                let val = 0, i, chr
+                const len = input.length
+                if (len === 0) return val
+                for (i = 0; i < len; i++) {
+                    chr = input.charCodeAt(i)
+                    val = ((val << 5) - val) + chr
+                    val |= 0    // convert to 32-bit integer
+                }
+                return Math.abs(val).toString()
             }
-            return Math.abs(val).toString()
-        }
-        const name = "epub-js-test"
-        const init = localforage.createInstance({
-            name
-        })
-        const data = {
-            host: location.host,
-            reporter: "html"
-        }
-        const rpv = document.getElementById("reporter-list")
-        const val = rpv.value
-        const key = hash(location.href)
-        rpv.onchange = (e) => {
-            data.reporter = e.target.value
-            init.setItem(key, data).then(() => {
-                location.reload()
+            const name = "epub-js-test"
+            const init = localforage.createInstance({
+                name
             })
-        }
-        init.getItem(key).then((d) => {
-            if (d === null) {
-                init.setItem(key, data) // default data
-            } else if (data.reporter !== d.reporter) {
-                data.reporter = d.reporter
-                rpv.value = d.reporter
+            const data = {
+                host: location.host,
+                href: location.href,
+                reporter: "html"
             }
-            mocha.setup({
-                bail: true,
-                color: true,
-                checkLeaks: true,
-                reporter: data.reporter,
-                ui: "bdd"
+            const rpl = document.getElementById("reporter-list")
+            const val = rpl.value
+            const key = hash(location.href)
+            rpl.onchange = (e) => {
+
+                data.reporter = e.target.value
+                init.setItem(key, data).then(() => {
+                    location.reload()
+                })
+            }
+            init.getItem(key).then((d) => {
+
+                if (d === null) {
+                    init.setItem(key, data) // default data
+                } else if (data.reporter !== d.reporter) {
+                    data.reporter = d.reporter
+                    rpl.value = d.reporter
+                }
+            }).then(() => {
+
+                mocha.setup({
+                    bail: true,
+                    color: true,
+                    checkLeaks: true,
+                    reporter: data.reporter,
+                    ui: "bdd"
+                })
             })
-        })
-    </script>
-    <script src="../dist/test.js"></script>
-    <script class="mocha-exec">
-        mocha.run()
-    </script>
+        </script>
+        <script src="../dist/test.js"></script>
+        <script class="mocha-exec">
+            mocha.run()
+        </script>
+    </main>
 </body>
 
 </html>
