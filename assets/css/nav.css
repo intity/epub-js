@@ -103,7 +103,6 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
     }
     nav ul.c-menu {
         display: none;
-        padding: 0 12px;
     }
     nav ul.r-menu {
         display: flex;
