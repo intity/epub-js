@@ -19,14 +19,14 @@ nav input[type=checkbox]#b-menu {
     display: none;
 }
 
-nav input[type=checkbox]#b-menu + label {
+nav input[type=checkbox]#b-menu+label {
     display: inline-block;
     width: 22px;
     height: 22px;
     background: url("../img/menu.svg") no-repeat;
 }
 
-nav input[type=checkbox]#b-menu:checked + label {
+nav input[type=checkbox]#b-menu:checked+label {
     display: inline-block;
     width: 22px;
     height: 22px;
@@ -37,6 +37,8 @@ nav li {
     align-items: center;
     display: inline-flex;
     height: 50px;
+    margin: 0;
+    padding: 0;
 }
 
 nav li.l-item {
@@ -97,13 +99,17 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
     nav ul {
         padding: 0 15px;
     }
+
     nav ul.l-menu {
+        width: calc(1/9*100%);
         display: flex;
         justify-content: flex-start;
     }
+
     nav ul.c-menu {
         display: none;
     }
+
     nav ul.r-menu {
         display: flex;
         justify-content: flex-end;
