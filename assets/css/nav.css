@@ -13,7 +13,6 @@ nav ul {
 
 nav ul.l-menu {
     display: none;
-    width: 100vw;
 }
 
 nav input[type=checkbox]#b-menu {
@@ -95,18 +94,18 @@ nav li.r-item a#gh-link:hover {
 @media
 only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
 only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
+    nav ul {
+        padding: 0 15px;
+    }
     nav ul.l-menu {
-        flex: 1;
         display: flex;
         justify-content: flex-start;
     }
     nav ul.c-menu {
-        flex: 6;
         display: none;
         padding: 0 12px;
     }
     nav ul.r-menu {
-        flex: 1;
         display: flex;
         justify-content: flex-end;
     }
