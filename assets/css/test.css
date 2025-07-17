@@ -14,9 +14,9 @@
 #mocha-stats {
     top: 0 !important;
     right: 0 !important;
-    width: calc(100% - 40px) !important;
+    width: calc(100% - 42px) !important;
     height: 40px !important;
-    padding: 0 20px !important;
+    padding: 0 21px !important;
     position: relative !important;
 }
 
@@ -29,8 +29,8 @@
 #mocha-report {
     margin: 0 !important;
     padding-left: 0px !important;
-    padding-right: 22px !important;
-    padding-bottom: 20px !important;
+    padding-right: 21px !important;
+    padding-bottom: 21px !important;
 }
 
 /**
@@ -47,10 +47,10 @@
 only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
 only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
     #mocha-stats {
-        right: 0 !important;
-        z-index: -1;
+        width: calc(100% - 30px) !important;
+        padding: 0 15px !important;
     }
     #mocha-report {
-        padding-right: 18px !important;
+        padding-right: 15px !important;
     }
 }
