@@ -606,7 +606,7 @@ class DefaultViewManager {
 		const views = this.visible();
 		const sections = views.map((view) => {
 
-			const { index, href } = view.section;
+			const { href, index } = view.section;
 
 			let startPos;
 			let endPos;
@@ -649,7 +649,7 @@ class DefaultViewManager {
 				pages,
 				total,
 				mapping
-			}
+			};
 		});
 
 		return sections;
@@ -668,14 +668,14 @@ class DefaultViewManager {
 		const views = this.visible();
 		const sections = views.map((view) => {
 
-			const { index, href } = view.section;
-			const pages = [];
+			const { href, index } = view.section;
 			const total = this.layout.count(view.width).pages;
 			const startPos = Math.abs(left);
 			const endPos = Math.abs(left) + rect.width;
 			const startPage = Math.floor(startPos / this.layout.pageWidth);
 			const endPage = Math.floor(endPos / this.layout.pageWidth);
 
+			const pages = [];
 			for (let i = startPage; i < endPage; i++) {
 				pages.push({ index: i });
 			}
@@ -694,7 +694,7 @@ class DefaultViewManager {
 				pages,
 				total,
 				mapping
-			}
+			};
 		});
 
 		return sections;
@@ -895,7 +895,7 @@ class DefaultViewManager {
 	}
 
 	/**
-	 * destroy
+	 * Destroy the DefaultViewManager object
 	 */
 	destroy() {
 
@@ -904,6 +904,8 @@ class DefaultViewManager {
 		this.views.destroy();
 		this.views = undefined;
 		this.ignore = undefined;
+		this.mapping.destroy();
+		this.mapping = undefined;
 		this.location = undefined;
 		this.rendered = undefined;
 		this.paginated = undefined;
