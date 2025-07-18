@@ -13,7 +13,7 @@ class Locations extends Map {
 	/**
 	 * Constructor
 	 * @param {Sections} [sections]
-	 * @param {Function} [request]
+	 * @param {function} [request]
 	 * @param {number} [pause=100]
 	 */
 	constructor(sections, request, pause) {
@@ -421,10 +421,8 @@ class Locations extends Map {
 		this.pause = undefined;
 		this.break = undefined;
 		this.current = undefined;
-		this.request = undefined;
 		this.q.stop();
 		this.q = undefined;
-		this.sections = undefined;
 		this.generated = undefined;
 	}
 }
