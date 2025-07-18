@@ -151,8 +151,11 @@ describe("Locations", () => {
 			book.locations.clear()
 			assert.equal(book.locations.size, 0)
 		})
-	})
-	after(() => {
-		book.destroy()
+		it("should destroy book object", () => {
+			book.destroy()
+			Object.keys(book).forEach(p => {
+				assert.equal(book[p], undefined)
+			})
+		})
 	})
 })
