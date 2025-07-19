@@ -8,6 +8,7 @@ import { qs, locationOf } from "./utils/core";
 
 /**
  * Find Locations for a Book
+ * @extends {Map}
  */
 class Locations extends Map {
 	/**
@@ -20,16 +21,16 @@ class Locations extends Map {
 
 		super();
 		this.sections = sections;
+		this.request = request;
 		this.pause = pause || 100;
 		this.break = 150;
-		this.request = request;
+		this.processing = new Defer();
 		/**
 		 * @member {Location} current Current Location
 		 * @memberof Locations
 		 * @readonly
 		 */
 		this.current = new Location();
-		this.processing = new Defer();
 		/**
 		 * @member {Promise<Locations>} generated
 		 * @memberof Locations
@@ -382,7 +383,7 @@ class Locations extends Map {
 					}
 				}
 			} else {
-				console.error("Invalid value type to " + opt);
+				throw new Error("Invalid value type to " + opt);
 			}
 		});
 
@@ -402,7 +403,7 @@ class Locations extends Map {
 	}
 
 	/**
-	 * clear locations
+	 * Clear locations
 	 */
 	clear() {
 
@@ -413,13 +414,14 @@ class Locations extends Map {
 	}
 
 	/**
-	 * destroy
+	 * Destroy the Locations object
 	 */
 	destroy() {
 
 		this.clear();
 		this.pause = undefined;
 		this.break = undefined;
+		this.current && this.current.destroy();
 		this.current = undefined;
 		this.q.stop();
 		this.q = undefined;
