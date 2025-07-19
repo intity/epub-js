@@ -9,6 +9,7 @@ Location class
     * [new Location()](#new_Location_new)
     * _instance_
         * [.set([props])](#Location+set)
+        * [.destroy()](#Location+destroy)
     * _static_
         * [.cfi](#Location.cfi) : <code>string</code>
         * [.index](#Location.index) : <code>number</code>
@@ -33,21 +34,30 @@ Set location properties
 | [props.index] | <code>number</code> | 
 | [props.percentage] | <code>number</code> | 
 
+<a name="Location+destroy"></a>
+
+## location.destroy()
+Destroy the Location object
+
+**Kind**: instance method of [<code>Location</code>](#Location)  
 <a name="Location.cfi"></a>
 
 ## Location.cfi : <code>string</code>
 EpubCFI string format
 
 **Kind**: static property of [<code>Location</code>](#Location)  
+**Read only**: true  
 <a name="Location.index"></a>
 
 ## Location.index : <code>number</code>
 Location index
 
 **Kind**: static property of [<code>Location</code>](#Location)  
+**Read only**: true  
 <a name="Location.percentage"></a>
 
 ## Location.percentage : <code>number</code>
 Percentage in the range from 0 to 1
 
 **Kind**: static property of [<code>Location</code>](#Location)  
+**Read only**: true  

@@ -1,20 +1,21 @@
 <a name="Queue"></a>
 
-# Queue
+# Queue ⇐ <code>Array</code>
 Queue for handling tasks one at a time
 
 **Kind**: global class  
+**Extends**: <code>Array</code>  
 
-* [Queue](#Queue)
+* [Queue](#Queue) ⇐ <code>Array</code>
     * [new Queue(context)](#new_Queue_new)
     * [.enqueue(task, [...args])](#Queue+enqueue) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.dequeue()](#Queue+dequeue) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.dump()](#Queue+dump)
     * [.run()](#Queue+run) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.clear()](#Queue+clear)
-    * [.length()](#Queue+length) ⇒ <code>number</code>
     * [.pause()](#Queue+pause)
     * [.stop()](#Queue+stop)
+    * [.destroy()](#Queue+destroy)
 
 <a name="new_Queue_new"></a>
 
@@ -62,13 +63,6 @@ Run all tasks sequentially, at convince
 Clear all items in wait
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
-<a name="Queue+length"></a>
-
-## queue.length() ⇒ <code>number</code>
-Get the number of tasks in the queue
-
-**Kind**: instance method of [<code>Queue</code>](#Queue)  
-**Returns**: <code>number</code> - tasks  
 <a name="Queue+pause"></a>
 
 ## queue.pause()
@@ -79,5 +73,11 @@ Pause a running queue
 
 ## queue.stop()
 End the queue
+
+**Kind**: instance method of [<code>Queue</code>](#Queue)  
+<a name="Queue+destroy"></a>
+
+## queue.destroy()
+Destroy the Queue object
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  

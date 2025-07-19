@@ -1,11 +1,12 @@
 <a name="Locations"></a>
 
-# Locations
+# Locations ⇐ <code>Map</code>
 Find Locations for a Book
 
 **Kind**: global class  
+**Extends**: <code>Map</code>  
 
-* [Locations](#Locations)
+* [Locations](#Locations) ⇐ <code>Map</code>
     * [new Locations([sections], [request], [pause])](#new_Locations_new)
     * _instance_
         * [.generate([chars])](#Locations+generate) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
@@ -169,13 +170,13 @@ Set current location
 <a name="Locations+clear"></a>
 
 ## locations.clear()
-clear locations
+Clear locations
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations+destroy"></a>
 
 ## locations.destroy()
-destroy
+Destroy the Locations object
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations.current"></a>
