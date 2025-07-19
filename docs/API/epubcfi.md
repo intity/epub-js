@@ -1,7 +1,10 @@
 <a name="EpubCFI"></a>
 
 # EpubCFI
-Parsing and creation of EpubCFIs: https://idpf.org/epub/linking/cfi/epub-cfi.html
+Parsing and creation of EpubCFIs:
+
+**Kind**: global class  
+**Link**: https://idpf.org/epub/linking/cfi/epub-cfi.html
 
 Implements:
 - Character Offset: `epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)`
@@ -11,9 +14,7 @@ Does Not Implement:
 - Temporal Offset `(~)`
 - Spatial Offset `(@)`
 - Temporal-Spatial Offset `(~ + @)`
-- Text Location Assertion `([)`
-
-**Kind**: global class  
+- Text Location Assertion `([)`  
 
 * [EpubCFI](#EpubCFI)
     * [new EpubCFI([cfiFrom], [base], [ignoreClass])](#new_EpubCFI_new)
@@ -27,6 +28,7 @@ Does Not Implement:
         * [.parse(cfiStr)](#EpubCFI+parse) ⇒ [<code>EpubCFI</code>](#EpubCFI)
         * [.toRange([doc], [ignoreClass])](#EpubCFI+toRange) ⇒ <code>Range</code>
         * [.toString()](#EpubCFI+toString) ⇒ <code>string</code>
+        * [.destroy()](#EpubCFI+destroy)
     * _static_
         * [.base](#EpubCFI.base) : <code>object</code>
         * [.spinePos](#EpubCFI.spinePos) : <code>number</code>
@@ -48,6 +50,22 @@ Constructor
 | [base] | <code>string</code> \| <code>object</code> |  |
 | [ignoreClass] | <code>string</code> | class to ignore when parsing DOM |
 
+**Example**  
+```js
+new EpubCFI()
+```
+**Example**  
+```js
+new EpubCFI("epubcfi(/6/2[cover]!/6)")
+```
+**Example**  
+```js
+new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+```
+**Example**  
+```js
+new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
+```
 <a name="EpubCFI+collapse"></a>
 
 ## epubCFI.collapse([toStart])
@@ -155,6 +173,12 @@ Convert CFI to a epubcfi(...) string
 
 **Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
 **Returns**: <code>string</code> - EpubCFI string format  
+<a name="EpubCFI+destroy"></a>
+
+## epubCFI.destroy()
+Destroy the EpubCFI object
+
+**Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
 <a name="EpubCFI.base"></a>
 
 ## EpubCFI.base : <code>object</code>

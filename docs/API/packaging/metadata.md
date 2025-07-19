@@ -7,9 +7,12 @@ Metadata class
 **Extends**: <code>Map</code>  
 
 * [Metadata](#Metadata) ⇐ <code>Map</code>
-    * [.parse(node)](#Metadata+parse) ⇒ [<code>Promise.&lt;Metadata&gt;</code>](#Metadata)
-    * [.load(metadata)](#Metadata+load) ⇒ [<code>Promise.&lt;Metadata&gt;</code>](#Metadata)
-    * [.destroy()](#Metadata+destroy)
+    * _instance_
+        * [.parse(node)](#Metadata+parse) ⇒ [<code>Promise.&lt;Metadata&gt;</code>](#Metadata)
+        * [.load(metadata)](#Metadata+load) ⇒ [<code>Promise.&lt;Metadata&gt;</code>](#Metadata)
+        * [.destroy()](#Metadata+destroy)
+    * _static_
+        * [.cover](#Metadata.cover) : <code>Node</code>
 
 <a name="Metadata+parse"></a>
 
@@ -39,3 +42,10 @@ Load metadata from JSON
 destroy
 
 **Kind**: instance method of [<code>Metadata</code>](#Metadata)  
+<a name="Metadata.cover"></a>
+
+## Metadata.cover : <code>Node</code>
+Legacy spec (2.x) support
+
+**Kind**: static property of [<code>Metadata</code>](#Metadata)  
+**Read only**: true  

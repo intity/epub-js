@@ -11,6 +11,7 @@ Map text locations to CFI ranges
     * [.page(contents, cfiBase, start, end)](#Mapping+page) ⇒ <code>Object</code>
     * [.findRanges(view)](#Mapping+findRanges) ⇒ <code>Array.&lt;object&gt;</code>
     * [.rangeListToCfiList(cfiBase, columns)](#Mapping+rangeListToCfiList) ⇒ <code>Array.&lt;object&gt;</code>
+    * [.destroy()](#Mapping+destroy)
 
 <a name="new_Mapping_new"></a>
 
@@ -20,7 +21,7 @@ Constructor
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| layout | <code>Layout</code> |  | Layout to apply |
+| layout | <code>Layout</code> |  | Layout ref |
 | [dev] | <code>boolean</code> | <code>false</code> | toggle developer highlighting |
 
 <a name="Mapping+section"></a>
@@ -72,3 +73,9 @@ rangeListToCfiList
 | cfiBase | <code>string</code> | 
 | columns | <code>Array.&lt;object&gt;</code> | 
 
+<a name="Mapping+destroy"></a>
+
+## mapping.destroy()
+Destroy the Mapping object
+
+**Kind**: instance method of [<code>Mapping</code>](#Mapping)  

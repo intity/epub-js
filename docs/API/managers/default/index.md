@@ -138,7 +138,7 @@ isRendered
 <a name="DefaultViewManager+destroy"></a>
 
 ## defaultViewManager.destroy()
-destroy
+Destroy the DefaultViewManager object
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager.name"></a>
