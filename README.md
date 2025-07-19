@@ -198,7 +198,7 @@ npm run start
 
 ## Examples
 
-You can find all the source code for the examples in the [epub-js/examples](examples/) subsection of the repository.
+You can find all the source code for the examples in the [epub-js/examples](https://github.com/intity/epub-js/tree/master/examples) subsection of the repository.
 
 >Please note: not all examples work; some may be outdated.
 

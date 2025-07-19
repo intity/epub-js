@@ -7,6 +7,7 @@ const ASSETRION_TYPE = {
 }
 
 const arrayBufferToBase64 = (buffer) => {
+
 	let binary = ""
 	let bytes = new Uint8Array(buffer)
 	let len = bytes.byteLength
@@ -16,7 +17,20 @@ const arrayBufferToBase64 = (buffer) => {
 	return window.btoa(binary)
 }
 
+const url = (path) => {
+
+	let result = location.origin
+	if (/localhost/.test(result)) {
+		result += path
+	} else {
+		result += "epub-js"
+		result += path
+	}
+	return result
+}
+
 const open = (book, { archived, url }) => {
+
 	assert.equal(book.isOpen, true)
 	assert.equal(book.archived, archived)
 	assert.equal(book.url.toString(), url)
@@ -27,25 +41,14 @@ const open = (book, { archived, url }) => {
 }
 
 const destroy = (book) => {
-	assert.equal(book.archive, undefined)
-	assert.equal(book.archived, undefined)
-	assert.equal(book.container, undefined)
-	assert.equal(book.cover, undefined)
-	assert.equal(book.isOpen, undefined)
-	assert.equal(book.loaded, undefined)
-	assert.equal(book.loading, undefined)
-	assert.equal(book.packaging, undefined)
-	assert.equal(book.path, undefined)
-	assert.equal(book.rendition, undefined)
-	assert.equal(book.request, undefined)
-	assert.equal(book.resources, undefined)
-	assert.equal(book.sections, undefined)
-	assert.equal(book.settings, undefined)
-	assert.equal(book.storage, undefined)
-	assert.equal(book.url, undefined)
+
+	Object.keys(book).forEach(p =>  {
+		assert.equal(book[p], undefined)
+	})
 }
 
 const assertion = (book, type, opts) => {
+
 	switch (type) {
 		case ASSETRION_TYPE.OPEN:
 			open(book, opts)
@@ -57,21 +60,17 @@ const assertion = (book, type, opts) => {
 	}
 }
 
-const url = (path) => {
-	let result = location.origin
-	if (/localhost/.test(result)) {
-		result += path
-	} else {
-		result += "epub-js"
-		result += path
+const init = (path) => {
+
+	return {
+		book: new Book(),
+		path: url(path)
 	}
-	return result
 }
 
 describe("Book", () => {
 	describe("open book from epub file of local server", () => {
-		const book = new Book()
-		const path = url("/assets/alice.epub")
+		const { book, path } = init("/assets/alice.epub")
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
@@ -90,8 +89,7 @@ describe("Book", () => {
 		})
 	})
 	describe("open book from epub file of remote server", () => {
-		const book = new Book()
-		const path = url("/assets/alice.epub")
+		const { book, path } = init("/assets/alice.epub")
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
@@ -160,8 +158,7 @@ describe("Book", () => {
 		})
 	})
 	describe("open book from epub file without cover", () => {
-		const book = new Book()
-		const path = url("/assets/alice_without_cover.epub")
+		const { book, path } = init("/assets/alice_without_cover.epub")
 		it("should open a archived epub", async () => {
 			await book.open(path)
 			await book.opened
@@ -180,8 +177,7 @@ describe("Book", () => {
 		})
 	})
 	describe("open book from directory of local server", () => {
-		const book = new Book()
-		const path = url("/assets/alice/")
+		const { book, path } = init("/assets/alice/")
 		it("should open a unarchived epub", async () => {
 			await book.open(path)
 			await book.opened
@@ -196,8 +192,7 @@ describe("Book", () => {
 		})
 	})
 	describe("open book from directory of remote server", () => {
-		const book = new Book()
-		const path = url("/assets/alice/")
+		const { book, path } = init("/assets/alice/")
 		it("should open a unarchived epub", async () => {
 			await book.open(path)
 			await book.opened

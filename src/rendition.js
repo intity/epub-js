@@ -647,8 +647,7 @@ class Rendition {
 	 */
 	destroy() {
 
-		this.q.clear();
-		this.q = undefined;
+		this.q.destroy();
 		this.layout.destroy();
 		this.themes.destroy();
 		this.viewport.destroy();
@@ -667,6 +666,7 @@ class Rendition {
 		this.started = undefined;
 		this.starting = undefined;
 		this.viewport = undefined;
+		this.q = undefined;
 	}
 
 	/**

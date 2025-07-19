@@ -2,15 +2,17 @@ import Defer from "./defer";
 
 /**
  * Queue for handling tasks one at a time
+ * @extends {Array}
  */
-class Queue {
+class Queue extends Array {
     /**
      * Constructor
      * @param {object} context what this will resolve to in the tasks
      */
     constructor(context) {
 
-        this._q = [];
+        super();
+
         this.context = context;
         this.running = false;
         this.paused = false;
@@ -41,7 +43,7 @@ class Queue {
             };
         }
 
-        this._q.push(queued);
+        this.push(queued);
 
         // Wait to start queue flush
         if (this.paused === false && !this.running) {
@@ -58,8 +60,8 @@ class Queue {
     dequeue() {
 
         let inwait;
-        if (this._q.length && !this.paused) {
-            inwait = this._q.shift();
+        if (this.length && !this.paused) {
+            inwait = this.shift();
             const task = inwait.task;
             if (task) {
                 const result = task.apply(this.context, inwait.args);
@@ -91,7 +93,7 @@ class Queue {
      */
     dump() {
 
-        while (this._q.length) {
+        while (this.length) {
             this.dequeue();
         }
     }
@@ -109,7 +111,7 @@ class Queue {
 
         requestAnimationFrame(() => {
 
-            if (this._q.length) {
+            if (this.length) {
                 this.dequeue().then(() => {
                     this.run();
                 });
@@ -131,16 +133,7 @@ class Queue {
      */
     clear() {
 
-        this._q = [];
-    }
-
-    /**
-     * Get the number of tasks in the queue
-     * @return {number} tasks
-     */
-    length() {
-
-        return this._q.length;
+        this.splice(0);
     }
 
     /**
@@ -156,9 +149,19 @@ class Queue {
      */
     stop() {
 
-        this._q = [];
+        this.splice(0);
         this.running = false;
         this.paused = true;
+    }
+
+    /**
+     * Destroy the Queue object
+     */
+    destroy() {
+
+        this.splice(0);
+        this.running = undefined;
+        this.paused = undefined;
     }
 }
 

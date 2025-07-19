@@ -11,17 +11,20 @@ class Location {
         /**
          * @member {string} cfi EpubCFI string format
          * @memberof Location
+         * @readonly
          */
         this.cfi = null;
         /**
          * @member {number} index Location index
          * @memberof Location
+         * @readonly
          */
         this.index = 0;
         /**
          * Percentage in the range from 0 to 1
          * @member {number} percentage
          * @memberof Location
+         * @readonly
          */
         this.percentage = 0;
     }
@@ -37,6 +40,14 @@ class Location {
 
         extend(this, props || {});
         return this;
+    }
+
+    /**
+     * Destroy the Location object
+     */
+    destroy() {
+
+        Object.keys(this).forEach(p => (this[p] = undefined));
     }
 }
 

@@ -76,8 +76,8 @@ describe("EpubCFI", () => {
 		})
 	})
 	describe("#compare()", () => {
+		const epubcfi = new EpubCFI()
 		it("should compare CFIs", () => {
-			const epubcfi = new EpubCFI()
 			// Spines
 			assert.equal(epubcfi.compare(
 				"epubcfi(/6/4[cover]!/4)",
@@ -158,6 +158,12 @@ describe("EpubCFI", () => {
 				"epubcfi(/6/16!/4/12/1:0)",
 				"epubcfi(/6/16!/4/12/2/1:9)"
 			), -1, "First CFI is before Second")
+		})
+		it("should destroy object", () => {
+			epubcfi.destroy()
+			Object.keys(epubcfi).forEach(p => {
+				assert.equal(epubcfi[p], undefined)
+			})
 		})
 	})
 	describe("#fromNode()", () => {

@@ -7,7 +7,7 @@ import { nodeBounds } from "./utils/core";
 class Mapping {
 	/**
 	 * Constructor
-	 * @param {Layout} layout Layout to apply
+	 * @param {Layout} layout Layout ref
 	 * @param {boolean} [dev=false] toggle developer highlighting
 	 */
 	constructor(layout, dev = false) {
@@ -454,6 +454,14 @@ class Mapping {
 		}
 
 		return map;
+	}
+
+	/**
+	 * Destroy the Mapping object
+	 */
+	destroy() {
+
+		this.devMode = undefined;
 	}
 }
 

@@ -991,7 +991,7 @@ class Contents {
 			return;
 		}
 
-		//this.document.fonts.ready.then(() => this.resize());
+		this.document.fonts.ready.then(() => this.resize());
 	}
 
 	/**

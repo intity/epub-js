@@ -64,4 +64,9 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
     #app {
         margin: 0;
     }
+    header a#h-logo {
+        width: auto;
+        height: auto;
+        visibility: collapse;
+    }
 }

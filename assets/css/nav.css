@@ -11,33 +11,48 @@ nav ul {
     list-style-type: none;
 }
 
+nav ul.l-menu {
+    display: none;
+}
+
+nav input[type=checkbox]#b-menu {
+    display: none;
+}
+
+nav input[type=checkbox]#b-menu+label {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: url("../img/menu.svg") no-repeat;
+}
+
+nav input[type=checkbox]#b-menu:checked+label {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: url("../img/menu.svg") no-repeat;
+}
+
 nav li {
-    height: 50px;
-    display: inline-flex;
     align-items: center;
+    display: inline-flex;
+    height: 50px;
+    margin: 0;
+    padding: 0;
+}
+
+nav li.l-item {
+    float: left;
 }
 
 nav li.r-item {
     float: right;
+    justify-content: flex-end;
 }
 
 nav li a {
     padding: 2px 10px;
     text-decoration: none;
-}
-
-nav li a#gh-link {
-    color: transparent;
-    width: 18px;
-    height: 18px;
-    padding: 0 10px;
-    background-image: url("https://github.githubassets.com/favicons/favicon.svg");
-    background-repeat: round;
-}
-
-nav li a#gh-link:hover {
-    color: transparent;
-    background-color: transparent;
 }
 
 nav li a:hover {
@@ -54,6 +69,20 @@ nav li label {
     padding: 2px 10px;
 }
 
+nav li.r-item a#gh-link {
+    color: transparent;
+    width: 18px;
+    height: 18px;
+    padding: 0 10px;
+    background-image: url("https://github.githubassets.com/favicons/favicon.svg");
+    background-repeat: round;
+}
+
+nav li.r-item a#gh-link:hover {
+    color: transparent;
+    background-color: transparent;
+}
+
 /**
  * iPhone 5             : 320 x 568
  * iPhone 6/7/8         : 375 x 667
@@ -68,6 +97,21 @@ nav li label {
 only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
 only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
     nav ul {
-        padding: 0 12px;
+        padding: 0 15px;
+    }
+
+    nav ul.l-menu {
+        width: calc(1/9*100%);
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    nav ul.c-menu {
+        display: none;
+    }
+
+    nav ul.r-menu {
+        display: flex;
+        justify-content: flex-end;
     }
 }

@@ -4,6 +4,14 @@ import Locations from "../src/locations"
 
 describe("Locations", () => {
 	let book, rendition, sections = {}
+	const chars = 549
+	const init = async (book) => {
+
+		if (book.locations.size === 0) {
+			await book.locations.generate(chars)
+		}
+		return Promise.resolve(book.locations)
+	}
 	before(async () => {
 		book = new Book("../assets/alice/")
 		await book.opened
@@ -24,7 +32,7 @@ describe("Locations", () => {
 		it("should parse locations from a document", async () => {
 			const sec = book.section(sections[2].idx)
 			const lcs = new Locations()
-			await lcs.parse(sec.contents, sec.cfiBase, 549)
+			await lcs.parse(sec.contents, sec.cfiBase, chars)
 			const loc = [...lcs.values()][0]
 			assert.equal(lcs.size, 1)
 			assert.equal(loc.cfi, "epubcfi(/6/6!/4/2,/4[pgepubid00001]/1:0,/14/4/2/1:33)")
@@ -34,12 +42,13 @@ describe("Locations", () => {
 	})
 	describe("#generate()", () => {
 		it("should generate locations", async () => {
-			await book.locations.generate(549)
+			await init(book)
 			assert.equal(book.locations.size, 101)
 		})
 	})
 	describe("#set()", () => {
-		it("should set current location by epubcfi", async () => {
+		before(async () => init(book))
+		it("should set current location by epubcfi", () => {
 			const locs = book.locations
 			const curr = book.locations.current
 			locs.set({ cfi: sections[3].cfi })
@@ -137,6 +146,7 @@ describe("Locations", () => {
 		})
 	})
 	describe("#cfiFromPercentage()", () => {
+		before(async () => init(book))
 		it("should get epubcfi from percentage", () => {
 			const locs = book.locations
 			const keys = [...locs.keys()]
@@ -147,12 +157,10 @@ describe("Locations", () => {
 		})
 	})
 	describe("#clear()", () => {
+		before(async () => init(book))
 		it("should clear locations", () => {
 			book.locations.clear()
 			assert.equal(book.locations.size, 0)
 		})
-	})
-	after(() => {
-		book.destroy()
 	})
 })

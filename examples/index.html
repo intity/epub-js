@@ -14,7 +14,20 @@
     <script src="../dist/marked.min.js"></script>
     <script type="module">
         import load from "../assets/js/main.js"
-        window.onload = (e) => load(e, "./index.md")
+        const menu = document.getElementById("b-menu")
+        const list = document.getElementById("m-list")
+        window.onload = (e) => {
+
+            menu.onclick = (e) => {
+
+                if (e.target.checked) {
+                    list.style["display"] = "grid"
+                } else {
+                    list.style["display"] = "none"
+                }
+            }
+            load(e, "./index.md")
+        }
     </script>
     <title>epub-js-examples</title>
 </head>
@@ -22,13 +35,23 @@
 <body id="app">
     <header>
         <nav>
-            <ul>
+            <ul class="l-menu">
+                <li class="l-item">
+                    <input type="checkbox" id="b-menu">
+                    <label for="b-menu"></label>
+                </li>
+            </ul>
+            <ul class="c-menu" id="m-list">
                 <li class="l-item"><a href="../">Home</a></li>
                 <li class="l-item"><a href="../docs/">Docs</a></li>
                 <!-- <li class="l-item"><a href="../test/">Test</a></li> -->
                 <li class="l-item"><a href="./" class="active">Examples</a></li>
-                <li class="r-item"><a href="https://github.com/intity/epub-js/tree/master/examples" id="gh-link" target="_blank"></a></li>
             </ul>
+            <ul class="r-menu">
+                <li class="r-item">
+                    <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/examples" target="_blank"></a>
+                </li>
+            </div>
         </nav>
     </header>
     <main id="content"></main>

@@ -2,7 +2,8 @@ import RangeObject from "./utils/rangeobject";
 import { findChildren, isNumber } from "./utils/core";
 
 /**
- * Parsing and creation of EpubCFIs: https://idpf.org/epub/linking/cfi/epub-cfi.html
+ * Parsing and creation of EpubCFIs:
+ * @link https://idpf.org/epub/linking/cfi/epub-cfi.html
  * 
  * Implements:
  * - Character Offset: `epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)`
@@ -13,6 +14,15 @@ import { findChildren, isNumber } from "./utils/core";
  * - Spatial Offset `(@)`
  * - Temporal-Spatial Offset `(~ + @)`
  * - Text Location Assertion `([)`
+ * 
+ * @example
+ * new EpubCFI()
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
  */
 class EpubCFI {
 	/**
@@ -65,8 +75,17 @@ class EpubCFI {
 		 */
 		this.str = "";
 
-		// Allow instantiation without the "new" keyword
+		return this.init(cfiFrom, base, ignoreClass);
+	}
+
+	/**
+	 * object init
+	 * @private
+	 */
+	init(cfiFrom, base, ignoreClass) {
+
 		if (!(this instanceof EpubCFI)) {
+			// Allow instantiation without the "new" keyword
 			return new EpubCFI(cfiFrom, base, ignoreClass);
 		}
 
@@ -106,7 +125,7 @@ class EpubCFI {
 		} else if (this.isCfiString(cfi)) {
 			return "string";
 		} else if (typeof cfi === "object") {
-			if (cfi instanceof Range || 
+			if (cfi instanceof Range ||
 				typeof cfi.startContainer !== "undefined") {
 				return "range";
 			} else if (cfi instanceof Node) {
@@ -312,8 +331,8 @@ class EpubCFI {
 		}
 
 		let step, curNode = node;
-		while (curNode && 
-			curNode.parentNode && 
+		while (curNode &&
+			curNode.parentNode &&
 			curNode.parentNode.nodeType !== Node.DOCUMENT_NODE) {
 
 			if (ignoreClass) {
@@ -1097,6 +1116,14 @@ class EpubCFI {
 		}
 
 		return container;
+	}
+
+	/**
+	 * Destroy the EpubCFI object
+	 */
+	destroy() {
+
+		Object.keys(this).forEach(p => (this[p] = undefined));
 	}
 }
 

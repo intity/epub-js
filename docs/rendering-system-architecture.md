@@ -6,13 +6,13 @@ The architecture of the rendering system contains many abstractions that help to
 
 Below is the graph of dependencies on the **layout** object.
 
-<img src="../assets/img/deps.svg" />
+<img src="../assets/img/deps.svg" class="horizontal" />
 
 Most of the dependent objects rely on the `layout.updated` event to finish synchronizing with the current state of the `layout` object. The `layout` object itself depends on the `viewport.resized` event. This happens every time the **viewport-container** is resized.
 
 However, the `layout` object knows nothing about containers, since it is only intended for calculations. Containers are created and configured by the [Viewport](API/viewport.md) class. The following image should clarify the technical details.
 
-<img src="../assets/img/rendition-viewport.svg" />
+<img src="../assets/img/rendition-viewport.svg" class="horizontal" />
 
 First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will run the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
 
@@ -45,7 +45,7 @@ PW:layout.pageWidth = CW
 PH:layout.pageHeight = CH
 ```
 
-<img src="../assets/img/rendition-flow-painated.svg" width=908 />
+<img src="../assets/img/rendition-flow-painated.svg" class="horizontal" />
 
 ## Vertical axis
 

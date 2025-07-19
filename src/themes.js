@@ -125,9 +125,8 @@ class Themes extends Map {
 
 		const contents = this.rendition.getContents();
 		contents.forEach((content) => {
-			if (!content) {
-				return;
-			} else if (name) {
+			if (!content) return;
+			if (name) {
 				content.removeClass(prev);
 				content.appendClass(name);
 				this.append(name, theme, content);
