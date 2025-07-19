@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,inline-view,example">
+    <meta name="description" content="spreading a dociment into pages">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <script src="../dist/epub.js"></script>
+    <title>epub-js-examples : InlineView</title>
+</head>
+
+<body id="app">
+    <header>
+        <nav>
+            <ul>
+                <li class="l-item"><a href="./">Examples</a></li>
+                <li class="l-item">
+                    <label for="spread">Spread:</label>
+                    <select name="spread" id="spread">
+                        <option value="auto">auto</option>
+                        <option value="none">none</option>
+                    </select>
+                </li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/paginated.html" id="gh-link"
+                        target="_blank"></a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+        <div id="viewport" class="paginated ltr" dir="ltr">
+            <div id="divider"></div>
+            <div id="loader"></div>
+        </div>
+        <a id="prev" href="#prev" class="arrow"></a>
+        <a id="next" href="#next" class="arrow"></a>
+    </main>
+    <footer></footer>
+    <script>
+        const divider = document.getElementById("divider")
+        const loader = document.getElementById("loader")
+        const spread = document.getElementById("spread")
+        const prev = document.getElementById("prev")
+        const next = document.getElementById("next")
+        const book = ePub("../assets/alice/", { replacements: "blobUrl" })
+        const rendition = book.renderTo("viewport", {
+            view: "inline",
+            width: 908,
+            height: 600
+        })
+        book.opened.then(() => {
+
+            loader.style.display = "none"
+        })
+        prev.onclick = (e) => {
+
+            rendition.prev()
+            e.preventDefault()
+        }
+        next.onclick = (e) => {
+
+            rendition.next()
+            e.preventDefault()
+        }
+        const update = (loc) => {
+
+            const div = rendition.layout.divisor
+            prev.style.display = loc.atStart ? "none" : "block"
+            next.style.display = loc.atEnd ? "none" : "block"
+            divider.style.display = div === 1 ? "none" : "block"
+        }
+        const keybinding = (e) => {
+
+            switch (e.key) {
+                case "ArrowLeft":
+                    rendition.prev()
+                    break
+                case "ArrowRight":
+                    rendition.next()
+                    break
+            }
+        }
+        spread.onchange = (e) => {
+
+            rendition.updateLayout({
+                spread: e.target.value
+            })
+        }
+        rendition.display().then(() => {
+
+            document.onkeyup = keybinding
+            rendition.on("keyup", keybinding)
+        })
+        rendition.on("attached", () => {
+
+            console.log(rendition)
+        })
+        rendition.on("relocated", (location) => {
+
+            console.log(location)
+            update(location)
+        })
+    </script>
+</body>
+
+</html>
