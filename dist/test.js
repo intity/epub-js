@@ -592,6 +592,547 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 /***/ }),
 
+/***/ 280:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
+/* harmony import */ var event_emitter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3068);
+/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8285);
+/* harmony import */ var _marks_pane_marks__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8077);
+/* harmony import */ var _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3755);
+/* harmony import */ var _marks_pane_underline__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(5548);
+/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9046);
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(5720);
+
+
+
+
+
+
+
+
+
+
+/**
+ * The View base class
+ */
+class View {
+  /**
+   * Constructor
+   * @param {layout} layout 
+   * @param {section} section 
+   */
+  constructor(layout, section) {
+    /**
+     * @member {string} id
+     * @memberof View
+     * @readonly
+     */
+    this.id = "vi-" + (0,_utils_core__WEBPACK_IMPORTED_MODULE_7__.uuid)();
+    /**
+     * @member {Contents} contents
+     * @memberof View
+     * @readonly
+     */
+    this.contents = null;
+    /**
+     * @member {Element} container
+     * @memberof View
+     * @readonly
+     */
+    this.container = null;
+    /**
+     * @member {boolean} displayed
+     * @memberof View
+     * @readonly
+     */
+    this.displayed = false;
+    /**
+     * @member {Document} document
+     * @memberof View
+     * @readonly
+     */
+    this.document = null;
+    /**
+     * @member {boolean} expanding
+     * @memberof View
+     * @readonly
+     */
+    this.expanding = false;
+    /**
+     * @member {Node}
+     * @memberof View
+     * @readonly
+     */
+    this.frame = null;
+    /**
+     * @member {Marks} marks
+     * @memberof View
+     * @readonly
+     */
+    this.marks = null;
+    /**
+     * @member {number} width
+     * @memberof View
+     * @readonly
+     */
+    this.width = 0;
+    /**
+     * @member {number} height
+     * @memberof View
+     * @readonly
+     */
+    this.height = 0;
+    this.layout = layout;
+    this.section = section;
+    /**
+     * @member {object} settings
+     * @memberof View
+     * @readonly
+     */
+    this.settings = null;
+    this.init();
+  }
+
+  /**
+   * Create the view-container
+   * @private
+   */
+  init() {
+    this.container = document.createElement("div");
+    this.container.classList.add("view-container");
+    this.container.style.height = "0";
+    this.container.style.width = "0";
+    this.container.style.overflow = "hidden";
+    this.container.style.position = "relative";
+    this.container.setAttribute("ref", this.section.index);
+  }
+
+  /**
+   * Clear all marks
+   * @returns {number} number of marks
+   * @abstract
+   */
+  clear() {
+    let len = 0;
+    if (this.marks) {
+      this.marks.forEach((mark, key) => {
+        if (mark instanceof _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A) {
+          len = this.unhighlight(mark.data["epubcfi"]) ? len += 1 : len;
+        } else {
+          len = this.ununderline(mark.data["epubcfi"]) ? len += 1 : len;
+        }
+      });
+    }
+    return len;
+  }
+
+  /**
+  * Create frame element
+  * @returns {Element} iframe
+  * @abstract
+  */
+  create() {}
+
+  /**
+  * render
+  * @param {function} request 
+  * @returns {Promise<string>} section render
+   * @abstract
+  */
+  render(request) {
+    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A();
+    this.create();
+    this.section.render(request).then(contents => {
+      return this.load(contents);
+    }).then(output => {
+      this.update();
+      def.resolve(output);
+    }, err => {
+      /**
+       * @event loaderror
+       * @param {object} err
+       * @memberof View
+       */
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.LOAD_ERROR, err);
+      def.reject(err);
+    }).then(() => {
+      /**
+       * @event rendered
+       * @param {IframeView} view
+       * @memberof View
+       */
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.RENDERED, this);
+    });
+    return def.promise;
+  }
+
+  /**
+  * Reset frame
+   * @abstract
+  */
+  reset() {
+    if (this.frame) {
+      this.frame.style.width = "0";
+      this.frame.style.height = "0";
+      this.width = 0;
+      this.height = 0;
+    }
+  }
+
+  /**
+  * Update view
+   * @abstract
+  */
+  update() {
+    this.contents.format(this.layout);
+    this.axis();
+    this.mode();
+    this.expand();
+  }
+
+  /**
+   * Update axis
+   * @abstract
+   */
+  axis() {
+    if (this.layout.axis === "horizontal") {
+      this.container.style.flex = "none";
+    } else {
+      this.container.style.flex = "initial";
+    }
+  }
+
+  /**
+   * Update mode
+   * @param {string} value 
+   * @abstract
+   */
+  mode(value) {}
+
+  /**
+   * Expanding
+   * @abstract
+   */
+  expand() {
+    if (!this.frame || this.expanding) return;
+    this.expanding = true;
+    const sz = this.contents.textSize();
+    const pw = this.layout.pageWidth;
+    if (this.layout.flow === "paginated") {
+      if (sz.width % pw > 0) {
+        sz.width = Math.ceil(sz.width / pw) * pw;
+      }
+      if (this.settings.forceEvenPages) {
+        const columns = sz.width / pw;
+        if (this.layout.divisor > 1 && this.layout.name === "reflowable" && columns % 2 > 0) {
+          // add a blank page
+          sz.width += pw;
+        }
+      }
+    }
+    if (this.width !== sz.width || this.height !== sz.height) {
+      this.reframe(sz.width, sz.height);
+    }
+    this.expanding = false;
+  }
+
+  /**
+  * reframe
+  * @param {number} width 
+  * @param {number} height 
+  * @abstract
+  */
+  reframe(width, height) {
+    if (!this.frame) return;
+    this.container.style.width = width + "px";
+    this.container.style.height = height + "px";
+    this.frame.style.width = width + "px";
+    this.frame.style.height = height + "px";
+    this.width = width;
+    this.height = height;
+    this.marks && this.marks.render();
+  }
+
+  /**
+   * Load frame
+   * @param {string} contents 
+   * @returns {Promise<any>} loading promise
+   * @abstract
+   */
+  load(contents) {
+    return Promise.resolve();
+  }
+
+  /**
+  * Display view
+  * @param {function} request 
+  * @returns {Promise<View>} displayed promise
+  */
+  display(request) {
+    const displayed = new _utils_defer__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A();
+    if (this.displayed) {
+      displayed.resolve(this);
+    } else {
+      this.render(request).then(() => {
+        /**
+         * @event displayed
+         * @memberof View
+         */
+        this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.DISPLAYED);
+        this.displayed = true;
+        displayed.resolve(this);
+      }, err => {
+        displayed.reject(err);
+      });
+    }
+    return displayed.promise;
+  }
+
+  /**
+   * Show container
+   */
+  show() {
+    this.container.style.visibility = "visible";
+    if (this.frame) {
+      this.frame.style.visibility = "visible";
+    }
+    /**
+    * @event shown
+    * @param {IframeView} view
+    * @memberof View
+    */
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.SHOWN, this);
+  }
+
+  /**
+   * Hide container
+   * @abstract
+   */
+  hide() {
+    this.container.style.visibility = "hidden";
+    if (this.frame) {
+      this.frame.style.visibility = "hidden";
+    }
+    /**
+    * @event hidden
+    * @param {IframeView} view
+    * @memberof IframeView
+    */
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.HIDDEN, this);
+  }
+
+  /**
+  * offset
+  * @returns {{ top: number, left: number }}
+  */
+  offset() {
+    return {
+      top: this.container.offsetTop,
+      left: this.container.offsetLeft
+    };
+  }
+
+  /**
+  * position
+  * @returns {DOMRect}
+  */
+  position() {
+    return this.container.getBoundingClientRect();
+  }
+
+  /**
+  * locationOf
+  * @param {string|EpubCFI} target 
+  * @returns {{ top: number, left: number }}
+  */
+  locationOf(target) {
+    const pos = this.contents.locationOf(target, this.settings.ignoreClass);
+    return {
+      left: pos.left,
+      top: pos.top
+    };
+  }
+
+  /**
+   * highlight
+   * @param {string} cfiRange 
+   * @param {object} [data={}] 
+   * @param {function} [cb=null] callback function
+   * @param {string} [className='epubjs-hl'] 
+   * @param {object} [styles={}] 
+   * @returns {object}
+   */
+  highlight(cfiRange, data = {}, cb = null, className = "epubjs-hl", styles = {}) {
+    if (!this.contents) return;
+    data["epubcfi"] = cfiRange;
+    if (this.marks === null) {
+      this.marks = new _marks_pane_marks__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(this.frame, this.container);
+    }
+    const attributes = Object.assign({
+      "fill": "yellow",
+      "fill-opacity": "0.3",
+      "mix-blend-mode": "multiply"
+    }, styles);
+    const emitter = e => {
+      /**
+       * @event markClicked
+       * @param {string} cfiRange
+       * @param {object} data
+       * @memberof View
+       */
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.MARK_CLICKED, cfiRange, data);
+    };
+    const key = encodeURI("epubjs-hl:" + cfiRange);
+    const range = this.contents.range(cfiRange);
+    const m = new _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A(range, {
+      className,
+      data,
+      attributes,
+      listeners: [emitter, cb]
+    });
+    const h = this.marks.appendMark(key, m);
+    h.element.setAttribute("ref", className);
+    h.element.addEventListener("click", emitter);
+    h.element.addEventListener("touchstart", emitter);
+    if (cb) {
+      h.element.addEventListener("click", cb);
+      h.element.addEventListener("touchstart", cb);
+    }
+    return h;
+  }
+
+  /**
+   * unhighlight
+   * @param {string} cfiRange 
+   * @returns {boolean}
+   */
+  unhighlight(cfiRange) {
+    const key = encodeURI("epubjs-hl:" + cfiRange);
+    const mark = this.marks.get(key);
+    let result = false;
+    if (mark) {
+      mark.listeners.forEach(l => {
+        if (l) {
+          mark.element.removeEventListener("click", l);
+          mark.element.removeEventListener("touchstart", l);
+        }
+        ;
+      });
+      this.marks.removeMark(key);
+      result = true;
+    }
+    return result;
+  }
+
+  /**
+   * underline
+   * @param {string} cfiRange 
+   * @param {object} [data={}] 
+   * @param {function} [cb=null]
+   * @param {string} [className='epubjs-ul'] 
+   * @param {object} [styles={}] 
+   * @returns {object}
+   */
+  underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
+    if (!this.contents) return;
+    data["epubcfi"] = cfiRange;
+    if (this.marks === null) {
+      this.marks = new _marks_pane_marks__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(this.frame, this.container);
+    }
+    const attributes = Object.assign({
+      "stroke": "black",
+      "stroke-opacity": "0.3",
+      "mix-blend-mode": "multiply"
+    }, styles);
+    const emitter = e => {
+      /**
+       * @event markClicked
+       * @param {string} cfiRange
+       * @param {object} data
+       * @memberof View
+       */
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_8__/* .EVENTS */ .qY.VIEWS.MARK_CLICKED, cfiRange, data);
+    };
+    const key = encodeURI("epubjs-ul:" + cfiRange);
+    const range = this.contents.range(cfiRange);
+    const m = new _marks_pane_underline__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .A(range, {
+      className,
+      data,
+      attributes,
+      listeners: [emitter, cb]
+    });
+    const h = this.marks.appendMark(key, m);
+    h.element.setAttribute("ref", className);
+    h.element.addEventListener("click", emitter);
+    h.element.addEventListener("touchstart", emitter);
+    if (cb) {
+      h.element.addEventListener("click", cb);
+      h.element.addEventListener("touchstart", cb);
+    }
+    return h;
+  }
+
+  /**
+   * ununderline
+   * @param {string} cfiRange 
+   * @returns {boolean}
+   */
+  ununderline(cfiRange) {
+    const key = encodeURI("epubjs-ul:" + cfiRange);
+    const mark = this.marks.get(key);
+    let result = false;
+    if (mark) {
+      mark.listeners.forEach(l => {
+        if (l) {
+          mark.element.removeEventListener("click", l);
+          mark.element.removeEventListener("touchstart", l);
+        }
+        ;
+      });
+      this.marks.removeMark(key);
+      result = true;
+    }
+    return result;
+  }
+
+  /**
+   * Destroy the View object
+   * @abstract
+   */
+  destroy() {
+    if (this.marks && this.displayed) {
+      this.marks.element.remove();
+      this.marks.clear();
+      this.marks = undefined;
+    }
+    if (this.displayed) {
+      this.displayed = undefined;
+      this.container.removeChild(this.frame);
+      this.container = undefined;
+      this.contents.destroy();
+      this.contents = undefined;
+    }
+    this.expanding = undefined;
+    this.document = undefined;
+    this.frame = undefined;
+    this.size = undefined;
+    this.id = undefined;
+    this.width = undefined;
+    this.height = undefined;
+    this.settings = undefined;
+  }
+}
+event_emitter__WEBPACK_IMPORTED_MODULE_2__(View.prototype);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (View);
+
+/***/ }),
+
 /***/ 283:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -3526,14 +4067,18 @@ var anUint8Array = __webpack_require__(4154);
 
 var Uint8Array = globalThis.Uint8Array;
 
-var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.setFromBase64 || !(function () {
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.setFromBase64 || !function () {
   var target = new Uint8Array([255, 255, 255, 255, 255]);
+  try {
+    target.setFromBase64('', null);
+    return;
+  } catch (error) { /* empty */ }
   try {
     target.setFromBase64('MjYyZg===');
   } catch (error) {
     return target[0] === 50 && target[1] === 54 && target[2] === 50 && target[3] === 255 && target[4] === 255;
   }
-})();
+}();
 
 // `Uint8Array.prototype.setFromBase64` method
 // https://github.com/tc39/proposal-arraybuffer-base64
@@ -4182,8 +4727,7 @@ class Rendition {
    * Remove and Clean Up the Rendition
    */
   destroy() {
-    this.q.clear();
-    this.q = undefined;
+    this.q.destroy();
     this.layout.destroy();
     this.themes.destroy();
     this.viewport.destroy();
@@ -4202,6 +4746,7 @@ class Rendition {
     this.started = undefined;
     this.starting = undefined;
     this.viewport = undefined;
+    this.q = undefined;
   }
 
   /**
@@ -4472,14 +5017,15 @@ $({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
 
 /**
  * Queue for handling tasks one at a time
+ * @extends {Array}
  */
-class Queue {
+class Queue extends Array {
   /**
    * Constructor
    * @param {object} context what this will resolve to in the tasks
    */
   constructor(context) {
-    this._q = [];
+    super();
     this.context = context;
     this.running = false;
     this.paused = false;
@@ -4508,7 +5054,7 @@ class Queue {
         promise: task
       };
     }
-    this._q.push(queued);
+    this.push(queued);
 
     // Wait to start queue flush
     if (this.paused === false && !this.running) {
@@ -4523,8 +5069,8 @@ class Queue {
    */
   dequeue() {
     let inwait;
-    if (this._q.length && !this.paused) {
-      inwait = this._q.shift();
+    if (this.length && !this.paused) {
+      inwait = this.shift();
       const task = inwait.task;
       if (task) {
         const result = task.apply(this.context, inwait.args);
@@ -4555,7 +5101,7 @@ class Queue {
    * Run All Immediately
    */
   dump() {
-    while (this._q.length) {
+    while (this.length) {
       this.dequeue();
     }
   }
@@ -4570,7 +5116,7 @@ class Queue {
       this.deferred = new _defer__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A();
     }
     requestAnimationFrame(() => {
-      if (this._q.length) {
+      if (this.length) {
         this.dequeue().then(() => {
           this.run();
         });
@@ -4589,15 +5135,7 @@ class Queue {
    * Clear all items in wait
    */
   clear() {
-    this._q = [];
-  }
-
-  /**
-   * Get the number of tasks in the queue
-   * @return {number} tasks
-   */
-  length() {
-    return this._q.length;
+    this.splice(0);
   }
 
   /**
@@ -4611,9 +5149,18 @@ class Queue {
    * End the queue
    */
   stop() {
-    this._q = [];
+    this.splice(0);
     this.running = false;
     this.paused = true;
+  }
+
+  /**
+   * Destroy the Queue object
+   */
+  destroy() {
+    this.splice(0);
+    this.running = undefined;
+    this.paused = undefined;
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Queue);
@@ -4626,7 +5173,7 @@ class Queue {
 "use strict";
 
 // `GetIteratorDirect(obj)` abstract operation
-// https://tc39.es/proposal-iterator-helpers/#sec-getiteratordirect
+// https://tc39.es/ecma262/#sec-getiteratordirect
 module.exports = function (obj) {
   return {
     iterator: obj,
@@ -7638,11 +8185,13 @@ module.exports = function (x, y) {
 /* harmony import */ var _helpers_views__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2488);
 /* harmony import */ var _utils_queue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(1758);
 /* harmony import */ var _views_iframe__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8797);
-/* harmony import */ var _utils_scrolltype__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(4112);
-/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(8285);
-/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5720);
-/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(9046);
-/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(8221);
+/* harmony import */ var _views_inline__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4844);
+/* harmony import */ var _utils_scrolltype__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(4112);
+/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(8285);
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(5720);
+/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(9046);
+/* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(8221);
+
 
 
 
@@ -7683,14 +8232,14 @@ class DefaultViewManager {
     this.name = "default";
     this.load = book.load.bind(book);
     this.layout = book.rendition.layout;
-    this.layout.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.LAYOUT.UPDATED, (props, changed) => {
+    this.layout.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.LAYOUT.UPDATED, (props, changed) => {
       if (changed.flow) {
         this.paginated = props.flow === "paginated";
       }
       this.views.update();
       this.calculate();
     });
-    this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_12__.extend)({
+    this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_14__.extend)({
       view: "iframe",
       method: null,
       sandbox: [],
@@ -7746,7 +8295,7 @@ class DefaultViewManager {
    * @param {string|number} size.height
    */
   render(element, size) {
-    this.scrollType = (0,_utils_scrolltype__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .A)();
+    this.scrollType = (0,_utils_scrolltype__WEBPACK_IMPORTED_MODULE_11__/* ["default"] */ .A)();
     this.viewport.attachTo(element, {
       views: this.views,
       width: size.width,
@@ -7764,8 +8313,8 @@ class DefaultViewManager {
    * @returns {Promise<view|null>} displaying promise
    */
   display(section, target) {
-    const displaying = new _utils_defer__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A();
-    if (target === section.href || (0,_utils_core__WEBPACK_IMPORTED_MODULE_12__.isNumber)(target)) {
+    const displaying = new _utils_defer__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .A();
+    if (target === section.href || (0,_utils_core__WEBPACK_IMPORTED_MODULE_14__.isNumber)(target)) {
       target = undefined;
     }
     const view = this.views.find(section);
@@ -7814,7 +8363,7 @@ class DefaultViewManager {
       lsc.addEventListener("scrollend", this.onscrollend.bind(this));
     }
     const timeout = this.name === "default" ? 0 : 30;
-    this.scrollend = lodash_debounce__WEBPACK_IMPORTED_MODULE_13__(this.scrolled.bind(this), timeout);
+    this.scrollend = lodash_debounce__WEBPACK_IMPORTED_MODULE_15__(this.scrolled.bind(this), timeout);
   }
 
   /**
@@ -7838,8 +8387,10 @@ class DefaultViewManager {
    */
   requireView(view) {
     let result;
-    if (typeof view == "string" && view === "iframe") {
+    if (typeof view === "string" && view === "iframe") {
       result = _views_iframe__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A;
+    } else if (view === "inline") {
+      result = _views_inline__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A;
     } else {
       result = view;
     }
@@ -7869,7 +8420,7 @@ class DefaultViewManager {
    * @private
    */
   displayed(view) {
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.MANAGERS.ADDED, view);
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.MANAGERS.ADDED, view);
   }
 
   /**
@@ -7879,7 +8430,7 @@ class DefaultViewManager {
    */
   resized(view) {
     this.relocated();
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.MANAGERS.RESIZED, view);
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.MANAGERS.RESIZED, view);
   }
 
   /**
@@ -7926,13 +8477,13 @@ class DefaultViewManager {
    */
   append(section) {
     const view = this.createView(section);
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.DISPLAYED, () => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.DISPLAYED, () => {
       this.displayed(view);
     });
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.RESIZED, rect => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.RESIZED, rect => {
       this.resized(view);
     });
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode => {
       this.updateWritingMode(mode);
     });
     this.views.append(view);
@@ -7947,14 +8498,14 @@ class DefaultViewManager {
    */
   prepend(section) {
     const view = this.createView(section);
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.DISPLAYED, () => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.DISPLAYED, () => {
       this.displayed(view);
     });
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.RESIZED, rect => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.RESIZED, rect => {
       this.counter(view);
       this.resized(view);
     });
-    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode => {
+    view.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode => {
       this.updateWritingMode(mode);
     });
     this.views.prepend(view);
@@ -7983,7 +8534,7 @@ class DefaultViewManager {
    */
   next() {
     let left, section;
-    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A();
+    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .A();
     const dir = this.layout.direction;
     const ish = this.layout.axis === AXIS_H && this.paginated;
     const isv = this.layout.axis === AXIS_V && this.paginated;
@@ -8055,7 +8606,7 @@ class DefaultViewManager {
    */
   prev() {
     let left, section;
-    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A();
+    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_12__/* ["default"] */ .A();
     const dir = this.layout.direction;
     const ish = this.layout.axis === AXIS_H && this.paginated;
     const isv = this.layout.axis === AXIS_V && this.paginated;
@@ -8155,7 +8706,7 @@ class DefaultViewManager {
    */
   relocated() {
     this.currentLocation();
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.MANAGERS.RELOCATED, this.location);
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.MANAGERS.RELOCATED, this.location);
   }
 
   /**
@@ -8181,8 +8732,8 @@ class DefaultViewManager {
     const views = this.visible();
     const sections = views.map(view => {
       const {
-        index,
-        href
+        href,
+        index
       } = view.section;
       let startPos;
       let endPos;
@@ -8235,15 +8786,15 @@ class DefaultViewManager {
     const views = this.visible();
     const sections = views.map(view => {
       const {
-        index,
-        href
+        href,
+        index
       } = view.section;
-      const pages = [];
       const total = this.layout.count(view.width).pages;
       const startPos = Math.abs(left);
       const endPos = Math.abs(left) + rect.width;
       const startPage = Math.floor(startPos / this.layout.pageWidth);
       const endPage = Math.floor(endPos / this.layout.pageWidth);
+      const pages = [];
       for (let i = startPage; i < endPage; i++) {
         pages.push({
           index: i
@@ -8339,7 +8890,7 @@ class DefaultViewManager {
       return;
     }
     this.relocated();
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.MANAGERS.SCROLLED, {
+    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.MANAGERS.SCROLLED, {
       top: e.target.scrollTop,
       left: e.target.scrollLeft
     });
@@ -8357,7 +8908,7 @@ class DefaultViewManager {
     if (this.ignore) {
       this.ignore = false;
     } else {
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_11__/* .EVENTS */ .qY.MANAGERS.SCROLL, {
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.MANAGERS.SCROLL, {
         top: e.target.scrollTop,
         left: e.target.scrollLeft
       });
@@ -8422,7 +8973,7 @@ class DefaultViewManager {
   }
 
   /**
-   * destroy
+   * Destroy the DefaultViewManager object
    */
   destroy() {
     if (!this.views) return;
@@ -8430,6 +8981,8 @@ class DefaultViewManager {
     this.views.destroy();
     this.views = undefined;
     this.ignore = undefined;
+    this.mapping.destroy();
+    this.mapping = undefined;
     this.location = undefined;
     this.rendered = undefined;
     this.paginated = undefined;
@@ -11819,7 +12372,11 @@ exportTypedArrayMethod('toSorted', function toSorted(compareFn) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9046);
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
+/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9046);
+
+
 
 
 /**
@@ -11833,17 +12390,20 @@ class Location {
     /**
      * @member {string} cfi EpubCFI string format
      * @memberof Location
+     * @readonly
      */
     this.cfi = null;
     /**
      * @member {number} index Location index
      * @memberof Location
+     * @readonly
      */
     this.index = 0;
     /**
      * Percentage in the range from 0 to 1
      * @member {number} percentage
      * @memberof Location
+     * @readonly
      */
     this.percentage = 0;
   }
@@ -11856,8 +12416,15 @@ class Location {
    * @param {number} [props.percentage]
    */
   set(props) {
-    (0,_utils_core__WEBPACK_IMPORTED_MODULE_0__.extend)(this, props || {});
+    (0,_utils_core__WEBPACK_IMPORTED_MODULE_2__.extend)(this, props || {});
     return this;
+  }
+
+  /**
+   * Destroy the Location object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Location);
@@ -11872,6 +12439,92 @@ var freeGlobal = typeof __webpack_require__.g == 'object' && __webpack_require__
 
 module.exports = freeGlobal;
 
+
+/***/ }),
+
+/***/ 4844:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _contents__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8905);
+/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8285);
+/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9046);
+/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(280);
+
+
+
+
+
+/**
+ * InlineView class
+ * @extends {View}
+ */
+class InlineView extends _view__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A {
+  /**
+   * Constructor
+   * @param {Layout} layout 
+   * @param {Section} section 
+   * @param {object} [options]
+   * @param {string} [options.ignoreClass='']
+   * @param {number} [options.width]
+   * @param {number} [options.height]
+   */
+  constructor(layout, section, options) {
+    super(layout, section);
+    this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_2__.extend)({
+      width: 0,
+      height: 0,
+      ignoreClass: ""
+    }, options || {});
+  }
+
+  /**
+   * Create div element
+   * @returns {Element} div
+   * @override
+   */
+  create() {
+    this.frame = document.createElement("div");
+    this.frame.id = this.id;
+    this.frame.style.overflow = "hidden";
+    this.frame.style.border = "none";
+    this.frame.style.wordSpacing = "initial";
+    this.frame.style.lineHeight = "initial";
+    this.width = 0;
+    this.height = 0;
+    return this.frame;
+  }
+
+  /**
+   * Load view
+   * @param {string} contents 
+   * @returns {Promise<any>} loading promise
+   * @override
+   */
+  load(contents) {
+    const loading = new _utils_defer__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A();
+    if (!this.frame) {
+      loading.reject(new Error("No Iframe Available"));
+      return loading.promise;
+    }
+    const doc = (0,_utils_core__WEBPACK_IMPORTED_MODULE_2__.parse)(contents, "text/html");
+    const body = (0,_utils_core__WEBPACK_IMPORTED_MODULE_2__.qs)(doc, "body");
+    this.container.appendChild(this.frame);
+    this.document = this.frame.ownerDocument;
+    if (!this.document) {
+      loading.reject(new Error("No Document Available"));
+      return loading.promise;
+    }
+    this.contents = new _contents__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A(this.document, this.frame);
+    this.frame.innerHTML = body.innerHTML;
+    loading.resolve(this.contents);
+    return loading.promise;
+  }
+}
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (InlineView);
 
 /***/ }),
 
@@ -12789,9 +13442,20 @@ var notDetached = __webpack_require__(5169);
 
 var numberToString = uncurryThis(1.1.toString);
 
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toHex || !(function () {
+  try {
+    var target = new Uint8Array([255, 255, 255, 255, 255, 255, 255, 255]);
+    return target.toHex() === 'ffffffffffffffff';
+  } catch (error) {
+    return false;
+  }
+})();
+
 // `Uint8Array.prototype.toHex` method
 // https://github.com/tc39/proposal-arraybuffer-base64
-if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true }, {
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
   toHex: function toHex() {
     anUint8Array(this);
     notDetached(this.buffer);
@@ -14906,9 +15570,8 @@ class Themes extends Map {
     this.current = name;
     const contents = this.rendition.getContents();
     contents.forEach(content => {
-      if (!content) {
-        return;
-      } else if (name) {
+      if (!content) return;
+      if (name) {
         content.removeClass(prev);
         content.appendClass(name);
         this.append(name, theme, content);
@@ -15319,7 +15982,8 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
 
 
 /**
- * Parsing and creation of EpubCFIs: https://idpf.org/epub/linking/cfi/epub-cfi.html
+ * Parsing and creation of EpubCFIs:
+ * @link https://idpf.org/epub/linking/cfi/epub-cfi.html
  * 
  * Implements:
  * - Character Offset: `epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)`
@@ -15330,6 +15994,15 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
  * - Spatial Offset `(@)`
  * - Temporal-Spatial Offset `(~ + @)`
  * - Text Location Assertion `([)`
+ * 
+ * @example
+ * new EpubCFI()
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
  */
 class EpubCFI {
   /**
@@ -15381,9 +16054,16 @@ class EpubCFI {
      * @readonly
      */
     this.str = "";
+    return this.init(cfiFrom, base, ignoreClass);
+  }
 
-    // Allow instantiation without the "new" keyword
+  /**
+   * object init
+   * @private
+   */
+  init(cfiFrom, base, ignoreClass) {
     if (!(this instanceof EpubCFI)) {
+      // Allow instantiation without the "new" keyword
       return new EpubCFI(cfiFrom, base, ignoreClass);
     }
     if (typeof base === "string") {
@@ -16289,6 +16969,13 @@ class EpubCFI {
     }
     return container;
   }
+
+  /**
+   * Destroy the EpubCFI object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
+  }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EpubCFI);
 
@@ -16384,7 +17071,7 @@ module.exports = function (fn) {
 class Mapping {
   /**
    * Constructor
-   * @param {Layout} layout Layout to apply
+   * @param {Layout} layout Layout ref
    * @param {boolean} [dev=false] toggle developer highlighting
    */
   constructor(layout, dev = false) {
@@ -16768,6 +17455,13 @@ class Mapping {
     }
     return map;
   }
+
+  /**
+   * Destroy the Mapping object
+   */
+  destroy() {
+    this.devMode = undefined;
+  }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mapping);
 
@@ -16887,8 +17581,8 @@ $({ target: 'Iterator', proto: true, real: true, forced: forEachWithoutClosingOn
 
 var lengthOfArrayLike = __webpack_require__(6198);
 
-// https://tc39.es/proposal-change-array-by-copy/#sec-array.prototype.toReversed
-// https://tc39.es/proposal-change-array-by-copy/#sec-%typedarray%.prototype.toReversed
+// https://tc39.es/ecma262/#sec-array.prototype.toreversed
+// https://tc39.es/ecma262/#sec-%typedarray%.prototype.toreversed
 module.exports = function (O, C) {
   var len = lengthOfArrayLike(O);
   var A = new C(len);
@@ -16913,10 +17607,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.43.0',
+  version: '3.44.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.43.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.44.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -17238,7 +17932,7 @@ var $ = __webpack_require__(6518);
 var $transfer = __webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transferToFixedLength` method
-// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfertofixedlength
+// https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength
 if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
   transferToFixedLength: function transferToFixedLength() {
     return $transfer(this, arguments.length ? arguments[0] : undefined, false);
@@ -17649,7 +18343,7 @@ var $ = __webpack_require__(6518);
 var $transfer = __webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transfer` method
-// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfer
+// https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer
 if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
   transfer: function transfer() {
     return $transfer(this, arguments.length ? arguments[0] : undefined, true);
@@ -19697,6 +20391,13 @@ class Hook {
 class Metadata extends Map {
   constructor() {
     super();
+    /**
+     * Legacy spec (2.x) support
+     * @member {Node} cover
+     * @memberof Metadata
+     * @readonly
+     */
+    this.cover = null;
   }
 
   /**
@@ -19739,9 +20440,12 @@ class Metadata extends Map {
    * @private
    */
   parseMeta(item) {
+    const name = item.getAttribute("name");
     const prop = item.getAttribute("property");
     if (typeof prop === "undefined" || typeof prop !== "string") {
-      return;
+      if (name === "cover") {
+        this.cover = item;
+      }
     } else if (/rendition:/.test(prop)) {
       // rendition:layout
       // rendition:spread
@@ -19780,6 +20484,7 @@ class Metadata extends Map {
    */
   destroy() {
     this.clear();
+    this.cover = undefined;
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Metadata);
@@ -19975,17 +20680,11 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /* harmony export */ });
 /* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
 /* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
-/* harmony import */ var event_emitter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3068);
-/* harmony import */ var _contents__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8905);
-/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8285);
-/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5720);
-/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9046);
-/* harmony import */ var _marks_pane_marks__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8077);
-/* harmony import */ var _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(3755);
-/* harmony import */ var _marks_pane_underline__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5548);
-
-
-
+/* harmony import */ var _contents__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8905);
+/* harmony import */ var _utils_defer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8285);
+/* harmony import */ var _utils_constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(5720);
+/* harmony import */ var _utils_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9046);
+/* harmony import */ var _view__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(280);
 
 
 
@@ -19996,52 +20695,27 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 /**
  * IframeView class
+ * @extends {View}
  */
-class IframeView {
+class IframeView extends _view__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .A {
   /**
    * Constructor
-   * @param {Layout} layout
-   * @param {Section} section
+   * @param {Layout} layout ref
+   * @param {Section} section ref
    * @param {object} [options]
-   * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
    * @param {string} [options.ignoreClass='']
+   * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
    * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    */
   constructor(layout, section, options) {
-    this.layout = layout;
-    this.section = section;
-    this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_6__.extend)({
+    super(layout, section);
+    this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_5__.extend)({
       method: null,
       sandbox: [],
       forceEvenPages: false,
       ignoreClass: ""
     }, options || {});
-    /**
-     * @member {string} id
-     * @memberof IframeView
-     * @readonly
-     */
-    this.id = "vc-" + (0,_utils_core__WEBPACK_IMPORTED_MODULE_6__.uuid)();
-    /**
-     * @member {Contents} contents
-     * @memberof IframeView
-     * @readonly
-     */
-    this.contents = null;
-    this.document = null;
-    /**
-     * @member {Element} container
-     * @memberof IframeView
-     * @readonly
-     */
-    this.container = null;
-    this.displayed = false;
-    /**
-     * @member {Marks} marks
-     * @memberof IframeView
-     * @readonly
-     */
-    this.marks = null;
+    this.blobUrl = null;
     /**
      * Load method
      * @member {string} method
@@ -20055,189 +20729,64 @@ class IframeView {
      * @readonly
      */
     this.writingMode = "";
-    this.init();
-  }
-
-  /**
-   * create view-container
-   * @private
-   */
-  init() {
-    this.container = document.createElement("div");
-    this.container.classList.add("view-container");
-    this.container.style.height = "0";
-    this.container.style.width = "0";
-    this.container.style.overflow = "hidden";
-    this.container.style.position = "relative";
   }
 
   /**
    * Create iframe element
    * @returns {Element} iframe
-   * @private
+   * @override
    */
   create() {
-    this.iframe = document.createElement("iframe");
-    this.iframe.id = this.id;
-    this.iframe.seamless = "seamless";
-    this.iframe.style.overflow = "hidden";
-    this.iframe.style.border = "none";
-    this.iframe.style.width = "0";
-    this.iframe.style.height = "0";
-    this.settings.sandbox.forEach(p => {
-      if (p) this.iframe.sandbox.add(p);
-    });
-    this.iframe.setAttribute("enable-annotation", "true");
-    this.container.setAttribute("ref", this.section.index);
+    this.frame = document.createElement("iframe");
+    this.frame.id = this.id;
+    this.frame.seamless = "seamless";
+    this.frame.style.overflow = "hidden";
+    this.frame.style.border = "none";
+    this.frame.style.width = "0";
+    this.frame.style.height = "0";
+    this.settings.sandbox.forEach(p => p && this.frame.sandbox.add(p));
+    this.frame.setAttribute("enable-annotation", "true");
     this.width = 0;
     this.height = 0;
-    return this.iframe;
+    return this.frame;
   }
 
   /**
-   * render
-   * @param {Function} request 
-   * @returns {Promise<string>} section render
-   */
-  render(request) {
-    const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
-    this.create();
-    this.section.render(request).then(contents => {
-      return this.load(contents);
-    }).then(output => {
-      this.update();
-      def.resolve(output);
-    }, err => {
-      /**
-       * @event loaderror
-       * @param {object} err
-       * @memberof IframeView
-       */
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.LOAD_ERROR, err);
-      def.reject(err);
-    }).then(() => {
-      /**
-       * @event rendered
-       * @param {IframeView} view
-       * @memberof IframeView
-       */
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.RENDERED, this);
-    });
-    return def.promise;
-  }
-
-  /**
-   * reset
-   */
-  reset() {
-    if (this.iframe) {
-      this.iframe.style.width = "0";
-      this.iframe.style.height = "0";
-      this.width = 0;
-      this.height = 0;
-    }
-  }
-
-  /**
-   * Update view
-   */
-  update() {
-    this.contents.format(this.layout);
-    this.axis();
-    this.mode();
-    this.expand();
-  }
-
-  /**
-   * update axis
-   * @private
-   */
-  axis() {
-    if (this.layout.axis === "horizontal") {
-      this.container.style.flex = "none";
-    } else {
-      this.container.style.flex = "initial";
-    }
-  }
-
-  /**
-   * update writing mode
+   * Update writing mode
    * @param {string} value 
-   * @private
+   * @override
    */
   mode(value) {
     const mode = value || this.contents.mode;
     if (this.writingMode !== mode) {
       this.writingMode = mode;
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode);
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_4__/* .EVENTS */ .qY.VIEWS.WRITING_MODE, mode);
     }
   }
 
   /**
-   * Resize a single axis based on content dimensions
-   * @private
-   */
-  expand() {
-    if (!this.iframe || this.expanding) return;
-    this.expanding = true;
-    const sz = this.contents.textSize();
-    const pw = this.layout.pageWidth;
-    if (this.layout.flow === "paginated") {
-      if (sz.width % pw > 0) {
-        sz.width = Math.ceil(sz.width / pw) * pw;
-      }
-      if (this.settings.forceEvenPages) {
-        const columns = sz.width / pw;
-        if (this.layout.divisor > 1 && this.layout.name === "reflowable" && columns % 2 > 0) {
-          // add a blank page
-          sz.width += pw;
-        }
-      }
-    }
-    if (this.width !== sz.width || this.height !== sz.height) {
-      this.reframe(sz.width, sz.height);
-    }
-    this.expanding = false;
-  }
-
-  /**
-   * reframe
-   * @param {number} width 
-   * @param {number} height 
-   * @private
-   */
-  reframe(width, height) {
-    this.container.style.width = width + "px";
-    this.container.style.height = height + "px";
-    this.iframe.style.width = width + "px";
-    this.iframe.style.height = height + "px";
-    this.width = width;
-    this.height = height;
-    this.marks && this.marks.render();
-  }
-
-  /**
-   * load
+   * Load iframe
    * @param {string} contents 
    * @returns {Promise<any>} loading promise
+   * @override
    */
   load(contents) {
-    const loading = new _utils_defer__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
-    if (!this.iframe) {
+    const loading = new _utils_defer__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A();
+    if (!this.frame) {
       loading.reject(new Error("No Iframe Available"));
       return loading.promise;
     }
-    this.container.appendChild(this.iframe);
-    this.document = this.iframe.contentDocument;
-    this.iframe.onload = e => this.onLoad(e, loading);
+    this.container.appendChild(this.frame);
+    this.document = this.frame.contentDocument;
+    this.frame.onload = e => this.onLoad(e, loading);
     if (!this.document) {
       loading.reject(new Error("No Document Available"));
       return loading.promise;
     } else if (this.method === "blobUrl") {
-      this.blobUrl = (0,_utils_core__WEBPACK_IMPORTED_MODULE_6__.createBlobUrl)(contents, "application/xhtml+xml");
-      this.iframe.src = this.blobUrl;
+      this.blobUrl = (0,_utils_core__WEBPACK_IMPORTED_MODULE_5__.createBlobUrl)(contents, "application/xhtml+xml");
+      this.frame.src = this.blobUrl;
     } else if (this.method === "srcdoc") {
-      this.iframe.srcdoc = contents;
+      this.frame.srcdoc = contents;
     } else {
       this.document.open();
       this.document.write("<!DOCTYPE html>");
@@ -20254,7 +20803,7 @@ class IframeView {
    */
   onLoad(event, defer) {
     this.document = event.target.contentDocument;
-    this.contents = new _contents__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A(this.document, this.document.body, this.section);
+    this.contents = new _contents__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(this.document, this.document.body, this.section);
     let link = this.document.querySelector("link[rel='canonical']");
     if (link) {
       link.setAttribute("href", this.section.canonical);
@@ -20264,295 +20813,46 @@ class IframeView {
       link.setAttribute("href", this.section.canonical);
       this.document.head.appendChild(link);
     }
-    this.contents.on(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.CONTENTS.RESIZED, rect => {
+    this.contents.on(_utils_constants__WEBPACK_IMPORTED_MODULE_4__/* .EVENTS */ .qY.CONTENTS.RESIZED, rect => {
       /**
        * @event resized
        * @param {object} rect
        * @memberof IframeView
        */
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.RESIZED, rect);
+      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_4__/* .EVENTS */ .qY.VIEWS.RESIZED, rect);
     });
     defer.resolve(this.contents);
   }
 
   /**
-   * display
-   * @param {Function} request 
-   * @returns {Promise<view>} displayed promise
-   */
-  display(request) {
-    const displayed = new _utils_defer__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
-    if (this.displayed) {
-      displayed.resolve(this);
-    } else {
-      this.render(request).then(() => {
-        /**
-         * @event displayed
-         * @memberof IframeView
-         */
-        this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.DISPLAYED);
-        this.displayed = true;
-        displayed.resolve(this);
-      }, err => {
-        displayed.reject(err);
-      });
-    }
-    return displayed.promise;
-  }
-
-  /**
-   * show
+   * Show container
+   * @override
    */
   show() {
-    this.container.style.visibility = "visible";
-    this.iframe.style.visibility = "visible";
-    // Remind Safari to redraw the iframe
-    this.iframe.style.transform = "translateZ(0)";
-    this.iframe.offsetWidth;
-    this.iframe.style.transform = null;
-    /**
-     * @event shown
-     * @param {IframeView} view
-     * @memberof IframeView
-     */
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.SHOWN, this);
-  }
-
-  /**
-   * hide
-   */
-  hide() {
-    this.container.style.visibility = "hidden";
-    this.iframe.style.visibility = "hidden";
-    /**
-     * @event hidden
-     * @param {IframeView} view
-     * @memberof IframeView
-     */
-    this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.HIDDEN, this);
-  }
-
-  /**
-   * offset
-   * @returns {{ top: number, left: number }}
-   */
-  offset() {
-    return {
-      top: this.container.offsetTop,
-      left: this.container.offsetLeft
-    };
-  }
-
-  /**
-   * position
-   * @returns {DOMRect}
-   */
-  position() {
-    return this.container.getBoundingClientRect();
-  }
-
-  /**
-   * locationOf
-   * @param {string|EpubCFI} target 
-   * @returns {{ top: number, left: number }}
-   */
-  locationOf(target) {
-    const pos = this.contents.locationOf(target, this.settings.ignoreClass);
-    return {
-      top: pos.top,
-      left: pos.left
-    };
-  }
-
-  /**
-   * highlight
-   * @param {string} cfiRange 
-   * @param {object} [data={}] 
-   * @param {Function} [cb=null] callback function
-   * @param {string} [className='epubjs-hl'] 
-   * @param {object} [styles={}] 
-   * @returns {object}
-   */
-  highlight(cfiRange, data = {}, cb = null, className = "epubjs-hl", styles = {}) {
-    if (!this.contents) {
-      return;
+    if (this.frame) {
+      // Remind Safari to redraw the iframe
+      this.frame.style.transform = "translateZ(0)";
+      this.frame.style.transform = null;
     }
-    data["epubcfi"] = cfiRange;
-    if (this.marks === null) {
-      this.marks = new _marks_pane_marks__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(this.iframe, this.container);
-    }
-    const attributes = Object.assign({
-      "fill": "yellow",
-      "fill-opacity": "0.3",
-      "mix-blend-mode": "multiply"
-    }, styles);
-    const emitter = e => {
-      /**
-       * @event markClicked
-       * @param {string} cfiRange
-       * @param {object} data
-       * @memberof IframeView
-       */
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.MARK_CLICKED, cfiRange, data);
-    };
-    const key = encodeURI("epubjs-hl:" + cfiRange);
-    const range = this.contents.range(cfiRange);
-    const m = new _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A(range, {
-      className,
-      data,
-      attributes,
-      listeners: [emitter, cb]
-    });
-    const h = this.marks.appendMark(key, m);
-    h.element.setAttribute("ref", className);
-    h.element.addEventListener("click", emitter);
-    h.element.addEventListener("touchstart", emitter);
-    if (cb) {
-      h.element.addEventListener("click", cb);
-      h.element.addEventListener("touchstart", cb);
-    }
-    return h;
+    super.show();
   }
 
   /**
-   * underline
-   * @param {string} cfiRange 
-   * @param {object} [data={}] 
-   * @param {Function} [cb=null]
-   * @param {string} [className='epubjs-ul'] 
-   * @param {object} [styles={}] 
-   * @returns {object}
-   */
-  underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
-    if (!this.contents) {
-      return;
-    }
-    data["epubcfi"] = cfiRange;
-    if (this.marks === null) {
-      this.marks = new _marks_pane_marks__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(this.iframe, this.container);
-    }
-    const attributes = Object.assign({
-      "stroke": "black",
-      "stroke-opacity": "0.3",
-      "mix-blend-mode": "multiply"
-    }, styles);
-    const emitter = e => {
-      /**
-       * @event markClicked
-       * @param {string} cfiRange
-       * @param {object} data
-       * @memberof IframeView
-       */
-      this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_5__/* .EVENTS */ .qY.VIEWS.MARK_CLICKED, cfiRange, data);
-    };
-    const key = encodeURI("epubjs-ul:" + cfiRange);
-    const range = this.contents.range(cfiRange);
-    const m = new _marks_pane_underline__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A(range, {
-      className,
-      data,
-      attributes,
-      listeners: [emitter, cb]
-    });
-    const h = this.marks.appendMark(key, m);
-    h.element.setAttribute("ref", className);
-    h.element.addEventListener("click", emitter);
-    h.element.addEventListener("touchstart", emitter);
-    if (cb) {
-      h.element.addEventListener("click", cb);
-      h.element.addEventListener("touchstart", cb);
-    }
-    return h;
-  }
-
-  /**
-   * unhighlight
-   * @param {string} cfiRange 
-   * @returns {boolean}
-   */
-  unhighlight(cfiRange) {
-    const key = encodeURI("epubjs-hl:" + cfiRange);
-    const mark = this.marks.get(key);
-    let result = false;
-    if (mark) {
-      mark.listeners.forEach(l => {
-        if (l) {
-          mark.element.removeEventListener("click", l);
-          mark.element.removeEventListener("touchstart", l);
-        }
-        ;
-      });
-      this.marks.removeMark(key);
-      result = true;
-    }
-    return result;
-  }
-
-  /**
-   * ununderline
-   * @param {string} cfiRange 
-   * @returns {boolean}
-   */
-  ununderline(cfiRange) {
-    const key = encodeURI("epubjs-ul:" + cfiRange);
-    const mark = this.marks.get(key);
-    let result = false;
-    if (mark) {
-      mark.listeners.forEach(l => {
-        if (l) {
-          mark.element.removeEventListener("click", l);
-          mark.element.removeEventListener("touchstart", l);
-        }
-        ;
-      });
-      this.marks.removeMark(key);
-      result = true;
-    }
-    return result;
-  }
-
-  /**
-   * destroy
+   * Destroy the IframeView object
+   * @override
    */
   destroy() {
-    if (this.marks) {
-      this.marks.forEach((mark, key) => {
-        if (mark instanceof _marks_pane_highlight__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A) {
-          this.unhighlight(mark.data["epubcfi"]);
-        } else {
-          this.ununderline(mark.data["epubcfi"]);
-        }
-      });
-    }
     if (this.blobUrl) {
-      (0,_utils_core__WEBPACK_IMPORTED_MODULE_6__.revokeBlobUrl)(this.blobUrl);
+      (0,_utils_core__WEBPACK_IMPORTED_MODULE_5__.revokeBlobUrl)(this.blobUrl);
       this.blobUrl = undefined;
     }
     if (this.displayed) {
-      this.displayed = undefined;
-      this.expanding = undefined;
-      this.document = undefined;
-      this.contents.destroy();
-      this.contents = undefined;
-      this.settings = undefined;
-      this.section = undefined;
-      this.container.removeChild(this.iframe);
-      this.container = undefined;
-      this.iframe = undefined;
-      this.layout = undefined;
+      super.destroy();
       this.method = undefined;
-      this.width = undefined;
-      this.height = undefined;
       this.writingMode = undefined;
-      this.id = undefined;
-      if (this.marks) {
-        this.marks.element.remove();
-        this.marks.clear();
-        this.marks = undefined;
-      }
     }
   }
 }
-event_emitter__WEBPACK_IMPORTED_MODULE_2__(IframeView.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (IframeView);
 
 /***/ }),
@@ -20621,27 +20921,28 @@ event_emitter__WEBPACK_IMPORTED_MODULE_2__(IframeView.prototype);
 
 /**
  * Find Locations for a Book
+ * @extends {Map}
  */
 class Locations extends Map {
   /**
    * Constructor
    * @param {Sections} [sections]
-   * @param {Function} [request]
+   * @param {function} [request]
    * @param {number} [pause=100]
    */
   constructor(sections, request, pause) {
     super();
     this.sections = sections;
+    this.request = request;
     this.pause = pause || 100;
     this.break = 150;
-    this.request = request;
+    this.processing = new _utils_defer__WEBPACK_IMPORTED_MODULE_23__/* ["default"] */ .A();
     /**
      * @member {Location} current Current Location
      * @memberof Locations
      * @readonly
      */
     this.current = new _location__WEBPACK_IMPORTED_MODULE_22__/* ["default"] */ .A();
-    this.processing = new _utils_defer__WEBPACK_IMPORTED_MODULE_23__/* ["default"] */ .A();
     /**
      * @member {Promise<Locations>} generated
      * @memberof Locations
@@ -20968,7 +21269,7 @@ class Locations extends Map {
           }
         }
       } else {
-        console.error("Invalid value type to " + opt);
+        throw new Error("Invalid value type to " + opt);
       }
     });
     if (Object.keys(options || {}).length) {
@@ -20988,7 +21289,7 @@ class Locations extends Map {
   }
 
   /**
-   * clear locations
+   * Clear locations
    */
   clear() {
     super.clear();
@@ -20998,17 +21299,16 @@ class Locations extends Map {
   }
 
   /**
-   * destroy
+   * Destroy the Locations object
    */
   destroy() {
     this.clear();
     this.pause = undefined;
     this.break = undefined;
+    this.current && this.current.destroy();
     this.current = undefined;
-    this.request = undefined;
     this.q.stop();
     this.q = undefined;
-    this.sections = undefined;
     this.generated = undefined;
   }
 }
@@ -22097,8 +22397,7 @@ class Contents {
     if (!this.document || !this.document.fonts) {
       return;
     }
-
-    //this.document.fonts.ready.then(() => this.resize());
+    this.document.fonts.ready.then(() => this.resize());
   }
 
   /**
@@ -25325,9 +25624,20 @@ var base64UrlAlphabet = base64Map.i2cUrl;
 
 var charAt = uncurryThis(''.charAt);
 
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toBase64 || !function () {
+  try {
+    var target = new Uint8Array();
+    target.toBase64(null);
+  } catch (error) {
+    return true;
+  }
+}();
+
 // `Uint8Array.prototype.toBase64` method
 // https://github.com/tc39/proposal-arraybuffer-base64
-if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true }, {
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
   toBase64: function toBase64(/* options */) {
     var array = anUint8Array(this);
     var options = arguments.length ? anObjectOrUndefined(arguments[0]) : undefined;
@@ -25645,8 +25955,8 @@ var toIntegerOrInfinity = __webpack_require__(1291);
 
 var $RangeError = RangeError;
 
-// https://tc39.es/proposal-change-array-by-copy/#sec-array.prototype.with
-// https://tc39.es/proposal-change-array-by-copy/#sec-%typedarray%.prototype.with
+// https://tc39.es/ecma262/#sec-array.prototype.with
+// https://tc39.es/ecma262/#sec-%typedarray%.prototype.with
 module.exports = function (O, C, index, value) {
   var len = lengthOfArrayLike(O);
   var relativeIndex = toIntegerOrInfinity(index);
@@ -25787,20 +26097,24 @@ var __webpack_exports__ = {};
 /* harmony import */ var core_js_modules_es_array_buffer_detached_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6573);
 /* harmony import */ var core_js_modules_es_array_buffer_transfer_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8100);
 /* harmony import */ var core_js_modules_es_array_buffer_transfer_to_fixed_length_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7936);
-/* harmony import */ var core_js_modules_es_typed_array_to_reversed_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7467);
-/* harmony import */ var core_js_modules_es_typed_array_to_sorted_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(4732);
-/* harmony import */ var core_js_modules_es_typed_array_with_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9577);
-/* harmony import */ var core_js_modules_esnext_typed_array_filter_reject_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(7350);
-/* harmony import */ var core_js_modules_esnext_typed_array_group_by_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(3241);
-/* harmony import */ var core_js_modules_esnext_typed_array_to_spliced_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7302);
-/* harmony import */ var core_js_modules_esnext_typed_array_unique_by_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(5871);
-/* harmony import */ var core_js_modules_esnext_uint8_array_set_from_base64_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(1549);
-/* harmony import */ var core_js_modules_esnext_uint8_array_set_from_hex_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(9797);
-/* harmony import */ var core_js_modules_esnext_uint8_array_to_base64_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(9631);
-/* harmony import */ var core_js_modules_esnext_uint8_array_to_hex_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(5623);
-/* harmony import */ var core_js_modules_web_dom_exception_stack_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(4979);
-/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(4148);
-/* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(8378);
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7588);
+/* harmony import */ var core_js_modules_es_typed_array_to_reversed_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(7467);
+/* harmony import */ var core_js_modules_es_typed_array_to_sorted_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(4732);
+/* harmony import */ var core_js_modules_es_typed_array_with_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9577);
+/* harmony import */ var core_js_modules_esnext_typed_array_filter_reject_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(7350);
+/* harmony import */ var core_js_modules_esnext_typed_array_group_by_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(3241);
+/* harmony import */ var core_js_modules_esnext_typed_array_to_spliced_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(7302);
+/* harmony import */ var core_js_modules_esnext_typed_array_unique_by_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(5871);
+/* harmony import */ var core_js_modules_esnext_uint8_array_set_from_base64_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(1549);
+/* harmony import */ var core_js_modules_esnext_uint8_array_set_from_hex_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9797);
+/* harmony import */ var core_js_modules_esnext_uint8_array_to_base64_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(9631);
+/* harmony import */ var core_js_modules_esnext_uint8_array_to_hex_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5623);
+/* harmony import */ var core_js_modules_web_dom_exception_stack_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(4979);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(4148);
+/* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(8378);
+
+
 
 
 
@@ -25831,35 +26145,32 @@ const arrayBufferToBase64 = buffer => {
   }
   return window.btoa(binary);
 };
+const url = path => {
+  let result = location.origin;
+  if (/localhost/.test(result)) {
+    result += path;
+  } else {
+    result += "epub-js";
+    result += path;
+  }
+  return result;
+};
 const open = (book, {
   archived,
   url
 }) => {
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.isOpen, true);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.archived, archived);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.url.toString(), url);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.container.directory, "OPS/");
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.container.fullPath, "OPS/package.opf");
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.container.encoding, "UTF-8");
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.container.mediaType, "application/oebps-package+xml");
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.isOpen, true);
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.archived, archived);
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.url.toString(), url);
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.container.directory, "OPS/");
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.container.fullPath, "OPS/package.opf");
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.container.encoding, "UTF-8");
+  assert__WEBPACK_IMPORTED_MODULE_17__.equal(book.container.mediaType, "application/oebps-package+xml");
 };
 const destroy = book => {
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.archive, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.archived, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.container, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.cover, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.isOpen, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.loaded, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.loading, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.packaging, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.path, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.rendition, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.request, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.resources, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.sections, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.settings, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.storage, undefined);
-  assert__WEBPACK_IMPORTED_MODULE_15__.equal(book.url, undefined);
+  Object.keys(book).forEach(p => {
+    assert__WEBPACK_IMPORTED_MODULE_17__.equal(book[p], undefined);
+  });
 };
 const assertion = (book, type, opts) => {
   switch (type) {
@@ -25871,20 +26182,18 @@ const assertion = (book, type, opts) => {
       break;
   }
 };
-const url = path => {
-  let result = location.origin;
-  if (/localhost/.test(result)) {
-    result += path;
-  } else {
-    result += "epub-js";
-    result += path;
-  }
-  return result;
+const init = path => {
+  return {
+    book: new _src_book__WEBPACK_IMPORTED_MODULE_18__/* ["default"] */ .A(),
+    path: url(path)
+  };
 };
 describe("Book", () => {
   describe("open book from epub file of local server", () => {
-    const book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
-    const path = url("/assets/alice.epub");
+    const {
+      book,
+      path
+    } = init("/assets/alice.epub");
     it("should open a archived epub", async () => {
       await book.open(path);
       await book.opened;
@@ -25895,7 +26204,7 @@ describe("Book", () => {
     });
     it("should have a blob cover url", async () => {
       const coverUrl = await book.coverUrl();
-      assert__WEBPACK_IMPORTED_MODULE_15__(/blob:/.test(coverUrl));
+      assert__WEBPACK_IMPORTED_MODULE_17__(/blob:/.test(coverUrl));
     });
     it("should destroy book instance", async () => {
       book.destroy();
@@ -25903,8 +26212,10 @@ describe("Book", () => {
     });
   });
   describe("open book from epub file of remote server", () => {
-    const book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
-    const path = url("/assets/alice.epub");
+    const {
+      book,
+      path
+    } = init("/assets/alice.epub");
     it("should open a archived epub", async () => {
       await book.open(path);
       await book.opened;
@@ -25915,7 +26226,7 @@ describe("Book", () => {
     });
     it("should have a blob cover url", async () => {
       const coverUrl = await book.coverUrl();
-      assert__WEBPACK_IMPORTED_MODULE_15__(/blob:/.test(coverUrl));
+      assert__WEBPACK_IMPORTED_MODULE_17__(/blob:/.test(coverUrl));
     });
     it("should destroy book instance", async () => {
       book.destroy();
@@ -25927,7 +26238,7 @@ describe("Book", () => {
     before(async () => {
       const response = await fetch(url("/assets/alice.epub"));
       data = await response.arrayBuffer();
-      book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
+      book = new _src_book__WEBPACK_IMPORTED_MODULE_18__/* ["default"] */ .A();
     });
     it("should open a archived epub", async () => {
       await book.open(data);
@@ -25939,7 +26250,7 @@ describe("Book", () => {
     });
     it("should have a blob cover url", async () => {
       const coverUrl = await book.coverUrl();
-      assert__WEBPACK_IMPORTED_MODULE_15__(/blob:/.test(coverUrl));
+      assert__WEBPACK_IMPORTED_MODULE_17__(/blob:/.test(coverUrl));
     });
     it("should destroy book instance", async () => {
       book.destroy();
@@ -25953,7 +26264,7 @@ describe("Book", () => {
       const blob = await response.blob();
       const buff = await blob.arrayBuffer();
       data = arrayBufferToBase64(buff);
-      book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
+      book = new _src_book__WEBPACK_IMPORTED_MODULE_18__/* ["default"] */ .A();
     });
     it("should open a archived epub", async () => {
       await book.open(data, "base64");
@@ -25965,7 +26276,7 @@ describe("Book", () => {
     });
     it("should have a blob cover url", async () => {
       const coverUrl = await book.coverUrl();
-      assert__WEBPACK_IMPORTED_MODULE_15__(/blob:/.test(coverUrl));
+      assert__WEBPACK_IMPORTED_MODULE_17__(/blob:/.test(coverUrl));
     });
     it("should destroy book instance", async () => {
       book.destroy();
@@ -25973,8 +26284,10 @@ describe("Book", () => {
     });
   });
   describe("open book from epub file without cover", () => {
-    const book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
-    const path = url("/assets/alice_without_cover.epub");
+    const {
+      book,
+      path
+    } = init("/assets/alice_without_cover.epub");
     it("should open a archived epub", async () => {
       await book.open(path);
       await book.opened;
@@ -25985,7 +26298,7 @@ describe("Book", () => {
     });
     it("should have a empty cover url", async () => {
       const coverUrl = await book.coverUrl();
-      assert__WEBPACK_IMPORTED_MODULE_15__.equal(coverUrl, null);
+      assert__WEBPACK_IMPORTED_MODULE_17__.equal(coverUrl, null);
     });
     it("should destroy book instance", async () => {
       book.destroy();
@@ -25993,8 +26306,10 @@ describe("Book", () => {
     });
   });
   describe("open book from directory of local server", () => {
-    const book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
-    const path = url("/assets/alice/");
+    const {
+      book,
+      path
+    } = init("/assets/alice/");
     it("should open a unarchived epub", async () => {
       await book.open(path);
       await book.opened;
@@ -26009,8 +26324,10 @@ describe("Book", () => {
     });
   });
   describe("open book from directory of remote server", () => {
-    const book = new _src_book__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .A();
-    const path = url("/assets/alice/");
+    const {
+      book,
+      path
+    } = init("/assets/alice/");
     it("should open a unarchived epub", async () => {
       await book.open(path);
       await book.opened;
@@ -26030,53 +26347,57 @@ describe("Book", () => {
 // This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
-/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4148);
-/* harmony import */ var _src_utils_request__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3412);
-/* harmony import */ var _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7421);
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
+/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4148);
+/* harmony import */ var _src_utils_request__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3412);
+/* harmony import */ var _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(7421);
+
+
 
 
 
 describe("EpubCFI", () => {
   let doc1, doc2, doc3;
   before(async () => {
-    doc1 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A)("../assets/chapter1.xhtml");
-    doc2 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A)("../assets/chapter1-highlights.xhtml");
-    doc3 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A)("../assets/highlight.xhtml");
+    doc1 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/chapter1.xhtml");
+    doc2 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/chapter1-highlights.xhtml");
+    doc3 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/highlight.xhtml");
   });
   describe("#constructor()", () => {
     it("should parse a cfi on init", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.spinePos, 0);
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.spinePos, 0);
     });
     it("should parse a cfi and ignore the base if present", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)", "/6/6[end]");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.spinePos, 0);
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)", "/6/6[end]");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.spinePos, 0);
     });
   });
   describe("#parse()", () => {
     it("should parse a cfi", () => {
       const cfi = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.parse(cfi);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.spinePos, 0);
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
     });
     xit("should parse a cfi and ignore the base if present", () => {
       const cfi = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.parse(cfi, "/6/6[end]");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.spinePos, 0);
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi, "/6/6[end]");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
     }); // TODO: comparison of the base component from the parse method is not implemented
     it("should parse a cfi with a character offset", () => {
       const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.parse(cfi);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.path.terminal.offset, 3);
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.path.terminal.offset, 3);
     });
     it("should parse a cfi with a range", () => {
       const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.parse(cfi);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.range, true);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.start.steps.length, 2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.end.steps.length, 1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.start.terminal.offset, 1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(parsed.end.terminal.offset, 4);
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.range, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.start.steps.length, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.end.steps.length, 1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.start.terminal.offset, 1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.end.terminal.offset, 4);
     });
   });
   describe("#toString()", () => {
@@ -26084,89 +26405,95 @@ describe("EpubCFI", () => {
       const cfi1 = "epubcfi(/6/2[cover]!/6)";
       const cfi2 = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
       const cfi3 = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)";
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(cfi1).toString(), cfi1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(cfi2).toString(), cfi2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(cfi3).toString(), cfi3);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(cfi1).toString(), cfi1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(cfi2).toString(), cfi2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(cfi3).toString(), cfi3);
     });
   });
   describe("#checkType()", () => {
     it("should determine the type as cfi string", () => {
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.checkType("epubcfi(/6/2[cover]!/6)"), "string");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType("epubcfi(/6/2[cover]!/6)"), "string");
     });
     it("should determine the type as EpubCFI instance", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A("epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.checkType(cfi), "EpubCFI");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(cfi), "EpubCFI");
     });
     it("should determine the type as node", () => {
       const node = document.createElement("div");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.checkType(node), "node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(node), "node");
     });
     it("should determine the type as range", () => {
       const range = document.createRange();
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.checkType(range), "range");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(range), "range");
     });
     it("should determine the type as undefined", () => {
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A.prototype.checkType("/6/2[cover]!/6"), undefined);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType("/6/2[cover]!/6"), undefined);
     });
   });
   describe("#compare()", () => {
+    const epubcfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
     it("should compare CFIs", () => {
-      const epubcfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A();
       // Spines
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/4[cover]!/4)", "epubcfi(/6/2[cover]!/4)"), 1, "First spine is greater");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/4[cover]!/4)", "epubcfi(/6/6[cover]!/4)"), -1, "Second spine is greater");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/4[cover]!/4)", "epubcfi(/6/2[cover]!/4)"), 1, "First spine is greater");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/4[cover]!/4)", "epubcfi(/6/6[cover]!/4)"), -1, "Second spine is greater");
       // First is deeper
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/8/2)", "epubcfi(/6/2[cover]!/6)"), 1, "First Element is after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/2)", "epubcfi(/6/2[cover]!/6)"), -1, "First Element is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/8/2)", "epubcfi(/6/2[cover]!/6)"), 1, "First Element is after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/2)", "epubcfi(/6/2[cover]!/6)"), -1, "First Element is before Second");
       // Second is deeper
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/8/2)", "epubcfi(/6/2[cover]!/6/4/2/2)"), 1, "First Element is after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/4)", "epubcfi(/6/2[cover]!/6/4/2/2)"), -1, "First Element is before Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/6)", "epubcfi(/6/2[cover]!/4/6/8/1:0)"), -1, "First is less specific, so is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/8/2)", "epubcfi(/6/2[cover]!/6/4/2/2)"), 1, "First Element is after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/4)", "epubcfi(/6/2[cover]!/6/4/2/2)"), -1, "First Element is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/6)", "epubcfi(/6/2[cover]!/4/6/8/1:0)"), -1, "First is less specific, so is before Second");
       // Same Depth
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/6/8)", "epubcfi(/6/2[cover]!/6/2)"), 1, "First Element is after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/20)", "epubcfi(/6/2[cover]!/6/10)"), -1, "First Element is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/6/8)", "epubcfi(/6/2[cover]!/6/2)"), 1, "First Element is after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/20)", "epubcfi(/6/2[cover]!/6/10)"), -1, "First Element is before Second");
       // Text nodes
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5)", "epubcfi(/6/2[cover]!/4/3)"), 1, "First TextNode is after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/7)", "epubcfi(/6/2[cover]!/4/13)"), -1, "First TextNode is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5)", "epubcfi(/6/2[cover]!/4/3)"), 1, "First TextNode is after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/7)", "epubcfi(/6/2[cover]!/4/13)"), -1, "First TextNode is before Second");
       // Char offset
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5:1)", "epubcfi(/6/2[cover]!/4/5:0)"), 1, "First Char Offset after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5:2)", "epubcfi(/6/2[cover]!/4/5:30)"), -1, "Second Char Offset before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5:1)", "epubcfi(/6/2[cover]!/4/5:0)"), 1, "First Char Offset after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/5:2)", "epubcfi(/6/2[cover]!/4/5:30)"), -1, "Second Char Offset before Second");
       // Normal example
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/8/5:1)", "epubcfi(/6/2[cover]!/4/6/15:2)"), 1, "First Element after Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/8/1:0)", "epubcfi(/6/2[cover]!/4/8/1:0)"), 0, "All Equal");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/8/5:1)", "epubcfi(/6/2[cover]!/4/6/15:2)"), 1, "First Element after Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/2[cover]!/4/8/1:0)", "epubcfi(/6/2[cover]!/4/8/1:0)"), 0, "All Equal");
       // Different Lengths
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/10/1:317)", "epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/10/2[page18]/1:0)"), -1, "First CFI is before Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/12/1:0)", "epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/12/2/1:9)"), -1, "First CFI is before Second");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(epubcfi.compare("epubcfi(/6/16!/4/12/1:0)", "epubcfi(/6/16!/4/12/2/1:9)"), -1, "First CFI is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/10/1:317)", "epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/10/2[page18]/1:0)"), -1, "First CFI is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/12/1:0)", "epubcfi(/6/16[id42]!/4[5N3C0-8c483216e03a4ff49927fc1a97dc7b2c]/12/2/1:9)"), -1, "First CFI is before Second");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi.compare("epubcfi(/6/16!/4/12/1:0)", "epubcfi(/6/16!/4/12/2/1:9)"), -1, "First CFI is before Second");
+    });
+    it("should destroy object", () => {
+      epubcfi.destroy();
+      Object.keys(epubcfi).forEach(p => {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(epubcfi[p], undefined);
+      });
     });
   });
   describe("#fromNode()", () => {
     const base = "/6/4[chap01ref]";
     it("should get a cfi from a p node", () => {
       const elm = doc2.getElementById("c001p0004");
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(elm, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(elm.nodeType, Node.ELEMENT_NODE, "provided a element node");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004])");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(elm, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(elm.nodeType, Node.ELEMENT_NODE, "provided a element node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004])");
     });
     it("should get a cfi from a text node", () => {
       const elm = doc2.getElementById("c001p0004");
       const txt = elm.childNodes[0];
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(txt, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(txt.nodeType, Node.TEXT_NODE, "provided a text node");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(txt, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(txt.nodeType, Node.TEXT_NODE, "provided a text node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1)");
     });
     it("should get a cfi from a text node inside a highlight", () => {
       const elm = doc2.getElementById("highlight-1");
       const txt = elm.childNodes[0];
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(txt, base, "annotator-hl");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(txt.nodeType, Node.TEXT_NODE, "provided a text node");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(txt, base, "annotator-hl");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(txt.nodeType, Node.TEXT_NODE, "provided a text node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1)");
     });
     it("should get a cfi from a highlight node", () => {
       const txt = doc2.getElementById("highlight-1");
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(txt, base, "annotator-hl");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(txt.nodeType, Node.ELEMENT_NODE, "provided a highlight node");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017])");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(txt, base, "annotator-hl");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(txt.nodeType, Node.ELEMENT_NODE, "provided a highlight node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017])");
     });
   });
   describe("#fromRange()", () => {
@@ -26175,9 +26502,9 @@ describe("EpubCFI", () => {
       const t1 = doc1.getElementById("c001p0004").childNodes[0];
       const range = doc1.createRange();
       range.setStart(t1, 6);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.range, false);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1:6)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1:6)");
     });
     it("should get a cfi from a range", () => {
       const t1 = doc1.getElementById("c001p0004").childNodes[0];
@@ -26185,46 +26512,46 @@ describe("EpubCFI", () => {
       const range = doc1.createRange();
       range.setStart(t1, 6);
       range.setEnd(t2, 27);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.range, true);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.range, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)");
     });
     it("should get a cfi from a range with offset 0", () => {
       const t1 = doc1.getElementById("c001p0004").childNodes[0];
       const range = doc1.createRange();
       range.setStart(t1, 0);
       range.setEnd(t1, 1);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.range, true);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004],/1:0,/1:1)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.range, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004],/1:0,/1:1)");
     });
     it("should get a cfi from a range inside a highlight", () => {
       const t1 = doc2.getElementById("highlight-1").childNodes[0];
       const range = doc2.createRange();
       range.setStart(t1, 6);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base, "annotator-hl");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1:43)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base, "annotator-hl");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1:43)");
     });
     it("should get a cfi from a range past a highlight", () => {
       const t1 = doc2.getElementById("c001s0001").childNodes[1];
       const range = doc2.createRange();
       range.setStart(t1, 25);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base, "annotator-hl");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/4/2[c001s0001]/1:41)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base, "annotator-hl");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/4/2[c001s0001]/1:41)");
     }); // TODO: might need to have double ranges in front
     it("should get a cfi from a range in between two highlights", () => {
       const t1 = doc3.getElementById("p2").childNodes[1];
       const range = doc3.createRange();
       range.setStart(t1, 4);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base, "annotator-hl");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/4[p2]/1:123)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base, "annotator-hl");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/4[p2]/1:123)");
     });
     it("should correctly count text nodes, independent of any elements present in between", () => {
       const t1 = doc3.getElementById("p3").childNodes[2];
       const range = doc3.createRange();
       range.setStart(t1, 4);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(range, base);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/6[p3]/3:4)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/6[p3]/3:4)");
     });
   });
   describe("#toRange()", () => {
@@ -26234,14 +26561,14 @@ describe("EpubCFI", () => {
       const t1 = doc2.getElementById("c001p0004").childNodes[0];
       const ogRange = doc2.createRange();
       ogRange.setStart(t1, 6);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(ogRange, base);
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(ogRange, base);
       // Check it was parse correctly
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1:6)");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/10/2[c001p0004]/1:6)");
       // Check the range
       const newRange = cfi.toRange(doc2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer, t1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startOffset, 6);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.collapsed, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer, t1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startOffset, 6);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.collapsed, true);
     });
     it("should get a range from a cfi with a range", () => {
       const t1 = doc2.getElementById("c001p0004").childNodes[0];
@@ -26249,29 +26576,29 @@ describe("EpubCFI", () => {
       const ogRange = doc2.createRange();
       ogRange.setStart(t1, 6);
       ogRange.setEnd(t2, 27);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(ogRange, base);
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(ogRange, base);
       // Check it was parse correctly
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)");
       // Check the range
       const newRange = cfi.toRange(doc2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer, t1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startOffset, 6);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.endContainer, t2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.endOffset, 27);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.collapsed, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer, t1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startOffset, 6);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.endContainer, t2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.endOffset, 27);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.collapsed, false);
     });
     xit("should get a cfi from a range inside a highlight", () => {
       const t1 = doc2.getElementById("highlight-1").childNodes[0];
       const ogRange = doc2.createRange();
       ogRange.setStart(t1, 6);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(ogRange, base, ignoreClass);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1:43)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(ogRange, base, ignoreClass);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/32/2[c001p0017]/1:43)");
       // Check the range
       const newRange = cfi.toRange(doc2, ignoreClass);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer, t1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer.textContent, t1.textContent);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startOffset, 6);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.collapsed, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer, t1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer.textContent, t1.textContent);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startOffset, 6);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.collapsed, true);
     });
     xit("should get a cfi from a range inside a highlight range", () => {
       const t1 = doc2.getElementById("highlight-2").childNodes[0];
@@ -26279,23 +26606,23 @@ describe("EpubCFI", () => {
       const ogRange = doc2.createRange();
       ogRange.setStart(t1, 5);
       ogRange.setEnd(t2, 25);
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A(ogRange, base, ignoreClass);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/4/2[c001s0001],/1:5,/1:41)");
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(ogRange, base, ignoreClass);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.toString(), "epubcfi(/6/4[chap01ref]!/4/2/4/2[c001s0001],/1:5,/1:41)");
       // Check the range
       const newRange = cfi.toRange(doc2, ignoreClass);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer, t1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startContainer.textContent, t1.textContent);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.startOffset, 5);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.endContainer, t2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.endContainer.textContent, t2.textContent);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.endOffset, 25);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(newRange.collapsed, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer, t1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startContainer.textContent, t1.textContent);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.startOffset, 5);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.endContainer, t2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.endContainer.textContent, t2.textContent);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.endOffset, 25);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(newRange.collapsed, false);
     });
   });
   describe("#isCfiString()", () => {
     it("should check if the string is wrapped using 'epubcfi()'", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A();
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(cfi.isCfiString("epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)"), true);
+      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.isCfiString("epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)"), true);
     });
   });
 });
@@ -26316,6 +26643,13 @@ describe("Locations", () => {
   let book,
     rendition,
     sections = {};
+  const chars = 549;
+  const init = async book => {
+    if (book.locations.size === 0) {
+      await book.locations.generate(chars);
+    }
+    return Promise.resolve(book.locations);
+  };
   before(async () => {
     book = new _src_book__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A("../assets/alice/");
     await book.opened;
@@ -26336,7 +26670,7 @@ describe("Locations", () => {
     it("should parse locations from a document", async () => {
       const sec = book.section(sections[2].idx);
       const lcs = new _src_locations__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A();
-      await lcs.parse(sec.contents, sec.cfiBase, 549);
+      await lcs.parse(sec.contents, sec.cfiBase, chars);
       const loc = [...lcs.values()][0];
       assert__WEBPACK_IMPORTED_MODULE_1__.equal(lcs.size, 1);
       assert__WEBPACK_IMPORTED_MODULE_1__.equal(loc.cfi, "epubcfi(/6/6!/4/2,/4[pgepubid00001]/1:0,/14/4/2/1:33)");
@@ -26346,12 +26680,13 @@ describe("Locations", () => {
   });
   describe("#generate()", () => {
     it("should generate locations", async () => {
-      await book.locations.generate(549);
+      await init(book);
       assert__WEBPACK_IMPORTED_MODULE_1__.equal(book.locations.size, 101);
     });
   });
   describe("#set()", () => {
-    it("should set current location by epubcfi", async () => {
+    before(async () => init(book));
+    it("should set current location by epubcfi", () => {
       const locs = book.locations;
       const curr = book.locations.current;
       locs.set({
@@ -26509,6 +26844,7 @@ describe("Locations", () => {
     });
   });
   describe("#cfiFromPercentage()", () => {
+    before(async () => init(book));
     it("should get epubcfi from percentage", () => {
       const locs = book.locations;
       const keys = [...locs.keys()];
@@ -26519,13 +26855,11 @@ describe("Locations", () => {
     });
   });
   describe("#clear()", () => {
+    before(async () => init(book));
     it("should clear locations", () => {
       book.locations.clear();
       assert__WEBPACK_IMPORTED_MODULE_1__.equal(book.locations.size, 0);
     });
-  });
-  after(() => {
-    book.destroy();
   });
 });
 })();

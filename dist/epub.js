@@ -890,7 +890,7 @@ $({ target: 'Iterator', proto: true, real: true, forced: FORCED }, {
 "use strict";
 
 // `GetIteratorDirect(obj)` abstract operation
-// https://tc39.es/proposal-iterator-helpers/#sec-getiteratordirect
+// https://tc39.es/ecma262/#sec-getiteratordirect
 module.exports = function (obj) {
   return {
     iterator: obj,
@@ -3871,10 +3871,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.43.0',
+  version: '3.44.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.43.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.44.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -4044,7 +4044,7 @@ var $ = __webpack_require__(6518);
 var $transfer = __webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transferToFixedLength` method
-// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfertofixedlength
+// https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfertofixedlength
 if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
   transferToFixedLength: function transferToFixedLength() {
     return $transfer(this, arguments.length ? arguments[0] : undefined, false);
@@ -4082,7 +4082,7 @@ var $ = __webpack_require__(6518);
 var $transfer = __webpack_require__(5636);
 
 // `ArrayBuffer.prototype.transfer` method
-// https://tc39.es/proposal-arraybuffer-transfer/#sec-arraybuffer.prototype.transfer
+// https://tc39.es/ecma262/#sec-arraybuffer.prototype.transfer
 if ($transfer) $({ target: 'ArrayBuffer', proto: true }, {
   transfer: function transfer() {
     return $transfer(this, arguments.length ? arguments[0] : undefined, true);
@@ -6954,7 +6954,8 @@ class RangeObject {
 
 
 /**
- * Parsing and creation of EpubCFIs: https://idpf.org/epub/linking/cfi/epub-cfi.html
+ * Parsing and creation of EpubCFIs:
+ * @link https://idpf.org/epub/linking/cfi/epub-cfi.html
  * 
  * Implements:
  * - Character Offset: `epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)`
@@ -6965,6 +6966,15 @@ class RangeObject {
  * - Spatial Offset `(@)`
  * - Temporal-Spatial Offset `(~ + @)`
  * - Text Location Assertion `([)`
+ * 
+ * @example
+ * new EpubCFI()
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+ * @example
+ * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
  */
 class EpubCFI {
   /**
@@ -7016,9 +7026,16 @@ class EpubCFI {
      * @readonly
      */
     this.str = "";
+    return this.init(cfiFrom, base, ignoreClass);
+  }
 
-    // Allow instantiation without the "new" keyword
+  /**
+   * object init
+   * @private
+   */
+  init(cfiFrom, base, ignoreClass) {
     if (!(this instanceof EpubCFI)) {
+      // Allow instantiation without the "new" keyword
       return new EpubCFI(cfiFrom, base, ignoreClass);
     }
     if (typeof base === "string") {
@@ -7924,9 +7941,18 @@ class EpubCFI {
     }
     return container;
   }
+
+  /**
+   * Destroy the EpubCFI object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
+  }
 }
 /* harmony default export */ const src_epubcfi = (EpubCFI);
 ;// ./src/location.js
+
+
 
 
 /**
@@ -7940,17 +7966,20 @@ class Location {
     /**
      * @member {string} cfi EpubCFI string format
      * @memberof Location
+     * @readonly
      */
     this.cfi = null;
     /**
      * @member {number} index Location index
      * @memberof Location
+     * @readonly
      */
     this.index = 0;
     /**
      * Percentage in the range from 0 to 1
      * @member {number} percentage
      * @memberof Location
+     * @readonly
      */
     this.percentage = 0;
   }
@@ -7966,6 +7995,13 @@ class Location {
     extend(this, props || {});
     return this;
   }
+
+  /**
+   * Destroy the Location object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
+  }
 }
 /* harmony default export */ const src_location = (Location);
 ;// ./src/utils/queue.js
@@ -7974,14 +8010,15 @@ class Location {
 
 /**
  * Queue for handling tasks one at a time
+ * @extends {Array}
  */
-class Queue {
+class Queue extends Array {
   /**
    * Constructor
    * @param {object} context what this will resolve to in the tasks
    */
   constructor(context) {
-    this._q = [];
+    super();
     this.context = context;
     this.running = false;
     this.paused = false;
@@ -8010,7 +8047,7 @@ class Queue {
         promise: task
       };
     }
-    this._q.push(queued);
+    this.push(queued);
 
     // Wait to start queue flush
     if (this.paused === false && !this.running) {
@@ -8025,8 +8062,8 @@ class Queue {
    */
   dequeue() {
     let inwait;
-    if (this._q.length && !this.paused) {
-      inwait = this._q.shift();
+    if (this.length && !this.paused) {
+      inwait = this.shift();
       const task = inwait.task;
       if (task) {
         const result = task.apply(this.context, inwait.args);
@@ -8057,7 +8094,7 @@ class Queue {
    * Run All Immediately
    */
   dump() {
-    while (this._q.length) {
+    while (this.length) {
       this.dequeue();
     }
   }
@@ -8072,7 +8109,7 @@ class Queue {
       this.deferred = new defer();
     }
     requestAnimationFrame(() => {
-      if (this._q.length) {
+      if (this.length) {
         this.dequeue().then(() => {
           this.run();
         });
@@ -8091,15 +8128,7 @@ class Queue {
    * Clear all items in wait
    */
   clear() {
-    this._q = [];
-  }
-
-  /**
-   * Get the number of tasks in the queue
-   * @return {number} tasks
-   */
-  length() {
-    return this._q.length;
+    this.splice(0);
   }
 
   /**
@@ -8113,9 +8142,18 @@ class Queue {
    * End the queue
    */
   stop() {
-    this._q = [];
+    this.splice(0);
     this.running = false;
     this.paused = true;
+  }
+
+  /**
+   * Destroy the Queue object
+   */
+  destroy() {
+    this.splice(0);
+    this.running = undefined;
+    this.paused = undefined;
   }
 }
 /* harmony default export */ const queue = (Queue);
@@ -8241,27 +8279,28 @@ const EVENTS = {
 
 /**
  * Find Locations for a Book
+ * @extends {Map}
  */
 class Locations extends Map {
   /**
    * Constructor
    * @param {Sections} [sections]
-   * @param {Function} [request]
+   * @param {function} [request]
    * @param {number} [pause=100]
    */
   constructor(sections, request, pause) {
     super();
     this.sections = sections;
+    this.request = request;
     this.pause = pause || 100;
     this.break = 150;
-    this.request = request;
+    this.processing = new defer();
     /**
      * @member {Location} current Current Location
      * @memberof Locations
      * @readonly
      */
     this.current = new src_location();
-    this.processing = new defer();
     /**
      * @member {Promise<Locations>} generated
      * @memberof Locations
@@ -8588,7 +8627,7 @@ class Locations extends Map {
           }
         }
       } else {
-        console.error("Invalid value type to " + opt);
+        throw new Error("Invalid value type to " + opt);
       }
     });
     if (Object.keys(options || {}).length) {
@@ -8608,7 +8647,7 @@ class Locations extends Map {
   }
 
   /**
-   * clear locations
+   * Clear locations
    */
   clear() {
     super.clear();
@@ -8618,17 +8657,16 @@ class Locations extends Map {
   }
 
   /**
-   * destroy
+   * Destroy the Locations object
    */
   destroy() {
     this.clear();
     this.pause = undefined;
     this.break = undefined;
+    this.current && this.current.destroy();
     this.current = undefined;
-    this.request = undefined;
     this.q.stop();
     this.q = undefined;
-    this.sections = undefined;
     this.generated = undefined;
   }
 }
@@ -8783,6 +8821,13 @@ class Container {
 class Metadata extends Map {
   constructor() {
     super();
+    /**
+     * Legacy spec (2.x) support
+     * @member {Node} cover
+     * @memberof Metadata
+     * @readonly
+     */
+    this.cover = null;
   }
 
   /**
@@ -8825,9 +8870,12 @@ class Metadata extends Map {
    * @private
    */
   parseMeta(item) {
+    const name = item.getAttribute("name");
     const prop = item.getAttribute("property");
     if (typeof prop === "undefined" || typeof prop !== "string") {
-      return;
+      if (name === "cover") {
+        this.cover = item;
+      }
     } else if (/rendition:/.test(prop)) {
       // rendition:layout
       // rendition:spread
@@ -8866,6 +8914,7 @@ class Metadata extends Map {
    */
   destroy() {
     this.clear();
+    this.cover = undefined;
   }
 }
 /* harmony default export */ const metadata = (Metadata);
@@ -11108,9 +11157,8 @@ class Themes extends Map {
     this.current = name;
     const contents = this.rendition.getContents();
     contents.forEach(content => {
-      if (!content) {
-        return;
-      } else if (name) {
+      if (!content) return;
+      if (name) {
         content.removeClass(prev);
         content.appendClass(name);
         this.append(name, theme, content);
@@ -11682,7 +11730,7 @@ var es_iterator_find = __webpack_require__(116);
 class Mapping {
   /**
    * Constructor
-   * @param {Layout} layout Layout to apply
+   * @param {Layout} layout Layout ref
    * @param {boolean} [dev=false] toggle developer highlighting
    */
   constructor(layout, dev = false) {
@@ -12065,6 +12113,13 @@ class Mapping {
       map.push(cifPair);
     }
     return map;
+  }
+
+  /**
+   * Destroy the Mapping object
+   */
+  destroy() {
+    this.devMode = undefined;
   }
 }
 /* harmony default export */ const src_mapping = (Mapping);
@@ -13175,8 +13230,7 @@ class Contents {
     if (!this.document || !this.document.fonts) {
       return;
     }
-
-    //this.document.fonts.ready.then(() => this.resize());
+    this.document.fonts.ready.then(() => this.resize());
   }
 
   /**
@@ -13226,7 +13280,7 @@ class Contents {
   }
 }
 event_emitter(Contents.prototype);
-/* harmony default export */ const contents = (Contents);
+/* harmony default export */ const src_contents = (Contents);
 ;// ./src/marks-pane/events.js
 
 
@@ -13632,8 +13686,7 @@ class Underline extends highlight {
   }
 }
 /* harmony default export */ const underline = (Underline);
-;// ./src/managers/views/iframe.js
-
+;// ./src/managers/views/view.js
 
 
 
@@ -13645,71 +13698,88 @@ class Underline extends highlight {
 
 
 /**
- * IframeView class
+ * The View base class
  */
-class IframeView {
+class View {
   /**
    * Constructor
-   * @param {Layout} layout
-   * @param {Section} section
-   * @param {object} [options]
-   * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
-   * @param {string} [options.ignoreClass='']
-   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
+   * @param {layout} layout 
+   * @param {section} section 
    */
-  constructor(layout, section, options) {
-    this.layout = layout;
-    this.section = section;
-    this.settings = extend({
-      method: null,
-      sandbox: [],
-      forceEvenPages: false,
-      ignoreClass: ""
-    }, options || {});
+  constructor(layout, section) {
     /**
      * @member {string} id
-     * @memberof IframeView
+     * @memberof View
      * @readonly
      */
-    this.id = "vc-" + uuid();
+    this.id = "vi-" + uuid();
     /**
      * @member {Contents} contents
-     * @memberof IframeView
+     * @memberof View
      * @readonly
      */
     this.contents = null;
-    this.document = null;
     /**
      * @member {Element} container
-     * @memberof IframeView
+     * @memberof View
      * @readonly
      */
     this.container = null;
+    /**
+     * @member {boolean} displayed
+     * @memberof View
+     * @readonly
+     */
     this.displayed = false;
     /**
+     * @member {Document} document
+     * @memberof View
+     * @readonly
+     */
+    this.document = null;
+    /**
+     * @member {boolean} expanding
+     * @memberof View
+     * @readonly
+     */
+    this.expanding = false;
+    /**
+     * @member {Node}
+     * @memberof View
+     * @readonly
+     */
+    this.frame = null;
+    /**
      * @member {Marks} marks
-     * @memberof IframeView
+     * @memberof View
      * @readonly
      */
     this.marks = null;
     /**
-     * Load method
-     * @member {string} method
-     * @memberof IframeView
+     * @member {number} width
+     * @memberof View
      * @readonly
      */
-    this.method = this.settings.method || "write";
+    this.width = 0;
     /**
-     * @member {string} writingMode
-     * @memberof IframeView
+     * @member {number} height
+     * @memberof View
      * @readonly
      */
-    this.writingMode = "";
+    this.height = 0;
+    this.layout = layout;
+    this.section = section;
+    /**
+     * @member {object} settings
+     * @memberof View
+     * @readonly
+     */
+    this.settings = null;
     this.init();
   }
 
   /**
-   * create view-container
+   * Create the view-container
    * @private
    */
   init() {
@@ -13719,36 +13789,41 @@ class IframeView {
     this.container.style.width = "0";
     this.container.style.overflow = "hidden";
     this.container.style.position = "relative";
-  }
-
-  /**
-   * Create iframe element
-   * @returns {Element} iframe
-   * @private
-   */
-  create() {
-    this.iframe = document.createElement("iframe");
-    this.iframe.id = this.id;
-    this.iframe.seamless = "seamless";
-    this.iframe.style.overflow = "hidden";
-    this.iframe.style.border = "none";
-    this.iframe.style.width = "0";
-    this.iframe.style.height = "0";
-    this.settings.sandbox.forEach(p => {
-      if (p) this.iframe.sandbox.add(p);
-    });
-    this.iframe.setAttribute("enable-annotation", "true");
     this.container.setAttribute("ref", this.section.index);
-    this.width = 0;
-    this.height = 0;
-    return this.iframe;
   }
 
   /**
-   * render
-   * @param {Function} request 
-   * @returns {Promise<string>} section render
+   * Clear all marks
+   * @returns {number} number of marks
+   * @abstract
    */
+  clear() {
+    let len = 0;
+    if (this.marks) {
+      this.marks.forEach((mark, key) => {
+        if (mark instanceof highlight) {
+          len = this.unhighlight(mark.data["epubcfi"]) ? len += 1 : len;
+        } else {
+          len = this.ununderline(mark.data["epubcfi"]) ? len += 1 : len;
+        }
+      });
+    }
+    return len;
+  }
+
+  /**
+  * Create frame element
+  * @returns {Element} iframe
+  * @abstract
+  */
+  create() {}
+
+  /**
+  * render
+  * @param {function} request 
+  * @returns {Promise<string>} section render
+   * @abstract
+  */
   render(request) {
     const def = new defer();
     this.create();
@@ -13761,7 +13836,7 @@ class IframeView {
       /**
        * @event loaderror
        * @param {object} err
-       * @memberof IframeView
+       * @memberof View
        */
       this.emit(EVENTS.VIEWS.LOAD_ERROR, err);
       def.reject(err);
@@ -13769,7 +13844,7 @@ class IframeView {
       /**
        * @event rendered
        * @param {IframeView} view
-       * @memberof IframeView
+       * @memberof View
        */
       this.emit(EVENTS.VIEWS.RENDERED, this);
     });
@@ -13777,20 +13852,22 @@ class IframeView {
   }
 
   /**
-   * reset
-   */
+  * Reset frame
+   * @abstract
+  */
   reset() {
-    if (this.iframe) {
-      this.iframe.style.width = "0";
-      this.iframe.style.height = "0";
+    if (this.frame) {
+      this.frame.style.width = "0";
+      this.frame.style.height = "0";
       this.width = 0;
       this.height = 0;
     }
   }
 
   /**
-   * Update view
-   */
+  * Update view
+   * @abstract
+  */
   update() {
     this.contents.format(this.layout);
     this.axis();
@@ -13799,8 +13876,8 @@ class IframeView {
   }
 
   /**
-   * update axis
-   * @private
+   * Update axis
+   * @abstract
    */
   axis() {
     if (this.layout.axis === "horizontal") {
@@ -13811,24 +13888,18 @@ class IframeView {
   }
 
   /**
-   * update writing mode
+   * Update mode
    * @param {string} value 
-   * @private
+   * @abstract
    */
-  mode(value) {
-    const mode = value || this.contents.mode;
-    if (this.writingMode !== mode) {
-      this.writingMode = mode;
-      this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
-    }
-  }
+  mode(value) {}
 
   /**
-   * Resize a single axis based on content dimensions
-   * @private
+   * Expanding
+   * @abstract
    */
   expand() {
-    if (!this.iframe || this.expanding) return;
+    if (!this.frame || this.expanding) return;
     this.expanding = true;
     const sz = this.contents.textSize();
     const pw = this.layout.pageWidth;
@@ -13851,85 +13922,37 @@ class IframeView {
   }
 
   /**
-   * reframe
-   * @param {number} width 
-   * @param {number} height 
-   * @private
-   */
+  * reframe
+  * @param {number} width 
+  * @param {number} height 
+  * @abstract
+  */
   reframe(width, height) {
+    if (!this.frame) return;
     this.container.style.width = width + "px";
     this.container.style.height = height + "px";
-    this.iframe.style.width = width + "px";
-    this.iframe.style.height = height + "px";
+    this.frame.style.width = width + "px";
+    this.frame.style.height = height + "px";
     this.width = width;
     this.height = height;
     this.marks && this.marks.render();
   }
 
   /**
-   * load
+   * Load frame
    * @param {string} contents 
    * @returns {Promise<any>} loading promise
+   * @abstract
    */
   load(contents) {
-    const loading = new defer();
-    if (!this.iframe) {
-      loading.reject(new Error("No Iframe Available"));
-      return loading.promise;
-    }
-    this.container.appendChild(this.iframe);
-    this.document = this.iframe.contentDocument;
-    this.iframe.onload = e => this.onLoad(e, loading);
-    if (!this.document) {
-      loading.reject(new Error("No Document Available"));
-      return loading.promise;
-    } else if (this.method === "blobUrl") {
-      this.blobUrl = createBlobUrl(contents, "application/xhtml+xml");
-      this.iframe.src = this.blobUrl;
-    } else if (this.method === "srcdoc") {
-      this.iframe.srcdoc = contents;
-    } else {
-      this.document.open();
-      this.document.write("<!DOCTYPE html>");
-      this.document.write(contents);
-      this.document.close();
-    }
-    return loading.promise;
+    return Promise.resolve();
   }
 
   /**
-   * onLoad
-   * @param {Event} event 
-   * @param {Defer} defer 
-   */
-  onLoad(event, defer) {
-    this.document = event.target.contentDocument;
-    this.contents = new contents(this.document, this.document.body, this.section);
-    let link = this.document.querySelector("link[rel='canonical']");
-    if (link) {
-      link.setAttribute("href", this.section.canonical);
-    } else {
-      link = this.document.createElement("link");
-      link.setAttribute("rel", "canonical");
-      link.setAttribute("href", this.section.canonical);
-      this.document.head.appendChild(link);
-    }
-    this.contents.on(EVENTS.CONTENTS.RESIZED, rect => {
-      /**
-       * @event resized
-       * @param {object} rect
-       * @memberof IframeView
-       */
-      this.emit(EVENTS.VIEWS.RESIZED, rect);
-    });
-    defer.resolve(this.contents);
-  }
-
-  /**
-   * display
-   * @param {Function} request 
-   * @returns {Promise<view>} displayed promise
-   */
+  * Display view
+  * @param {function} request 
+  * @returns {Promise<View>} displayed promise
+  */
   display(request) {
     const displayed = new defer();
     if (this.displayed) {
@@ -13938,7 +13961,7 @@ class IframeView {
       this.render(request).then(() => {
         /**
          * @event displayed
-         * @memberof IframeView
+         * @memberof View
          */
         this.emit(EVENTS.VIEWS.DISPLAYED);
         this.displayed = true;
@@ -13951,41 +13974,42 @@ class IframeView {
   }
 
   /**
-   * show
+   * Show container
    */
   show() {
     this.container.style.visibility = "visible";
-    this.iframe.style.visibility = "visible";
-    // Remind Safari to redraw the iframe
-    this.iframe.style.transform = "translateZ(0)";
-    this.iframe.offsetWidth;
-    this.iframe.style.transform = null;
+    if (this.frame) {
+      this.frame.style.visibility = "visible";
+    }
     /**
-     * @event shown
-     * @param {IframeView} view
-     * @memberof IframeView
-     */
+    * @event shown
+    * @param {IframeView} view
+    * @memberof View
+    */
     this.emit(EVENTS.VIEWS.SHOWN, this);
   }
 
   /**
-   * hide
+   * Hide container
+   * @abstract
    */
   hide() {
     this.container.style.visibility = "hidden";
-    this.iframe.style.visibility = "hidden";
+    if (this.frame) {
+      this.frame.style.visibility = "hidden";
+    }
     /**
-     * @event hidden
-     * @param {IframeView} view
-     * @memberof IframeView
-     */
+    * @event hidden
+    * @param {IframeView} view
+    * @memberof IframeView
+    */
     this.emit(EVENTS.VIEWS.HIDDEN, this);
   }
 
   /**
-   * offset
-   * @returns {{ top: number, left: number }}
-   */
+  * offset
+  * @returns {{ top: number, left: number }}
+  */
   offset() {
     return {
       top: this.container.offsetTop,
@@ -13994,23 +14018,23 @@ class IframeView {
   }
 
   /**
-   * position
-   * @returns {DOMRect}
-   */
+  * position
+  * @returns {DOMRect}
+  */
   position() {
     return this.container.getBoundingClientRect();
   }
 
   /**
-   * locationOf
-   * @param {string|EpubCFI} target 
-   * @returns {{ top: number, left: number }}
-   */
+  * locationOf
+  * @param {string|EpubCFI} target 
+  * @returns {{ top: number, left: number }}
+  */
   locationOf(target) {
     const pos = this.contents.locationOf(target, this.settings.ignoreClass);
     return {
-      top: pos.top,
-      left: pos.left
+      left: pos.left,
+      top: pos.top
     };
   }
 
@@ -14018,18 +14042,16 @@ class IframeView {
    * highlight
    * @param {string} cfiRange 
    * @param {object} [data={}] 
-   * @param {Function} [cb=null] callback function
+   * @param {function} [cb=null] callback function
    * @param {string} [className='epubjs-hl'] 
    * @param {object} [styles={}] 
    * @returns {object}
    */
   highlight(cfiRange, data = {}, cb = null, className = "epubjs-hl", styles = {}) {
-    if (!this.contents) {
-      return;
-    }
+    if (!this.contents) return;
     data["epubcfi"] = cfiRange;
     if (this.marks === null) {
-      this.marks = new marks(this.iframe, this.container);
+      this.marks = new marks(this.frame, this.container);
     }
     const attributes = Object.assign({
       "fill": "yellow",
@@ -14041,63 +14063,13 @@ class IframeView {
        * @event markClicked
        * @param {string} cfiRange
        * @param {object} data
-       * @memberof IframeView
+       * @memberof View
        */
       this.emit(EVENTS.VIEWS.MARK_CLICKED, cfiRange, data);
     };
     const key = encodeURI("epubjs-hl:" + cfiRange);
     const range = this.contents.range(cfiRange);
     const m = new highlight(range, {
-      className,
-      data,
-      attributes,
-      listeners: [emitter, cb]
-    });
-    const h = this.marks.appendMark(key, m);
-    h.element.setAttribute("ref", className);
-    h.element.addEventListener("click", emitter);
-    h.element.addEventListener("touchstart", emitter);
-    if (cb) {
-      h.element.addEventListener("click", cb);
-      h.element.addEventListener("touchstart", cb);
-    }
-    return h;
-  }
-
-  /**
-   * underline
-   * @param {string} cfiRange 
-   * @param {object} [data={}] 
-   * @param {Function} [cb=null]
-   * @param {string} [className='epubjs-ul'] 
-   * @param {object} [styles={}] 
-   * @returns {object}
-   */
-  underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
-    if (!this.contents) {
-      return;
-    }
-    data["epubcfi"] = cfiRange;
-    if (this.marks === null) {
-      this.marks = new marks(this.iframe, this.container);
-    }
-    const attributes = Object.assign({
-      "stroke": "black",
-      "stroke-opacity": "0.3",
-      "mix-blend-mode": "multiply"
-    }, styles);
-    const emitter = e => {
-      /**
-       * @event markClicked
-       * @param {string} cfiRange
-       * @param {object} data
-       * @memberof IframeView
-       */
-      this.emit(EVENTS.VIEWS.MARK_CLICKED, cfiRange, data);
-    };
-    const key = encodeURI("epubjs-ul:" + cfiRange);
-    const range = this.contents.range(cfiRange);
-    const m = new underline(range, {
       className,
       data,
       attributes,
@@ -14138,6 +14110,54 @@ class IframeView {
   }
 
   /**
+   * underline
+   * @param {string} cfiRange 
+   * @param {object} [data={}] 
+   * @param {function} [cb=null]
+   * @param {string} [className='epubjs-ul'] 
+   * @param {object} [styles={}] 
+   * @returns {object}
+   */
+  underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
+    if (!this.contents) return;
+    data["epubcfi"] = cfiRange;
+    if (this.marks === null) {
+      this.marks = new marks(this.frame, this.container);
+    }
+    const attributes = Object.assign({
+      "stroke": "black",
+      "stroke-opacity": "0.3",
+      "mix-blend-mode": "multiply"
+    }, styles);
+    const emitter = e => {
+      /**
+       * @event markClicked
+       * @param {string} cfiRange
+       * @param {object} data
+       * @memberof View
+       */
+      this.emit(EVENTS.VIEWS.MARK_CLICKED, cfiRange, data);
+    };
+    const key = encodeURI("epubjs-ul:" + cfiRange);
+    const range = this.contents.range(cfiRange);
+    const m = new underline(range, {
+      className,
+      data,
+      attributes,
+      listeners: [emitter, cb]
+    });
+    const h = this.marks.appendMark(key, m);
+    h.element.setAttribute("ref", className);
+    h.element.addEventListener("click", emitter);
+    h.element.addEventListener("touchstart", emitter);
+    if (cb) {
+      h.element.addEventListener("click", cb);
+      h.element.addEventListener("touchstart", cb);
+    }
+    return h;
+  }
+
+  /**
    * ununderline
    * @param {string} cfiRange 
    * @returns {boolean}
@@ -14161,49 +14181,277 @@ class IframeView {
   }
 
   /**
-   * destroy
+   * Destroy the View object
+   * @abstract
    */
   destroy() {
-    if (this.marks) {
-      this.marks.forEach((mark, key) => {
-        if (mark instanceof highlight) {
-          this.unhighlight(mark.data["epubcfi"]);
-        } else {
-          this.ununderline(mark.data["epubcfi"]);
-        }
-      });
+    if (this.marks && this.displayed) {
+      this.marks.element.remove();
+      this.marks.clear();
+      this.marks = undefined;
     }
+    if (this.displayed) {
+      this.displayed = undefined;
+      this.container.removeChild(this.frame);
+      this.container = undefined;
+      this.contents.destroy();
+      this.contents = undefined;
+    }
+    this.expanding = undefined;
+    this.document = undefined;
+    this.frame = undefined;
+    this.size = undefined;
+    this.id = undefined;
+    this.width = undefined;
+    this.height = undefined;
+    this.settings = undefined;
+  }
+}
+event_emitter(View.prototype);
+/* harmony default export */ const view = (View);
+;// ./src/managers/views/iframe.js
+
+
+
+
+
+
+
+
+/**
+ * IframeView class
+ * @extends {View}
+ */
+class IframeView extends view {
+  /**
+   * Constructor
+   * @param {Layout} layout ref
+   * @param {Section} section ref
+   * @param {object} [options]
+   * @param {string} [options.ignoreClass='']
+   * @param {string} [options.method='write'] values: `"blobUrl"` OR `"srcdoc"` OR `"write"`
+   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
+   */
+  constructor(layout, section, options) {
+    super(layout, section);
+    this.settings = extend({
+      method: null,
+      sandbox: [],
+      forceEvenPages: false,
+      ignoreClass: ""
+    }, options || {});
+    this.blobUrl = null;
+    /**
+     * Load method
+     * @member {string} method
+     * @memberof IframeView
+     * @readonly
+     */
+    this.method = this.settings.method || "write";
+    /**
+     * @member {string} writingMode
+     * @memberof IframeView
+     * @readonly
+     */
+    this.writingMode = "";
+  }
+
+  /**
+   * Create iframe element
+   * @returns {Element} iframe
+   * @override
+   */
+  create() {
+    this.frame = document.createElement("iframe");
+    this.frame.id = this.id;
+    this.frame.seamless = "seamless";
+    this.frame.style.overflow = "hidden";
+    this.frame.style.border = "none";
+    this.frame.style.width = "0";
+    this.frame.style.height = "0";
+    this.settings.sandbox.forEach(p => p && this.frame.sandbox.add(p));
+    this.frame.setAttribute("enable-annotation", "true");
+    this.width = 0;
+    this.height = 0;
+    return this.frame;
+  }
+
+  /**
+   * Update writing mode
+   * @param {string} value 
+   * @override
+   */
+  mode(value) {
+    const mode = value || this.contents.mode;
+    if (this.writingMode !== mode) {
+      this.writingMode = mode;
+      this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
+    }
+  }
+
+  /**
+   * Load iframe
+   * @param {string} contents 
+   * @returns {Promise<any>} loading promise
+   * @override
+   */
+  load(contents) {
+    const loading = new defer();
+    if (!this.frame) {
+      loading.reject(new Error("No Iframe Available"));
+      return loading.promise;
+    }
+    this.container.appendChild(this.frame);
+    this.document = this.frame.contentDocument;
+    this.frame.onload = e => this.onLoad(e, loading);
+    if (!this.document) {
+      loading.reject(new Error("No Document Available"));
+      return loading.promise;
+    } else if (this.method === "blobUrl") {
+      this.blobUrl = createBlobUrl(contents, "application/xhtml+xml");
+      this.frame.src = this.blobUrl;
+    } else if (this.method === "srcdoc") {
+      this.frame.srcdoc = contents;
+    } else {
+      this.document.open();
+      this.document.write("<!DOCTYPE html>");
+      this.document.write(contents);
+      this.document.close();
+    }
+    return loading.promise;
+  }
+
+  /**
+   * onLoad
+   * @param {Event} event 
+   * @param {Defer} defer 
+   */
+  onLoad(event, defer) {
+    this.document = event.target.contentDocument;
+    this.contents = new src_contents(this.document, this.document.body, this.section);
+    let link = this.document.querySelector("link[rel='canonical']");
+    if (link) {
+      link.setAttribute("href", this.section.canonical);
+    } else {
+      link = this.document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      link.setAttribute("href", this.section.canonical);
+      this.document.head.appendChild(link);
+    }
+    this.contents.on(EVENTS.CONTENTS.RESIZED, rect => {
+      /**
+       * @event resized
+       * @param {object} rect
+       * @memberof IframeView
+       */
+      this.emit(EVENTS.VIEWS.RESIZED, rect);
+    });
+    defer.resolve(this.contents);
+  }
+
+  /**
+   * Show container
+   * @override
+   */
+  show() {
+    if (this.frame) {
+      // Remind Safari to redraw the iframe
+      this.frame.style.transform = "translateZ(0)";
+      this.frame.style.transform = null;
+    }
+    super.show();
+  }
+
+  /**
+   * Destroy the IframeView object
+   * @override
+   */
+  destroy() {
     if (this.blobUrl) {
       revokeBlobUrl(this.blobUrl);
       this.blobUrl = undefined;
     }
     if (this.displayed) {
-      this.displayed = undefined;
-      this.expanding = undefined;
-      this.document = undefined;
-      this.contents.destroy();
-      this.contents = undefined;
-      this.settings = undefined;
-      this.section = undefined;
-      this.container.removeChild(this.iframe);
-      this.container = undefined;
-      this.iframe = undefined;
-      this.layout = undefined;
+      super.destroy();
       this.method = undefined;
-      this.width = undefined;
-      this.height = undefined;
       this.writingMode = undefined;
-      this.id = undefined;
-      if (this.marks) {
-        this.marks.element.remove();
-        this.marks.clear();
-        this.marks = undefined;
-      }
     }
   }
 }
-event_emitter(IframeView.prototype);
 /* harmony default export */ const iframe = (IframeView);
+;// ./src/managers/views/inline.js
+
+
+
+
+
+/**
+ * InlineView class
+ * @extends {View}
+ */
+class InlineView extends view {
+  /**
+   * Constructor
+   * @param {Layout} layout 
+   * @param {Section} section 
+   * @param {object} [options]
+   * @param {string} [options.ignoreClass='']
+   * @param {number} [options.width]
+   * @param {number} [options.height]
+   */
+  constructor(layout, section, options) {
+    super(layout, section);
+    this.settings = extend({
+      width: 0,
+      height: 0,
+      ignoreClass: ""
+    }, options || {});
+  }
+
+  /**
+   * Create div element
+   * @returns {Element} div
+   * @override
+   */
+  create() {
+    this.frame = document.createElement("div");
+    this.frame.id = this.id;
+    this.frame.style.overflow = "hidden";
+    this.frame.style.border = "none";
+    this.frame.style.wordSpacing = "initial";
+    this.frame.style.lineHeight = "initial";
+    this.width = 0;
+    this.height = 0;
+    return this.frame;
+  }
+
+  /**
+   * Load view
+   * @param {string} contents 
+   * @returns {Promise<any>} loading promise
+   * @override
+   */
+  load(contents) {
+    const loading = new defer();
+    if (!this.frame) {
+      loading.reject(new Error("No Iframe Available"));
+      return loading.promise;
+    }
+    const doc = parse(contents, "text/html");
+    const body = qs(doc, "body");
+    this.container.appendChild(this.frame);
+    this.document = this.frame.ownerDocument;
+    if (!this.document) {
+      loading.reject(new Error("No Document Available"));
+      return loading.promise;
+    }
+    this.contents = new src_contents(this.document, this.frame);
+    this.frame.innerHTML = body.innerHTML;
+    loading.resolve(this.contents);
+    return loading.promise;
+  }
+}
+/* harmony default export */ const inline = (InlineView);
 ;// ./src/utils/scrolltype.js
 /**
  * createDefiner
@@ -14263,6 +14511,7 @@ const scrollType = () => {
 // EXTERNAL MODULE: ./node_modules/lodash/debounce.js
 var debounce = __webpack_require__(8221);
 ;// ./src/managers/default/index.js
+
 
 
 
@@ -14458,8 +14707,10 @@ class DefaultViewManager {
    */
   requireView(view) {
     let result;
-    if (typeof view == "string" && view === "iframe") {
+    if (typeof view === "string" && view === "iframe") {
       result = iframe;
+    } else if (view === "inline") {
+      result = inline;
     } else {
       result = view;
     }
@@ -14801,8 +15052,8 @@ class DefaultViewManager {
     const views = this.visible();
     const sections = views.map(view => {
       const {
-        index,
-        href
+        href,
+        index
       } = view.section;
       let startPos;
       let endPos;
@@ -14855,15 +15106,15 @@ class DefaultViewManager {
     const views = this.visible();
     const sections = views.map(view => {
       const {
-        index,
-        href
+        href,
+        index
       } = view.section;
-      const pages = [];
       const total = this.layout.count(view.width).pages;
       const startPos = Math.abs(left);
       const endPos = Math.abs(left) + rect.width;
       const startPage = Math.floor(startPos / this.layout.pageWidth);
       const endPage = Math.floor(endPos / this.layout.pageWidth);
+      const pages = [];
       for (let i = startPage; i < endPage; i++) {
         pages.push({
           index: i
@@ -15042,7 +15293,7 @@ class DefaultViewManager {
   }
 
   /**
-   * destroy
+   * Destroy the DefaultViewManager object
    */
   destroy() {
     if (!this.views) return;
@@ -15050,6 +15301,8 @@ class DefaultViewManager {
     this.views.destroy();
     this.views = undefined;
     this.ignore = undefined;
+    this.mapping.destroy();
+    this.mapping = undefined;
     this.location = undefined;
     this.rendered = undefined;
     this.paginated = undefined;
@@ -16304,8 +16557,7 @@ class Rendition {
    * Remove and Clean Up the Rendition
    */
   destroy() {
-    this.q.clear();
-    this.q = undefined;
+    this.q.destroy();
     this.layout.destroy();
     this.themes.destroy();
     this.viewport.destroy();
@@ -16324,6 +16576,7 @@ class Rendition {
     this.started = undefined;
     this.starting = undefined;
     this.viewport = undefined;
+    this.q = undefined;
   }
 
   /**
@@ -18259,7 +18512,7 @@ if (typeof global !== "undefined") {
 }
 ePub.Book = book;
 ePub.Rendition = rendition;
-ePub.Contents = contents;
+ePub.Contents = src_contents;
 ePub.EpubCFI = src_epubcfi;
 ePub.utils = core_namespaceObject;
 /* harmony default export */ const epub = (ePub);
