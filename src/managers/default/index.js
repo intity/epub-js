@@ -3,6 +3,7 @@ import Mapping from "../../mapping";
 import Views from "../helpers/views";
 import Queue from "../../utils/queue";
 import IframeView from "../views/iframe";
+import InlineView from "../views/inline";
 import scrollType from "../../utils/scrolltype";
 import Defer from "../../utils/defer";
 import { EVENTS } from "../../utils/constants";
@@ -206,8 +207,10 @@ class DefaultViewManager {
 	requireView(view) {
 
 		let result;
-		if (typeof view == "string" && view === "iframe") {
+		if (typeof view === "string" && view === "iframe") {
 			result = IframeView;
+		} else if (view === "inline") {
+			result = InlineView;
 		} else {
 			result = view;
 		}
