@@ -5,12 +5,28 @@ const url = (path) => (/epub-js/.test(location.href) ? "/epub-js" : "") + path
 
 describe("Rendition", () => {
     let book, rendition
-    before(async () => {
-        book = new Book("../assets/handbook/")
-        await book.opened
-        rendition = book.renderTo(document.body)
+    const init = async (n) => {
+
+        if (book === undefined) {
+            book = new Book("../assets/handbook/")
+            await book.opened
+        }
+        if (rendition === undefined && n === 1) {
+            rendition = book.renderTo(document.body)
+        }
+        return Promise.resolve({ book, rendition })
+    }
+    describe("#renderTo()", () => {
+        before(async () => init(0))
+        it("should be prepare render", () => {
+            rendition = book.renderTo(document.body)
+            rendition.on("attached", () => {
+                assert.ok(true)
+            })
+        })
     })
     describe("#display()", () => {
+        before(async () => init(1))
         it("should be displayed by default", async () => {
             const section = await rendition.display()
             assert.equal(section.index, 0)
@@ -47,7 +63,28 @@ describe("Rendition", () => {
             assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"))
         })
     })
-    after(() => {
-        book.destroy()
+    describe("#next()", () => {
+        before(async () => init(1))
+        it("should be displayed by index 0", async () => {
+            const section = await rendition.display(0)
+            assert.equal(section.index, 0)
+        })
+        it("should be next section", async () => {
+            await rendition.next()
+            const loc = rendition.currentLocation()
+            assert.equal(loc.start.index, 1)
+        })
+    })
+    describe("#prev()", () => {
+        before(async () => init(1))
+        it("should be displayed by index 1", async () => {
+            const section = await rendition.display(1)
+            assert.equal(section.index, 1)
+        })
+        it("should be prev section", async () => {
+            await rendition.prev()
+            const loc = rendition.currentLocation()
+            assert.equal(loc.start.index, 0)
+        })
     })
 })

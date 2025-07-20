@@ -64,6 +64,10 @@
         - isNumber
         - RangeObject
         - type
+- [Highlight](marks-pane/highlight.md) `from ./marks-pane/highlight`
+    - [Mark](marks-pane/mark.md) `from ./mark`
+- [Underline](marks-pane/underline.md) `from ./marks-pane/underline`
+    - [Highlight](marks-pane/highlight.md)
 - [Landmarks](navigation/landmarks.md) `from ./navigation/landmarks`
     - [core](utils/core.md) `from ../utils/core`
         - qsa
@@ -87,6 +91,8 @@
     - [EpubCFI](epubcfi.md)
     - [Location](location.md)
     - [Queue](utils/queue.md)
+- [Marks](marks-pane/marks.md) `from ./marks-pane/marks`
+    - [proxyMouse](marks-pane/events.md) `from ./events`
 - [Manifest](packaging/manifest.md) `from ./packaging/manifest`
     - [core](utils/core.md) `from ../utils/core`
         - qsa
@@ -153,22 +159,12 @@
         - [constants](utils/constants.md) `from ../../utils/constants`
             - EVENTS
         - [Contents](contents.md) `from ../../contents`
-        - [Marks](marks-pane/marks.md) `from ../../marks-pane/marks`
-            - [proxyMouse](marks-pane/events.md) `from ./events`
-        - [Highlight](marks-pane/highlight.md) `from ../../marks-pane/highlight`
-            - [Mark](marks-pane/mark.md) `from ./mark`
-        - [Underline](marks-pane/underline.md) `from ../../marks-pane/underline`
-            - [Highlight](marks-pane/highlight.md)
         - [core](utils/core.md) `from ../../utils/core`
-            - createBlobUrl
-            - borders
-            - bounds
             - extend
-            - isNumber
+            - createBlobUrl
             - revokeBlobUrl
-            - uuid
         - [Defer](utils/defer.md) `from ../../utils/defer`
-        - [EpubCFI](epubcfi.md) `from ../../epubcfi`
+        - [View](managers/views/view.md) `from ./view`
     - [Layout](layout.md)
     - [Themes](themes.md)
     - [Viewport](viewport.md)
@@ -216,8 +212,18 @@
     - [core](utils/core.md) `from ../utils/core`
         - filterChildren
         - qs
+- [View](managers/views/view.md)
+    - [core] (utils/core.md) `from ../../utils/core`
+        - uuid
+    - [constants](utils/constants.md) `from ../../utils/constants`
+        - EVENTS
+    - [Defer](utils/defer.md)
+    - [Marks](marks-pane/marks.md) `from ../../marks-pane/marks`
+    - [Highlight](marks-pane/highlight.md) `from ../../marks-pane/highlight`
+    - [Underline](marks-pane/underline.md) `from ../../marks-pane/underline`
 - [Viewport](viewport.md) `from ./viewport`
     - [core](utils/core.md) `from ./utils/core`
+        - isNumber
     - [constants](utils/constants.md) `from ./utils/constants`
         - EVENTS
 

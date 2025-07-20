@@ -31,6 +31,7 @@ const docs = [
     "managers/helpers/snap",
     "managers/helpers/views",
     "managers/views/iframe",
+    "managers/views/view",
     "marks-pane/events",
     "marks-pane/mark",
     "marks-pane/marks",
