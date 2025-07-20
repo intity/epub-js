@@ -51,12 +51,27 @@
     - [Mapping](mapping.md)
     - [replacements](utils/replacements.md) `from ./utils/replacements`
         - replaceLinks
-- [Input](input.md)
-    - [core](utils/core.md) `from ./utils/core`
-        - isXml
-        - parse
-    - [Defer](utils/defer.md)
-    - [Path](utils/path.md)
+- [DefaultViewManager](managers/default/index.md) `from ./managers/default/index`
+    - [constants](utils/constants.md) `from ../../utils/constants`
+        - EVENTS
+    - [core](utils/core.md) `from ../../utils/core`
+        - extend
+        - isNumber
+        - windowBounds
+    - [Defer](utils/defer.md) `from ../../utils/defer`
+    - [IframeView](managers/views/iframe.md)
+    - [Mapping](mapping.md) `from ../../mapping`
+    - [scrollType](utils/scrolltype.md) `from ../../utils/scrolltype`
+    - [Views](managers/helpers/views.md) `from ../helpers/views`
+- [ContinuousViewManager](managers/continuous/index.md) `from ./managers/continuous/index`
+    - [constants](utils/constants.md) `from ../../utils/constants`
+        - EVENTS
+    - [core](utils/core.md) `from ../../utils/core`
+        - extend
+        - requestAnimationFrame
+    - [DefaultViewManager](managers/default/index.md) `from ../default/index`
+    - [Defer](utils/defer.md) `from ../../utils/defer`
+    - [Snap](managers/helpers/snap.md) `from ../helpers/snap`
 - [EpubCFI](epubcfi.md) `from ./epubcfi`
     - [core](utils/core.md) `from ./utils/core`
         - extend
@@ -64,6 +79,22 @@
         - isNumber
         - RangeObject
         - type
+- [IframeView](managers/views/iframe.md) `from ./managers/views/iframe`
+    - [constants](utils/constants.md) `from ../../utils/constants`
+        - EVENTS
+    - [Contents](contents.md) `from ../../contents`
+    - [core](utils/core.md) `from ../../utils/core`
+        - extend
+        - createBlobUrl
+        - revokeBlobUrl
+    - [Defer](utils/defer.md) `from ../../utils/defer`
+    - [View](managers/views/view.md) `from ./view`
+- [Input](input.md)
+    - [core](utils/core.md) `from ./utils/core`
+        - isXml
+        - parse
+    - [Defer](utils/defer.md)
+    - [Path](utils/path.md)
 - [Highlight](marks-pane/highlight.md) `from ./marks-pane/highlight`
     - [Mark](marks-pane/mark.md) `from ./mark`
 - [Underline](marks-pane/underline.md) `from ./marks-pane/underline`
@@ -132,39 +163,12 @@
     - [core](utils/core.md) `from ./utils/core`
         - extend
         - isFloat
-    - [ContinuousViewManager](managers/continuous/index.md) `from ./managers/continuous/index`
-        - [constants](utils/constants.md) `from ../../utils/constants`
-            - EVENTS
-        - [core](utils/core.md) `from ../../utils/core`
-            - extend
-            - requestAnimationFrame
-        - DefaultViewManager `from ../default/index`
-        - [Defer](utils/defer.md) `from ../../utils/defer`
-        - [Snap](managers/helpers/snap.md) `from ../helpers/snap`
-    - [DefaultViewManager](managers/default/index.md) `from ./managers/default/index`
-        - [constants](utils/constants.md) `from ../../utils/constants`
-            - EVENTS
-        - [core](utils/core.md) `from ../../utils/core`
-            - extend
-            - isNumber
-            - windowBounds
-        - [Defer](utils/defer.md) `from ../../utils/defer`
-        - [Mapping](mapping.md) `from ../../mapping`
-        - [scrollType](utils/scrolltype.md) `from ../../utils/scrolltype`
-        - [Views](managers/helpers/views.md) `from ../helpers/views`
-    - [Defer](utils/defer.md) `from ./utils/defer`
+    - [ContinuousViewManager](managers/continuous/index.md)
+    - [DefaultViewManager](managers/default/index.md)
+    - [Defer](utils/defer.md)
     - [EpubCFI](epubcfi.md)
     - [Hook](utils/hook.md)
-    - [IframeView](managers/views/iframe.md) `from ./managers/views/iframe`
-        - [constants](utils/constants.md) `from ../../utils/constants`
-            - EVENTS
-        - [Contents](contents.md) `from ../../contents`
-        - [core](utils/core.md) `from ../../utils/core`
-            - extend
-            - createBlobUrl
-            - revokeBlobUrl
-        - [Defer](utils/defer.md) `from ../../utils/defer`
-        - [View](managers/views/view.md) `from ./view`
+    - [IframeView](managers/views/iframe.md)
     - [Layout](layout.md)
     - [Themes](themes.md)
     - [Viewport](viewport.md)
@@ -213,7 +217,7 @@
         - filterChildren
         - qs
 - [View](managers/views/view.md)
-    - [core] (utils/core.md) `from ../../utils/core`
+    - [core](utils/core.md) `from ../../utils/core`
         - uuid
     - [constants](utils/constants.md) `from ../../utils/constants`
         - EVENTS
