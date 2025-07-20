@@ -4830,7 +4830,10 @@ class Rendition {
    * @private
    */
   adjustImages(contents) {
-    const content = contents.content;
+    const content = contents ? contents.content : null;
+    if (!content) {
+      return Promise.resolve(null);
+    }
     const padding = {
       top: parseFloat(content.style["padding-top"]),
       bottom: parseFloat(content.style["padding-bottom"]),
@@ -27088,12 +27091,30 @@ describe("Path", () => {
 const url = path => (/epub-js/.test(location.href) ? "/epub-js" : "") + path;
 describe("Rendition", () => {
   let book, rendition;
-  before(async () => {
-    book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A("../assets/handbook/");
-    await book.opened;
-    rendition = book.renderTo(document.body);
+  const init = async n => {
+    if (book === undefined) {
+      book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A("../assets/handbook/");
+      await book.opened;
+    }
+    if (rendition === undefined && n === 1) {
+      rendition = book.renderTo(document.body);
+    }
+    return Promise.resolve({
+      book,
+      rendition
+    });
+  };
+  describe("#renderTo()", () => {
+    before(async () => init(0));
+    it("should be prepare render", () => {
+      rendition = book.renderTo(document.body);
+      rendition.on("attached", () => {
+        assert__WEBPACK_IMPORTED_MODULE_0__.ok(true);
+      });
+    });
   });
   describe("#display()", () => {
+    before(async () => init(1));
     it("should be displayed by default", async () => {
       const section = await rendition.display();
       assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 0);
@@ -27130,8 +27151,29 @@ describe("Rendition", () => {
       assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
     });
   });
-  after(() => {
-    book.destroy();
+  describe("#next()", () => {
+    before(async () => init(1));
+    it("should be displayed by index 0", async () => {
+      const section = await rendition.display(0);
+      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 0);
+    });
+    it("should be next section", async () => {
+      await rendition.next();
+      const loc = rendition.currentLocation();
+      assert__WEBPACK_IMPORTED_MODULE_0__.equal(loc.start.index, 1);
+    });
+  });
+  describe("#prev()", () => {
+    before(async () => init(1));
+    it("should be displayed by index 1", async () => {
+      const section = await rendition.display(1);
+      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 1);
+    });
+    it("should be prev section", async () => {
+      await rendition.prev();
+      const loc = rendition.currentLocation();
+      assert__WEBPACK_IMPORTED_MODULE_0__.equal(loc.start.index, 0);
+    });
   });
 });
 })();

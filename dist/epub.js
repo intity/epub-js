@@ -16660,7 +16660,10 @@ class Rendition {
    * @private
    */
   adjustImages(contents) {
-    const content = contents.content;
+    const content = contents ? contents.content : null;
+    if (!content) {
+      return Promise.resolve(null);
+    }
     const padding = {
       top: parseFloat(content.style["padding-top"]),
       bottom: parseFloat(content.style["padding-bottom"]),
