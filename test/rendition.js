@@ -1,21 +1,34 @@
 import assert from "assert"
 import Book from "../src/book"
+import CustomVM from "./manager"
 
 const url = (path) => (/epub-js/.test(location.href) ? "/epub-js" : "") + path
 
 describe("Rendition", () => {
     let book, rendition
-    const init = async (n) => {
+    const init = async (n, options) => {
 
         if (book === undefined) {
             book = new Book("../assets/handbook/")
             await book.opened
         }
         if (rendition === undefined && n === 1) {
-            rendition = book.renderTo(document.body)
+            rendition = book.renderTo(document.body, options)
         }
         return Promise.resolve({ book, rendition })
     }
+    describe("#requireManager", () => {
+        before(async () => {
+            await init(1, { manager: CustomVM })
+            await rendition.display()
+        })
+        it("should be create custom manager", () => {
+            const manager = rendition.manager
+            assert.ok(manager instanceof CustomVM)
+            assert.equal(typeof manager, "object")
+            assert.equal(manager.name, "custom")
+        })
+    })
     describe("#renderTo()", () => {
         before(async () => init(0))
         it("should be prepare render", () => {
