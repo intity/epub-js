@@ -110,6 +110,11 @@ class Rendition {
 		 * @readonly
 		 */
 		this.themes = new Themes(this);
+		/**
+		 * @member {EpubCFI} epubcfi
+		 * @memberof Rendition
+		 * @readonly
+		 */
 		this.epubcfi = new EpubCFI();
 		/**
 		 * A Rendered Location Range
@@ -172,7 +177,7 @@ class Rendition {
 					ret = DefaultViewManager;
 					break;
 			}
-		} else {
+		} else if (typeof manager === "function") {
 			// otherwise, assume we were passed a class function
 			ret = manager;
 		}
@@ -496,8 +501,7 @@ class Rendition {
 	 */
 	determineLayoutProperties() {
 
-		const metadata = this.book.packaging.metadata;
-		const direction = this.book.packaging.direction;
+		const { metadata, direction } = this.book.packaging;
 		return {
 			name: this.settings.layout || metadata.get("layout"),
 			flow: this.settings.flow || metadata.get("flow"),
@@ -634,33 +638,6 @@ class Rendition {
 		 * @memberof Rendition
 		 */
 		this.emit(EVENTS.RENDITION.RELOCATED, this.location);
-	}
-
-	/**
-	 * Remove and Clean Up the Rendition
-	 */
-	destroy() {
-
-		this.q.destroy();
-		this.layout.destroy();
-		this.themes.destroy();
-		this.viewport.destroy();
-		this.manager.destroy();
-		this.hooks.display.clear();
-		this.hooks.content.clear();
-		this.hooks.layout.clear();
-		this.hooks.render.clear();
-		this.hooks.show.clear();
-		this.hooks.unloaded.clear();
-		this.hooks = undefined;
-		this.layout = undefined;
-		this.themes = undefined;
-		this.manager = undefined;
-		this.epubcfi = undefined;
-		this.started = undefined;
-		this.starting = undefined;
-		this.viewport = undefined;
-		this.q = undefined;
 	}
 
 	/**
@@ -860,6 +837,33 @@ class Rendition {
 		meta.setAttribute("name", "dc.relation.ispartof");
 		if (ident) meta.setAttribute("content", ident);
 		doc.getElementsByTagName("head")[0].appendChild(meta);
+	}
+
+	/**
+	 * Remove and Clean Up the Rendition
+	 */
+	destroy() {
+
+		this.q.destroy();
+		this.layout.destroy();
+		this.themes.destroy();
+		this.viewport.destroy();
+		this.manager.destroy();
+		this.hooks.display.clear();
+		this.hooks.content.clear();
+		this.hooks.layout.clear();
+		this.hooks.render.clear();
+		this.hooks.show.clear();
+		this.hooks.unloaded.clear();
+		this.hooks = undefined;
+		this.layout = undefined;
+		this.themes = undefined;
+		this.manager = undefined;
+		this.epubcfi = undefined;
+		this.started = undefined;
+		this.starting = undefined;
+		this.viewport = undefined;
+		this.q = undefined;
 	}
 }
 
