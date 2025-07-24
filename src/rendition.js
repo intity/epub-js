@@ -142,7 +142,7 @@ class Rendition {
 		 * @property {boolean} atEnd Location at end position
 		 * @memberof Rendition
 		 */
-		this.location = undefined;
+		this.location = null;
 		this.starting = new Defer();
 		/**
 		 * returns after the rendition has started
@@ -238,7 +238,6 @@ class Rendition {
 			 * @memberof Rendition
 			 */
 			this.emit(EVENTS.RENDITION.RESIZED, rect);
-			this.display(this.location.start.cfi);
 		});
 		this.viewport.on(EVENTS.VIEWPORT.ORIENTATION_CHANGE, (target) => {
 			/**
@@ -352,7 +351,7 @@ class Rendition {
 		const displaying = new Defer();
 
 		// Check if this is a book percentage
-		if (this.book.locations.length && isFloat(target)) {
+		if (this.book.locations.size && isFloat(target)) {
 			target = this.book.locations.cfiFromPercentage(parseFloat(target));
 		}
 
@@ -522,7 +521,6 @@ class Rendition {
 	updateLayout(options) {
 
 		this.layout.set(options);
-		this.display(this.location.start.cfi);
 	}
 
 	/**
@@ -531,7 +529,7 @@ class Rendition {
 	 */
 	currentLocation() {
 
-		const location = this.manager.currentLocation();
+		const location = this.manager.currentLocation(); // [{}]
 		if (location && location.then && typeof location.then === "function") {
 			location.then((result) => {
 				return this.located(result);
@@ -542,19 +540,18 @@ class Rendition {
 	}
 
 	/**
-	 * Creates a Rendition#locationRange from location
-	 * passed by the Manager
-	 * @param {object} location Location sections
+	 * Creates a Rendition#locationRange from location passed by the Manager
+	 * @param {object[]} target Location sections
 	 * @returns {object}
 	 * @private
 	 */
-	located(location) {
+	located(target) {
 
-		if (location.length === 0) return {};
+		if (target.length === 0) return {};
 
-		const start = location[0];
-		const end = location[location.length - 1];
-		const located = {
+		const start = target[0];
+		const end = target[target.length - 1];
+		const loc = {
 			atStart: false,
 			atEnd: false,
 			start: {
@@ -575,20 +572,20 @@ class Rendition {
 					total: end.total
 				}
 			}
-		}
+		};
 
 		const locations = this.book.locations;
 		if (locations.size) {
-			const locationStart = locations.locationFromCfi(start.mapping.start);
-			const locationEnd = locations.locationFromCfi(end.mapping.end);
+			const locStart = locations.locationFromCfi(start.mapping.start);
+			const locEnd = locations.locationFromCfi(end.mapping.end);
 
-			if (locationStart !== -1) {
-				located.start.location = locationStart;
-				located.start.percentage = locations.percentageFromLocation(locationStart);
+			if (locStart !== -1) {
+				loc.start.location = locStart;
+				loc.start.percentage = locations.percentageFromLocation(locStart);
 			}
-			if (locationEnd !== -1) {
-				located.end.location = locationEnd;
-				located.end.percentage = locations.percentageFromLocation(locationEnd);
+			if (locEnd !== -1) {
+				loc.end.location = locEnd;
+				loc.end.percentage = locations.percentageFromLocation(locEnd);
 			}
 		}
 
@@ -598,37 +595,38 @@ class Rendition {
 			const pageEnd = pageList.pageFromCfi(end.mapping.end);
 
 			if (pageStart !== -1) {
-				located.start.page = pageStart;
+				loc.start.page = pageStart;
 			}
 			if (pageEnd !== -1) {
-				located.end.page = pageEnd;
+				loc.end.page = pageEnd;
 			}
 		}
 
-		const startPage = located.start.displayed.page;
+		const startPage = loc.start.displayed.page;
 		if (this.book.sections.first().index === start.index &&
 			startPage.index === 0) {
-			located.atStart = true;
+			loc.atStart = true;
 		}
 
-		const endPage = located.end.displayed.page;
+		const endPage = loc.end.displayed.page;
 		if (this.book.sections.last().index === end.index &&
-			endPage.index === located.end.displayed.total - 1) {
-			located.atEnd = true;
+			endPage.index === loc.end.displayed.total - 1) {
+			loc.atEnd = true;
 		}
 
-		return located;
+		return loc;
 	}
 
 	/**
 	 * relocated event handler
 	 * @fires relocated
+	 * @param {object[]} loc 
 	 * @private
 	 */
-	relocated(location) {
+	relocated(loc) {
 
-		const located = this.located(location);
-		if (!located || !located.start || !located.end) {
+		const located = this.located(loc);
+		if (!located && (!located.start || !located.end)) {
 			return;
 		}
 		this.location = located;
