@@ -4133,34 +4133,37 @@ if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIO
 
 
 
-// Default View Managers
-
 
 
 /**
+ * Rendition class
+ * @description
  * Displays an Epub as a series of Views for each Section.
  * Requires Manager and View class to handle specifics of rendering
  * the section content.
- * @param {Book} book
- * @param {object} [options]
- * @param {string|number} [options.width] viewport width
- * @param {string|number} [options.height] viewport height
- * @param {string} [options.ignoreClass] class for the cfi parser to ignore
- * @param {string|class} [options.manager='default'] string values: default / continuous
- * @param {string|class} [options.view='iframe']
- * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
- * @param {string} [options.layout] layout to force
- * @param {string} [options.spread] force spread value
- * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
- * @param {number} [options.pageWidth] page width
- * @param {number} [options.pageHeight] page height
- * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
- * @param {string} [options.stylesheet] url of stylesheet to be injected
- * @param {string} [options.script] url of script to be injected
- * @param {object} [options.snap] use snap scrolling
- * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
  */
 class Rendition {
+  /**
+   * Constructor
+   * @param {Book} book
+   * @param {object} [options]
+   * @param {string|number} [options.width] viewport width
+   * @param {string|number} [options.height] viewport height
+   * @param {string} [options.ignoreClass] class for the cfi parser to ignore
+   * @param {string|function} [options.manager='default'] string values: default / continuous
+   * @param {string|function} [options.view='iframe']
+   * @param {string} [options.method='write'] values: `"write"` OR `"srcdoc"`
+   * @param {string} [options.layout] layout to force
+   * @param {string} [options.spread] force spread value
+   * @param {string} [options.direction] direction `"ltr"` OR `"rtl"`
+   * @param {number} [options.pageWidth] page width
+   * @param {number} [options.pageHeight] page height
+   * @param {number} [options.minSpreadWidth] overridden by spread: none (never) / both (always)
+   * @param {string} [options.stylesheet] url of stylesheet to be injected
+   * @param {string} [options.script] url of script to be injected
+   * @param {object} [options.snap] use snap scrolling
+   * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
+   */
   constructor(book, options) {
     /**
      * @member {object} settings
@@ -4168,7 +4171,6 @@ class Rendition {
      * @readonly
      */
     this.settings = (0,_utils_core__WEBPACK_IMPORTED_MODULE_12__.extend)({
-      axis: undefined,
       width: null,
       height: null,
       manager: "default",
@@ -4187,9 +4189,6 @@ class Rendition {
       sandbox: [],
       stylesheet: null
     }, options || {});
-    if (typeof this.settings.manager === "object") {
-      this.manager = this.settings.manager;
-    }
     this.book = book;
     /**
      * Adds Hook methods to the Rendition prototype
@@ -4232,6 +4231,11 @@ class Rendition {
      * @readonly
      */
     this.themes = new _themes__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .A(this);
+    /**
+     * @member {EpubCFI} epubcfi
+     * @memberof Rendition
+     * @readonly
+     */
     this.epubcfi = new _epubcfi__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A();
     /**
      * A Rendered Location Range
@@ -4259,7 +4263,7 @@ class Rendition {
      * @property {boolean} atEnd Location at end position
      * @memberof Rendition
      */
-    this.location = undefined;
+    this.location = null;
     this.starting = new _utils_defer__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A();
     /**
      * returns after the rendition has started
@@ -4275,27 +4279,25 @@ class Rendition {
   }
 
   /**
-   * Set the manager function
-   * @param {Function} manager
-   */
-  setManager(manager) {
-    this.manager = manager;
-  }
-
-  /**
    * Require the manager from passed string, or as a class function
-   * @param {string|object} manager [description]
-   * @return {any}
+   * @param {string|function} manager 
+   * @return {any} manager
+   * @private
    */
   requireManager(manager) {
     let ret;
 
     // If manager is a string, try to load from imported managers
-    if (typeof manager === "string" && manager === "default") {
-      ret = _managers_default_index__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .A;
-    } else if (typeof manager === "string" && manager === "continuous") {
-      ret = _managers_continuous_index__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .A;
-    } else {
+    if (typeof manager === "string") {
+      switch (manager) {
+        case "continuous":
+          ret = _managers_continuous_index__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .A;
+          break;
+        default:
+          ret = _managers_default_index__WEBPACK_IMPORTED_MODULE_14__/* ["default"] */ .A;
+          break;
+      }
+    } else if (typeof manager === "function") {
       // otherwise, assume we were passed a class function
       ret = manager;
     }
@@ -4304,6 +4306,7 @@ class Rendition {
 
   /**
    * Start the rendering
+   * @private
    */
   start() {
     const props = this.determineLayoutProperties();
@@ -4352,7 +4355,6 @@ class Rendition {
        * @memberof Rendition
        */
       this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.RENDITION.RESIZED, rect);
-      this.display(this.location.start.cfi);
     });
     this.viewport.on(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.VIEWPORT.ORIENTATION_CHANGE, target => {
       /**
@@ -4410,10 +4412,12 @@ class Rendition {
   }
 
   /**
-   * Call to attach the container to an element in the dom
-   * Container must be attached before rendering can begin
+   * Attach to viewport container
    * @param {Element|string} element viewport element
    * @return {Promise<any>}
+   * @description
+   * Call to attach the container to an element in the dom.
+   * Container must be attached before rendering can begin.
    */
   attachTo(element) {
     return this.q.enqueue(() => {
@@ -4433,9 +4437,6 @@ class Rendition {
 
   /**
    * Display a point in the book
-   * The request will be added to the rendering Queue,
-   * so it will wait until book is opened, rendering started
-   * and all other rendering tasks have finished to be called.
    * @param {string|number} [target] `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI
    * @example rendition.display()
    * @example rendition.display(3)
@@ -4443,26 +4444,26 @@ class Rendition {
    * @example rendition.display("chapter_001.xhtml")
    * @example rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
    * @return {Promise<Section>}
+   * @description
+   * The request will be added to the rendering Queue, so it will wait until 
+   * book is opened, rendering started and all other rendering tasks have 
+   * finished to be called.
    */
   display(target) {
-    if (this.displaying) {
-      this.displaying.resolve();
-    }
     return this.q.enqueue(this._display.bind(this), target);
   }
 
   /**
    * Tells the manager what to display immediately
-   * @param {string} [target]
+   * @param {string|number} [target]
    * @return {Promise<Section>}
    * @private
    */
   _display(target) {
     const displaying = new _utils_defer__WEBPACK_IMPORTED_MODULE_8__/* ["default"] */ .A();
-    this.displaying = displaying;
 
     // Check if this is a book percentage
-    if (this.book.locations.length && (0,_utils_core__WEBPACK_IMPORTED_MODULE_12__.isFloat)(target)) {
+    if (this.book.locations.size && (0,_utils_core__WEBPACK_IMPORTED_MODULE_12__.isFloat)(target)) {
       target = this.book.locations.cfiFromPercentage(parseFloat(target));
     }
     const section = this.book.sections.get(target);
@@ -4472,7 +4473,6 @@ class Rendition {
     }
     this.manager.display(section, target).then(() => {
       displaying.resolve(section);
-      this.displaying = undefined;
       /**
        * Emit that a section has been displayed
        * @event displayed
@@ -4597,8 +4597,10 @@ class Rendition {
    * @private
    */
   determineLayoutProperties() {
-    const metadata = this.book.packaging.metadata;
-    const direction = this.book.packaging.direction;
+    const {
+      metadata,
+      direction
+    } = this.book.packaging;
     return {
       name: this.settings.layout || metadata.get("layout"),
       flow: this.settings.flow || metadata.get("flow"),
@@ -4618,7 +4620,6 @@ class Rendition {
    */
   updateLayout(options) {
     this.layout.set(options);
-    this.display(this.location.start.cfi);
   }
 
   /**
@@ -4626,7 +4627,7 @@ class Rendition {
    * @return {displayedLocation|Promise} location (may be a promise)
    */
   currentLocation() {
-    const location = this.manager.currentLocation();
+    const location = this.manager.currentLocation(); // [{}]
     if (location && location.then && typeof location.then === "function") {
       location.then(result => {
         return this.located(result);
@@ -4637,17 +4638,16 @@ class Rendition {
   }
 
   /**
-   * Creates a Rendition#locationRange from location
-   * passed by the Manager
-   * @param {object} location Location sections
+   * Creates a Rendition#locationRange from location passed by the Manager
+   * @param {object[]} target Location sections
    * @returns {object}
    * @private
    */
-  located(location) {
-    if (location.length === 0) return {};
-    const start = location[0];
-    const end = location[location.length - 1];
-    const located = {
+  located(target) {
+    if (target.length === 0) return {};
+    const start = target[0];
+    const end = target[target.length - 1];
+    const loc = {
       atStart: false,
       atEnd: false,
       start: {
@@ -4671,15 +4671,15 @@ class Rendition {
     };
     const locations = this.book.locations;
     if (locations.size) {
-      const locationStart = locations.locationFromCfi(start.mapping.start);
-      const locationEnd = locations.locationFromCfi(end.mapping.end);
-      if (locationStart !== -1) {
-        located.start.location = locationStart;
-        located.start.percentage = locations.percentageFromLocation(locationStart);
+      const locStart = locations.locationFromCfi(start.mapping.start);
+      const locEnd = locations.locationFromCfi(end.mapping.end);
+      if (locStart !== -1) {
+        loc.start.location = locStart;
+        loc.start.percentage = locations.percentageFromLocation(locStart);
       }
-      if (locationEnd !== -1) {
-        located.end.location = locationEnd;
-        located.end.percentage = locations.percentageFromLocation(locationEnd);
+      if (locEnd !== -1) {
+        loc.end.location = locEnd;
+        loc.end.percentage = locations.percentageFromLocation(locEnd);
       }
     }
     const pageList = this.book.navigation.pageList;
@@ -4687,31 +4687,32 @@ class Rendition {
       const pageStart = pageList.pageFromCfi(start.mapping.start);
       const pageEnd = pageList.pageFromCfi(end.mapping.end);
       if (pageStart !== -1) {
-        located.start.page = pageStart;
+        loc.start.page = pageStart;
       }
       if (pageEnd !== -1) {
-        located.end.page = pageEnd;
+        loc.end.page = pageEnd;
       }
     }
-    const startPage = located.start.displayed.page;
+    const startPage = loc.start.displayed.page;
     if (this.book.sections.first().index === start.index && startPage.index === 0) {
-      located.atStart = true;
+      loc.atStart = true;
     }
-    const endPage = located.end.displayed.page;
-    if (this.book.sections.last().index === end.index && endPage.index === located.end.displayed.total - 1) {
-      located.atEnd = true;
+    const endPage = loc.end.displayed.page;
+    if (this.book.sections.last().index === end.index && endPage.index === loc.end.displayed.total - 1) {
+      loc.atEnd = true;
     }
-    return located;
+    return loc;
   }
 
   /**
    * relocated event handler
    * @fires relocated
+   * @param {object[]} loc 
    * @private
    */
-  relocated(location) {
-    const located = this.located(location);
-    if (!located || !located.start || !located.end) {
+  relocated(loc) {
+    const located = this.located(loc);
+    if (!located && (!located.start || !located.end)) {
       return;
     }
     this.location = located;
@@ -4721,32 +4722,6 @@ class Rendition {
      * @memberof Rendition
      */
     this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_13__/* .EVENTS */ .qY.RENDITION.RELOCATED, this.location);
-  }
-
-  /**
-   * Remove and Clean Up the Rendition
-   */
-  destroy() {
-    this.q.destroy();
-    this.layout.destroy();
-    this.themes.destroy();
-    this.viewport.destroy();
-    this.manager.destroy();
-    this.hooks.display.clear();
-    this.hooks.content.clear();
-    this.hooks.layout.clear();
-    this.hooks.render.clear();
-    this.hooks.show.clear();
-    this.hooks.unloaded.clear();
-    this.hooks = undefined;
-    this.layout = undefined;
-    this.themes = undefined;
-    this.manager = undefined;
-    this.epubcfi = undefined;
-    this.started = undefined;
-    this.starting = undefined;
-    this.viewport = undefined;
-    this.q = undefined;
   }
 
   /**
@@ -4923,8 +4898,7 @@ class Rendition {
   }
 
   /**
-   * Hook to handle the document identifier before
-   * a Section is serialized
+   * Hook to handle the document identifier before a Section is serialized
    * @param {Document} doc
    * @param {Section} section 
    * @private
@@ -4935,6 +4909,32 @@ class Rendition {
     meta.setAttribute("name", "dc.relation.ispartof");
     if (ident) meta.setAttribute("content", ident);
     doc.getElementsByTagName("head")[0].appendChild(meta);
+  }
+
+  /**
+   * Remove and Clean Up the Rendition
+   */
+  destroy() {
+    this.q.destroy();
+    this.layout.destroy();
+    this.themes.destroy();
+    this.viewport.destroy();
+    this.manager.destroy();
+    this.hooks.display.clear();
+    this.hooks.content.clear();
+    this.hooks.layout.clear();
+    this.hooks.render.clear();
+    this.hooks.show.clear();
+    this.hooks.unloaded.clear();
+    this.hooks = undefined;
+    this.layout = undefined;
+    this.themes = undefined;
+    this.manager = undefined;
+    this.epubcfi = undefined;
+    this.started = undefined;
+    this.starting = undefined;
+    this.viewport = undefined;
+    this.q = undefined;
   }
 }
 event_emitter__WEBPACK_IMPORTED_MODULE_3__(Rendition.prototype);
@@ -27084,95 +27084,188 @@ describe("Path", () => {
 // This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
-/* harmony import */ var assert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4148);
-/* harmony import */ var _src_book__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(8378);
+
+// EXTERNAL MODULE: ./node_modules/assert/build/assert.js
+var assert = __webpack_require__(4148);
+// EXTERNAL MODULE: ./src/book.js
+var src_book = __webpack_require__(8378);
+// EXTERNAL MODULE: ./src/managers/default/index.js
+var managers_default = __webpack_require__(3362);
+;// ./test/manager.js
+
+class CustomVM extends managers_default/* default */.A {
+  constructor(book, options) {
+    super(book, options);
+    this.name = "custom";
+  }
+}
+/* harmony default export */ const test_manager = (CustomVM);
+;// ./test/rendition.js
 
 
+
+const EPUBJS_EID = "viewport";
 const url = path => (/epub-js/.test(location.href) ? "/epub-js" : "") + path;
 describe("Rendition", () => {
   let book, rendition;
-  const init = async n => {
+  const init = async (n, options) => {
     if (book === undefined) {
-      book = new _src_book__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A("../assets/handbook/");
+      book = new src_book/* default */.A("../assets/handbook/");
       await book.opened;
     }
-    if (rendition === undefined && n === 1) {
-      rendition = book.renderTo(document.body);
+    if (rendition === undefined && n) {
+      rendition = book.renderTo(EPUBJS_EID, options);
     }
-    return Promise.resolve({
-      book,
-      rendition
-    });
+    return rendition.started;
   };
-  describe("#renderTo()", () => {
-    before(async () => init(0));
-    it("should be prepare render", () => {
-      rendition = book.renderTo(document.body);
-      rendition.on("attached", () => {
-        assert__WEBPACK_IMPORTED_MODULE_0__.ok(true);
+  describe("#requireManager()", () => {
+    before(async () => {
+      await init(1, {
+        manager: test_manager
       });
+      await rendition.display();
+    });
+    it("should be create custom manager", () => {
+      const manager = rendition.manager;
+      assert.ok(manager instanceof test_manager);
+      assert.equal(typeof manager, "object");
+      assert.equal(manager.name, "custom");
     });
   });
   describe("#display()", () => {
-    before(async () => init(1));
+    before(async () => {
+      await init(1);
+    });
     it("should be displayed by default", async () => {
       const section = await rendition.display();
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 0);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.idref, "s0");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.href, "xhtml/nav.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/nav.xhtml"));
+      assert.equal(section.cfiBase, "/6/2");
+      assert.equal(section.index, 0);
+      assert.equal(section.idref, "s0");
+      assert.equal(section.href, "xhtml/nav.xhtml");
+      assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/nav.xhtml"));
     });
     it("should be displayed by index", async () => {
-      const section = await rendition.display(2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.idref, "s2");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
+      const section = await rendition.display(1);
+      assert.equal(section.cfiBase, "/6/4");
+      assert.equal(section.index, 1);
+      assert.equal(section.idref, "s1");
+      assert.equal(section.href, "xhtml/introduction.xhtml");
+      assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/introduction.xhtml"));
     });
     it("should be displayed by idref", async () => {
       const section = await rendition.display("#s2");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.idref, "s2");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
+      assert.equal(section.cfiBase, "/6/6");
+      assert.equal(section.index, 2);
+      assert.equal(section.idref, "s2");
+      assert.equal(section.href, "xhtml/mathml.xhtml");
+      assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
     });
     it("should be displayed by href", async () => {
       const section = await rendition.display("xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.idref, "s2");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
+      assert.equal(section.cfiBase, "/6/6");
+      assert.equal(section.index, 2);
+      assert.equal(section.idref, "s2");
+      assert.equal(section.href, "xhtml/mathml.xhtml");
+      assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
     });
     it("should be displayed by epubcfi", async () => {
       const section = await rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 2);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.idref, "s2");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.href, "xhtml/mathml.xhtml");
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
+      assert.equal(section.cfiBase, "/6/6");
+      assert.equal(section.index, 2);
+      assert.equal(section.idref, "s2");
+      assert.equal(section.href, "xhtml/mathml.xhtml");
+      assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
     });
   });
   describe("#next()", () => {
-    before(async () => init(1));
-    it("should be displayed by index 0", async () => {
-      const section = await rendition.display(0);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 0);
+    before(async () => {
+      await init(1);
+      await rendition.display(0);
     });
-    it("should be next section", async () => {
+    it("should be next to section index 1", async () => {
       await rendition.next();
       const loc = rendition.currentLocation();
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(loc.start.index, 1);
+      assert.equal(loc.start.index, 1);
+    });
+    it("should be next to section index 2", async () => {
+      await rendition.next();
+      const loc = rendition.currentLocation();
+      assert.equal(loc.start.index, 2);
     });
   });
   describe("#prev()", () => {
-    before(async () => init(1));
-    it("should be displayed by index 1", async () => {
-      const section = await rendition.display(1);
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(section.index, 1);
+    before(async () => {
+      await init(1);
+      await rendition.display(2);
     });
-    it("should be prev section", async () => {
+    it("should be prev to section.index 1", async () => {
       await rendition.prev();
       const loc = rendition.currentLocation();
-      assert__WEBPACK_IMPORTED_MODULE_0__.equal(loc.start.index, 0);
+      assert.equal(loc.start.index, 1);
+    });
+    it("should be prev to section.index 0", async () => {
+      await rendition.prev();
+      const loc = rendition.currentLocation();
+      assert.equal(loc.start.index, 0);
+    });
+  });
+  describe("#resize()", () => {
+    before(async () => {
+      await init(1, {
+        spread: "none"
+      });
+      await rendition.display(2);
+    });
+    it("should be viewport resizing to width 500", () => {
+      const size = rendition.resize(500, "100%");
+      assert.equal(size.width, 500);
+    });
+    it("should be viewport resizing to height 600", () => {
+      const size = rendition.resize("100%", 600);
+      assert.equal(size.height, 600);
+    });
+    it("should be viewport resizing by default", () => {
+      const size = rendition.resize("100%", "100%");
+      assert.equal(rendition.viewport.rect.width, size.width);
+      assert.equal(rendition.viewport.rect.height, size.height);
+    });
+  });
+  describe("#upateLayout()", () => {
+    before(async () => {
+      await init(1, {
+        spread: "auto"
+      });
+      await rendition.display(2);
+    });
+    it("should be updating layout.spread:none", async () => {
+      rendition.updateLayout({
+        spread: "none"
+      });
+      assert.equal(rendition.layout.spread, "none");
+    });
+    it("should be updating layout.spread:auto", async () => {
+      rendition.updateLayout({
+        spread: "auto"
+      });
+      assert.equal(rendition.layout.spread, "auto");
+    });
+    it("should be updating layout.flow:scrolled", async () => {
+      await rendition.updateLayout({
+        flow: "scrolled"
+      });
+      assert.equal(rendition.layout.flow, "scrolled");
+    });
+    it("should be updating layout.flow:scrolled-doc", async () => {
+      await rendition.updateLayout({
+        flow: "scrolled-doc"
+      });
+      assert.equal(rendition.layout.flow, "scrolled-doc");
+    });
+    it("should be updating layout.flow:paginated", async () => {
+      await rendition.updateLayout({
+        flow: "paginated"
+      });
+      assert.equal(rendition.layout.flow, "paginated");
     });
   });
 });
