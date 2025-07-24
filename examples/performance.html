@@ -19,6 +19,9 @@
         <nav>
             <ul>
                 <li class="l-item"><a href="./">Examples</a></li>
+                <li class="r-item">
+                    <a href="https://github.com/intity/epub-js/blob/master/examples/performance.html" id="gh-link" target="_blank"></a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -36,7 +39,7 @@
         const prev = document.getElementById("prev")
         const next = document.getElementById("next")
         put("init", 0, false)
-        const book = ePub("../assets/alice/", {
+        const book = ePub("../assets/handbook/", {
             store: "epub-js"
         })
         book.opened.then(() => {
@@ -94,7 +97,7 @@
             prev.style.display = loc.atStart ? "none" : "block"
             next.style.display = loc.atEnd ? "none" : "block"
         }
-        rendition.display(6).then(() => {
+        rendition.display().then(() => {
 
             document.onkeyup = keybinding
             rendition.on("keyup", keybinding)
@@ -117,7 +120,6 @@
         })
         rendition.on("relocated", (location) => {
 
-            console.clear()
             put("book.rendition.relocated")
             const { table, total } = gen()
             console.table(table)
