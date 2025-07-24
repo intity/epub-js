@@ -1,18 +1,13 @@
 <a name="Rendition"></a>
 
 # Rendition
-Displays an Epub as a series of Views for each Section.
-Requires Manager and View class to handle specifics of rendering
-the section content.
+Rendition class
 
 **Kind**: global class  
 
 * [Rendition](#Rendition)
     * [new Rendition(book, [options])](#new_Rendition_new)
     * _instance_
-        * [.setManager(manager)](#Rendition+setManager)
-        * [.requireManager(manager)](#Rendition+requireManager) ⇒ <code>any</code>
-        * [.start()](#Rendition+start)
         * [.attachTo(element)](#Rendition+attachTo) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.display([target])](#Rendition+display) ⇒ <code>Promise.&lt;Section&gt;</code>
         * [.moveTo(offset)](#Rendition+moveTo)
@@ -22,15 +17,16 @@ the section content.
         * [.prev()](#Rendition+prev) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.updateLayout(options)](#Rendition+updateLayout)
         * [.currentLocation()](#Rendition+currentLocation) ⇒ <code>displayedLocation</code> \| <code>Promise</code>
-        * [.destroy()](#Rendition+destroy)
         * [.getRange(epubcfi, ignoreClass)](#Rendition+getRange) ⇒ <code>Range</code>
         * [.getContents()](#Rendition+getContents) ⇒ <code>Array.&lt;Contents&gt;</code>
         * [.views()](#Rendition+views) ⇒ <code>Views</code>
+        * [.destroy()](#Rendition+destroy)
     * _static_
         * [.settings](#Rendition.settings) : <code>object</code>
         * [.hooks](#Rendition.hooks) : <code>object</code>
         * [.annotations](#Rendition.annotations) : <code>Annotations</code>
         * [.themes](#Rendition.themes) : <code>Themes</code>
+        * [.epubcfi](#Rendition.epubcfi) : <code>EpubCFI</code>
         * [.started](#Rendition.started) : <code>Promise.&lt;any&gt;</code>
         * [.layout](#Rendition.layout) : <code>Layout</code>
         * [.viewport](#Rendition.viewport) : <code>Viewport</code>
@@ -51,6 +47,10 @@ the section content.
 <a name="new_Rendition_new"></a>
 
 ## new Rendition(book, [options])
+Displays an Epub as a series of Views for each Section.
+Requires Manager and View class to handle specifics of rendering
+the section content.
+
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -59,8 +59,8 @@ the section content.
 | [options.width] | <code>string</code> \| <code>number</code> |  | viewport width |
 | [options.height] | <code>string</code> \| <code>number</code> |  | viewport height |
 | [options.ignoreClass] | <code>string</code> |  | class for the cfi parser to ignore |
-| [options.manager] | <code>string</code> \| <code>class</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | string values: default / continuous |
-| [options.view] | <code>string</code> \| <code>class</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
+| [options.manager] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | string values: default / continuous |
+| [options.view] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
 | [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"write"` OR `"srcdoc"` |
 | [options.layout] | <code>string</code> |  | layout to force |
 | [options.spread] | <code>string</code> |  | force spread value |
@@ -73,39 +73,11 @@ the section content.
 | [options.snap] | <code>object</code> |  | use snap scrolling |
 | [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
 
-<a name="Rendition+setManager"></a>
-
-## rendition.setManager(manager)
-Set the manager function
-
-**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
-
-| Param | Type |
-| --- | --- |
-| manager | <code>function</code> | 
-
-<a name="Rendition+requireManager"></a>
-
-## rendition.requireManager(manager) ⇒ <code>any</code>
-Require the manager from passed string, or as a class function
-
-**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| manager | <code>string</code> \| <code>object</code> | [description] |
-
-<a name="Rendition+start"></a>
-
-## rendition.start()
-Start the rendering
-
-**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+attachTo"></a>
 
 ## rendition.attachTo(element) ⇒ <code>Promise.&lt;any&gt;</code>
-Call to attach the container to an element in the dom
-Container must be attached before rendering can begin
+Call to attach the container to an element in the dom.
+Container must be attached before rendering can begin.
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
@@ -116,10 +88,9 @@ Container must be attached before rendering can begin
 <a name="Rendition+display"></a>
 
 ## rendition.display([target]) ⇒ <code>Promise.&lt;Section&gt;</code>
-Display a point in the book
-The request will be added to the rendering Queue,
-so it will wait until book is opened, rendering started
-and all other rendering tasks have finished to be called.
+The request will be added to the rendering Queue, so it will wait until 
+book is opened, rendering started and all other rendering tasks have 
+finished to be called.
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
@@ -215,12 +186,6 @@ Get the Current Location object
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 **Returns**: <code>displayedLocation</code> \| <code>Promise</code> - location (may be a promise)  
-<a name="Rendition+destroy"></a>
-
-## rendition.destroy()
-Remove and Clean Up the Rendition
-
-**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+getRange"></a>
 
 ## rendition.getRange(epubcfi, ignoreClass) ⇒ <code>Range</code>
@@ -243,6 +208,12 @@ Get the Contents object of each rendered view
 
 ## rendition.views() ⇒ <code>Views</code>
 Get the views member from the manager
+
+**Kind**: instance method of [<code>Rendition</code>](#Rendition)  
+<a name="Rendition+destroy"></a>
+
+## rendition.destroy()
+Remove and Clean Up the Rendition
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition.settings"></a>
@@ -275,6 +246,11 @@ Adds Hook methods to the Rendition prototype
 <a name="Rendition.themes"></a>
 
 ## Rendition.themes : <code>Themes</code>
+**Kind**: static property of [<code>Rendition</code>](#Rendition)  
+**Read only**: true  
+<a name="Rendition.epubcfi"></a>
+
+## Rendition.epubcfi : <code>EpubCFI</code>
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
 **Read only**: true  
 <a name="Rendition.started"></a>
