@@ -757,26 +757,27 @@ class EpubCFI {
 
 	/**
 	 * Parse a cfi string to a EpubCFI object representation
-	 * @param {string} cfiStr EpubCFI string format
+	 * @param {string} hash EpubCFI string format
 	 * @returns {EpubCFI} EpubCFI object
 	 */
-	parse(cfiStr) {
+	parse(hash) {
 
 		const cfi = new EpubCFI();
 
-		if (typeof cfiStr !== "string") {
+		if (typeof hash !== "string") {
 			throw new TypeError("invalid argument type");
 		}
 
-		if (this.isCfiString(cfiStr)) {
+		if (this.isCfiString(hash)) {
 			// Remove initial 'epubcfi(' and ending ')'
-			cfi.hash = cfiStr; // save EpubCFI string
-			cfiStr = cfiStr.slice(8, cfiStr.length - 1);
+			cfi.hash = hash; // save EpubCFI string
+			cfi.type = "string";
+			hash = hash.slice(8, hash.length - 1);
 		} else {
 			throw new Error("invalid EpubCFI string format");
 		}
 
-		const baseComponent = this.getBaseComponent(cfiStr);
+		const baseComponent = this.getBaseComponent(hash);
 
 		// Make sure this is a valid cfi or return
 		if (!baseComponent) {
@@ -786,18 +787,15 @@ class EpubCFI {
 
 		cfi.base = this.parseComponent(baseComponent);
 
-		const pathComponent = this.getPathComponent(cfiStr);
+		const pathComponent = this.getPathComponent(hash);
 		cfi.path = this.parseComponent(pathComponent);
 
-		const range = this.getRange(cfiStr);
+		const range = this.getRange(hash);
 		if (range) {
 			cfi.range = true;
 			cfi.start = this.parseComponent(range[0]);
 			cfi.end = this.parseComponent(range[1]);
 		}
-
-		// Get spine node position
-		// cfi.spineSegment = cfi.base.steps[1];
 
 		// Chapter segment is always the second step
 		cfi.spinePos = cfi.base.steps[1].index;
