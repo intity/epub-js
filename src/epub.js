@@ -3,11 +3,11 @@ import Rendition from "./rendition";
 import EpubCFI from "./epubcfi";
 import Contents from "./contents";
 import * as utils from "./utils/core";
-import { EPUBJS_VERSION } from "./utils/constants";
-
 import IframeView from "./managers/views/iframe";
+import InlineView from "./managers/views/inline";
 import DefaultViewManager from "./managers/default";
 import ContinuousViewManager from "./managers/continuous";
+import { EPUBJS_VERSION } from "./utils/constants";
 
 /**
  * Create a new Book instance
@@ -27,7 +27,7 @@ function ePub(input, options) {
 
 ePub.VERSION = EPUBJS_VERSION;
 
-if (typeof(global) !== "undefined") {
+if (typeof (global) !== "undefined") {
 	global.EPUBJS_VERSION = EPUBJS_VERSION;
 }
 
@@ -35,6 +35,32 @@ ePub.Book = Book;
 ePub.Rendition = Rendition;
 ePub.Contents = Contents;
 ePub.EpubCFI = EpubCFI;
+ePub.manager = (t) => {
+	let ret;
+	switch(t)
+	{
+		default:
+			ret = DefaultViewManager;
+			break;
+		case "continuous":
+			ret = ContinuousViewManager;
+			break;
+	}
+	return ret;
+};
+ePub.view = (t) => {
+	let ret;
+	switch(t)
+	{
+		default:
+			ret = IframeView;
+			break;
+		case "inline":
+			ret = InlineView;
+			break;
+	}
+	return ret;
+};
 ePub.utils = utils;
 
 export default ePub;

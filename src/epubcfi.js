@@ -14,37 +14,41 @@ import { findChildren, isNumber } from "./utils/core";
  * - Spatial Offset `(@)`
  * - Temporal-Spatial Offset `(~ + @)`
  * - Text Location Assertion `([)`
- * 
- * @example
- * new EpubCFI()
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)")
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
  */
 class EpubCFI {
 	/**
 	 * Constructor
-	 * @param {string|Range|Node} [cfiFrom] 
-	 * @param {string|object} [base] 
+	 * @param {string|Range|Node} [data] values: 'epubcfi(..)' OR range OR node
+	 * @param {string|object} [base] base component
 	 * @param {string} [ignoreClass] class to ignore when parsing DOM
+	 * @example new EpubCFI()
+	 * @example new EpubCFI("epubcfi(/6/2[cover]!/6)")
+	 * @example new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+	 * @example new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "token-hl")
 	 */
-	constructor(cfiFrom, base, ignoreClass) {
+	constructor(data, base, ignoreClass) {
 		/**
+		 * Base component
 		 * @member {object} base
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.base = {};
 		/**
-		 * @member {number} spinePos spine position
+		 * EpubCFI string format
+		 * @member {string} hash
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
-		this.spinePos = 0; // For compatibility
+		this.hash = "";
 		/**
+		 * @member {string} ignoreClass
+		 * @memberof EpubCFI
+		 * @readonly
+		 */
+		this.ignoreClass = "";
+		/**
+		 * Path component
 		 * @member {object} path
 		 * @memberof EpubCFI
 		 * @readonly
@@ -57,80 +61,126 @@ class EpubCFI {
 		 */
 		this.range = false;
 		/**
+		 * Spine position
+		 * @member {number} spinePos
+		 * @memberof EpubCFI
+		 * @readonly
+		 */
+		this.spinePos = 0; // For compatibility
+		/**
+		 * Start component
 		 * @member {object} start
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.start = null;
 		/**
+		 * End component
 		 * @member {object} end
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.end = null;
 		/**
-		 * @member {string} str EpubCFI string format
+		 * @member {string} type
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
-		this.str = "";
-
-		return this.init(cfiFrom, base, ignoreClass);
+		this.type = undefined;
+		this.set({ data, base, ignoreClass });
 	}
 
 	/**
-	 * object init
-	 * @private
+	 * Set object data options
+	 * @param {object} [options]
+	 * @param {string|Range|Node} [options.data]
+	 * @param {string|object} [options.base]
+	 * @param {string} [options.ignoreClass]
+	 * @returns {EpubCFI}
+	 * @example in: epubcfi.set({ data: "epubcfi(/6/2[cover]!/6)" })
+	 * @example in: epubcfi.set({ data: range })
+	 * @example in: epubcfi.set({ data: node })
+	 * @example in: epubcfi.set({ base: "/6/6[end]" })
+	 * @example in: epubcfi.set({ ignoreClass: "annotator-hl" })
 	 */
-	init(cfiFrom, base, ignoreClass) {
+	set(options) {
 
-		if (!(this instanceof EpubCFI)) {
-			// Allow instantiation without the "new" keyword
-			return new EpubCFI(cfiFrom, base, ignoreClass);
-		}
+		let data, base, igcl, type;
+		const b = (value) => {
+			if (base) return;
+			if (typeof value === "string") {
+				this.base = this.parseComponent(value);
+				this.spinePos = this.base.steps[1].index;
+			} else if (typeof value === "object" && value.steps) {
+				this.base = value;
+			}
+			base = this.base;
+		};
+		const c = (value) => {
+			if (igcl) return;
+			if (typeof value === "string") {
+				this.ignoreClass = value;
+			}
+			igcl = this.ignoreClass;
+		};
+		const d = (value) => {
+			if (data) return;
+			type = type || this.checkType(value);
+			if (type === "string") {
+				data = this.parse(value);
+			} else if (type === "range") {
+				data = this.fromRange(value, base, igcl);
+			} else if (type === "node") {
+				data = this.fromNode(value, base, igcl);
+			} else if (type === "EpubCFI") {
+				data = value;
+			} else if (!value) {
+				data = this;
+			} else {
+				throw new TypeError("not a valid argument for EpubCFI");
+			}
+			data.type = type || this.type;
+		};
+		Object.keys(options).forEach(opt => {
 
-		if (typeof base === "string") {
-			this.base = this.parseComponent(base);
-			this.spinePos = this.base.steps[1].index;
-		} else if (typeof base === "object" && base.steps) {
-			this.base = base;
-		}
-
-		const type = this.checkType(cfiFrom);
-		if (type === "string") {
-			return this.parse(cfiFrom);
-		} else if (type === "range") {
-			return this.fromRange(cfiFrom, this.base, ignoreClass);
-		} else if (type === "node") {
-			return this.fromNode(cfiFrom, this.base, ignoreClass);
-		} else if (type === "EpubCFI" && cfiFrom.path) {
-			return cfiFrom;
-		} else if (cfiFrom === undefined) {
-			return this;
-		} else {
-			throw new TypeError("not a valid argument for EpubCFI");
-		}
+			const value = options[opt];
+			if (this[opt] === value || typeof value === "undefined") {
+				delete options[opt];
+			} else if (opt === "data") {
+				b(options["base"]);
+				c(options["ignoreClass"]);
+				d(value);
+			} else if (opt === "base") {
+				b(value);
+				c(options["ignoreClass"]);
+				d(options["data"]);
+			} else if (opt === "ignoreClass") {
+				b(options["base"]);
+				c(value);
+				d(options["data"]);
+			}
+		});
+		return data ? Object.assign(this, data) : this;
 	}
 
 	/**
-	 * Check the type of constructor input
-	 * @param {string|Range|Node} cfi
-	 * @returns {string} argument type
-	 * @private
+	 * Check the type to input
+	 * @param {string|Range|Node} cfiFrom
+	 * @returns {string|undefined} argument type
 	 */
-	checkType(cfi) {
+	checkType(cfiFrom) {
 
-		if (typeof cfi === "undefined") {
+		if (typeof cfiFrom === "undefined") {
 			return undefined;
-		} else if (this.isCfiString(cfi)) {
+		} else if (this.isCfiString(cfiFrom)) {
 			return "string";
-		} else if (typeof cfi === "object") {
-			if (cfi instanceof Range ||
-				typeof cfi.startContainer !== "undefined") {
+		} else if (typeof cfiFrom === "object") {
+			if (cfiFrom instanceof Range ||
+				typeof cfiFrom.startContainer !== "undefined") {
 				return "range";
-			} else if (cfi instanceof Node) {
+			} else if (cfiFrom instanceof Node) {
 				return "node";
-			} else if (cfi instanceof EpubCFI) {
+			} else if (cfiFrom instanceof EpubCFI) {
 				return "EpubCFI";
 			} else return undefined;
 		} else return undefined;
@@ -257,7 +307,7 @@ class EpubCFI {
 	 * getRange
 	 * @param {string} cfiStr EubCFI string format
 	 * @example in: /6/4!/4/1:0
-	 * @returns {object[]} An array of ranges or null if the array length is not 3
+	 * @returns {object[]|null} An array of ranges or null if the array length is not 3
 	 * @private
 	 */
 	getRange(cfiStr) {
@@ -275,15 +325,30 @@ class EpubCFI {
 	}
 
 	/**
-	 * getCharecterOffsetComponent (unused)
+	 * Get the offset component of a character (unused)
 	 * @param {string} cfiStr 
 	 * @returns {string}
 	 * @private
 	 */
-	getCharecterOffsetComponent(cfiStr) {
+	getCharacterOffsetComponent(cfiStr) {
 
 		const arr = cfiStr.split(":");
 		return arr[1] || "";
+	}
+
+	/**
+	 * Check if a string is wrapped with "epubcfi()"
+	 * @param {string} str EpubCFI string format
+	 * @returns {boolean} `true` if the string is valid, `false` otherwise
+	 */
+	isCfiString(str) {
+
+		if (typeof str === "string" &&
+			str.indexOf("epubcfi(") === 0 &&
+			str[str.length - 1] === ")") {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -328,10 +393,11 @@ class EpubCFI {
 				offset: null,
 				assertion: null
 			}
-		}
+		};
 
 		let step, curNode = node;
-		while (curNode &&
+		while (
+			curNode &&
 			curNode.parentNode &&
 			curNode.parentNode.nodeType !== Node.DOCUMENT_NODE) {
 
@@ -348,7 +414,10 @@ class EpubCFI {
 		if (offset !== null && offset >= 0) {
 			segment.terminal.offset = offset;
 			// Make sure we are getting to a textNode if there is an offset
-			if (segment.steps[segment.steps.length - 1].type !== "text") {
+			const len = segment.steps.length;
+			const idx = len ? (len - 1) : len;
+			const stp = idx ? segment.steps[idx].type : null; 
+			if (stp && stp !== "text") {
 				segment.steps.push({
 					index: 0,
 					type: "text"
@@ -482,17 +551,17 @@ class EpubCFI {
 	 */
 	findNode(steps, doc, ignoreClass) {
 
-		const _doc = doc || document;
+		const dc = doc || document;
 		let container;
 
 		if (ignoreClass) {
-			container = this.walkToNode(steps, _doc, ignoreClass);
-		} else if (typeof _doc.evaluate !== "undefined") {
+			container = this.walkToNode(steps, dc, ignoreClass);
+		} else if (typeof dc.evaluate !== "undefined") {
 			const xpath = this.stepsToXpath(steps);
 			const xtype = XPathResult.FIRST_ORDERED_NODE_TYPE;
-			container = _doc.evaluate(xpath, _doc, null, xtype, null).singleNodeValue;
+			container = dc.evaluate(xpath, dc, null, xtype, null).singleNodeValue;
 		} else {
-			container = this.walkToNode(steps, _doc);
+			container = this.walkToNode(steps, dc);
 		}
 
 		return container;
@@ -573,11 +642,11 @@ class EpubCFI {
 
 		const cfi = new EpubCFI();
 		const start = range.startContainer;
-		const doc = start.ownerDocument;
 		const end = range.endContainer;
 		let startOffset = range.startOffset;
 		let endOffset = range.endOffset;
 		let needsIgnoring = false;
+		const doc = start.ownerDocument;
 
 		if (ignoreClass) {
 			// Tell pathTo if / what to ignore
@@ -591,17 +660,18 @@ class EpubCFI {
 			cfi.base = base;
 		}
 
-		if (range.collapsed) {
+		const offset = () => {
 			if (needsIgnoring) {
 				startOffset = this.patchOffset(start, startOffset, ignoreClass);
 			}
+		};
+
+		if (range.collapsed) {
+			offset();
 			cfi.path = this.pathTo(start, startOffset, ignoreClass);
 		} else {
 			cfi.range = true;
-
-			if (needsIgnoring) {
-				startOffset = this.patchOffset(start, startOffset, ignoreClass);
-			}
+			offset();
 
 			cfi.start = this.pathTo(start, startOffset, ignoreClass);
 			if (needsIgnoring) {
@@ -642,21 +712,6 @@ class EpubCFI {
 		}
 
 		return cfi;
-	}
-
-	/**
-	 * Check if a string is wrapped with "epubcfi()"
-	 * @param {string} str EpubCFI string format
-	 * @returns {boolean} `true` if the string is valid, `false` otherwise
-	 */
-	isCfiString(str) {
-
-		if (typeof str === "string" &&
-			str.indexOf("epubcfi(") === 0 &&
-			str[str.length - 1] === ")") {
-			return true;
-		}
-		return false;
 	}
 
 	/**
@@ -715,7 +770,7 @@ class EpubCFI {
 
 		if (this.isCfiString(cfiStr)) {
 			// Remove initial 'epubcfi(' and ending ')'
-			cfi.str = cfiStr; // save EpubCFI string
+			cfi.hash = cfiStr; // save EpubCFI string
 			cfiStr = cfiStr.slice(8, cfiStr.length - 1);
 		} else {
 			throw new Error("invalid EpubCFI string format");
@@ -1001,15 +1056,15 @@ class EpubCFI {
 	 */
 	toRange(doc, ignoreClass) {
 
-		const _doc = doc || document;
+		const dc = doc || document;
 		let start, end, startContainer, endContainer;
 		let startSteps, endSteps, hasOffset;
-		const needsIgnoring = ignoreClass && (_doc.querySelector("." + ignoreClass) !== null);
+		let range, missed;
+		const needsIgnoring = ignoreClass && (dc.querySelector("." + ignoreClass) !== null);
 		const reqClass = needsIgnoring ? ignoreClass : undefined;
 
-		let range, missed;
-		if (typeof (_doc.createRange) !== "undefined") {
-			range = _doc.createRange();
+		if (typeof (dc.createRange) !== "undefined") {
+			range = dc.createRange();
 		} else {
 			range = new RangeObject();
 		}
@@ -1017,14 +1072,14 @@ class EpubCFI {
 		if (this.range) {
 			start = this.start;
 			startSteps = this.path.steps.concat(start.steps);
-			startContainer = this.findNode(startSteps, _doc, reqClass);
+			startContainer = this.findNode(startSteps, dc, reqClass);
 			end = this.end;
 			endSteps = this.path.steps.concat(end.steps);
-			endContainer = this.findNode(endSteps, _doc, reqClass);
+			endContainer = this.findNode(endSteps, dc, reqClass);
 		} else {
 			start = this.path;
 			startSteps = this.path.steps;
-			startContainer = this.findNode(startSteps, _doc, reqClass);
+			startContainer = this.findNode(startSteps, dc, reqClass);
 		}
 
 		if (startContainer) {
@@ -1032,13 +1087,14 @@ class EpubCFI {
 				hasOffset = start.terminal.offset !== null;
 				range.setStart(startContainer, hasOffset ? start.terminal.offset : 0);
 			} catch (e) {
-				missed = this.fixMiss(startSteps, start.terminal.offset, _doc, reqClass);
+				missed = this.fixMiss(startSteps, start.terminal.offset, dc, reqClass);
 				range.setStart(missed.container, missed.offset);
-				console.error(e);
+				console.warn(e);
 			}
 		} else {
-			console.error("No startContainer found for", this.toString());
-			return null; // No start found
+			// console.error("No startContainer found for", this.toString());
+			// return null; // No start found
+			throw new Error("No startContainer found for", this.toString());
 		}
 
 		if (endContainer) {
@@ -1046,9 +1102,9 @@ class EpubCFI {
 				hasOffset = end.terminal.offset !== null;
 				range.setEnd(endContainer, hasOffset ? end.terminal.offset : 0);
 			} catch (e) {
-				missed = this.fixMiss(endSteps, this.end.terminal.offset, _doc, reqClass);
+				missed = this.fixMiss(endSteps, this.end.terminal.offset, dc, reqClass);
 				range.setEnd(missed.container, missed.offset);
-				console.error(e);
+				console.warn(e);
 			}
 		}
 
@@ -1088,8 +1144,8 @@ class EpubCFI {
 	 */
 	walkToNode(steps, doc, ignoreClass) {
 
-		const _doc = doc || document;
-		let container = _doc.documentElement;
+		const dc = doc || document;
+		let container = dc.documentElement;
 
 		for (let i = 0, len = steps.length; i < len; i++) {
 			const step = steps[i];
@@ -1098,7 +1154,7 @@ class EpubCFI {
 				//better to get a container using id as some times step.index may not be correct
 				//For ex.https://github.com/futurepress/epub.js/issues/561
 				if (step.id) {
-					container = _doc.getElementById(step.id);
+					container = dc.getElementById(step.id);
 				}
 				else {
 					const children = container.children || findChildren(container);
