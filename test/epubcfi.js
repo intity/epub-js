@@ -2,42 +2,217 @@ import assert from "assert"
 import request from "../src/utils/request"
 import EpubCFI from "../src/epubcfi"
 
+const ASSERTION_TYPES = {
+	I: 0, // INIT
+	H: 1, // HASH
+	N: 2, // NODE
+	R: 4  // RANGE
+}
+
+const assertion = (inst, hash, t) => {
+	switch (t) {
+		case ASSERTION_TYPES.I:
+			//--TARGET
+			assert.equal(inst.hash, "")
+			assert.equal(inst.type, undefined)
+			//--RANGE
+			assert.equal(inst.range, false)
+			assert.equal(inst.start, null)
+			assert.equal(inst.end, null)
+			//--BASE:PATH
+			assert.equal(Object.keys(inst.base).length, 0)
+			assert.equal(Object.keys(inst.path).length, 0)
+			//--MISC
+			assert.equal(inst.spinePos, 0)
+			assert.equal(inst.ignoreClass, "")
+			assert.equal(inst.toString(), "epubcfi(/!/)")
+			break;
+		case ASSERTION_TYPES.H:
+			//--TARGET
+			assert.equal(inst.hash, hash)
+			assert.equal(inst.type, "string")
+			//--RANGE
+			if (inst.range) {
+				assert.equal(inst.range, true)
+				assert.equal(inst.start.steps.length, 1)
+				assert.equal(inst.end.steps.length, 1)
+			} else {
+				assert.equal(inst.range, false)
+				assert.equal(inst.start, null)
+				assert.equal(inst.end, null)
+			}
+			//--BASE
+			assert.equal(inst.base.steps.length, 2)
+			assert.equal(inst.base.steps[0].id, null)
+			assert.equal(inst.base.steps[0].index, 2)
+			assert.equal(inst.base.steps[0].type, "element")
+			assert.equal(inst.base.steps[1].id, null)
+			assert.equal(inst.base.steps[1].index, 0)
+			assert.equal(inst.base.steps[1].type, "element")
+			assert.equal(inst.base.terminal.assertion, null)
+			assert.equal(inst.base.terminal.offset, null)
+			//--PATH
+			assert.equal(inst.path.steps[0].id, null)
+			assert.equal(inst.path.steps[0].index, 1)
+			assert.equal(inst.path.steps[0].type, "element")
+			assert.equal(inst.path.steps[1].id, "toc")
+			assert.equal(inst.path.steps[1].index, 0)
+			assert.equal(inst.path.steps[1].type, "element")
+			assert.equal(inst.path.steps[2].id, "contents")
+			assert.equal(inst.path.steps[2].index, 0)
+			assert.equal(inst.path.steps[2].type, "element")
+			assert.equal(inst.path.terminal.assertion, null)
+			if (inst.range) {
+				assert.equal(inst.path.steps.length, 3)
+				assert.equal(inst.path.terminal.offset, null)
+			} else {
+				assert.equal(inst.path.steps.length, 4)
+				assert.equal(inst.path.steps[3].id, null)
+				assert.equal(inst.path.steps[3].index, 0)
+				assert.equal(inst.path.steps[3].type, "text")
+				assert.equal(inst.path.terminal.offset, 0)
+			}
+			//--MISC
+			assert.equal(inst.spinePos, 0)
+			assert.equal(inst.ignoreClass, "")
+			assert.equal(inst.toString(), hash)
+			break;
+		case ASSERTION_TYPES.N:
+		case ASSERTION_TYPES.R:
+			//--TARGET
+			assert.equal(inst.hash, "")
+			if (inst.type === "node") {
+				assert.equal(inst.type, "node")
+			} else {
+				assert.equal(inst.type, "range")
+			}
+			//--RANGE
+			if (inst.range) {
+				assert.equal(inst.range, true)
+			} else {
+				assert.equal(inst.range, false)
+				assert.equal(inst.start, null)
+				assert.equal(inst.end, null)
+			}
+			//--BASE
+			assert.equal(inst.base.steps.length, 2)
+			assert.equal(inst.base.steps[0].id, null)
+			assert.equal(inst.base.steps[0].index, 2)
+			assert.equal(inst.base.steps[0].type, "element")
+			assert.equal(inst.base.steps[1].id, null)
+			assert.equal(inst.base.steps[1].index, 0)
+			assert.equal(inst.base.steps[1].type, "element")
+			assert.equal(inst.base.terminal.assertion, null)
+			assert.equal(inst.base.terminal.offset, null)
+			//--PATH
+			assert.equal(inst.path.steps.length, 0)
+			assert.equal(inst.path.terminal.assertion, null)
+			if (inst.type === "node") {
+				assert.equal(inst.path.terminal.offset, null)
+			} else {
+				assert.equal(inst.path.terminal.offset, 0)
+			}
+			//--MISC
+			assert.equal(inst.spinePos, 0)
+			assert.equal(inst.ignoreClass, "")
+			if (inst.type === "node") {
+				assert.equal(inst.toString(), "epubcfi(/6/2!/)")
+			} else {
+				assert.equal(inst.toString(), "epubcfi(/6/2!/:0)")
+			}
+			break;
+	}
+}
+
 describe("EpubCFI", () => {
-	let doc1, doc2, doc3
+	let doc0, doc1, doc2, doc3
 	before(async () => {
+		doc0 = await request("../assets/handbook/EPUB/xhtml/nav.xhtml")
 		doc1 = await request("../assets/chapter1.xhtml")
 		doc2 = await request("../assets/chapter1-highlights.xhtml")
 		doc3 = await request("../assets/highlight.xhtml")
 	})
 	describe("#constructor()", () => {
-		it("should parse a cfi on init", () => {
-			const cfi = new EpubCFI("epubcfi(/6/2[cover]!/6)")
-			assert.equal(cfi.spinePos, 0)
+		const base = "/6/2"
+		it("should be created instance by default", () => {
+			const inst = new EpubCFI()
+			assertion(inst, null, ASSERTION_TYPES.I)
 		})
-		it("should parse a cfi and ignore the base if present", () => {
-			const cfi = new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
-			assert.equal(cfi.spinePos, 0)
+		it("should be created instance with (hash)", () => {
+			const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)"
+			const inst = new EpubCFI(hash)
+			assertion(inst, hash, ASSERTION_TYPES.H)
+		})
+		it("should be created instance with (hash) to range", () => {
+			const hash = "epubcfi(/6/2!/4/2[toc]/2[contents],/1:0,/1:17)"
+			const inst = new EpubCFI(hash)
+			assertion(inst, hash, ASSERTION_TYPES.H)
+		})
+		it("should be created instance with (node, base)", () => {
+			const node = doc0.documentElement
+			const inst = new EpubCFI(node, base)
+			assertion(inst, null, ASSERTION_TYPES.N)
+		})
+		it("should be created instanse with (range, base)", () => {
+			const range = doc0.createRange()
+			const inst = new EpubCFI(range, base)
+			assertion(inst, null, ASSERTION_TYPES.R)
+		})
+	})
+	describe("#set()", () => {
+		const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)"
+		const inst = new EpubCFI()
+		it("should be update epubcfi.hash", () => {
+			inst.set({ data: hash })
+			assert.equal(inst.range, false)
+			assert.equal(inst.hash, hash)
+			assert.equal(inst.type, "string")
+			assert.equal(inst.toString(), hash)
+		})
+		it("should be update epubcfi.base component", () => {
+			const base = "/6/2"
+			inst.set({ base })
+			assert.equal(inst.range, false)
+			assert.equal(inst.hash, hash)
+			assert.equal(inst.type, "string")
+			assert.equal(inst.toString(), hash)
+		})
+		it("should be update epubcfi.type of node", () => {
+			const data = doc0.documentElement
+			inst.set({ data })
+			assert.equal(inst.range, false)
+			assert.equal(inst.hash, "")
+			assert.equal(inst.type, "node")
+			assert.equal(inst.toString(), "epubcfi(/6/2!/)")
+		})
+		it("should be update epubcfi.type of range", () => {
+			const data = doc0.createRange()
+			inst.set({ data })
+			assert.equal(inst.range, false)
+			assert.equal(inst.hash, "")
+			assert.equal(inst.type, "range")
+			assert.equal(inst.toString(), "epubcfi(/6/2!/:0)")
 		})
 	})
 	describe("#parse()", () => {
 		it("should parse a cfi", () => {
-			const cfi = "epubcfi(/6/2[cover]!/6)"
-			const parsed = EpubCFI.prototype.parse(cfi)
+			const hash = "epubcfi(/6/2[cover]!/6)"
+			const parsed = EpubCFI.prototype.parse(hash)
 			assert.equal(parsed.spinePos, 0)
 		})
 		xit("should parse a cfi and ignore the base if present", () => {
-			const cfi = "epubcfi(/6/2[cover]!/6)"
-			const parsed = EpubCFI.prototype.parse(cfi, "/6/6[end]")
+			const hash = "epubcfi(/6/2[cover]!/6)"
+			const parsed = EpubCFI.prototype.parse(hash, "/6/6[end]")
 			assert.equal(parsed.spinePos, 0)
 		}) // TODO: comparison of the base component from the parse method is not implemented
 		it("should parse a cfi with a character offset", () => {
-			const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)"
-			const parsed = EpubCFI.prototype.parse(cfi)
+			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)"
+			const parsed = EpubCFI.prototype.parse(hash)
 			assert.equal(parsed.path.terminal.offset, 3)
 		})
 		it("should parse a cfi with a range", () => {
-			const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)"
-			const parsed = EpubCFI.prototype.parse(cfi)
+			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)"
+			const parsed = EpubCFI.prototype.parse(hash)
 			assert.equal(parsed.range, true)
 			assert.equal(parsed.start.steps.length, 2)
 			assert.equal(parsed.end.steps.length, 1)
@@ -57,22 +232,34 @@ describe("EpubCFI", () => {
 	})
 	describe("#checkType()", () => {
 		it("should determine the type as cfi string", () => {
-			assert.equal(EpubCFI.prototype.checkType("epubcfi(/6/2[cover]!/6)"), "string")
+			const hash = "epubcfi(/6/2[cover]!/6)"
+			const type = EpubCFI.prototype.checkType(hash)
+			assert.equal(type, "string")
 		})
 		it("should determine the type as EpubCFI instance", () => {
-			const cfi = new EpubCFI("epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)")
-			assert.equal(EpubCFI.prototype.checkType(cfi), "EpubCFI")
+			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)"
+			const inst = new EpubCFI(hash)
+			const type = EpubCFI.prototype.checkType(inst)
+			assert.equal(type, "EpubCFI")
 		})
 		it("should determine the type as node", () => {
 			const node = document.createElement("div")
-			assert.equal(EpubCFI.prototype.checkType(node), "node")
+			const type = EpubCFI.prototype.checkType(node)
+			assert.equal(type, "node")
 		})
 		it("should determine the type as range", () => {
 			const range = document.createRange()
-			assert.equal(EpubCFI.prototype.checkType(range), "range")
+			const type = EpubCFI.prototype.checkType(range)
+			assert.equal(type, "range")
 		})
 		it("should determine the type as undefined", () => {
-			assert.equal(EpubCFI.prototype.checkType("/6/2[cover]!/6"), undefined)
+			[
+				"",
+				"/6/2[cover]!/6",
+				"epubcfi(/6/2[cover]!/6"
+			].forEach(val => {
+				assert.equal(EpubCFI.prototype.checkType(val), undefined)
+			})
 		})
 	})
 	describe("#compare()", () => {
@@ -320,8 +507,8 @@ describe("EpubCFI", () => {
 	})
 	describe("#isCfiString()", () => {
 		it("should check if the string is wrapped using 'epubcfi()'", () => {
-			const cfi = new EpubCFI()
-			assert.equal(cfi.isCfiString("epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)"), true)
+			const hash = "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)"
+			assert.equal(EpubCFI.prototype.isCfiString(hash), true)
 		})
 	})
 })
