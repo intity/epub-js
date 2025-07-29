@@ -17,37 +17,41 @@ Does Not Implement:
 - Text Location Assertion `([)`  
 
 * [EpubCFI](#EpubCFI)
-    * [new EpubCFI([cfiFrom], [base], [ignoreClass])](#new_EpubCFI_new)
+    * [new EpubCFI([data], [base], [ignoreClass])](#new_EpubCFI_new)
     * _instance_
+        * [.set([options])](#EpubCFI+set) ⇒ [<code>EpubCFI</code>](#EpubCFI)
+        * [.checkType(cfiFrom)](#EpubCFI+checkType) ⇒ <code>string</code> \| <code>undefined</code>
         * [.collapse([toStart])](#EpubCFI+collapse)
         * [.compare(cfiOne, cfiTwo)](#EpubCFI+compare) ⇒ <code>number</code>
         * [.generateChapterComponent(spineNodeIndex, position, [id])](#EpubCFI+generateChapterComponent) ⇒ <code>string</code>
+        * [.isCfiString(str)](#EpubCFI+isCfiString) ⇒ <code>boolean</code>
         * [.fromNode(node, base, [ignoreClass])](#EpubCFI+fromNode) ⇒ [<code>EpubCFI</code>](#EpubCFI)
         * [.fromRange(range, base, [ignoreClass])](#EpubCFI+fromRange) ⇒ [<code>EpubCFI</code>](#EpubCFI)
-        * [.isCfiString(str)](#EpubCFI+isCfiString) ⇒ <code>boolean</code>
         * [.parse(cfiStr)](#EpubCFI+parse) ⇒ [<code>EpubCFI</code>](#EpubCFI)
         * [.toRange([doc], [ignoreClass])](#EpubCFI+toRange) ⇒ <code>Range</code>
         * [.toString()](#EpubCFI+toString) ⇒ <code>string</code>
         * [.destroy()](#EpubCFI+destroy)
     * _static_
         * [.base](#EpubCFI.base) : <code>object</code>
-        * [.spinePos](#EpubCFI.spinePos) : <code>number</code>
+        * [.hash](#EpubCFI.hash) : <code>string</code>
+        * [.ignoreClass](#EpubCFI.ignoreClass) : <code>string</code>
         * [.path](#EpubCFI.path) : <code>object</code>
         * [.range](#EpubCFI.range) : <code>boolean</code>
+        * [.spinePos](#EpubCFI.spinePos) : <code>number</code>
         * [.start](#EpubCFI.start) : <code>object</code>
         * [.end](#EpubCFI.end) : <code>object</code>
-        * [.str](#EpubCFI.str) : <code>string</code>
+        * [.type](#EpubCFI.type) : <code>string</code>
 
 <a name="new_EpubCFI_new"></a>
 
-## new EpubCFI([cfiFrom], [base], [ignoreClass])
+## new EpubCFI([data], [base], [ignoreClass])
 Constructor
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [cfiFrom] | <code>string</code> \| <code>Range</code> \| <code>Node</code> |  |
-| [base] | <code>string</code> \| <code>object</code> |  |
+| [data] | <code>string</code> \| <code>Range</code> \| <code>Node</code> | values: 'epubcfi(..)' OR range OR node |
+| [base] | <code>string</code> \| <code>object</code> | base component |
 | [ignoreClass] | <code>string</code> | class to ignore when parsing DOM |
 
 **Example**  
@@ -64,8 +68,54 @@ new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
 ```
 **Example**  
 ```js
-new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
+new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "token-hl")
 ```
+<a name="EpubCFI+set"></a>
+
+## epubCFI.set([options]) ⇒ [<code>EpubCFI</code>](#EpubCFI)
+Set object data options
+
+**Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
+
+| Param | Type |
+| --- | --- |
+| [options] | <code>object</code> | 
+| [options.data] | <code>string</code> \| <code>Range</code> \| <code>Node</code> | 
+| [options.base] | <code>string</code> \| <code>object</code> | 
+| [options.ignoreClass] | <code>string</code> | 
+
+**Example**  
+```js
+in: epubcfi.set({ data: "epubcfi(/6/2[cover]!/6)" })
+```
+**Example**  
+```js
+in: epubcfi.set({ data: range })
+```
+**Example**  
+```js
+in: epubcfi.set({ data: node })
+```
+**Example**  
+```js
+in: epubcfi.set({ base: "/6/6[end]" })
+```
+**Example**  
+```js
+in: epubcfi.set({ ignoreClass: "annotator-hl" })
+```
+<a name="EpubCFI+checkType"></a>
+
+## epubCFI.checkType(cfiFrom) ⇒ <code>string</code> \| <code>undefined</code>
+Check the type to input
+
+**Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
+**Returns**: <code>string</code> \| <code>undefined</code> - argument type  
+
+| Param | Type |
+| --- | --- |
+| cfiFrom | <code>string</code> \| <code>Range</code> \| <code>Node</code> | 
+
 <a name="EpubCFI+collapse"></a>
 
 ## epubCFI.collapse([toStart])
@@ -104,6 +154,18 @@ Generate chapter component
 | position | <code>number</code> | 
 | [id] | <code>string</code> | 
 
+<a name="EpubCFI+isCfiString"></a>
+
+## epubCFI.isCfiString(str) ⇒ <code>boolean</code>
+Check if a string is wrapped with "epubcfi()"
+
+**Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
+**Returns**: <code>boolean</code> - `true` if the string is valid, `false` otherwise  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| str | <code>string</code> | EpubCFI string format |
+
 <a name="EpubCFI+fromNode"></a>
 
 ## epubCFI.fromNode(node, base, [ignoreClass]) ⇒ [<code>EpubCFI</code>](#EpubCFI)
@@ -129,18 +191,6 @@ Create a CFI object from a Range
 | range | <code>Range</code> | 
 | base | <code>string</code> \| <code>object</code> | 
 | [ignoreClass] | <code>string</code> | 
-
-<a name="EpubCFI+isCfiString"></a>
-
-## epubCFI.isCfiString(str) ⇒ <code>boolean</code>
-Check if a string is wrapped with "epubcfi()"
-
-**Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
-**Returns**: <code>boolean</code> - `true` if the string is valid, `false` otherwise  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| str | <code>string</code> | EpubCFI string format |
 
 <a name="EpubCFI+parse"></a>
 
@@ -182,18 +232,27 @@ Destroy the EpubCFI object
 <a name="EpubCFI.base"></a>
 
 ## EpubCFI.base : <code>object</code>
+Base component
+
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
-<a name="EpubCFI.spinePos"></a>
+<a name="EpubCFI.hash"></a>
 
-## EpubCFI.spinePos : <code>number</code>
-spine position
+## EpubCFI.hash : <code>string</code>
+EpubCFI string format
 
+**Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
+**Read only**: true  
+<a name="EpubCFI.ignoreClass"></a>
+
+## EpubCFI.ignoreClass : <code>string</code>
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
 <a name="EpubCFI.path"></a>
 
 ## EpubCFI.path : <code>object</code>
+Path component
+
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
 <a name="EpubCFI.range"></a>
@@ -201,20 +260,29 @@ spine position
 ## EpubCFI.range : <code>boolean</code>
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
+<a name="EpubCFI.spinePos"></a>
+
+## EpubCFI.spinePos : <code>number</code>
+Spine position
+
+**Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
+**Read only**: true  
 <a name="EpubCFI.start"></a>
 
 ## EpubCFI.start : <code>object</code>
+Start component
+
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
 <a name="EpubCFI.end"></a>
 
 ## EpubCFI.end : <code>object</code>
+End component
+
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
-<a name="EpubCFI.str"></a>
+<a name="EpubCFI.type"></a>
 
-## EpubCFI.str : <code>string</code>
-EpubCFI string format
-
+## EpubCFI.type : <code>string</code>
 **Kind**: static property of [<code>EpubCFI</code>](#EpubCFI)  
 **Read only**: true  
