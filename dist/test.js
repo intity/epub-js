@@ -15997,37 +15997,41 @@ $({ target: 'Map', proto: true, real: true, forced: true }, {
  * - Spatial Offset `(@)`
  * - Temporal-Spatial Offset `(~ + @)`
  * - Text Location Assertion `([)`
- * 
- * @example
- * new EpubCFI()
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)")
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
- * @example
- * new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "annotator-hl")
  */
 class EpubCFI {
   /**
    * Constructor
-   * @param {string|Range|Node} [cfiFrom] 
-   * @param {string|object} [base] 
+   * @param {string|Range|Node} [data] values: 'epubcfi(..)' OR range OR node
+   * @param {string|object} [base] base component
    * @param {string} [ignoreClass] class to ignore when parsing DOM
+   * @example new EpubCFI()
+   * @example new EpubCFI("epubcfi(/6/2[cover]!/6)")
+   * @example new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]")
+   * @example new EpubCFI("epubcfi(/6/2[cover]!/6)", "/6/6[end]", "token-hl")
    */
-  constructor(cfiFrom, base, ignoreClass) {
+  constructor(data, base, ignoreClass) {
     /**
+     * Base component
      * @member {object} base
      * @memberof EpubCFI
      * @readonly
      */
     this.base = {};
     /**
-     * @member {number} spinePos spine position
+     * EpubCFI string format
+     * @member {string} hash
      * @memberof EpubCFI
      * @readonly
      */
-    this.spinePos = 0; // For compatibility
+    this.hash = "";
     /**
+     * @member {string} ignoreClass
+     * @memberof EpubCFI
+     * @readonly
+     */
+    this.ignoreClass = "";
+    /**
+     * Path component
      * @member {object} path
      * @memberof EpubCFI
      * @readonly
@@ -16040,74 +16044,126 @@ class EpubCFI {
      */
     this.range = false;
     /**
+     * Spine position
+     * @member {number} spinePos
+     * @memberof EpubCFI
+     * @readonly
+     */
+    this.spinePos = 0; // For compatibility
+    /**
+     * Start component
      * @member {object} start
      * @memberof EpubCFI
      * @readonly
      */
     this.start = null;
     /**
+     * End component
      * @member {object} end
      * @memberof EpubCFI
      * @readonly
      */
     this.end = null;
     /**
-     * @member {string} str EpubCFI string format
+     * @member {string} type
      * @memberof EpubCFI
      * @readonly
      */
-    this.str = "";
-    return this.init(cfiFrom, base, ignoreClass);
+    this.type = undefined;
+    this.set({
+      data,
+      base,
+      ignoreClass
+    });
   }
 
   /**
-   * object init
-   * @private
+   * Set object data options
+   * @param {object} [options]
+   * @param {string|Range|Node} [options.data]
+   * @param {string|object} [options.base]
+   * @param {string} [options.ignoreClass]
+   * @returns {EpubCFI}
+   * @example in: epubcfi.set({ data: "epubcfi(/6/2[cover]!/6)" })
+   * @example in: epubcfi.set({ data: range })
+   * @example in: epubcfi.set({ data: node })
+   * @example in: epubcfi.set({ base: "/6/6[end]" })
+   * @example in: epubcfi.set({ ignoreClass: "annotator-hl" })
    */
-  init(cfiFrom, base, ignoreClass) {
-    if (!(this instanceof EpubCFI)) {
-      // Allow instantiation without the "new" keyword
-      return new EpubCFI(cfiFrom, base, ignoreClass);
-    }
-    if (typeof base === "string") {
-      this.base = this.parseComponent(base);
-      this.spinePos = this.base.steps[1].index;
-    } else if (typeof base === "object" && base.steps) {
-      this.base = base;
-    }
-    const type = this.checkType(cfiFrom);
-    if (type === "string") {
-      return this.parse(cfiFrom);
-    } else if (type === "range") {
-      return this.fromRange(cfiFrom, this.base, ignoreClass);
-    } else if (type === "node") {
-      return this.fromNode(cfiFrom, this.base, ignoreClass);
-    } else if (type === "EpubCFI" && cfiFrom.path) {
-      return cfiFrom;
-    } else if (cfiFrom === undefined) {
-      return this;
-    } else {
-      throw new TypeError("not a valid argument for EpubCFI");
-    }
+  set(options) {
+    let data, base, igcl, type;
+    const b = value => {
+      if (base) return;
+      if (typeof value === "string") {
+        this.base = this.parseComponent(value);
+        this.spinePos = this.base.steps[1].index;
+      } else if (typeof value === "object" && value.steps) {
+        this.base = value;
+      }
+      base = this.base;
+    };
+    const c = value => {
+      if (igcl) return;
+      if (typeof value === "string") {
+        this.ignoreClass = value;
+      }
+      igcl = this.ignoreClass;
+    };
+    const d = value => {
+      if (data) return;
+      type = type || this.checkType(value);
+      if (type === "string") {
+        data = this.parse(value);
+      } else if (type === "range") {
+        data = this.fromRange(value, base, igcl);
+      } else if (type === "node") {
+        data = this.fromNode(value, base, igcl);
+      } else if (type === "EpubCFI") {
+        data = value;
+      } else if (!value) {
+        data = this;
+      } else {
+        throw new TypeError("not a valid argument for EpubCFI");
+      }
+      data.type = type || this.type;
+    };
+    Object.keys(options).forEach(opt => {
+      const value = options[opt];
+      if (this[opt] === value || typeof value === "undefined") {
+        delete options[opt];
+      } else if (opt === "data") {
+        b(options["base"]);
+        c(options["ignoreClass"]);
+        d(value);
+      } else if (opt === "base") {
+        b(value);
+        c(options["ignoreClass"]);
+        d(options["data"]);
+      } else if (opt === "ignoreClass") {
+        b(options["base"]);
+        c(value);
+        d(options["data"]);
+      }
+    });
+    return data ? Object.assign(this, data) : this;
   }
 
   /**
-   * Check the type of constructor input
-   * @param {string|Range|Node} cfi
-   * @returns {string} argument type
-   * @private
+   * Check the type to input
+   * @param {string|Range|Node} cfiFrom
+   * @returns {string|undefined} argument type
    */
-  checkType(cfi) {
-    if (typeof cfi === "undefined") {
+  checkType(cfiFrom) {
+    if (typeof cfiFrom === "undefined") {
       return undefined;
-    } else if (this.isCfiString(cfi)) {
+    } else if (this.isCfiString(cfiFrom)) {
       return "string";
-    } else if (typeof cfi === "object") {
-      if (cfi instanceof Range || typeof cfi.startContainer !== "undefined") {
+    } else if (typeof cfiFrom === "object") {
+      if (cfiFrom instanceof Range || typeof cfiFrom.startContainer !== "undefined") {
         return "range";
-      } else if (cfi instanceof Node) {
+      } else if (cfiFrom instanceof Node) {
         return "node";
-      } else if (cfi instanceof EpubCFI) {
+      } else if (cfiFrom instanceof EpubCFI) {
         return "EpubCFI";
       } else return undefined;
     } else return undefined;
@@ -16224,7 +16280,7 @@ class EpubCFI {
    * getRange
    * @param {string} cfiStr EubCFI string format
    * @example in: /6/4!/4/1:0
-   * @returns {object[]} An array of ranges or null if the array length is not 3
+   * @returns {object[]|null} An array of ranges or null if the array length is not 3
    * @private
    */
   getRange(cfiStr) {
@@ -16236,14 +16292,26 @@ class EpubCFI {
   }
 
   /**
-   * getCharecterOffsetComponent (unused)
+   * Get the offset component of a character (unused)
    * @param {string} cfiStr 
    * @returns {string}
    * @private
    */
-  getCharecterOffsetComponent(cfiStr) {
+  getCharacterOffsetComponent(cfiStr) {
     const arr = cfiStr.split(":");
     return arr[1] || "";
+  }
+
+  /**
+   * Check if a string is wrapped with "epubcfi()"
+   * @param {string} str EpubCFI string format
+   * @returns {boolean} `true` if the string is valid, `false` otherwise
+   */
+  isCfiString(str) {
+    if (typeof str === "string" && str.indexOf("epubcfi(") === 0 && str[str.length - 1] === ")") {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -16299,7 +16367,10 @@ class EpubCFI {
     if (offset !== null && offset >= 0) {
       segment.terminal.offset = offset;
       // Make sure we are getting to a textNode if there is an offset
-      if (segment.steps[segment.steps.length - 1].type !== "text") {
+      const len = segment.steps.length;
+      const idx = len ? len - 1 : len;
+      const stp = idx ? segment.steps[idx].type : null;
+      if (stp && stp !== "text") {
         segment.steps.push({
           index: 0,
           type: "text"
@@ -16417,16 +16488,16 @@ class EpubCFI {
    * @private
    */
   findNode(steps, doc, ignoreClass) {
-    const _doc = doc || document;
+    const dc = doc || document;
     let container;
     if (ignoreClass) {
-      container = this.walkToNode(steps, _doc, ignoreClass);
-    } else if (typeof _doc.evaluate !== "undefined") {
+      container = this.walkToNode(steps, dc, ignoreClass);
+    } else if (typeof dc.evaluate !== "undefined") {
       const xpath = this.stepsToXpath(steps);
       const xtype = XPathResult.FIRST_ORDERED_NODE_TYPE;
-      container = _doc.evaluate(xpath, _doc, null, xtype, null).singleNodeValue;
+      container = dc.evaluate(xpath, dc, null, xtype, null).singleNodeValue;
     } else {
-      container = this.walkToNode(steps, _doc);
+      container = this.walkToNode(steps, dc);
     }
     return container;
   }
@@ -16497,11 +16568,11 @@ class EpubCFI {
   fromRange(range, base, ignoreClass) {
     const cfi = new EpubCFI();
     const start = range.startContainer;
-    const doc = start.ownerDocument;
     const end = range.endContainer;
     let startOffset = range.startOffset;
     let endOffset = range.endOffset;
     let needsIgnoring = false;
+    const doc = start.ownerDocument;
     if (ignoreClass) {
       // Tell pathTo if / what to ignore
       needsIgnoring = doc.querySelector("." + ignoreClass) !== null;
@@ -16512,16 +16583,17 @@ class EpubCFI {
     } else if (typeof base === "object") {
       cfi.base = base;
     }
-    if (range.collapsed) {
+    const offset = () => {
       if (needsIgnoring) {
         startOffset = this.patchOffset(start, startOffset, ignoreClass);
       }
+    };
+    if (range.collapsed) {
+      offset();
       cfi.path = this.pathTo(start, startOffset, ignoreClass);
     } else {
       cfi.range = true;
-      if (needsIgnoring) {
-        startOffset = this.patchOffset(start, startOffset, ignoreClass);
-      }
+      offset();
       cfi.start = this.pathTo(start, startOffset, ignoreClass);
       if (needsIgnoring) {
         endOffset = this.patchOffset(end, endOffset, ignoreClass);
@@ -16558,18 +16630,6 @@ class EpubCFI {
       // TODO: Add Sanity check to make sure that the end if greater than the start
     }
     return cfi;
-  }
-
-  /**
-   * Check if a string is wrapped with "epubcfi()"
-   * @param {string} str EpubCFI string format
-   * @returns {boolean} `true` if the string is valid, `false` otherwise
-   */
-  isCfiString(str) {
-    if (typeof str === "string" && str.indexOf("epubcfi(") === 0 && str[str.length - 1] === ")") {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -16616,7 +16676,7 @@ class EpubCFI {
     }
     if (this.isCfiString(cfiStr)) {
       // Remove initial 'epubcfi(' and ending ')'
-      cfi.str = cfiStr; // save EpubCFI string
+      cfi.hash = cfiStr; // save EpubCFI string
       cfiStr = cfiStr.slice(8, cfiStr.length - 1);
     } else {
       throw new Error("invalid EpubCFI string format");
@@ -16867,50 +16927,51 @@ class EpubCFI {
    * @return {Range}
    */
   toRange(doc, ignoreClass) {
-    const _doc = doc || document;
+    const dc = doc || document;
     let start, end, startContainer, endContainer;
     let startSteps, endSteps, hasOffset;
-    const needsIgnoring = ignoreClass && _doc.querySelector("." + ignoreClass) !== null;
-    const reqClass = needsIgnoring ? ignoreClass : undefined;
     let range, missed;
-    if (typeof _doc.createRange !== "undefined") {
-      range = _doc.createRange();
+    const needsIgnoring = ignoreClass && dc.querySelector("." + ignoreClass) !== null;
+    const reqClass = needsIgnoring ? ignoreClass : undefined;
+    if (typeof dc.createRange !== "undefined") {
+      range = dc.createRange();
     } else {
       range = new _utils_rangeobject__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A();
     }
     if (this.range) {
       start = this.start;
       startSteps = this.path.steps.concat(start.steps);
-      startContainer = this.findNode(startSteps, _doc, reqClass);
+      startContainer = this.findNode(startSteps, dc, reqClass);
       end = this.end;
       endSteps = this.path.steps.concat(end.steps);
-      endContainer = this.findNode(endSteps, _doc, reqClass);
+      endContainer = this.findNode(endSteps, dc, reqClass);
     } else {
       start = this.path;
       startSteps = this.path.steps;
-      startContainer = this.findNode(startSteps, _doc, reqClass);
+      startContainer = this.findNode(startSteps, dc, reqClass);
     }
     if (startContainer) {
       try {
         hasOffset = start.terminal.offset !== null;
         range.setStart(startContainer, hasOffset ? start.terminal.offset : 0);
       } catch (e) {
-        missed = this.fixMiss(startSteps, start.terminal.offset, _doc, reqClass);
+        missed = this.fixMiss(startSteps, start.terminal.offset, dc, reqClass);
         range.setStart(missed.container, missed.offset);
-        console.error(e);
+        console.warn(e);
       }
     } else {
-      console.error("No startContainer found for", this.toString());
-      return null; // No start found
+      // console.error("No startContainer found for", this.toString());
+      // return null; // No start found
+      throw new Error("No startContainer found for", this.toString());
     }
     if (endContainer) {
       try {
         hasOffset = end.terminal.offset !== null;
         range.setEnd(endContainer, hasOffset ? end.terminal.offset : 0);
       } catch (e) {
-        missed = this.fixMiss(endSteps, this.end.terminal.offset, _doc, reqClass);
+        missed = this.fixMiss(endSteps, this.end.terminal.offset, dc, reqClass);
         range.setEnd(missed.container, missed.offset);
-        console.error(e);
+        console.warn(e);
       }
     }
     return range;
@@ -16947,15 +17008,15 @@ class EpubCFI {
    * @private
    */
   walkToNode(steps, doc, ignoreClass) {
-    const _doc = doc || document;
-    let container = _doc.documentElement;
+    const dc = doc || document;
+    let container = dc.documentElement;
     for (let i = 0, len = steps.length; i < len; i++) {
       const step = steps[i];
       if (step.type === "element") {
         //better to get a container using id as some times step.index may not be correct
         //For ex.https://github.com/futurepress/epub.js/issues/561
         if (step.id) {
-          container = _doc.getElementById(step.id);
+          container = dc.getElementById(step.id);
         } else {
           const children = container.children || (0,_utils_core__WEBPACK_IMPORTED_MODULE_6__.findChildren)(container);
           container = children[step.index];
@@ -26360,42 +26421,226 @@ describe("Book", () => {
 
 
 
+const ASSERTION_TYPES = {
+  I: 0,
+  // INIT
+  H: 1,
+  // HASH
+  N: 2,
+  // NODE
+  R: 4 // RANGE
+};
+const assertion = (inst, hash, t) => {
+  switch (t) {
+    case ASSERTION_TYPES.I:
+      //--TARGET
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, undefined);
+      //--RANGE
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end, null);
+      //--BASE:PATH
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(Object.keys(inst.base).length, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(Object.keys(inst.path).length, 0);
+      //--MISC
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.spinePos, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.ignoreClass, "");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/!/)");
+      break;
+    case ASSERTION_TYPES.H:
+      //--TARGET
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "string");
+      //--RANGE
+      if (inst.range) {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, true);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start.steps.length, 1);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end.steps.length, 1);
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start, null);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end, null);
+      }
+      //--BASE
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps.length, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].id, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].index, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].id, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].index, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.terminal.assertion, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.terminal.offset, null);
+      //--PATH
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[0].id, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[0].index, 1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[0].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[1].id, "toc");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[1].index, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[1].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[2].id, "contents");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[2].index, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[2].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.assertion, null);
+      if (inst.range) {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps.length, 3);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.offset, null);
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps.length, 4);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[3].id, null);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[3].index, 0);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps[3].type, "text");
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.offset, 0);
+      }
+      //--MISC
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.spinePos, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.ignoreClass, "");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), hash);
+      break;
+    case ASSERTION_TYPES.N:
+    case ASSERTION_TYPES.R:
+      //--TARGET
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
+      if (inst.type === "node") {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "node");
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "range");
+      }
+      //--RANGE
+      if (inst.range) {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, true);
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start, null);
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end, null);
+      }
+      //--BASE
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps.length, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].id, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].index, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[0].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].id, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].index, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.steps[1].type, "element");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.terminal.assertion, null);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.base.terminal.offset, null);
+      //--PATH
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.steps.length, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.assertion, null);
+      if (inst.type === "node") {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.offset, null);
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.offset, 0);
+      }
+      //--MISC
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.spinePos, 0);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.ignoreClass, "");
+      if (inst.type === "node") {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/)");
+      } else {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/:0)");
+      }
+      break;
+  }
+};
 describe("EpubCFI", () => {
-  let doc1, doc2, doc3;
+  let doc0, doc1, doc2, doc3;
   before(async () => {
+    doc0 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/handbook/EPUB/xhtml/nav.xhtml");
     doc1 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/chapter1.xhtml");
     doc2 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/chapter1-highlights.xhtml");
     doc3 = await (0,_src_utils_request__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A)("../assets/highlight.xhtml");
   });
   describe("#constructor()", () => {
-    it("should parse a cfi on init", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.spinePos, 0);
+    const base = "/6/2";
+    it("should be created instance by default", () => {
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
+      assertion(inst, null, ASSERTION_TYPES.I);
     });
-    it("should parse a cfi and ignore the base if present", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/2[cover]!/6)", "/6/6[end]");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.spinePos, 0);
+    it("should be created instance with (hash)", () => {
+      const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)";
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(hash);
+      assertion(inst, hash, ASSERTION_TYPES.H);
+    });
+    it("should be created instance with (hash) to range", () => {
+      const hash = "epubcfi(/6/2!/4/2[toc]/2[contents],/1:0,/1:17)";
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(hash);
+      assertion(inst, hash, ASSERTION_TYPES.H);
+    });
+    it("should be created instance with (node, base)", () => {
+      const node = doc0.documentElement;
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(node, base);
+      assertion(inst, null, ASSERTION_TYPES.N);
+    });
+    it("should be created instanse with (range, base)", () => {
+      const range = doc0.createRange();
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(range, base);
+      assertion(inst, null, ASSERTION_TYPES.R);
+    });
+  });
+  describe("#set()", () => {
+    const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)";
+    const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
+    it("should be update epubcfi.hash", () => {
+      inst.set({
+        data: hash
+      });
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "string");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), hash);
+    });
+    it("should be update epubcfi.base component", () => {
+      const base = "/6/2";
+      inst.set({
+        base
+      });
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "string");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), hash);
+    });
+    it("should be update epubcfi.type of node", () => {
+      const data = doc0.documentElement;
+      inst.set({
+        data
+      });
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "node");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/)");
+    });
+    it("should be update epubcfi.type of range", () => {
+      const data = doc0.createRange();
+      inst.set({
+        data
+      });
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "range");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/:0)");
     });
   });
   describe("#parse()", () => {
     it("should parse a cfi", () => {
-      const cfi = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      const hash = "epubcfi(/6/2[cover]!/6)";
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
     });
     xit("should parse a cfi and ignore the base if present", () => {
-      const cfi = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi, "/6/6[end]");
+      const hash = "epubcfi(/6/2[cover]!/6)";
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash, "/6/6[end]");
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
     }); // TODO: comparison of the base component from the parse method is not implemented
     it("should parse a cfi with a character offset", () => {
-      const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.path.terminal.offset, 3);
     });
     it("should parse a cfi with a range", () => {
-      const cfi = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(cfi);
+      const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)";
+      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.range, true);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.start.steps.length, 2);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.end.steps.length, 1);
@@ -26415,22 +26660,30 @@ describe("EpubCFI", () => {
   });
   describe("#checkType()", () => {
     it("should determine the type as cfi string", () => {
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType("epubcfi(/6/2[cover]!/6)"), "string");
+      const hash = "epubcfi(/6/2[cover]!/6)";
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "string");
     });
     it("should determine the type as EpubCFI instance", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A("epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(cfi), "EpubCFI");
+      const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
+      const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(hash);
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(inst);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "EpubCFI");
     });
     it("should determine the type as node", () => {
       const node = document.createElement("div");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(node), "node");
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(node);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "node");
     });
     it("should determine the type as range", () => {
       const range = document.createRange();
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(range), "range");
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(range);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "range");
     });
     it("should determine the type as undefined", () => {
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType("/6/2[cover]!/6"), undefined);
+      ["", "/6/2[cover]!/6", "epubcfi(/6/2[cover]!/6"].forEach(val => {
+        assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(val), undefined);
+      });
     });
   });
   describe("#compare()", () => {
@@ -26624,8 +26877,8 @@ describe("EpubCFI", () => {
   });
   describe("#isCfiString()", () => {
     it("should check if the string is wrapped using 'epubcfi()'", () => {
-      const cfi = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(cfi.isCfiString("epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)"), true);
+      const hash = "epubcfi(/6/4[chap01ref]!/4/2,/10/2[c001p0004]/1:6,/16/2[c001p0007]/1:27)";
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(_src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.isCfiString(hash), true);
     });
   });
 });
@@ -27169,7 +27422,7 @@ describe("Rendition", () => {
       assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"));
     });
     it("should be displayed by epubcfi", async () => {
-      const section = await rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)");
+      const section = await rendition.display("epubcfi(/6/6!/4/2[s2]/2[mathml]/1:0)");
       assert.equal(section.cfiBase, "/6/6");
       assert.equal(section.index, 2);
       assert.equal(section.idref, "s2");
