@@ -28,18 +28,27 @@ class EpubCFI {
 	 */
 	constructor(data, base, ignoreClass) {
 		/**
+		 * Base component
 		 * @member {object} base
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.base = {};
 		/**
+		 * EpubCFI string format
+		 * @member {string} hash
+		 * @memberof EpubCFI
+		 * @readonly
+		 */
+		this.hash = "";
+		/**
 		 * @member {string} ignoreClass
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
-		this.ignoreClass = ignoreClass;
+		this.ignoreClass = "";
 		/**
+		 * Path component
 		 * @member {object} path
 		 * @memberof EpubCFI
 		 * @readonly
@@ -59,30 +68,26 @@ class EpubCFI {
 		 */
 		this.spinePos = 0; // For compatibility
 		/**
+		 * Start component
 		 * @member {object} start
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.start = null;
 		/**
+		 * End component
 		 * @member {object} end
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
 		this.end = null;
 		/**
-		 * @member {string} str EpubCFI string format
-		 * @memberof EpubCFI
-		 * @readonly
-		 */
-		this.str = "";
-		/**
 		 * @member {string} type
 		 * @memberof EpubCFI
 		 * @readonly
 		 */
-		this.type = this.checkType(data);
-		this.set({ data, base });
+		this.type = undefined;
+		this.set({ data, base, ignoreClass });
 	}
 
 	/**
@@ -119,40 +124,40 @@ class EpubCFI {
 			igcl = this.ignoreClass;
 		};
 		const d = (value) => {
-			type = type || this.checkType(value);
 			if (data) return;
+			type = type || this.checkType(value);
 			if (type === "string") {
 				data = this.parse(value);
 			} else if (type === "range") {
 				data = this.fromRange(value, base, igcl);
 			} else if (type === "node") {
 				data = this.fromNode(value, base, igcl);
-			} else if (type === "EpubCFI" && value.path) {
+			} else if (type === "EpubCFI") {
 				data = value;
 			} else if (!value) {
 				data = this;
 			} else {
 				throw new TypeError("not a valid argument for EpubCFI");
 			}
-			data.type = type;
+			data.type = type || this.type;
 		};
 		Object.keys(options).forEach(opt => {
 
 			const value = options[opt];
 			if (this[opt] === value || typeof value === "undefined") {
 				delete options[opt];
-			} else if (opt === "base") {
-				b(value);
-				c(options["ignoreClass"]);
-				d(options["data"]);
 			} else if (opt === "data") {
 				b(options["base"]);
 				c(options["ignoreClass"]);
 				d(value);
+			} else if (opt === "base") {
+				b(value);
+				c(options["ignoreClass"]);
+				d(options["data"]);
 			} else if (opt === "ignoreClass") {
 				b(options["base"]);
-				c(options["ignoreClass"]);
 				c(value);
+				d(options["data"]);
 			}
 		});
 		return data ? Object.assign(this, data) : this;
@@ -161,7 +166,7 @@ class EpubCFI {
 	/**
 	 * Check the type to input
 	 * @param {string|Range|Node} cfiFrom
-	 * @returns {string} argument type
+	 * @returns {string|undefined} argument type
 	 */
 	checkType(cfiFrom) {
 
@@ -388,10 +393,11 @@ class EpubCFI {
 				offset: null,
 				assertion: null
 			}
-		}
+		};
 
 		let step, curNode = node;
-		while (curNode &&
+		while (
+			curNode &&
 			curNode.parentNode &&
 			curNode.parentNode.nodeType !== Node.DOCUMENT_NODE) {
 
@@ -408,7 +414,10 @@ class EpubCFI {
 		if (offset !== null && offset >= 0) {
 			segment.terminal.offset = offset;
 			// Make sure we are getting to a textNode if there is an offset
-			if (segment.steps[segment.steps.length - 1].type !== "text") {
+			const len = segment.steps.length;
+			const idx = len ? (len - 1) : len;
+			const stp = idx ? segment.steps[idx].type : null; 
+			if (stp && stp !== "text") {
 				segment.steps.push({
 					index: 0,
 					type: "text"
@@ -761,7 +770,7 @@ class EpubCFI {
 
 		if (this.isCfiString(cfiStr)) {
 			// Remove initial 'epubcfi(' and ending ')'
-			cfi.str = cfiStr; // save EpubCFI string
+			cfi.hash = cfiStr; // save EpubCFI string
 			cfiStr = cfiStr.slice(8, cfiStr.length - 1);
 		} else {
 			throw new Error("invalid EpubCFI string format");
