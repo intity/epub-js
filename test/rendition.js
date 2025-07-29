@@ -68,7 +68,7 @@ describe("Rendition", () => {
             assert.equal(section.url, url("/assets/handbook/EPUB/xhtml/mathml.xhtml"))
         })
         it("should be displayed by epubcfi", async () => {
-            const section = await rendition.display("epubcfi(/6/6!/4/2[mathml]/2/1:0)")
+            const section = await rendition.display("epubcfi(/6/6!/4/2[s2]/2[mathml]/1:0)")
             assert.equal(section.cfiBase, "/6/6")
             assert.equal(section.index, 2)
             assert.equal(section.idref, "s2")
