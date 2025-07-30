@@ -214,7 +214,7 @@ The [mocha](https://mochajs.org/) framework is used for unit testing. All tests 
 npm run start
 ```
 
-Then open the page in the browser at: [epub-js/test/](test/)
+Then open the page in the browser at: [localhost:8080/test/](http://localhost:8080/test/)
 
 Finally, open the browser console to see the test results.
 
