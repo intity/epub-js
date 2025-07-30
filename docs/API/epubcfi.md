@@ -27,7 +27,7 @@ Does Not Implement:
         * [.isCfiString(str)](#EpubCFI+isCfiString) ⇒ <code>boolean</code>
         * [.fromNode(node, base, [ignoreClass])](#EpubCFI+fromNode) ⇒ [<code>EpubCFI</code>](#EpubCFI)
         * [.fromRange(range, base, [ignoreClass])](#EpubCFI+fromRange) ⇒ [<code>EpubCFI</code>](#EpubCFI)
-        * [.parse(cfiStr)](#EpubCFI+parse) ⇒ [<code>EpubCFI</code>](#EpubCFI)
+        * [.parse(hash)](#EpubCFI+parse) ⇒ [<code>EpubCFI</code>](#EpubCFI)
         * [.toRange([doc], [ignoreClass])](#EpubCFI+toRange) ⇒ <code>Range</code>
         * [.toString()](#EpubCFI+toString) ⇒ <code>string</code>
         * [.destroy()](#EpubCFI+destroy)
@@ -194,15 +194,19 @@ Create a CFI object from a Range
 
 <a name="EpubCFI+parse"></a>
 
-## epubCFI.parse(cfiStr) ⇒ [<code>EpubCFI</code>](#EpubCFI)
+## epubCFI.parse(hash) ⇒ [<code>EpubCFI</code>](#EpubCFI)
 Parse a cfi string to a EpubCFI object representation
 
 **Kind**: instance method of [<code>EpubCFI</code>](#EpubCFI)  
 **Returns**: [<code>EpubCFI</code>](#EpubCFI) - EpubCFI object  
+**Todo**
+
+- [ ] Comparison of the base component from the parse method
+
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfiStr | <code>string</code> | EpubCFI string format |
+| hash | <code>string</code> | EpubCFI string format |
 
 <a name="EpubCFI+toRange"></a>
 
