@@ -757,6 +757,7 @@ class EpubCFI {
 
 	/**
 	 * Parse a cfi string to a EpubCFI object representation
+	 * @todo Comparison of the base component from the parse method
 	 * @param {string} hash EpubCFI string format
 	 * @returns {EpubCFI} EpubCFI object
 	 */
