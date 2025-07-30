@@ -16666,22 +16666,24 @@ class EpubCFI {
 
   /**
    * Parse a cfi string to a EpubCFI object representation
-   * @param {string} cfiStr EpubCFI string format
+   * @todo Comparison of the base component from the parse method
+   * @param {string} hash EpubCFI string format
    * @returns {EpubCFI} EpubCFI object
    */
-  parse(cfiStr) {
+  parse(hash) {
     const cfi = new EpubCFI();
-    if (typeof cfiStr !== "string") {
+    if (typeof hash !== "string") {
       throw new TypeError("invalid argument type");
     }
-    if (this.isCfiString(cfiStr)) {
+    if (this.isCfiString(hash)) {
       // Remove initial 'epubcfi(' and ending ')'
-      cfi.hash = cfiStr; // save EpubCFI string
-      cfiStr = cfiStr.slice(8, cfiStr.length - 1);
+      cfi.hash = hash; // save EpubCFI string
+      cfi.type = "string";
+      hash = hash.slice(8, hash.length - 1);
     } else {
       throw new Error("invalid EpubCFI string format");
     }
-    const baseComponent = this.getBaseComponent(cfiStr);
+    const baseComponent = this.getBaseComponent(hash);
 
     // Make sure this is a valid cfi or return
     if (!baseComponent) {
@@ -16689,17 +16691,14 @@ class EpubCFI {
       return cfi;
     }
     cfi.base = this.parseComponent(baseComponent);
-    const pathComponent = this.getPathComponent(cfiStr);
+    const pathComponent = this.getPathComponent(hash);
     cfi.path = this.parseComponent(pathComponent);
-    const range = this.getRange(cfiStr);
+    const range = this.getRange(hash);
     if (range) {
       cfi.range = true;
       cfi.start = this.parseComponent(range[0]);
       cfi.end = this.parseComponent(range[1]);
     }
-
-    // Get spine node position
-    // cfi.spineSegment = cfi.base.steps[1];
 
     // Chapter segment is always the second step
     cfi.spinePos = cfi.base.steps[1].index;
@@ -26586,66 +26585,54 @@ describe("EpubCFI", () => {
       inst.set({
         data: hash
       });
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, hash);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "string");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), hash);
+      assertion(inst, hash, ASSERTION_TYPES.H);
     });
     it("should be update epubcfi.base component", () => {
       const base = "/6/2";
       inst.set({
         base
       });
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, hash);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "string");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), hash);
+      assertion(inst, hash, ASSERTION_TYPES.H);
     });
     it("should be update epubcfi.type of node", () => {
       const data = doc0.documentElement;
       inst.set({
         data
       });
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "node");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/)");
+      assertion(inst, null, ASSERTION_TYPES.N);
     });
     it("should be update epubcfi.type of range", () => {
       const data = doc0.createRange();
       inst.set({
         data
       });
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, false);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.hash, "");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.type, "range");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.toString(), "epubcfi(/6/2!/:0)");
+      assertion(inst, null, ASSERTION_TYPES.R);
     });
   });
   describe("#parse()", () => {
     it("should parse a cfi", () => {
-      const hash = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
+      const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)";
+      const inst = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
+      assertion(inst, hash, ASSERTION_TYPES.H);
     });
     xit("should parse a cfi and ignore the base if present", () => {
-      const hash = "epubcfi(/6/2[cover]!/6)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash, "/6/6[end]");
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.spinePos, 0);
+      const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)";
+      const inst = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash, "/6/2");
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.spinePos, 0);
     }); // TODO: comparison of the base component from the parse method is not implemented
     it("should parse a cfi with a character offset", () => {
       const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.path.terminal.offset, 3);
+      const inst = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.path.terminal.offset, 3);
     });
-    it("should parse a cfi with a range", () => {
+    it("should be parse a (hash) by range with offset", () => {
       const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)";
-      const parsed = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.range, true);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.start.steps.length, 2);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.end.steps.length, 1);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.start.terminal.offset, 1);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(parsed.end.terminal.offset, 4);
+      const inst = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.parse(hash);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.range, true);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start.steps.length, 2);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end.steps.length, 1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.start.terminal.offset, 1);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(inst.end.terminal.offset, 4);
     });
   });
   describe("#toString()", () => {
@@ -26664,21 +26651,21 @@ describe("EpubCFI", () => {
       const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(hash);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "string");
     });
+    it("should determine the type as node", () => {
+      const node = doc0.documentElement;
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(node);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "node");
+    });
+    it("should determine the type as range", () => {
+      const range = doc0.createRange();
+      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(range);
+      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "range");
+    });
     it("should determine the type as EpubCFI instance", () => {
       const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)";
       const inst = new _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(hash);
       const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(inst);
       assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "EpubCFI");
-    });
-    it("should determine the type as node", () => {
-      const node = document.createElement("div");
-      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(node);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "node");
-    });
-    it("should determine the type as range", () => {
-      const range = document.createRange();
-      const type = _src_epubcfi__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A.prototype.checkType(range);
-      assert__WEBPACK_IMPORTED_MODULE_2__.equal(type, "range");
     });
     it("should determine the type as undefined", () => {
       ["", "/6/2[cover]!/6", "epubcfi(/6/2[cover]!/6"].forEach(val => {
