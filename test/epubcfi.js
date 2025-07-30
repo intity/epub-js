@@ -164,60 +164,48 @@ describe("EpubCFI", () => {
 		const inst = new EpubCFI()
 		it("should be update epubcfi.hash", () => {
 			inst.set({ data: hash })
-			assert.equal(inst.range, false)
-			assert.equal(inst.hash, hash)
-			assert.equal(inst.type, "string")
-			assert.equal(inst.toString(), hash)
+			assertion(inst, hash, ASSERTION_TYPES.H)
 		})
 		it("should be update epubcfi.base component", () => {
 			const base = "/6/2"
 			inst.set({ base })
-			assert.equal(inst.range, false)
-			assert.equal(inst.hash, hash)
-			assert.equal(inst.type, "string")
-			assert.equal(inst.toString(), hash)
+			assertion(inst, hash, ASSERTION_TYPES.H)
 		})
 		it("should be update epubcfi.type of node", () => {
 			const data = doc0.documentElement
 			inst.set({ data })
-			assert.equal(inst.range, false)
-			assert.equal(inst.hash, "")
-			assert.equal(inst.type, "node")
-			assert.equal(inst.toString(), "epubcfi(/6/2!/)")
+			assertion(inst, null, ASSERTION_TYPES.N)
 		})
 		it("should be update epubcfi.type of range", () => {
 			const data = doc0.createRange()
 			inst.set({ data })
-			assert.equal(inst.range, false)
-			assert.equal(inst.hash, "")
-			assert.equal(inst.type, "range")
-			assert.equal(inst.toString(), "epubcfi(/6/2!/:0)")
+			assertion(inst, null, ASSERTION_TYPES.R)
 		})
 	})
 	describe("#parse()", () => {
 		it("should parse a cfi", () => {
-			const hash = "epubcfi(/6/2[cover]!/6)"
-			const parsed = EpubCFI.prototype.parse(hash)
-			assert.equal(parsed.spinePos, 0)
+			const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)"
+			const inst = EpubCFI.prototype.parse(hash)
+			assertion(inst, hash, ASSERTION_TYPES.H)
 		})
 		xit("should parse a cfi and ignore the base if present", () => {
-			const hash = "epubcfi(/6/2[cover]!/6)"
-			const parsed = EpubCFI.prototype.parse(hash, "/6/6[end]")
-			assert.equal(parsed.spinePos, 0)
+			const hash = "epubcfi(/6/2!/4/2[toc]/2[contents]/1:0)"
+			const inst = EpubCFI.prototype.parse(hash, "/6/2")
+			assert.equal(inst.spinePos, 0)
 		}) // TODO: comparison of the base component from the parse method is not implemented
 		it("should parse a cfi with a character offset", () => {
 			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)"
-			const parsed = EpubCFI.prototype.parse(hash)
-			assert.equal(parsed.path.terminal.offset, 3)
+			const inst = EpubCFI.prototype.parse(hash)
+			assert.equal(inst.path.terminal.offset, 3)
 		})
-		it("should parse a cfi with a range", () => {
+		it("should be parse a (hash) by range with offset", () => {
 			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05],/2/1:1,/3:4)"
-			const parsed = EpubCFI.prototype.parse(hash)
-			assert.equal(parsed.range, true)
-			assert.equal(parsed.start.steps.length, 2)
-			assert.equal(parsed.end.steps.length, 1)
-			assert.equal(parsed.start.terminal.offset, 1)
-			assert.equal(parsed.end.terminal.offset, 4)
+			const inst = EpubCFI.prototype.parse(hash)
+			assert.equal(inst.range, true)
+			assert.equal(inst.start.steps.length, 2)
+			assert.equal(inst.end.steps.length, 1)
+			assert.equal(inst.start.terminal.offset, 1)
+			assert.equal(inst.end.terminal.offset, 4)
 		})
 	})
 	describe("#toString()", () => {
@@ -236,21 +224,21 @@ describe("EpubCFI", () => {
 			const type = EpubCFI.prototype.checkType(hash)
 			assert.equal(type, "string")
 		})
+		it("should determine the type as node", () => {
+			const node = doc0.documentElement
+			const type = EpubCFI.prototype.checkType(node)
+			assert.equal(type, "node")
+		})
+		it("should determine the type as range", () => {
+			const range = doc0.createRange()
+			const type = EpubCFI.prototype.checkType(range)
+			assert.equal(type, "range")
+		})
 		it("should determine the type as EpubCFI instance", () => {
 			const hash = "epubcfi(/6/4[chap01ref]!/4[body01]/10[para05]/2/1:3)"
 			const inst = new EpubCFI(hash)
 			const type = EpubCFI.prototype.checkType(inst)
 			assert.equal(type, "EpubCFI")
-		})
-		it("should determine the type as node", () => {
-			const node = document.createElement("div")
-			const type = EpubCFI.prototype.checkType(node)
-			assert.equal(type, "node")
-		})
-		it("should determine the type as range", () => {
-			const range = document.createRange()
-			const type = EpubCFI.prototype.checkType(range)
-			assert.equal(type, "range")
 		})
 		it("should determine the type as undefined", () => {
 			[
