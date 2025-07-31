@@ -5,7 +5,7 @@ module.exports = {
     reporter: "spec",
     require: [
         "@babel/register",
-        "setup.js"
+        "setup.cjs"
     ],
     exit: true
 }

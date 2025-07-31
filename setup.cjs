@@ -1,16 +1,16 @@
-import { URL } from "node:url"
-import { JSDOM } from "jsdom"
-import { ResizeObserver } from "resize-observer"
-import JSZip from "jszip"
-import localforage from "localforage"
+const { URL } = require("node:url")
+const { JSDOM } = require("jsdom")
+const { ResizeObserver } = require("resize-observer")
+const JSZip = require("jszip")
+const localforage = require("localforage")
 
 const html = "<!DOCTYPE html><html><head></head><body></body></html>"
-const dom = new JSDOM(html, {
+const vdom = new JSDOM(html, {
     url: "http://localhost",
     contentType: "text/html",
     resources: "usable"
 })
-const window = dom.window
+const window = vdom.window
 //-- NODEJS
 global.URL = URL
 global.requestAnimationFrame = window.requestAnimationFrame = (fn) => {
@@ -26,6 +26,7 @@ global.location = window.location
 global.navigator = window.navigator
 global.screen = window.screen
 global.Array = window.Array
+global.Blob = window.Blob
 global.Document = window.Document
 global.DOMParser = window.DOMParser
 global.Element = window.Element
