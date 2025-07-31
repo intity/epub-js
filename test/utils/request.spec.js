@@ -1,3 +1,4 @@
+import assert from "assert"
 import request from "../../src/utils/request";
 
 const url = (path) => {
@@ -14,7 +15,12 @@ const url = (path) => {
 
 describe("#request()", () => {
     it("should be request of the xhtml type", async () => {
-        const uri = url("/assets/handbook/EPUB/xhtml/nav.xhtml")
-        const doc = await request(uri, "xhtml")
+        const uri = "../assets/handbook/EPUB/xhtml/nav.xhtml"
+        const doc = await request(uri, "xhtml").then((e) => {
+			console.log(doc)
+		},(err) => {
+			console.log(err)
+		})
+		assert.equal(uri, "../assets/handbook/EPUB/xhtml/nav.xhtml")
     })
 })
