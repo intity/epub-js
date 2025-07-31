@@ -19,7 +19,7 @@ class Defer {
          * @member {Map} dump
          * @memberof Defer
          */
-        this.dump = new Map();
+        this.dump = {};
         /**
          * A method to resolve the associated Promise with the value passed.
          * If the promise is already settled it does nothing.
