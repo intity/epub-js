@@ -6,7 +6,7 @@ const localforage = require("localforage")
 
 const html = "<!DOCTYPE html><html><head></head><body></body></html>"
 const vdom = new JSDOM(html, {
-    url: "http://localhost",
+    url: "http://localhost:8080",
     contentType: "text/html",
     resources: "usable"
 })
