@@ -16,7 +16,7 @@ class Defer {
         this.id = uuid();
         /**
          * Dump for debug trace
-         * @member {Map} dump
+         * @member {object} dump
          * @memberof Defer
          */
         this.dump = {};
