@@ -9,12 +9,17 @@ const BLOB_RESPONSE = SUPPORTS_URL ? "blob" : "arraybuffer";
 const read = (e, def) => {
 
 	const xhr = e.target;
+	def.dump["READY"] = e.target.status;
 
 	if (xhr.status === 403) {
 		def.reject({
 			message: "Forbidden",
 			target: xhr,
-			stack: new Error().stack
+			stack: new Error().stack,
+			trace: {
+				dump: def.dump,
+				uuid: def.id
+			}
 		});
 	}
 }
@@ -22,6 +27,7 @@ const read = (e, def) => {
 const load = (e, type, def) => {
 
 	const xhr = e.target;
+	def.dump["LOAD"] = e.target.status;
 
 	let r;
 	if (xhr.responseType === "document") {
@@ -30,7 +36,11 @@ const load = (e, type, def) => {
 			def.reject({
 				message: "Empty Response",
 				target: xhr,
-				stack: new Error().stack
+				stack: new Error().stack,
+				trace: {
+					dump: def.dump,
+					uuid: def.id
+				}
 			});
 		} else if (xhr.responseXML) {
 			r = xhr.responseXML;
@@ -91,11 +101,25 @@ const request = (url, type, withCredentials = false, headers = []) => {
 
 	xhr.onreadystatechange = (e) => read(e, def);
 	xhr.onload = (e) => load(e, type, def);
+	xhr.onloadstart = (e) => {
+		def.dump["LOAD_START"] = e.target.status;
+	};
+	xhr.onloadend = (e) => {
+		def.dump["LOAD_END"] = e.target.status;
+	};
+	xhr.onprogress = (e) => {
+		def.dump["PROGRESS"] = e.target.status;
+	};
 	xhr.onerror = (e) => {
+		def.dump["ERROR"] = e.target.status;
 		def.reject({
 			message: "Error",
 			target: e.target,
-			stack: new Error().stack
+			stack: new Error().stack,
+			trace: {
+				dump: def.dump,
+				uuid: def.id
+			}
 		});
 	};
 	xhr.open("GET", url, true);
