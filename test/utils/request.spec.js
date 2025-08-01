@@ -19,4 +19,9 @@ describe("#request()", () => {
 		const doc = await request(uri, "xhtml")
 		assert.ok(doc instanceof Document)
 	})
+	it("should be request of the binary type", async () => {
+		const uri = url("/assets/alice.epub")
+		const bin = await request(uri, "binary")
+		assert.ok(bin instanceof ArrayBuffer)
+	})
 })

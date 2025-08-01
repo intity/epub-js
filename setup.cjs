@@ -26,6 +26,7 @@ global.location = window.location
 global.navigator = window.navigator
 global.screen = window.screen
 global.Array = window.Array
+global.ArrayBuffer = window.ArrayBuffer
 global.Blob = window.Blob
 global.Document = window.Document
 global.DOMParser = window.DOMParser
