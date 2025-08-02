@@ -13,15 +13,26 @@ const url = (path) => {
 	return result
 }
 
-describe("#request()", () => {
-	it("should be request of the xhtml type", async () => {
-		const uri = url("/assets/handbook/EPUB/xhtml/nav.xhtml")
-		const doc = await request(uri, "xhtml")
-		assert.ok(doc instanceof Document)
-	})
-	it("should be request of the binary type", async () => {
-		const uri = url("/assets/alice.epub")
-		const bin = await request(uri, "binary")
-		assert.ok(bin instanceof ArrayBuffer)
+describe("Core", () => {
+	describe("#request()", () => {
+		it("should be request of the xml type", async () => {
+			const uri = url("/assets/handbook/META-INF/container.xml")
+			const doc = await request(uri, "xml")
+			assert.ok(doc instanceof Document)
+		})
+		it("should be request of the json type", async () => {
+			const uri = url("/assets/handbook/META-INF/container.json")
+			const obj = await request(uri, "json")
+			assert.equal(obj["directory"], "EPUB/")
+			assert.equal(obj["encoding"], "UTF-8")
+			assert.equal(obj["full-path"], "EPUB/package.json")
+			assert.equal(obj["media-type"], "application/json")
+			assert.equal(obj["version"], "1.0")
+		})
+		it("should be request of the binary type", async () => {
+			const uri = url("/assets/alice.epub")
+			const bin = await request(uri, "binary")
+			assert.ok(bin instanceof ArrayBuffer)
+		})
 	})
 })
