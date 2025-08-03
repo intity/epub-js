@@ -3,7 +3,7 @@ import request from "../src/utils/request"
 import Packaging from "../src/packaging"
 
 describe("Packaging", () => {
-	let pkg1, pkg2, list = []
+	let pkg1, pkg2, tasks = []
 	before(async () => {
 		pkg1 = await request("../assets/alice/OPS/package.opf", null)
 		pkg2 = await request("../assets/alice/OPS/package.json", "json")
@@ -16,7 +16,7 @@ describe("Packaging", () => {
 			assert.equal(pack.metadata.size, 9)
 			assert.equal(pack.manifest.size, 42)
 			assert.equal(pack.spine.size, 13)
-			list.push(pack)
+			tasks.push(pack)
 		})
 	})
 	describe("#load()", () => {
@@ -27,12 +27,26 @@ describe("Packaging", () => {
 			assert.equal(pack.metadata.size, 9)
 			assert.equal(pack.manifest.size, 42)
 			assert.equal(pack.spine.size, 13)
-			list.push(pack)
+			tasks.push(pack)
+		})
+	})
+	describe("#clear()", () => {
+		it("should be cleaning object data", () => {
+			if (tasks.length) {
+				const pack = tasks[0]
+				pack.clear()
+				assert.equal(pack.direction, null)
+				assert.equal(pack.version, null)
+				assert.equal(pack.uniqueIdentifier, null)
+				assert.equal(pack.metadata.size, 0)
+				assert.equal(pack.manifest.size, 0)
+				assert.equal(pack.spine.size, 0)
+			}
 		})
 	})
 	describe("#destroy()", () => {
-		it("should be destroy packaging object", () => {
-			list.forEach(pack => {
+		it("should be destroy all packages", () => {
+			tasks.forEach(pack => {
 				pack.destroy()
 				assert.equal(pack.metadata, undefined)
 				assert.equal(pack.manifest, undefined)
