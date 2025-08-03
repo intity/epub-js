@@ -1,5 +1,4 @@
 import assert from "assert"
-import request from "../src/utils/request"
 import Archive from "../src/archive"
 import JSZip from "jszip"
 
@@ -16,19 +15,26 @@ const url = (path) => {
 }
 
 describe("Archive", () => {
-    let uri, bin, archive
+    let uri, zip, archive
     before(async () => {
         uri = url("/assets/alice.epub")
-        bin = await request(uri, "binary")
     })
     describe("#constructor()", () => {
         it("should be create instance", async () => {
             archive = new Archive()
             assert.ok(archive.instance instanceof JSZip)
         })
-        it("should be open .epub file from ArrayBuffer", async () => {
-            const epub = await archive.open(bin)
-            assert.equal(epub.files.mimetype.name, "mimetype")
+    })
+    describe("#openUrl()", () => {
+        it("should be open .epub file from URL", async () => {
+            zip = await archive.openUrl(uri)
+            assert.equal(zip.files.mimetype.name, "mimetype")
+        })
+    })
+    describe("#get()", () => {
+        it("should be get entry from the archive by URI", () => {
+            const entry = archive.get("/META-INF/container.xml")
+            assert.equal(entry.name, "META-INF/container.xml")
         })
     })
 })
