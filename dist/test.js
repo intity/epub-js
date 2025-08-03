@@ -9041,12 +9041,13 @@ module.exports = function (key) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var core_js_modules_web_url_search_params_delete_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4603);
-/* harmony import */ var core_js_modules_web_url_search_params_has_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7566);
-/* harmony import */ var core_js_modules_web_url_search_params_size_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(8721);
-/* harmony import */ var _path__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1010);
-/* harmony import */ var _defer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8285);
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(9046);
+/* harmony import */ var core_js_modules_es_array_push_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4114);
+/* harmony import */ var core_js_modules_web_url_search_params_delete_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4603);
+/* harmony import */ var core_js_modules_web_url_search_params_has_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7566);
+/* harmony import */ var core_js_modules_web_url_search_params_size_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(8721);
+/* harmony import */ var _path__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1010);
+/* harmony import */ var _defer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8285);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(9046);
 
 
 
@@ -9054,17 +9055,29 @@ module.exports = function (key) {
 
 
 
-// TODO: fallback for url if window isn't defined
 const SUPPORTS_URL = window && window.URL ? true : false;
 const BLOB_RESPONSE = SUPPORTS_URL ? "blob" : "arraybuffer";
+const error = (e, def, msg = "Error") => {
+  const xhr = e.target;
+  def.dump["error"] = xhr.status;
+  def.reject({
+    message: msg,
+    target: xhr,
+    stack: new Error().stack,
+    trace: {
+      dump: def.dump,
+      uuid: def.id
+    }
+  });
+};
 const read = (e, def) => {
   const xhr = e.target;
   if (xhr.status === 403) {
-    def.reject({
-      message: "Forbidden",
-      target: xhr,
-      stack: new Error().stack
-    });
+    error(e, def, "Forbidden");
+  } else if (def.dump["read"]) {
+    def.dump["read"].push(xhr.status);
+  } else {
+    def.dump["read"] = [xhr.status];
   }
 };
 const load = (e, type, def) => {
@@ -9075,16 +9088,20 @@ const load = (e, type, def) => {
       def.reject({
         message: "Empty Response",
         target: xhr,
-        stack: new Error().stack
+        stack: new Error().stack,
+        trace: {
+          dump: def.dump,
+          uuid: def.id
+        }
       });
     } else if (xhr.responseXML) {
       r = xhr.responseXML;
-    } else if ((0,_core__WEBPACK_IMPORTED_MODULE_5__.isXml)(type)) {
-      r = (0,_core__WEBPACK_IMPORTED_MODULE_5__.parse)(xhr.response, "text/xml");
+    } else if ((0,_core__WEBPACK_IMPORTED_MODULE_6__.isXml)(type)) {
+      r = (0,_core__WEBPACK_IMPORTED_MODULE_6__.parse)(xhr.response, "text/xml");
     } else if (type === "xhtml") {
-      r = (0,_core__WEBPACK_IMPORTED_MODULE_5__.parse)(xhr.response, "application/xhtml+xml");
+      r = (0,_core__WEBPACK_IMPORTED_MODULE_6__.parse)(xhr.response, "application/xhtml+xml");
     } else if (type === "html" || type === "htm") {
-      r = (0,_core__WEBPACK_IMPORTED_MODULE_5__.parse)(xhr.response, "text/html");
+      r = (0,_core__WEBPACK_IMPORTED_MODULE_6__.parse)(xhr.response, "text/html");
     }
   } else if (xhr.responseType === "json") {
     r = xhr.response;
@@ -9099,11 +9116,25 @@ const load = (e, type, def) => {
   } else {
     r = xhr.response;
   }
+  def.dump["load"] = [xhr.status, xhr.responseType];
   def.resolve(r);
+};
+const progress = (e, def) => {
+  const xhr = e.target;
+  def.dump["progress"] = xhr.status;
+};
+const start = (e, def) => {
+  const xhr = e.target;
+  def.dump["start"] = xhr.status;
+};
+const end = (e, def) => {
+  const xhr = e.target;
+  def.dump["end"] = xhr.status;
 };
 
 /**
  * request
+ * @todo Fallback for url if window isn't defined
  * @param {string|ArrayBuffer} url 
  * @param {string} [type] 
  * @param {boolean} [withCredentials=false] 
@@ -9111,11 +9142,11 @@ const load = (e, type, def) => {
  * @returns {Promise<any>}
  */
 const request = (url, type, withCredentials = false, headers = []) => {
-  const def = new _defer__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A();
+  const def = new _defer__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .A();
   const xhr = new XMLHttpRequest();
-  type = type || new _path__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A(url).extension;
+  type = type || new _path__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A(url).extension;
   xhr.withCredentials = withCredentials;
-  if ((0,_core__WEBPACK_IMPORTED_MODULE_5__.isXml)(type)) {
+  if ((0,_core__WEBPACK_IMPORTED_MODULE_6__.isXml)(type)) {
     xhr.responseType = "document";
     xhr.overrideMimeType("text/xml"); // for OPF parsing
   } else if (type === "xhtml") {
@@ -9131,13 +9162,10 @@ const request = (url, type, withCredentials = false, headers = []) => {
   }
   xhr.onreadystatechange = e => read(e, def);
   xhr.onload = e => load(e, type, def);
-  xhr.onerror = e => {
-    def.reject({
-      message: "Error",
-      target: e.target,
-      stack: new Error().stack
-    });
-  };
+  xhr.onprogress = e => progress(e, def);
+  xhr.onloadstart = e => start(e, def);
+  xhr.onloadend = e => end(e, def);
+  xhr.onerror = e => error(e, def);
   xhr.open("GET", url, true);
   for (const header in headers) {
     xhr.setRequestHeader(header, headers[header]);
@@ -18984,27 +19012,40 @@ d.gs = function (dscr, get, set/*, options*/) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(9046);
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9046);
+
+
 
 
 /**
  * Creates a new pending promise and provides methods to resolve or reject it.
  */
 class Defer {
+  /**
+   * Constructor
+   */
   constructor() {
     /**
      * @member {string} id
      * @memberof Defer
      * @readonly
      */
-    this.id = (0,_core__WEBPACK_IMPORTED_MODULE_0__.uuid)();
+    this.id = (0,_core__WEBPACK_IMPORTED_MODULE_2__.uuid)();
+    /**
+     * Dump for debug trace
+     * @member {object} dump
+     * @memberof Defer
+     */
+    this.dump = {};
     /**
      * A method to resolve the associated Promise with the value passed.
      * If the promise is already settled it does nothing.
-     * @member {method} resolve
-     * @param {anything} value : This value is used to resolve the promise
-     * If the value is a Promise then the associated promise assumes the state
-     * of Promise passed as value.
+     * @member {function} resolve
+     * @param {any} value : This value is used to resolve the promise
+     * If the value is a Promise then the associated promise assumes 
+     * the state of Promise passed as value.
      * @memberof Defer
      * @readonly
      */
@@ -19012,10 +19053,11 @@ class Defer {
     /**
      * A method to reject the associated Promise with the value passed.
      * If the promise is already settled it does nothing.
-     * @member {method} reject
-     * @param {anything} reason: The reason for the rejection of the Promise.
-     * Generally its an Error object. If however a Promise is passed, then the Promise
-     * itself will be the reason for rejection no matter the state of the Promise.
+     * @member {function} reject
+     * @param {any} reason : The reason for the rejection of the Promise.
+     * Generally its an Error object. If however a Promise is passed, then 
+     * the Promise itself will be the reason for rejection no matter 
+     * the state of the Promise.
      * @memberof Defer
      * @readonly
      */
@@ -19031,6 +19073,13 @@ class Defer {
       this.resolve = resolve;
       this.reject = reject;
     });
+  }
+
+  /**
+   * Dectroy the Defer object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Defer);

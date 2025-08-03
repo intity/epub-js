@@ -6408,10 +6408,15 @@ const getParentByTagName = (node, tagname) => {
 ;// ./src/utils/defer.js
 
 
+
+
 /**
  * Creates a new pending promise and provides methods to resolve or reject it.
  */
 class Defer {
+  /**
+   * Constructor
+   */
   constructor() {
     /**
      * @member {string} id
@@ -6420,12 +6425,18 @@ class Defer {
      */
     this.id = uuid();
     /**
+     * Dump for debug trace
+     * @member {object} dump
+     * @memberof Defer
+     */
+    this.dump = {};
+    /**
      * A method to resolve the associated Promise with the value passed.
      * If the promise is already settled it does nothing.
-     * @member {method} resolve
-     * @param {anything} value : This value is used to resolve the promise
-     * If the value is a Promise then the associated promise assumes the state
-     * of Promise passed as value.
+     * @member {function} resolve
+     * @param {any} value : This value is used to resolve the promise
+     * If the value is a Promise then the associated promise assumes 
+     * the state of Promise passed as value.
      * @memberof Defer
      * @readonly
      */
@@ -6433,10 +6444,11 @@ class Defer {
     /**
      * A method to reject the associated Promise with the value passed.
      * If the promise is already settled it does nothing.
-     * @member {method} reject
-     * @param {anything} reason: The reason for the rejection of the Promise.
-     * Generally its an Error object. If however a Promise is passed, then the Promise
-     * itself will be the reason for rejection no matter the state of the Promise.
+     * @member {function} reject
+     * @param {any} reason : The reason for the rejection of the Promise.
+     * Generally its an Error object. If however a Promise is passed, then 
+     * the Promise itself will be the reason for rejection no matter 
+     * the state of the Promise.
      * @memberof Defer
      * @readonly
      */
@@ -6452,6 +6464,13 @@ class Defer {
       this.resolve = resolve;
       this.reject = reject;
     });
+  }
+
+  /**
+   * Dectroy the Defer object
+   */
+  destroy() {
+    Object.keys(this).forEach(p => this[p] = undefined);
   }
 }
 /* harmony default export */ const defer = (Defer);
@@ -16837,17 +16856,29 @@ event_emitter(Rendition.prototype);
 
 
 
-// TODO: fallback for url if window isn't defined
 const SUPPORTS_URL = window && window.URL ? true : false;
 const BLOB_RESPONSE = SUPPORTS_URL ? "blob" : "arraybuffer";
+const error = (e, def, msg = "Error") => {
+  const xhr = e.target;
+  def.dump["error"] = xhr.status;
+  def.reject({
+    message: msg,
+    target: xhr,
+    stack: new Error().stack,
+    trace: {
+      dump: def.dump,
+      uuid: def.id
+    }
+  });
+};
 const read = (e, def) => {
   const xhr = e.target;
   if (xhr.status === 403) {
-    def.reject({
-      message: "Forbidden",
-      target: xhr,
-      stack: new Error().stack
-    });
+    error(e, def, "Forbidden");
+  } else if (def.dump["read"]) {
+    def.dump["read"].push(xhr.status);
+  } else {
+    def.dump["read"] = [xhr.status];
   }
 };
 const load = (e, type, def) => {
@@ -16858,7 +16889,11 @@ const load = (e, type, def) => {
       def.reject({
         message: "Empty Response",
         target: xhr,
-        stack: new Error().stack
+        stack: new Error().stack,
+        trace: {
+          dump: def.dump,
+          uuid: def.id
+        }
       });
     } else if (xhr.responseXML) {
       r = xhr.responseXML;
@@ -16882,11 +16917,25 @@ const load = (e, type, def) => {
   } else {
     r = xhr.response;
   }
+  def.dump["load"] = [xhr.status, xhr.responseType];
   def.resolve(r);
+};
+const progress = (e, def) => {
+  const xhr = e.target;
+  def.dump["progress"] = xhr.status;
+};
+const start = (e, def) => {
+  const xhr = e.target;
+  def.dump["start"] = xhr.status;
+};
+const end = (e, def) => {
+  const xhr = e.target;
+  def.dump["end"] = xhr.status;
 };
 
 /**
  * request
+ * @todo Fallback for url if window isn't defined
  * @param {string|ArrayBuffer} url 
  * @param {string} [type] 
  * @param {boolean} [withCredentials=false] 
@@ -16914,13 +16963,10 @@ const request = (url, type, withCredentials = false, headers = []) => {
   }
   xhr.onreadystatechange = e => read(e, def);
   xhr.onload = e => load(e, type, def);
-  xhr.onerror = e => {
-    def.reject({
-      message: "Error",
-      target: e.target,
-      stack: new Error().stack
-    });
-  };
+  xhr.onprogress = e => progress(e, def);
+  xhr.onloadstart = e => start(e, def);
+  xhr.onloadend = e => end(e, def);
+  xhr.onerror = e => error(e, def);
   xhr.open("GET", url, true);
   for (const header in headers) {
     xhr.setRequestHeader(header, headers[header]);
