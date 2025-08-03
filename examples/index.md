@@ -6,7 +6,7 @@ This section of the documentation contains a list of links to examples that demo
 
 Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
 
-Metadata property: `rendition:flow`
+>Metadata property: `rendition:flow`
 
 1. [Spreading a document into pages](paginated.html)
 
