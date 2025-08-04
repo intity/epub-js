@@ -2,6 +2,8 @@ import assert from "assert"
 import Archive from "../src/archive"
 import JSZip from "jszip"
 
+const CONTAINER_PATH_0 = "META-INF/container.xml"
+
 const url = (path) => {
 
 	let result = location.origin
@@ -34,7 +36,7 @@ describe("Archive", () => {
     describe("#get()", () => {
         it("should be get entry from the archive by URI", () => {
             const entry = archive.get("/META-INF/container.xml")
-            assert.equal(entry.name, "META-INF/container.xml")
+            assert.equal(entry.name, CONTAINER_PATH_0)
         })
     })
 })
