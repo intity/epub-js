@@ -17093,6 +17093,8 @@ var external_JSZip_ = __webpack_require__(6838);
 
 
 
+
+
 /**
  * Handles Unzipping a requesting files from an Epub Archive
  * @extends {Input}
@@ -17128,6 +17130,14 @@ class Archive extends input {
     return this.instance.loadAsync(input, {
       base64: encoding === "base64"
     });
+  }
+
+  /**
+   * Clear the JSZip.files to empty
+   */
+  clear() {
+    const props = this.instance.files;
+    Object.keys(props).forEach(p => this.instance.remove(p));
   }
 
   /**
@@ -18211,6 +18221,9 @@ class Book {
     this.navigation.clear();
     this.sections.clear();
     this.locations.clear();
+    if (this.archive) {
+      this.archive.clear();
+    }
   }
 
   /**

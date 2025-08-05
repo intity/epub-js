@@ -3596,10 +3596,14 @@ module.exports = EvalError;
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   A: () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _utils_request__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3412);
-/* harmony import */ var _utils_mime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9357);
-/* harmony import */ var _input__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2575);
-/* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6838);
+/* harmony import */ var core_js_modules_es_iterator_constructor_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8111);
+/* harmony import */ var core_js_modules_es_iterator_for_each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7588);
+/* harmony import */ var _utils_request__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(3412);
+/* harmony import */ var _utils_mime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9357);
+/* harmony import */ var _input__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2575);
+/* harmony import */ var jszip__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6838);
+
+
 
 
 
@@ -3609,7 +3613,7 @@ module.exports = EvalError;
  * Handles Unzipping a requesting files from an Epub Archive
  * @extends {Input}
  */
-class Archive extends _input__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A {
+class Archive extends _input__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A {
   constructor() {
     super();
     this.createInstance();
@@ -3619,8 +3623,8 @@ class Archive extends _input__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A {
    * Create JSZip instance
    */
   createInstance() {
-    if (jszip__WEBPACK_IMPORTED_MODULE_3__) {
-      this.instance = new jszip__WEBPACK_IMPORTED_MODULE_3__();
+    if (jszip__WEBPACK_IMPORTED_MODULE_5__) {
+      this.instance = new jszip__WEBPACK_IMPORTED_MODULE_5__();
     } else {
       throw new Error("JSZip lib not loaded");
     }
@@ -3643,13 +3647,21 @@ class Archive extends _input__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A {
   }
 
   /**
+   * Clear the JSZip.files to empty
+   */
+  clear() {
+    const props = this.instance.files;
+    Object.keys(props).forEach(p => this.instance.remove(p));
+  }
+
+  /**
    * Load and Open an archive
    * @param {string} zipUrl
    * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
    * @returns {Promise<any>} zipfile
    */
   async openUrl(zipUrl, isBase64) {
-    return (0,_utils_request__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A)(zipUrl, "binary").then(data => {
+    return (0,_utils_request__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A)(zipUrl, "binary").then(data => {
       return this.instance.loadAsync(data, {
         base64: isBase64
       });
@@ -3677,7 +3689,7 @@ class Archive extends _input__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A {
   async getBlob(url, mimeType) {
     const entry = this.get(url);
     if (entry) {
-      const type = mimeType || _utils_mime__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A.lookup(entry.name);
+      const type = mimeType || _utils_mime__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A.lookup(entry.name);
       return entry.async("uint8array").then(data => {
         return new Blob([data], {
           type
@@ -3719,7 +3731,7 @@ class Archive extends _input__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .A {
   async getBase64(url, mimeType) {
     const entry = this.get(url);
     if (entry) {
-      const type = mimeType || _utils_mime__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .A.lookup(entry.name);
+      const type = mimeType || _utils_mime__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A.lookup(entry.name);
       return entry.async("base64").then(data => {
         return "data:" + type + ";base64," + data;
       });
@@ -19840,6 +19852,9 @@ class Book {
     this.navigation.clear();
     this.sections.clear();
     this.locations.clear();
+    if (this.archive) {
+      this.archive.clear();
+    }
   }
 
   /**
