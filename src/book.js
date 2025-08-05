@@ -232,6 +232,7 @@ class Book {
 		this.navigation.clear();
 		this.sections.clear();
 		this.locations.clear();
+		this.archive.clear();
 	}
 
 	/**

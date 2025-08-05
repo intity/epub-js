@@ -45,6 +45,15 @@ class Archive extends Input {
 	}
 
 	/**
+	 * Clear the JSZip.files to empty
+	 */
+	clear() {
+
+		const props = this.instance.files;
+		Object.keys(props).forEach(p => this.instance.remove(p));
+	}
+
+	/**
 	 * Load and Open an archive
 	 * @param {string} zipUrl
 	 * @param {boolean} [isBase64] tells JSZip if the input data is base64 encoded
