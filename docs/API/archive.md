@@ -9,6 +9,7 @@ Handles Unzipping a requesting files from an Epub Archive
 * [Archive](#Archive) ⇐ <code>Input</code>
     * [.createInstance()](#Archive+createInstance)
     * [.open(input, [encoding])](#Archive+open) ⇒ <code>Promise.&lt;any&gt;</code>
+    * [.clear()](#Archive+clear)
     * [.openUrl(zipUrl, [isBase64])](#Archive+openUrl) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.getBlob(url, [mimeType])](#Archive+getBlob) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>
     * [.getText(url)](#Archive+getText) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
@@ -33,6 +34,12 @@ Open an archive
 | input | <code>string</code> \| <code>ArrayBuffer</code> |  |
 | [encoding] | <code>string</code> | tells JSZip if the input data is base64 encoded |
 
+<a name="Archive+clear"></a>
+
+## archive.clear()
+Clear the JSZip.files to empty
+
+**Kind**: instance method of [<code>Archive</code>](#Archive)  
 <a name="Archive+openUrl"></a>
 
 ## archive.openUrl(zipUrl, [isBase64]) ⇒ <code>Promise.&lt;any&gt;</code>

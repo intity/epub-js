@@ -4,6 +4,10 @@
 request
 
 **Kind**: global function  
+**Todo**
+
+- [ ] Fallback for url if window isn't defined
+
 
 | Param | Type | Default |
 | --- | --- | --- |
