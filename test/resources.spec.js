@@ -20,31 +20,45 @@ const url = (path) => {
     return result
 }
 
+const init = async () => {
+    //--NOTE: Init book object without called the book.open() method
+    const path = url("/assets/alice.epub")
+    //--BOOK_INIT [in: INIT_PATH]
+    const book = new Book(path)
+    //--ARCH_INIT [in: INIT]
+    book.archive = new Archive()
+    book.archived = true
+    //--PATH: http://localhost:8080/assets/alice.epub
+    //--ARCH_OPEN_URI [in: PATH, out: Object]
+    //--TODO: add to: 'book.fromURI(path)' --> 'book.archive.openUrl')
+    const jszip_data = await book.archive.openUrl(path)
+    //--BOOK_RESOLVE [in: META-INF/container.xml]
+    const container_path = book.resolve(CONTAINER_PATH_0)
+    //--ARCH_REQUEST [in: /META-INF/container.xml, out: Document]
+    const container_data = await book.archive.request(container_path)
+    //--ARCH_PARSE [in: Document, out: Container]
+    //--TODO: mv book.container --> book.archive.container
+    const container_inst = await book.container.parse(container_data)
+    //--PACK_PATH [in: OPS/package.opf, out: /OPS/package.opf]
+    const pack_path = "\/" + container_inst.fullPath
+    //--ARCH_REQUEST [in: /OPS/package.opf, out: Document]
+    const pack_data = await book.archive.request(pack_path)
+    //--PACK_PARSE [in: Document, out: Packaging]
+    const pack = await book.packaging.parse(pack_data)
+    //--TARGET_INST [out: Resources]
+    const inst = book.resources
+    const data = jszip_data
+    return Promise.resolve({ book, pack, inst, data })
+}
+
 describe("Resources", () => {
-    let path, book, epub, data, cobj, pack, inst
+    let book, pack, inst, data
     before(async () => {
-        //--BOOK_PATH:
-        path = url("/assets/alice.epub")
-        //--BOOK_INIT    : PATH
-        book = new Book(path)
-        book.archive = new Archive()
-        book.archived = true
-        //--BOOK_FROM_URI: book.fromURI(path) --> book.archive.openUrl : Promise<EDB>
-        epub = await book.archive.openUrl(path)
-        //--BOOK_RESOLVE : PATH
-        path = book.resolve(CONTAINER_PATH_0)
-        //--ARCH_REQUEST : input.request(path)
-        data = await book.archive.request(path)
-        //--ARCH_PARSE   : Document
-        cobj = await book.container.parse(data)
-        //--EPUB_PATH    : OPS/package.opf
-        path = cobj.fullPath
-        //--ARCH_REQUEST : PATH
-        data = await book.archive.request("\/" + path)
-        //--PACK_PARSE   : Document
-        pack = await book.packaging.parse(data)
-        //--DONE         : Packaging
-        inst = book.resources
+        const pr = await init()
+        book = pr.book
+        pack = pr.pack
+        inst = pr.inst
+        data = pr.data
     })
     describe("#constructor()", () => {
         it("should be check instance", () => {
