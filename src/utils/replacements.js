@@ -81,7 +81,7 @@ export const replaceMeta = (doc, section) => {
  * Replace links from node
  * @param {Node} contents 
  * @param {function} cb Callback function
- * @returns {number} Number of replace links
+ * @returns {NodeList} Replace links
  * @example replaceLinks(node, (href) => { actions })
  * @todo move me to Contents
  */
@@ -90,7 +90,7 @@ export const replaceLinks = (contents, cb) => {
 	const links = contents.querySelectorAll("a[href]");
 	const len = links.length;
 
-	if (!len) return 0;
+	if (!len) return links;
 
 	const repl = (link) => {
 
@@ -110,7 +110,7 @@ export const replaceLinks = (contents, cb) => {
 	};
 
 	links.forEach(ln => repl(ln));
-	return len;
+	return links;
 }
 
 const relative = (p1, p2) => {
