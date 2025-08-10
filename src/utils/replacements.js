@@ -78,37 +78,39 @@ export const replaceMeta = (doc, section) => {
 }
 
 /**
- * replaceLinks
+ * Replace links from node
  * @param {Node} contents 
- * @param {function} fn 
+ * @param {function} cb Callback function
+ * @returns {number} Number of replace links
+ * @example replaceLinks(node, (href) => { actions })
  * @todo move me to Contents
  */
-export const replaceLinks = (contents, fn) => {
+export const replaceLinks = (contents, cb) => {
 
 	const links = contents.querySelectorAll("a[href]");
+	const len = links.length;
 
-	if (!links.length) return;
+	if (!len) return 0;
 
-	const replaceLink = (link) => {
+	const repl = (link) => {
 
 		const href = link.getAttribute("href");
 
 		if (href.indexOf("mailto:") === 0) {
-			return;
+			return 0;
 		}
 		if (href.indexOf("://") > -1) { // is absolute
 			link.setAttribute("target", "_blank");
 		} else {
 			link.onclick = (e) => {
-				fn(href);
+				cb(href);
 				return false;
 			};
 		}
 	};
 
-	for (let i = 0; i < links.length; i++) {
-		replaceLink(links[i]);
-	}
+	links.forEach(ln => repl(ln));
+	return len;
 }
 
 const relative = (p1, p2) => {
