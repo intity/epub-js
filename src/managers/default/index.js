@@ -200,18 +200,23 @@ class DefaultViewManager {
 
 	/**
 	 * Require the view from passed string, or as a class function
-	 * @param {string|class} view
-	 * @return {class}
+	 * @param {string|function} view
+	 * @return {function}
 	 * @private
 	 */
 	requireView(view) {
 
 		let result;
-		if (typeof view === "string" && view === "iframe") {
-			result = IframeView;
-		} else if (view === "inline") {
-			result = InlineView;
-		} else {
+		if (typeof view === "string") {
+			switch (view) {
+				default:
+					result = IframeView;
+					break;
+				case "inline":
+					result = InlineView;
+					break;
+			}
+		} else if (typeof view === "function") {
 			result = view;
 		}
 		return result;
