@@ -81,11 +81,6 @@ describe("Resources", () => {
             assert.equal(inst.size, 29)
         })
     })
-    describe("#substitute()", () => {
-        xit("should be substitute urls", () => {
-            // inst.substitute(content, section)
-        })
-    })
     describe("#createUrl()", () => {
         it("should be create blob URL", async () => {
             const path = "images/cover_th.jpg"
