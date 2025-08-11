@@ -2,43 +2,39 @@ const { Blob } = require("node:buffer")
 const { URL } = require("node:url")
 const { JSDOM } = require("jsdom")
 const { ResizeObserver } = require("resize-observer")
-const JSZip = require("jszip")
-const localforage = require("localforage")
-
 const html = "<!DOCTYPE html><html><head></head><body></body></html>"
 const vdom = new JSDOM(html, {
     url: "http://localhost:8080",
     contentType: "text/html",
     resources: "usable"
 })
-const window = vdom.window
-//-- NODEJS
+const wind = vdom.window
+//--NODEJS
 global.URL = URL
-global.requestAnimationFrame = window.requestAnimationFrame = (fn) => {
+global.Blob = Blob
+//--JSDOM
+global.requestAnimationFrame = wind.requestAnimationFrame = (fn) => {
     return setTimeout(fn, 0)
 }
-global.cancelAnimationFrame = window.cancelAnimationFrame = (id) => {
+global.cancelAnimationFrame = wind.cancelAnimationFrame = (id) => {
     clearTimeout(id)
 }
-//-- JSDOM
-global.window = window
-global.document = window.document
-global.location = window.location
-global.navigator = window.navigator
-global.screen = window.screen
-global.Blob = Blob
-global.Document = window.Document
-global.DOMParser = window.DOMParser
-global.Element = window.Element
-global.Node = window.Node
-global.NodeFilter = window.NodeFilter
-global.NodeList = window.NodeList
-global.Object = window.Object
-global.Range = window.Range
-global.XMLHttpRequest = window.XMLHttpRequest
-global.XMLSerializer = window.XMLSerializer
-global.XPathResult = window.XPathResult
-//-- DEPS
-global.JSZip = JSZip
-global.localforage = localforage
+global.window = wind
+global.document = wind.document
+global.location = wind.location
+global.navigator = wind.navigator
+global.screen = wind.screen
+global.Document = wind.Document
+global.DOMParser = wind.DOMParser
+global.Element = wind.Element
+global.HTMLAnchorElement = wind.HTMLAnchorElement
+global.Node = wind.Node
+global.NodeFilter = wind.NodeFilter
+global.NodeList = wind.NodeList
+global.Object = wind.Object
+global.Range = wind.Range
+global.XMLHttpRequest = wind.XMLHttpRequest
+global.XMLSerializer = wind.XMLSerializer
+global.XPathResult = wind.XPathResult
+//--DEPS
 global.ResizeObserver = ResizeObserver
