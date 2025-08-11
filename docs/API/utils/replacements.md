@@ -7,7 +7,7 @@
     * [.replaceCanonical](#module_replacements.replaceCanonical)
     * [.replaceMeta](#module_replacements.replaceMeta)
     * [.replaceLinks](#module_replacements.replaceLinks) ⇒ <code>NodeList</code>
-    * [.substitute](#module_replacements.substitute)
+    * [.substitute](#module_replacements.substitute) ⇒ <code>string</code>
 
 <a name="module_replacements.replaceBase"></a>
 
@@ -68,14 +68,15 @@ replaceLinks(node, (href) => { actions })
 ```
 <a name="module_replacements.substitute"></a>
 
-## replacements.substitute
+## replacements.substitute ⇒ <code>string</code>
 substitute
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
+**Returns**: <code>string</code> - Modified content in text format.  
 
-| Param | Type |
-| --- | --- |
-| content | <code>string</code> | 
-| urls | <code>Array.&lt;string&gt;</code> | 
-| replacements | <code>Array.&lt;string&gt;</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | Content in text format |
+| urls | <code>Array.&lt;string&gt;</code> | URLs |
+| repl | <code>Array.&lt;string&gt;</code> | Replacements array |
 

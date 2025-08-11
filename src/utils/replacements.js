@@ -125,19 +125,20 @@ const relative = (p1, p2) => {
 
 /**
  * substitute
- * @param {string} content 
- * @param {string[]} urls 
- * @param {string[]} replacements 
+ * @param {string} content Content in text format
+ * @param {string[]} urls URLs
+ * @param {string[]} repl Replacements array
+ * @returns {string} Modified content in text format.
  */
-export const substitute = (content, section, urls, replacements) => {
+export const substitute = (content, section, urls, repl) => {
 
 	urls.forEach((url, i) => {
-		if (url && replacements[i]) {
+		if (url && repl[i]) {
 			// Account for special characters in the file name.
 			// See https://stackoverflow.com/a/6318729.
 			url = relative(section.href, url);
 			url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-			content = content.replace(new RegExp(url, "g"), replacements[i]);
+			content = content.replace(new RegExp(url, "g"), repl[i]);
 		}
 	});
 	return content;
