@@ -52,7 +52,7 @@ const init = async () => {
 }
 
 describe("Resources", () => {
-    let book, pack, inst, data, blobUrl
+    let book, pack, inst, data, blobURI
     before(async () => {
         const pr = await init()
         book = pr.book
@@ -83,7 +83,7 @@ describe("Resources", () => {
     })
     describe("#substitute()", () => {
         xit("should be substitute urls", () => {
-            // inst.substitute(content, section, [])
+            // inst.substitute(content, section)
         })
     })
     describe("#createUrl()", () => {
@@ -93,14 +93,27 @@ describe("Resources", () => {
             const type = "blob"
             const blob = await inst.archive.request(href, type)
             const burl = await inst.createUrl(href, type)
-            blobUrl = burl
+            blobURI = burl
             assert.ok(blob instanceof Blob)
             assert.ok(/blob:/.test(burl))
+            assert.equal(href, "/OPS/images/cover_th.jpg")
+            assert.equal(blob.size, 36192)
+            assert.equal(blob.type, "image/jpeg")
+            assert.equal(inst.size, 29)
         })
     })
     describe("#revokeUrl()", () => {
-        xit("should be revke blob URL", () => {
-            // inst.revokeUrl(blobUrl)
+        it("should be revke blob URL", () => {
+            const path = "images/cover_th.jpg"
+            const href = inst.resolve(path)
+            const list = [
+                inst.revokeUrl(href),
+                inst.revokeUrl(path)
+            ]
+            assert.equal(href, "/OPS/images/cover_th.jpg")
+            assert.equal(list[0], 1)
+            assert.equal(list[1], 2) // success
+            assert.equal(inst.size, 29)
         })
     })
     describe("#destroy()", () => {
