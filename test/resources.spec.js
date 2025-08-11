@@ -52,7 +52,7 @@ const init = async () => {
 }
 
 describe("Resources", () => {
-    let book, pack, inst, data, blobURI
+    let book, pack, inst, data
     before(async () => {
         const pr = await init()
         book = pr.book
@@ -93,7 +93,6 @@ describe("Resources", () => {
             const type = "blob"
             const blob = await inst.archive.request(href, type)
             const burl = await inst.createUrl(href, type)
-            blobURI = burl
             assert.ok(blob instanceof Blob)
             assert.ok(/blob:/.test(burl))
             assert.equal(href, "/OPS/images/cover_th.jpg")
@@ -110,9 +109,12 @@ describe("Resources", () => {
                 inst.revokeUrl(href),
                 inst.revokeUrl(path)
             ]
+            const burl = list[1].blobUrl
+            assert.ok(typeof list[0].blobUrl === "undefined")
+            assert.ok(/blob:/.test(burl))
             assert.equal(href, "/OPS/images/cover_th.jpg")
-            assert.equal(list[0], 1)
-            assert.equal(list[1], 2) // success
+            assert.equal(list[0].result, 1)
+            assert.equal(list[1].result, 2) // success
             assert.equal(inst.size, 29)
         })
     })
