@@ -52,7 +52,7 @@ const init = async () => {
 }
 
 describe("Resources", () => {
-    let book, pack, inst, data
+    let book, pack, inst, data, blobUrl
     before(async () => {
         const pr = await init()
         book = pr.book
@@ -81,6 +81,11 @@ describe("Resources", () => {
             assert.equal(inst.size, 29)
         })
     })
+    describe("#substitute()", () => {
+        xit("should be substitute urls", () => {
+            // inst.substitute(content, section, [])
+        })
+    })
     describe("#createUrl()", () => {
         it("should be create blob URL", async () => {
             const path = "images/cover_th.jpg"
@@ -88,8 +93,14 @@ describe("Resources", () => {
             const type = "blob"
             const blob = await inst.archive.request(href, type)
             const burl = await inst.createUrl(href, type)
+            blobUrl = burl
             assert.ok(blob instanceof Blob)
             assert.ok(/blob:/.test(burl))
+        })
+    })
+    describe("#revokeUrl()", () => {
+        xit("should be revke blob URL", () => {
+            // inst.revokeUrl(blobUrl)
         })
     })
     describe("#destroy()", () => {
