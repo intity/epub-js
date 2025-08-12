@@ -118,7 +118,7 @@ const relative = (p1, p2) => {
 	const arr = p1.split("/");
 	let result = "";
 	for (let i = 1; i < arr.length; ++i) {
-		result += "../"
+		result += "../";
 	}
 	return result + p2;
 };
@@ -126,16 +126,19 @@ const relative = (p1, p2) => {
 /**
  * substitute
  * @param {string} content Content in text format
+ * @param {Section} section Section
  * @param {string[]} urls URLs
  * @param {string[]} repl Replacements array
  * @returns {string} Modified content in text format.
+ * @description
+ * This function replaces all URLs in the content text block.
  */
 export const substitute = (content, section, urls, repl) => {
 
 	urls.forEach((url, i) => {
 		if (url && repl[i]) {
 			// Account for special characters in the file name.
-			// See https://stackoverflow.com/a/6318729.
+			// See https://stackoverflow.com/a/6318729
 			url = relative(section.href, url);
 			url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 			content = content.replace(new RegExp(url, "g"), repl[i]);
