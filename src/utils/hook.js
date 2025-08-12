@@ -12,6 +12,11 @@ class Hook {
 	constructor(context) {
 
 		this.context = context || this;
+		/**
+		 * @member {Array} tasks
+		 * @memberof Hook
+		 * @readonly
+		 */
 		this.tasks = [];
 	}
 
@@ -63,7 +68,7 @@ class Hook {
 			try {
 				executing = task.apply(context, args);
 			} catch (err) {
-				console.error(err);
+				throw new TypeError(err);
 			}
 
 			if (executing && typeof executing["then"] === "function") {
