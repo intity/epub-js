@@ -1678,6 +1678,48 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 
 /***/ }),
 
+/***/ 456:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var globalThis = __webpack_require__(4576);
+var uncurryThis = __webpack_require__(9504);
+var anUint8Array = __webpack_require__(4154);
+var notDetached = __webpack_require__(5169);
+
+var numberToString = uncurryThis(1.1.toString);
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toHex || !(function () {
+  try {
+    var target = new Uint8Array([255, 255, 255, 255, 255, 255, 255, 255]);
+    return target.toHex() === 'ffffffffffffffff';
+  } catch (error) {
+    return false;
+  }
+})();
+
+// `Uint8Array.prototype.toHex` method
+// https://github.com/tc39/proposal-arraybuffer-base64
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  toHex: function toHex() {
+    anUint8Array(this);
+    notDetached(this.buffer);
+    var result = '';
+    for (var i = 0, length = this.length; i < length; i++) {
+      var hex = numberToString(this[i], 16);
+      result += hex.length === 1 ? '0' + hex : hex;
+    }
+    return result;
+  }
+});
+
+
+/***/ }),
+
 /***/ 487:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -4072,37 +4114,8 @@ module.exports = !!structuredClone && !fails(function () {
 
 "use strict";
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var $fromBase64 = __webpack_require__(9143);
-var anUint8Array = __webpack_require__(4154);
-
-var Uint8Array = globalThis.Uint8Array;
-
-var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.setFromBase64 || !function () {
-  var target = new Uint8Array([255, 255, 255, 255, 255]);
-  try {
-    target.setFromBase64('', null);
-    return;
-  } catch (error) { /* empty */ }
-  try {
-    target.setFromBase64('MjYyZg===');
-  } catch (error) {
-    return target[0] === 50 && target[1] === 54 && target[2] === 50 && target[3] === 255 && target[4] === 255;
-  }
-}();
-
-// `Uint8Array.prototype.setFromBase64` method
-// https://github.com/tc39/proposal-arraybuffer-base64
-if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
-  setFromBase64: function setFromBase64(string /* , options */) {
-    anUint8Array(this);
-
-    var result = $fromBase64(string, arguments.length > 1 ? arguments[1] : undefined, this, this.length);
-
-    return { read: result.read, written: result.written };
-  }
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(6632);
 
 
 /***/ }),
@@ -6805,32 +6818,34 @@ const replaceMeta = (doc, section) => {
 };
 
 /**
- * replaceLinks
+ * Replace links from node
  * @param {Node} contents 
- * @param {function} fn 
+ * @param {function} cb Callback function
+ * @returns {NodeList} Replace links
+ * @example replaceLinks(node, (href) => { actions })
  * @todo move me to Contents
  */
-const replaceLinks = (contents, fn) => {
+const replaceLinks = (contents, cb) => {
   const links = contents.querySelectorAll("a[href]");
-  if (!links.length) return;
-  const replaceLink = link => {
+  const len = links.length;
+  if (!len) return links;
+  const repl = link => {
     const href = link.getAttribute("href");
     if (href.indexOf("mailto:") === 0) {
-      return;
+      return 0;
     }
     if (href.indexOf("://") > -1) {
       // is absolute
       link.setAttribute("target", "_blank");
     } else {
       link.onclick = e => {
-        fn(href);
+        cb(href);
         return false;
       };
     }
   };
-  for (let i = 0; i < links.length; i++) {
-    replaceLink(links[i]);
-  }
+  links.forEach(ln => repl(ln));
+  return links;
 };
 const relative = (p1, p2) => {
   const arr = p1.split("/");
@@ -6843,18 +6858,22 @@ const relative = (p1, p2) => {
 
 /**
  * substitute
- * @param {string} content 
- * @param {string[]} urls 
- * @param {string[]} replacements 
+ * @param {string} content Content in text format
+ * @param {Section} section Section
+ * @param {string[]} urls URLs
+ * @param {string[]} repl Replacements array
+ * @returns {string} Modified content in text format.
+ * @description
+ * This function replaces all URLs in the content text block.
  */
-const substitute = (content, section, urls, replacements) => {
+const substitute = (content, section, urls, repl) => {
   urls.forEach((url, i) => {
-    if (url && replacements[i]) {
+    if (url && repl[i]) {
       // Account for special characters in the file name.
-      // See https://stackoverflow.com/a/6318729.
+      // See https://stackoverflow.com/a/6318729
       url = relative(section.href, url);
       url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-      content = content.replace(new RegExp(url, "g"), replacements[i]);
+      content = content.replace(new RegExp(url, "g"), repl[i]);
     }
   });
   return content;
@@ -8396,17 +8415,22 @@ class DefaultViewManager {
 
   /**
    * Require the view from passed string, or as a class function
-   * @param {string|class} view
-   * @return {class}
+   * @param {string|function} view
+   * @return {function}
    * @private
    */
   requireView(view) {
     let result;
-    if (typeof view === "string" && view === "iframe") {
-      result = _views_iframe__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A;
-    } else if (view === "inline") {
-      result = _views_inline__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A;
-    } else {
+    if (typeof view === "string") {
+      switch (view) {
+        default:
+          result = _views_iframe__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .A;
+          break;
+        case "inline":
+          result = _views_inline__WEBPACK_IMPORTED_MODULE_10__/* ["default"] */ .A;
+          break;
+      }
+    } else if (typeof view === "function") {
       result = view;
     }
     return result;
@@ -9161,9 +9185,7 @@ const request = (url, type, withCredentials = false, headers = []) => {
   if ((0,_core__WEBPACK_IMPORTED_MODULE_6__.isXml)(type)) {
     xhr.responseType = "document";
     xhr.overrideMimeType("text/xml"); // for OPF parsing
-  } else if (type === "xhtml") {
-    xhr.responseType = "document";
-  } else if (type === "html" || type === "htm") {
+  } else if (type === "xhtml" || type === "html" || type === "htm") {
     xhr.responseType = "document";
   } else if (type === "binary") {
     xhr.responseType = "arraybuffer";
@@ -9171,6 +9193,8 @@ const request = (url, type, withCredentials = false, headers = []) => {
     xhr.responseType = BLOB_RESPONSE;
   } else if (type === "json") {
     xhr.responseType = "json";
+  } else if (type === "text") {
+    xhr.responseType = "text";
   }
   xhr.onreadystatechange = e => read(e, def);
   xhr.onload = e => load(e, type, def);
@@ -11640,6 +11664,33 @@ module.exports = (function () {
 
 /***/ }),
 
+/***/ 4226:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var globalThis = __webpack_require__(4576);
+var aString = __webpack_require__(3463);
+var anUint8Array = __webpack_require__(4154);
+var notDetached = __webpack_require__(5169);
+var $fromHex = __webpack_require__(2303);
+
+// `Uint8Array.prototype.setFromHex` method
+// https://github.com/tc39/proposal-arraybuffer-base64
+if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true }, {
+  setFromHex: function setFromHex(string) {
+    anUint8Array(this);
+    aString(string);
+    notDetached(this.buffer);
+    var read = $fromHex(string, this).read;
+    return { read: read, written: read / 2 };
+  }
+});
+
+
+/***/ }),
+
 /***/ 4232:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -13477,39 +13528,8 @@ module.exports = function (index, length) {
 
 "use strict";
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
-
-var numberToString = uncurryThis(1.1.toString);
-
-var Uint8Array = globalThis.Uint8Array;
-
-var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toHex || !(function () {
-  try {
-    var target = new Uint8Array([255, 255, 255, 255, 255, 255, 255, 255]);
-    return target.toHex() === 'ffffffffffffffff';
-  } catch (error) {
-    return false;
-  }
-})();
-
-// `Uint8Array.prototype.toHex` method
-// https://github.com/tc39/proposal-arraybuffer-base64
-if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
-  toHex: function toHex() {
-    anUint8Array(this);
-    notDetached(this.buffer);
-    var result = '';
-    for (var i = 0, length = this.length; i < length; i++) {
-      var hex = numberToString(this[i], 16);
-      result += hex.length === 1 ? '0' + hex : hex;
-    }
-    return result;
-  }
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(456);
 
 
 /***/ }),
@@ -14608,6 +14628,51 @@ module.exports = __webpack_require__(5339)() ? Object.assign : __webpack_require
 
 /***/ }),
 
+/***/ 6632:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var globalThis = __webpack_require__(4576);
+var $fromBase64 = __webpack_require__(9143);
+var anUint8Array = __webpack_require__(4154);
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.setFromBase64 || !function () {
+  var target = new Uint8Array([255, 255, 255, 255, 255]);
+  try {
+    target.setFromBase64('', null);
+    return;
+  } catch (error) { /* empty */ }
+  // Webkit not throw an error on odd length string
+  try {
+    target.setFromBase64('a');
+    return;
+  } catch (error) { /* empty */ }
+  try {
+    target.setFromBase64('MjYyZg===');
+  } catch (error) {
+    return target[0] === 50 && target[1] === 54 && target[2] === 50 && target[3] === 255 && target[4] === 255;
+  }
+}();
+
+// `Uint8Array.prototype.setFromBase64` method
+// https://github.com/tc39/proposal-arraybuffer-base64
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  setFromBase64: function setFromBase64(string /* , options */) {
+    anUint8Array(this);
+
+    var result = $fromBase64(string, arguments.length > 1 ? arguments[1] : undefined, this, this.length);
+
+    return { read: result.read, written: result.written };
+  }
+});
+
+
+/***/ }),
+
 /***/ 6642:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -14975,7 +15040,7 @@ var set = MapHelpers.set;
 
 // `Map.prototype.getOrInsertComputed` method
 // https://github.com/tc39/proposal-upsert
-$({ target: 'Map', proto: true, real: true, forced: true }, {
+$({ target: 'Map', proto: true, real: true }, {
   getOrInsertComputed: function getOrInsertComputed(key, callbackfn) {
     aMap(this);
     aCallable(callbackfn);
@@ -15438,7 +15503,7 @@ var set = MapHelpers.set;
 
 // `Map.prototype.getOrInsert` method
 // https://github.com/tc39/proposal-upsert
-$({ target: 'Map', proto: true, real: true, forced: true }, {
+$({ target: 'Map', proto: true, real: true }, {
   getOrInsert: function getOrInsert(key, value) {
     if (has(aMap(this), key)) return get(this, key);
     set(this, key, value);
@@ -17710,10 +17775,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.44.0',
+  version: '3.45.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.44.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.45.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -20392,6 +20457,11 @@ class Hook {
    */
   constructor(context) {
     this.context = context || this;
+    /**
+     * @member {Array} tasks
+     * @memberof Hook
+     * @readonly
+     */
     this.tasks = [];
   }
 
@@ -20439,7 +20509,7 @@ class Hook {
       try {
         executing = task.apply(context, args);
       } catch (err) {
-        console.error(err);
+        throw new TypeError(err);
       }
       if (executing && typeof executing["then"] === "function") {
         // Task is a function that returns a promise
@@ -24012,14 +24082,27 @@ class Resources extends Map {
   /**
    * Revoke URL for a resource item
    * @param {string} url 
+   * @returns {{result: number, blobUrl: string}} 
+   * Result:
+   * 
+   * 0. no-replacements
+   * 1. replacements
+   * 2. success
    */
   revokeUrl(url) {
+    let data = {
+      result: 0,
+      blobUrl: null
+    };
     if (this.replacements === "blobUrl") {
-      const blobUrl = this.get(url);
-      if (blobUrl) {
-        URL.revokeObjectURL(blobUrl);
+      data.result = 1;
+      data.blobUrl = this.get(url);
+      if (data.blobUrl) {
+        data.result = 2;
+        URL.revokeObjectURL(data.blobUrl);
       }
     }
+    return data;
   }
 
   /**
@@ -24248,6 +24331,7 @@ module.exports = function (string, options, into, maxLength) {
 
   if (into) notDetached(into.buffer);
 
+  var stringLength = string.length;
   var bytes = into || [];
   var written = 0;
   var read = 0;
@@ -24256,7 +24340,7 @@ module.exports = function (string, options, into, maxLength) {
 
   if (maxLength) while (true) {
     index = skipAsciiWhitespace(string, index);
-    if (index === string.length) {
+    if (index === stringLength) {
       if (chunk.length > 0) {
         if (lastChunkHandling === 'stop-before-partial') {
           break;
@@ -24270,7 +24354,7 @@ module.exports = function (string, options, into, maxLength) {
           throw new SyntaxError('Missing padding');
         }
       }
-      read = string.length;
+      read = stringLength;
       break;
     }
     var chr = at(string, index);
@@ -24281,7 +24365,7 @@ module.exports = function (string, options, into, maxLength) {
       }
       index = skipAsciiWhitespace(string, index);
       if (chunk.length === 2) {
-        if (index === string.length) {
+        if (index === stringLength) {
           if (lastChunkHandling === 'stop-before-partial') {
             break;
           }
@@ -24292,11 +24376,11 @@ module.exports = function (string, options, into, maxLength) {
           index = skipAsciiWhitespace(string, index);
         }
       }
-      if (index < string.length) {
+      if (index < stringLength) {
         throw new SyntaxError('Unexpected character after padding');
       }
       written = writeBytes(bytes, decodeBase64Chunk(chunk, alphabet, lastChunkHandling === 'strict'), written);
-      read = string.length;
+      read = stringLength;
       break;
     }
     if (!hasOwn(alphabet, chr)) {
@@ -25095,6 +25179,74 @@ module.exports = function (nextHandler, IS_ITERATOR, RETURN_HANDLER_RESULT) {
 
 /***/ }),
 
+/***/ 9486:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+
+var $ = __webpack_require__(6518);
+var globalThis = __webpack_require__(4576);
+var uncurryThis = __webpack_require__(9504);
+var anObjectOrUndefined = __webpack_require__(3972);
+var anUint8Array = __webpack_require__(4154);
+var notDetached = __webpack_require__(5169);
+var base64Map = __webpack_require__(2804);
+var getAlphabetOption = __webpack_require__(944);
+
+var base64Alphabet = base64Map.i2c;
+var base64UrlAlphabet = base64Map.i2cUrl;
+
+var charAt = uncurryThis(''.charAt);
+
+var Uint8Array = globalThis.Uint8Array;
+
+var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toBase64 || !function () {
+  try {
+    var target = new Uint8Array();
+    target.toBase64(null);
+  } catch (error) {
+    return true;
+  }
+}();
+
+// `Uint8Array.prototype.toBase64` method
+// https://github.com/tc39/proposal-arraybuffer-base64
+if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
+  toBase64: function toBase64(/* options */) {
+    var array = anUint8Array(this);
+    var options = arguments.length ? anObjectOrUndefined(arguments[0]) : undefined;
+    var alphabet = getAlphabetOption(options) === 'base64' ? base64Alphabet : base64UrlAlphabet;
+    var omitPadding = !!options && !!options.omitPadding;
+    notDetached(this.buffer);
+
+    var result = '';
+    var i = 0;
+    var length = array.length;
+    var triplet;
+
+    var at = function (shift) {
+      return charAt(alphabet, (triplet >> (6 * shift)) & 63);
+    };
+
+    for (; i + 2 < length; i += 3) {
+      triplet = (array[i] << 16) + (array[i + 1] << 8) + array[i + 2];
+      result += at(3) + at(2) + at(1) + at(0);
+    }
+    if (i + 2 === length) {
+      triplet = (array[i] << 16) + (array[i + 1] << 8);
+      result += at(3) + at(2) + at(1) + (omitPadding ? '' : '=');
+    } else if (i + 1 === length) {
+      triplet = array[i] << 16;
+      result += at(3) + at(2) + (omitPadding ? '' : '==');
+    }
+
+    return result;
+  }
+});
+
+
+/***/ }),
+
 /***/ 9504:
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
@@ -25737,65 +25889,8 @@ module.exports = {
 
 "use strict";
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var uncurryThis = __webpack_require__(9504);
-var anObjectOrUndefined = __webpack_require__(3972);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
-var base64Map = __webpack_require__(2804);
-var getAlphabetOption = __webpack_require__(944);
-
-var base64Alphabet = base64Map.i2c;
-var base64UrlAlphabet = base64Map.i2cUrl;
-
-var charAt = uncurryThis(''.charAt);
-
-var Uint8Array = globalThis.Uint8Array;
-
-var INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS = !Uint8Array || !Uint8Array.prototype.toBase64 || !function () {
-  try {
-    var target = new Uint8Array();
-    target.toBase64(null);
-  } catch (error) {
-    return true;
-  }
-}();
-
-// `Uint8Array.prototype.toBase64` method
-// https://github.com/tc39/proposal-arraybuffer-base64
-if (Uint8Array) $({ target: 'Uint8Array', proto: true, forced: INCORRECT_BEHAVIOR_OR_DOESNT_EXISTS }, {
-  toBase64: function toBase64(/* options */) {
-    var array = anUint8Array(this);
-    var options = arguments.length ? anObjectOrUndefined(arguments[0]) : undefined;
-    var alphabet = getAlphabetOption(options) === 'base64' ? base64Alphabet : base64UrlAlphabet;
-    var omitPadding = !!options && !!options.omitPadding;
-    notDetached(this.buffer);
-
-    var result = '';
-    var i = 0;
-    var length = array.length;
-    var triplet;
-
-    var at = function (shift) {
-      return charAt(alphabet, (triplet >> (6 * shift)) & 63);
-    };
-
-    for (; i + 2 < length; i += 3) {
-      triplet = (array[i] << 16) + (array[i + 1] << 8) + array[i + 2];
-      result += at(3) + at(2) + at(1) + at(0);
-    }
-    if (i + 2 === length) {
-      triplet = (array[i] << 16) + (array[i + 1] << 8);
-      result += at(3) + at(2) + at(1) + (omitPadding ? '' : '=');
-    } else if (i + 1 === length) {
-      triplet = array[i] << 16;
-      result += at(3) + at(2) + (omitPadding ? '' : '==');
-    }
-
-    return result;
-  }
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(9486);
 
 
 /***/ }),
@@ -25890,24 +25985,8 @@ module.exports = function (val) { return val !== _undefined && val !== null; };
 
 "use strict";
 
-var $ = __webpack_require__(6518);
-var globalThis = __webpack_require__(4576);
-var aString = __webpack_require__(3463);
-var anUint8Array = __webpack_require__(4154);
-var notDetached = __webpack_require__(5169);
-var $fromHex = __webpack_require__(2303);
-
-// `Uint8Array.prototype.setFromHex` method
-// https://github.com/tc39/proposal-arraybuffer-base64
-if (globalThis.Uint8Array) $({ target: 'Uint8Array', proto: true }, {
-  setFromHex: function setFromHex(string) {
-    anUint8Array(this);
-    aString(string);
-    notDetached(this.buffer);
-    var read = $fromHex(string, this).read;
-    return { read: read, written: read / 2 };
-  }
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(4226);
 
 
 /***/ }),

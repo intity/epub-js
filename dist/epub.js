@@ -3511,7 +3511,7 @@ var set = MapHelpers.set;
 
 // `Map.prototype.getOrInsertComputed` method
 // https://github.com/tc39/proposal-upsert
-$({ target: 'Map', proto: true, real: true, forced: true }, {
+$({ target: 'Map', proto: true, real: true }, {
   getOrInsertComputed: function getOrInsertComputed(key, callbackfn) {
     aMap(this);
     aCallable(callbackfn);
@@ -3597,7 +3597,7 @@ var set = MapHelpers.set;
 
 // `Map.prototype.getOrInsert` method
 // https://github.com/tc39/proposal-upsert
-$({ target: 'Map', proto: true, real: true, forced: true }, {
+$({ target: 'Map', proto: true, real: true }, {
   getOrInsert: function getOrInsert(key, value) {
     if (has(aMap(this), key)) return get(this, key);
     set(this, key, value);
@@ -3871,10 +3871,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.44.0',
+  version: '3.45.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.44.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.45.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -10209,32 +10209,34 @@ const replaceMeta = (doc, section) => {
 };
 
 /**
- * replaceLinks
+ * Replace links from node
  * @param {Node} contents 
- * @param {function} fn 
+ * @param {function} cb Callback function
+ * @returns {NodeList} Replace links
+ * @example replaceLinks(node, (href) => { actions })
  * @todo move me to Contents
  */
-const replaceLinks = (contents, fn) => {
+const replaceLinks = (contents, cb) => {
   const links = contents.querySelectorAll("a[href]");
-  if (!links.length) return;
-  const replaceLink = link => {
+  const len = links.length;
+  if (!len) return links;
+  const repl = link => {
     const href = link.getAttribute("href");
     if (href.indexOf("mailto:") === 0) {
-      return;
+      return 0;
     }
     if (href.indexOf("://") > -1) {
       // is absolute
       link.setAttribute("target", "_blank");
     } else {
       link.onclick = e => {
-        fn(href);
+        cb(href);
         return false;
       };
     }
   };
-  for (let i = 0; i < links.length; i++) {
-    replaceLink(links[i]);
-  }
+  links.forEach(ln => repl(ln));
+  return links;
 };
 const relative = (p1, p2) => {
   const arr = p1.split("/");
@@ -10247,18 +10249,22 @@ const relative = (p1, p2) => {
 
 /**
  * substitute
- * @param {string} content 
- * @param {string[]} urls 
- * @param {string[]} replacements 
+ * @param {string} content Content in text format
+ * @param {Section} section Section
+ * @param {string[]} urls URLs
+ * @param {string[]} repl Replacements array
+ * @returns {string} Modified content in text format.
+ * @description
+ * This function replaces all URLs in the content text block.
  */
-const substitute = (content, section, urls, replacements) => {
+const substitute = (content, section, urls, repl) => {
   urls.forEach((url, i) => {
-    if (url && replacements[i]) {
+    if (url && repl[i]) {
       // Account for special characters in the file name.
-      // See https://stackoverflow.com/a/6318729.
+      // See https://stackoverflow.com/a/6318729
       url = relative(section.href, url);
       url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-      content = content.replace(new RegExp(url, "g"), replacements[i]);
+      content = content.replace(new RegExp(url, "g"), repl[i]);
     }
   });
   return content;
@@ -10536,14 +10542,27 @@ class Resources extends Map {
   /**
    * Revoke URL for a resource item
    * @param {string} url 
+   * @returns {{result: number, blobUrl: string}} 
+   * Result:
+   * 
+   * 0. no-replacements
+   * 1. replacements
+   * 2. success
    */
   revokeUrl(url) {
+    let data = {
+      result: 0,
+      blobUrl: null
+    };
     if (this.replacements === "blobUrl") {
-      const blobUrl = this.get(url);
-      if (blobUrl) {
-        URL.revokeObjectURL(blobUrl);
+      data.result = 1;
+      data.blobUrl = this.get(url);
+      if (data.blobUrl) {
+        data.result = 2;
+        URL.revokeObjectURL(data.blobUrl);
       }
     }
+    return data;
   }
 
   /**
@@ -11432,6 +11451,11 @@ class Hook {
    */
   constructor(context) {
     this.context = context || this;
+    /**
+     * @member {Array} tasks
+     * @memberof Hook
+     * @readonly
+     */
     this.tasks = [];
   }
 
@@ -11479,7 +11503,7 @@ class Hook {
       try {
         executing = task.apply(context, args);
       } catch (err) {
-        console.error(err);
+        throw new TypeError(err);
       }
       if (executing && typeof executing["then"] === "function") {
         // Task is a function that returns a promise
@@ -14780,17 +14804,22 @@ class DefaultViewManager {
 
   /**
    * Require the view from passed string, or as a class function
-   * @param {string|class} view
-   * @return {class}
+   * @param {string|function} view
+   * @return {function}
    * @private
    */
   requireView(view) {
     let result;
-    if (typeof view === "string" && view === "iframe") {
-      result = iframe;
-    } else if (view === "inline") {
-      result = inline;
-    } else {
+    if (typeof view === "string") {
+      switch (view) {
+        default:
+          result = iframe;
+          break;
+        case "inline":
+          result = inline;
+          break;
+      }
+    } else if (typeof view === "function") {
       result = view;
     }
     return result;
@@ -16950,9 +16979,7 @@ const request = (url, type, withCredentials = false, headers = []) => {
   if (isXml(type)) {
     xhr.responseType = "document";
     xhr.overrideMimeType("text/xml"); // for OPF parsing
-  } else if (type === "xhtml") {
-    xhr.responseType = "document";
-  } else if (type === "html" || type === "htm") {
+  } else if (type === "xhtml" || type === "html" || type === "htm") {
     xhr.responseType = "document";
   } else if (type === "binary") {
     xhr.responseType = "arraybuffer";
@@ -16960,6 +16987,8 @@ const request = (url, type, withCredentials = false, headers = []) => {
     xhr.responseType = BLOB_RESPONSE;
   } else if (type === "json") {
     xhr.responseType = "json";
+  } else if (type === "text") {
+    xhr.responseType = "text";
   }
   xhr.onreadystatechange = e => read(e, def);
   xhr.onload = e => load(e, type, def);
