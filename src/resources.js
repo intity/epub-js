@@ -73,15 +73,28 @@ class Resources extends Map {
 	/**
 	 * Revoke URL for a resource item
 	 * @param {string} url 
+	 * @returns {{result: number, blobUrl: string}} 
+	 * Result:
+	 * 
+	 * 0. no-replacements
+	 * 1. replacements
+	 * 2. success
 	 */
 	revokeUrl(url) {
 
+		let data = {
+			result: 0,
+			blobUrl: null
+		};
 		if (this.replacements === "blobUrl") {
-			const blobUrl = this.get(url);
-			if (blobUrl) {
-				URL.revokeObjectURL(blobUrl);
+			data.result = 1;
+			data.blobUrl = this.get(url);
+			if (data.blobUrl) {
+				data.result = 2;
+				URL.revokeObjectURL(data.blobUrl);
 			}
 		}
+		return data;
 	}
 
 	/**

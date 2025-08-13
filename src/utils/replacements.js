@@ -78,37 +78,39 @@ export const replaceMeta = (doc, section) => {
 }
 
 /**
- * replaceLinks
+ * Replace links from node
  * @param {Node} contents 
- * @param {function} fn 
+ * @param {function} cb Callback function
+ * @returns {NodeList} Replace links
+ * @example replaceLinks(node, (href) => { actions })
  * @todo move me to Contents
  */
-export const replaceLinks = (contents, fn) => {
+export const replaceLinks = (contents, cb) => {
 
 	const links = contents.querySelectorAll("a[href]");
+	const len = links.length;
 
-	if (!links.length) return;
+	if (!len) return links;
 
-	const replaceLink = (link) => {
+	const repl = (link) => {
 
 		const href = link.getAttribute("href");
 
 		if (href.indexOf("mailto:") === 0) {
-			return;
+			return 0;
 		}
 		if (href.indexOf("://") > -1) { // is absolute
 			link.setAttribute("target", "_blank");
 		} else {
 			link.onclick = (e) => {
-				fn(href);
+				cb(href);
 				return false;
 			};
 		}
 	};
 
-	for (let i = 0; i < links.length; i++) {
-		replaceLink(links[i]);
-	}
+	links.forEach(ln => repl(ln));
+	return links;
 }
 
 const relative = (p1, p2) => {
@@ -116,26 +118,30 @@ const relative = (p1, p2) => {
 	const arr = p1.split("/");
 	let result = "";
 	for (let i = 1; i < arr.length; ++i) {
-		result += "../"
+		result += "../";
 	}
 	return result + p2;
 };
 
 /**
  * substitute
- * @param {string} content 
- * @param {string[]} urls 
- * @param {string[]} replacements 
+ * @param {string} content Content in text format
+ * @param {Section} section Section
+ * @param {string[]} urls URLs
+ * @param {string[]} repl Replacements array
+ * @returns {string} Modified content in text format.
+ * @description
+ * This function replaces all URLs in the content text block.
  */
-export const substitute = (content, section, urls, replacements) => {
+export const substitute = (content, section, urls, repl) => {
 
 	urls.forEach((url, i) => {
-		if (url && replacements[i]) {
+		if (url && repl[i]) {
 			// Account for special characters in the file name.
-			// See https://stackoverflow.com/a/6318729.
+			// See https://stackoverflow.com/a/6318729
 			url = relative(section.href, url);
 			url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-			content = content.replace(new RegExp(url, "g"), replacements[i]);
+			content = content.replace(new RegExp(url, "g"), repl[i]);
 		}
 	});
 	return content;

@@ -10,7 +10,7 @@ Assets container for URL replacements
     * [new Resources(request, resolve, [replacements])](#new_Resources_new)
     * [.clear()](#Resources+clear)
     * [.createUrl(href, [mimeType])](#Resources+createUrl) ⇒ <code>Promise.&lt;string&gt;</code>
-    * [.revokeUrl(url)](#Resources+revokeUrl)
+    * [.revokeUrl(url)](#Resources+revokeUrl) ⇒ <code>Object</code>
     * [.substitute(content, section)](#Resources+substitute)
     * [.unpack(manifest, archive, storage)](#Resources+unpack) ⇒ [<code>Promise.&lt;Resources&gt;</code>](#Resources)
     * [.destroy()](#Resources+destroy)
@@ -48,10 +48,15 @@ Create a url to a resource
 
 <a name="Resources+revokeUrl"></a>
 
-## resources.revokeUrl(url)
+## resources.revokeUrl(url) ⇒ <code>Object</code>
 Revoke URL for a resource item
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
+**Returns**: <code>Object</code> - Result:
+
+0. no-replacements
+1. replacements
+2. success  
 
 | Param | Type |
 | --- | --- |
