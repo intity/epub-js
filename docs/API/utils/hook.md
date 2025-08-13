@@ -9,11 +9,14 @@ Functions may return a promise if they are async.
 
 * [Hook](#Hook)
     * [new Hook(context)](#new_Hook_new)
-    * [.register()](#Hook+register)
-    * [.deregister()](#Hook+deregister)
-    * [.trigger()](#Hook+trigger) ⇒ <code>Array.&lt;Promise&gt;</code>
-    * [.list()](#Hook+list) ⇒ <code>Array</code>
-    * [.clear()](#Hook+clear)
+    * _instance_
+        * [.register()](#Hook+register)
+        * [.deregister()](#Hook+deregister)
+        * [.trigger()](#Hook+trigger) ⇒ <code>Array.&lt;Promise&gt;</code>
+        * [.list()](#Hook+list) ⇒ <code>Array</code>
+        * [.clear()](#Hook+clear)
+    * _static_
+        * [.tasks](#Hook.tasks) : <code>Array</code>
 
 <a name="new_Hook_new"></a>
 
@@ -71,3 +74,8 @@ list
 clear
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
+<a name="Hook.tasks"></a>
+
+## Hook.tasks : <code>Array</code>
+**Kind**: static property of [<code>Hook</code>](#Hook)  
+**Read only**: true  
