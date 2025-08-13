@@ -118,9 +118,7 @@ const request = (url, type, withCredentials = false, headers = []) => {
 	if (isXml(type)) {
 		xhr.responseType = "document";
 		xhr.overrideMimeType("text/xml"); // for OPF parsing
-	} else if (type === "xhtml") {
-		xhr.responseType = "document";
-	} else if (type === "html" || type === "htm") {
+	} else if (type === "xhtml" || type === "html" || type === "htm") {
 		xhr.responseType = "document";
 	} else if (type === "binary") {
 		xhr.responseType = "arraybuffer";
@@ -128,6 +126,8 @@ const request = (url, type, withCredentials = false, headers = []) => {
 		xhr.responseType = BLOB_RESPONSE;
 	} else if (type === "json") {
 		xhr.responseType = "json";
+	} else if (type === "text") {
+		xhr.responseType = "text";
 	}
 
 	xhr.onreadystatechange = (e) => read(e, def);

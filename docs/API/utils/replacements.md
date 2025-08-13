@@ -69,7 +69,7 @@ replaceLinks(node, (href) => { actions })
 <a name="module_replacements.substitute"></a>
 
 ## replacements.substitute ⇒ <code>string</code>
-substitute
+This function replaces all URLs in the content text block.
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
 **Returns**: <code>string</code> - Modified content in text format.  
@@ -77,6 +77,7 @@ substitute
 | Param | Type | Description |
 | --- | --- | --- |
 | content | <code>string</code> | Content in text format |
+| section | <code>Section</code> | Section |
 | urls | <code>Array.&lt;string&gt;</code> | URLs |
 | repl | <code>Array.&lt;string&gt;</code> | Replacements array |
 
