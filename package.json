@@ -4,8 +4,8 @@
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
   "type": "module",
-  "module": "src/index.js",
   "types": "types/index.d.ts",
+  "module": "src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/intity/epub-js.git"
@@ -19,15 +19,22 @@
   "scripts": {
     "docs": "node docsgen.cjs",
     "lint": "eslint src",
+    "test": "mocha",
     "start": "NODE_ENV=development webpack serve",
     "build": "NODE_ENV=production webpack --progress",
     "minify": "NODE_ENV=production MINIMIZE=true webpack --progress",
     "compile": "babel -d lib/ src/",
-    "watch": "babel --watch -d lib/ src/",
-    "prepare": "npm run compile && npm run build && npm run minify"
+    "prepare": "npm run compile && npm run build && npm run minify",
+    "watch": "babel --watch -d lib/ src/"
   },
   "author": "fchasen@gmail.com",
   "license": "BSD-2-Clause",
+  "contributors": [
+    {
+      "name": "vite",
+      "email": "nuget@list.ru"
+    }
+  ],
   "devDependencies": {
     "@babel/cli": "^7.28.0",
     "@babel/core": "^7.28.0",
