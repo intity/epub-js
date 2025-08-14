@@ -27,6 +27,7 @@
         <item id="s2" media-type="application/xhtml+xml" href="xhtml/mathml.xhtml" properties="mathml"/>
     </manifest>
     <spine>
+        <itemref idref="r0" linear="no"/>
         <itemref idref="s0" linear="yes"/>
         <itemref idref="s1" linear="yes"/>
         <itemref idref="s2" linear="yes"/>

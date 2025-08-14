@@ -46,7 +46,10 @@
     }
   ],
   "spine": [
-    {},
+    {
+      "idref": "r0",
+      "linear": "no"
+    },
     {
       "idref": "s0",
       "linear": "yes"
