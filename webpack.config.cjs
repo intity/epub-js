@@ -74,6 +74,12 @@ module.exports = {
 					force: true
 				},
 				{
+					from: "node_modules/mocha/mocha.js.map",
+					to: "mocha.js.map",
+					toType: "file",
+					force: true
+				},
+				{
 					from: "node_modules/mocha/mocha.css",
 					to: "mocha.css",
 					toType: "file",
