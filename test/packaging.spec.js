@@ -32,8 +32,7 @@ describe("Packaging", () => {
 	})
 	describe("#clear()", () => {
 		it("should be cleaning object data", () => {
-			if (tasks.length) {
-				const pack = tasks[0]
+			tasks.forEach(pack => {
 				pack.clear()
 				assert.equal(pack.direction, null)
 				assert.equal(pack.version, null)
@@ -41,7 +40,7 @@ describe("Packaging", () => {
 				assert.equal(pack.metadata.size, 0)
 				assert.equal(pack.manifest.size, 0)
 				assert.equal(pack.spine.size, 0)
-			}
+			})
 		})
 	})
 	describe("#destroy()", () => {
