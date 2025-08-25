@@ -7,7 +7,7 @@
     "contributor": "nuget@list.ru",
     "identifier": "urn:uuid:8910d318-ad40-495e-8f31-e2af48cebdec",
     "language": "en-US",
-    "modified": "2025-08-14T00:00:00Z",
+    "modified": "2025-08-25T00:00:00Z",
     "creator": "epub-js community",
     "subject": "computer-sci",
     "rights": "cc-by, epub-js community",
@@ -23,7 +23,21 @@
       "properties": []
     },
     {
+      "id": "r1",
+      "href": "images/cover.svg",
+      "media-type": "image/svg+xml",
+      "properties": [
+        "cover-image"
+      ]
+    },
+    {
       "id": "s0",
+      "href": "xhtml/cover.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "s1",
       "href": "xhtml/nav.xhtml",
       "media-type": "application/xhtml+xml",
       "properties": [
@@ -31,13 +45,13 @@
       ]
     },
     {
-      "id": "s1",
+      "id": "s2",
       "href": "xhtml/introduction.xhtml",
       "media-type": "application/xhtml+xml",
       "properties": []
     },
     {
-      "id": "s2",
+      "id": "s3",
       "href": "xhtml/mathml.xhtml",
       "media-type": "application/xhtml+xml",
       "properties": [
@@ -51,6 +65,10 @@
       "linear": "no"
     },
     {
+      "idref": "r1",
+      "linear": "no"
+    },
+    {
       "idref": "s0",
       "linear": "yes"
     },
@@ -60,6 +78,10 @@
     },
     {
       "idref": "s2",
+      "linear": "yes"
+    },
+    {
+      "idref": "s3",
       "linear": "yes"
     }
   ]
