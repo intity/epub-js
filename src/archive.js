@@ -72,11 +72,12 @@ class Archive extends Input {
 	 * Get entry from Archive
 	 * @param {string} url 
 	 * @returns {object} entry
-	 * @private
+	 * @example archive.get("META-INF/container.xml")
 	 */
 	get(url) {
 
-		const name = window.decodeURIComponent(url.substring(1));
+		const path = url.length && url[0] === '/' ? url.substring(1) : url;
+		const name = window.decodeURIComponent(path);
 		return this.instance.file(name);
 	}
 
