@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="en" unique-identifier="pub-id">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
-    <dc:language>en-US</dc:language>
-    <meta property="dcterms:modified">2012-01-18T12:47:00Z</meta>
-    <!-- Id, referenced above - in Reverse domain name notation -->
-    <dc:identifier id="pub-id">edu.nyu.itp.future-of-publishing.alice-in-wonderland</dc:identifier>
-    <!-- Basic Metadata -->    
-    <dc:rights>Public domain in the USA.</dc:rights>
-    <dc:creator>Lewis Carroll</dc:creator>
-    <dc:contributor>Gordon Robinson</dc:contributor>
+    <!-- required -->
     <dc:title>Alice's Adventures in Wonderland</dc:title>
-    <dc:subject>Fantasy</dc:subject>
+    <dc:language>en-US</dc:language>
+    <dc:identifier id="pub-id">edu.nyu.itp.future-of-publishing.alice-in-wonderland</dc:identifier>
+    <!-- optional -->   
+    <dc:rights>Public domain in the USA.</dc:rights>
+    <dc:contributor>Gordon Robinson</dc:contributor>
+    <dc:creator>Lewis Carroll</dc:creator>
+    <dc:subject>fantasy</dc:subject>
     <dc:source>http://www.gutenberg.org/files/19033/19033-h/19033-h.htm</dc:source>
+    <dc:type>@book</dc:type>
+    <meta property="dcterms:modified">2012-01-18T12:47:00Z</meta>
+    <!-- legacy 2.x -->
     <meta content="coverpage" name="cover"/>
   </metadata>
   <manifest>

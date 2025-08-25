@@ -1,349 +1,330 @@
 {
-    "version": "3.0",
-    "direction": "ltr",
-    "manifest": [
-        {
-            "id": "navigation",
-            "href": "nav.json",
-            "media-type": "application/json",
-            "properties": ["nav"]
-        },
-        {
-            "id": "cover",
-            "href": "cover.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "style",
-            "href": "css/stylesheet.css",
-            "media-type": "text/css",
-            "properties": []
-        },
-        {
-            "id": "cover-image",
-            "href": "images/cover_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": ["cover-image"]
-        },
-        {
-            "id": "i001_th",
-            "href": "images/i001_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i002_th",
-            "href": "images/i002_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i003_th",
-            "href": "images/i003_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i004_th",
-            "href": "images/i004_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i005_th",
-            "href": "images/i005_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i006_th",
-            "href": "images/i006_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i007_th",
-            "href": "images/i007_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i008_th",
-            "href": "images/i008_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i009_th",
-            "href": "images/i009_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i010_th",
-            "href": "images/i010_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i011_th",
-            "href": "images/i011_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i012_th",
-            "href": "images/i012_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i013_th",
-            "href": "images/i013_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i014_th",
-            "href": "images/i014_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i015_th",
-            "href": "images/i015_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i016_th",
-            "href": "images/i016_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i017_th",
-            "href": "images/i017_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i018_th",
-            "href": "images/i018_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i019_th",
-            "href": "images/i019_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i020_th",
-            "href": "images/i020_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "i022_th",
-            "href": "images/i022_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "ii021_th",
-            "href": "images/ii021_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "plate01_th",
-            "href": "images/plate01_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "plate02_th",
-            "href": "images/plate02_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "plate03_th",
-            "href": "images/plate03_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "plate04_th",
-            "href": "images/plate04_th.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "title-img",
-            "href": "images/title.jpg",
-            "media-type": "image/jpeg",
-            "properties": []
-        },
-        {
-            "id": "titlepage",
-            "href": "titlepage.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_001",
-            "href": "chapter_001.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_002",
-            "href": "chapter_002.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_003",
-            "href": "chapter_003.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_004",
-            "href": "chapter_004.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_005",
-            "href": "chapter_005.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_006",
-            "href": "chapter_006.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_007",
-            "href": "chapter_007.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_008",
-            "href": "chapter_008.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_009",
-            "href": "chapter_009.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        },
-        {
-            "id": "chapter_010",
-            "href": "chapter_010.xhtml",
-            "media-type": "application/xhtml+xml",
-            "properties": []
-        }
-    ],
-    "metadata": {
-        "language": "en-US",
-        "modified": "2012-01-18T12:47:00Z",
-        "identifier": "edu.nyu.itp.future-of-publishing.alice-in-wonderland",
-        "rights": "Public domain in the USA.",
-        "creator": "Lewis Carroll",
-        "contributor": "Gordon Robinson",
-        "title": "Alice's Adventures in Wonderland",
-        "subject": "Fantasy",
-        "source": "https://www.gutenberg.org/files/19033/19033-h/19033-h.htm"
+  "version": "3.0",
+  "direction": "ltr",
+  "metadata": {
+    "title": "Alice's Adventures in Wonderland",
+    "identifier": "edu.nyu.itp.future-of-publishing.alice-in-wonderland",
+    "language": "en-US",
+    "contributor": "Gordon Robinson",
+    "creator": "Lewis Carroll",
+    "subject": "fantasy",
+    "modified": "2012-01-18T12:47:00Z",
+    "rights": "Public domain in the USA.",
+    "source": "https://www.gutenberg.org/files/19033/19033-h/19033-h.htm",
+    "type": "@book"
+  },
+  "manifest": [
+    {
+      "id": "navigation",
+      "href": "nav.json",
+      "media-type": "application/json",
+      "properties": [
+        "nav"
+      ]
     },
-    "spine": [
-        {
-            "id": "",
-            "idref": "cover",
-            "linear": "no",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "toc",
-            "linear": "no",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "titlepage",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_001",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_002",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_003",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_004",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_005",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_006",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_007",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_008",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_009",
-            "linear": "yes",
-            "properties": []
-        },
-        {
-            "id": "",
-            "idref": "chapter_010",
-            "linear": "yes",
-            "properties": []
-        }
-    ]
+    {
+      "id": "cover",
+      "href": "cover.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": [
+        "cover-image"
+      ]
+    },
+    {
+      "id": "style",
+      "href": "css/stylesheet.css",
+      "media-type": "text/css",
+      "properties": []
+    },
+    {
+      "id": "cover-image",
+      "href": "images/cover_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": [
+        "cover-image"
+      ]
+    },
+    {
+      "id": "i001_th",
+      "href": "images/i001_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i002_th",
+      "href": "images/i002_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i003_th",
+      "href": "images/i003_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i004_th",
+      "href": "images/i004_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i005_th",
+      "href": "images/i005_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i006_th",
+      "href": "images/i006_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i007_th",
+      "href": "images/i007_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i008_th",
+      "href": "images/i008_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i009_th",
+      "href": "images/i009_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i010_th",
+      "href": "images/i010_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i011_th",
+      "href": "images/i011_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i012_th",
+      "href": "images/i012_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i013_th",
+      "href": "images/i013_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i014_th",
+      "href": "images/i014_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i015_th",
+      "href": "images/i015_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i016_th",
+      "href": "images/i016_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i017_th",
+      "href": "images/i017_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i018_th",
+      "href": "images/i018_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i019_th",
+      "href": "images/i019_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i020_th",
+      "href": "images/i020_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "i022_th",
+      "href": "images/i022_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "ii021_th",
+      "href": "images/ii021_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "plate01_th",
+      "href": "images/plate01_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "plate02_th",
+      "href": "images/plate02_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "plate03_th",
+      "href": "images/plate03_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "plate04_th",
+      "href": "images/plate04_th.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "title-img",
+      "href": "images/title.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "titlepage",
+      "href": "titlepage.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_001",
+      "href": "chapter_001.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_002",
+      "href": "chapter_002.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_003",
+      "href": "chapter_003.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_004",
+      "href": "chapter_004.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_005",
+      "href": "chapter_005.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_006",
+      "href": "chapter_006.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_007",
+      "href": "chapter_007.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_008",
+      "href": "chapter_008.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_009",
+      "href": "chapter_009.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "chapter_010",
+      "href": "chapter_010.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    }
+  ],
+  "spine": [
+    {
+      "idref": "cover",
+      "linear": "no"
+    },
+    {
+      "idref": "toc",
+      "linear": "no"
+    },
+    {
+      "idref": "titlepage",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_001",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_002",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_003",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_004",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_005",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_006",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_007",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_008",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_009",
+      "linear": "yes"
+    },
+    {
+      "idref": "chapter_010",
+      "linear": "yes"
+    }
+  ]
 }
