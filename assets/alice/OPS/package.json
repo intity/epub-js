@@ -26,9 +26,7 @@
       "id": "cover",
       "href": "cover.xhtml",
       "media-type": "application/xhtml+xml",
-      "properties": [
-        "cover-image"
-      ]
+      "properties": []
     },
     {
       "id": "style",
