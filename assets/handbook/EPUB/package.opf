@@ -18,18 +18,22 @@
         <dc:rights>cc-by, epub-js community</dc:rights>
         <dc:source>https://github.com/intity/epub-js/tree/master/assets/handbook</dc:source>
         <dc:type>@manual</dc:type>
-        <meta property="dcterms:modified">2025-08-14T00:00:00Z</meta>
+        <meta property="dcterms:modified">2025-08-25T00:00:00Z</meta>
     </metadata>
     <manifest>
         <item id="r0" media-type="text/css" href="css/epub.css"/>
-        <item id="s0" media-type="application/xhtml+xml" href="xhtml/nav.xhtml" properties="nav"/>
-        <item id="s1" media-type="application/xhtml+xml" href="xhtml/introduction.xhtml"/>
-        <item id="s2" media-type="application/xhtml+xml" href="xhtml/mathml.xhtml" properties="mathml"/>
+        <item id="r1" media-type="image/svg+xml" href="images/cover.svg" properties="cover-image"/>
+        <item id="s0" media-type="application/xhtml+xml" href="xhtml/cover.xhtml"/>
+        <item id="s1" media-type="application/xhtml+xml" href="xhtml/nav.xhtml" properties="nav"/>
+        <item id="s2" media-type="application/xhtml+xml" href="xhtml/introduction.xhtml"/>
+        <item id="s3" media-type="application/xhtml+xml" href="xhtml/mathml.xhtml" properties="mathml"/>
     </manifest>
     <spine>
         <itemref idref="r0" linear="no"/>
+        <itemref idref="r1" linear="no"/>
         <itemref idref="s0" linear="yes"/>
         <itemref idref="s1" linear="yes"/>
         <itemref idref="s2" linear="yes"/>
+        <itemref idref="s3" linear="yes"/>
     </spine>
 </package>
