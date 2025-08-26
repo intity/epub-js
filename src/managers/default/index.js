@@ -128,8 +128,14 @@ class DefaultViewManager {
 			target = undefined;
 		}
 
-		const cb = (view, index, views) => {};
-		const view = this.views.find(cb, section.index);
+		const view = this.views.find((v) => {
+
+			if (section.index === v.section.index) {
+				return v;
+			}
+			return null;
+		});
+
 		if (view) {
 			const offset = view.offset();
 			let x, y = offset.top;
