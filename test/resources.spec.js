@@ -81,6 +81,15 @@ describe("Resources", () => {
             assert.equal(inst.size, 29)
         })
     })
+    describe("#resolve(k)", () => {
+        it("should be resolve keys", () => {
+            inst.forEach((v, k) => {
+                const key = inst.resolve(k)
+                const entry = inst.archive.get(key)
+                assert.equal(entry.name, key.substring(1))
+            })
+        })
+    })
     describe("#createUrl()", () => {
         it("should be create blob URL", async () => {
             const path = "images/cover_th.jpg"
