@@ -16,7 +16,6 @@ Views
         * [.insert(view, index)](#Views+insert) ⇒ <code>object</code>
         * [.remove(view, [i])](#Views+remove)
         * [.clear()](#Views+clear)
-        * [.find(section)](#Views+find) ⇒ <code>object</code>
         * [.displayed()](#Views+displayed) ⇒ <code>Array.&lt;object&gt;</code>
         * [.show()](#Views+show)
         * [.hide()](#Views+hide)
@@ -111,18 +110,6 @@ remove
 clear
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-<a name="Views+find"></a>
-
-## views.find(section) ⇒ <code>object</code>
-find
-
-**Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
-
-| Param | Type |
-| --- | --- |
-| section | <code>Section</code> | 
-
 <a name="Views+displayed"></a>
 
 ## views.displayed() ⇒ <code>Array.&lt;object&gt;</code>

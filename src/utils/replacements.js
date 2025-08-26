@@ -2,6 +2,7 @@
  * @module replacements
  */
 
+import Section from "../section";
 import { qs } from "./core";
 
 /**

@@ -1,0 +1,14 @@
+{
+  "include": [
+    "src/index.js"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types",
+    "module": "commonjs",
+    "target": "es6",
+    "strict": true
+  }
+}

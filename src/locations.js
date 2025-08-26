@@ -1,6 +1,8 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Location from "./location";
+import Sections from "./sections";
+import Section from "./section";
 import Defer from "./utils/defer";
 import Queue from "./utils/queue";
 import { EVENTS } from "./utils/constants";
@@ -335,22 +337,26 @@ class Locations extends Map {
 
 	/**
 	 * Set current location
-	 * @param {object} [options]
-	 * @param {string} [options.cfi] EpubCFI string format
-	 * @param {number} [options.index] Location index
-	 * @param {number} [options.percentage] Percentage
-	 * @returns {Locations}
+	 * @param {any} key EpubCFI to string
+	 * @param {any} val Location
+	 * @example locations.set(key, val)
+	 * @example locations.set({ cfi })
+	 * @example locations.set({ index })
+	 * @example locations.set({ percentage })
+	 * @returns {any} Locations
+	 * @override
 	 */
-	set(options) {
+	set(key, val) {
 
-		if (arguments.length === 2) {
-			super.set(arguments[0], arguments[1]);
-			return this;
-		} else if (this.size === 0) {
-			return this;
+		let options;
+
+		if (typeof key === "string" && val instanceof Location) {
+			return super.set(key, val);
+		} else {
+			options = typeof key === "object" ? key : {};
 		}
 
-		Object.keys(options || {}).forEach(opt => {
+		Object.keys(options).forEach(opt => {
 			const value = options[opt];
 			if (this.current[opt] === value || typeof value === "undefined") {
 				delete options[opt];
@@ -387,7 +393,7 @@ class Locations extends Map {
 			}
 		});
 
-		if (Object.keys(options || {}).length) {
+		if (Object.keys(options).length) {
 			const { ...current } = this.current;
 			/**
 			 * Current location changed

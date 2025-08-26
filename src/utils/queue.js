@@ -21,7 +21,7 @@ class Queue extends Array {
     /**
      * Add an item to the queue
      * @param {any} task
-     * @param {any[]} [args]
+     * @param {Array} args
      * @return {Promise<any>}
      */
     enqueue(task, ...args) {

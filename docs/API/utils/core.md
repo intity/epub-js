@@ -34,7 +34,7 @@
     * [.sprint](#module_core.sprint)
     * [.treeWalker](#module_core.treeWalker)
     * [.walk](#module_core.walk) ⇒ <code>boolean</code>
-    * [.blob2base64](#module_core.blob2base64) ⇒ <code>Promise</code>
+    * [.blob2base64](#module_core.blob2base64) ⇒ <code>Promise.&lt;string&gt;</code>
     * [.querySelectorByType](#module_core.querySelectorByType) ⇒ <code>Array.&lt;Element&gt;</code>
     * [.findChildren](#module_core.findChildren) ⇒ <code>Array.&lt;Element&gt;</code>
     * [.parents](#module_core.parents) ⇒ <code>Array.&lt;Node&gt;</code>
@@ -407,18 +407,18 @@ Create a treeWalker
 | Param | Type | Description |
 | --- | --- | --- |
 | node | <code>Node</code> |  |
-| callback | <code>method</code> | false for continue,true for break inside callback |
+| callback | <code>function</code> | false for continue,true for break inside callback |
 
 <a name="module_core.blob2base64"></a>
 
-## core.blob2base64 ⇒ <code>Promise</code>
+## core.blob2base64 ⇒ <code>Promise.&lt;string&gt;</code>
 Convert a blob to a base64 encoded string
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
 | Param | Type |
 | --- | --- |
-| blob | <code>Blog</code> | 
+| blob | <code>Blob</code> | 
 
 <a name="module_core.querySelectorByType"></a>
 

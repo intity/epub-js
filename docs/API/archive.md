@@ -11,6 +11,7 @@ Handles Unzipping a requesting files from an Epub Archive
     * [.open(input, [encoding])](#Archive+open) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.clear()](#Archive+clear)
     * [.openUrl(zipUrl, [isBase64])](#Archive+openUrl) ⇒ <code>Promise.&lt;any&gt;</code>
+    * [.get(url)](#Archive+get) ⇒ <code>object</code>
     * [.getBlob(url, [mimeType])](#Archive+getBlob) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>
     * [.getText(url)](#Archive+getText) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
     * [.getBase64(url, [mimeType])](#Archive+getBase64) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
@@ -53,6 +54,22 @@ Load and Open an archive
 | zipUrl | <code>string</code> |  |
 | [isBase64] | <code>boolean</code> | tells JSZip if the input data is base64 encoded |
 
+<a name="Archive+get"></a>
+
+## archive.get(url) ⇒ <code>object</code>
+Get entry from Archive
+
+**Kind**: instance method of [<code>Archive</code>](#Archive)  
+**Returns**: <code>object</code> - entry  
+
+| Param | Type |
+| --- | --- |
+| url | <code>string</code> | 
+
+**Example**  
+```js
+archive.get("META-INF/container.xml")
+```
 <a name="Archive+getBlob"></a>
 
 ## archive.getBlob(url, [mimeType]) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>

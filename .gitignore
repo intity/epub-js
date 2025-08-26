@@ -7,4 +7,4 @@ bower_components
 books
 lib
 dist
-types/*.js
+types

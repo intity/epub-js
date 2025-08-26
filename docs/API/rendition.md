@@ -16,7 +16,7 @@ Rendition class
         * [.next()](#Rendition+next) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.prev()](#Rendition+prev) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.updateLayout(options)](#Rendition+updateLayout)
-        * [.currentLocation()](#Rendition+currentLocation) ⇒ <code>displayedLocation</code> \| <code>Promise</code>
+        * [.currentLocation()](#Rendition+currentLocation) ⇒ <code>object</code> \| <code>Promise.&lt;object&gt;</code>
         * [.getRange(epubcfi, ignoreClass)](#Rendition+getRange) ⇒ <code>Range</code>
         * [.getContents()](#Rendition+getContents) ⇒ <code>Array.&lt;Contents&gt;</code>
         * [.views()](#Rendition+views) ⇒ <code>Views</code>
@@ -27,6 +27,7 @@ Rendition class
         * [.annotations](#Rendition.annotations) : <code>Annotations</code>
         * [.themes](#Rendition.themes) : <code>Themes</code>
         * [.epubcfi](#Rendition.epubcfi) : <code>EpubCFI</code>
+        * [.this.location](#Rendition.this.location) : <code>object</code>
         * [.started](#Rendition.started) : <code>Promise.&lt;any&gt;</code>
         * [.layout](#Rendition.layout) : <code>Layout</code>
         * [.viewport](#Rendition.viewport) : <code>Viewport</code>
@@ -42,7 +43,6 @@ Rendition class
         * ["relocated" (location)](#Rendition.event_relocated)
         * ["selected" (cfirange, contents)](#Rendition.event_selected)
         * ["markClicked" (cfiRange, data, contents)](#Rendition.event_markClicked)
-        * [.location](#Rendition.location) : <code>object</code>
 
 <a name="new_Rendition_new"></a>
 
@@ -181,11 +181,11 @@ Layout configuration
 
 <a name="Rendition+currentLocation"></a>
 
-## rendition.currentLocation() ⇒ <code>displayedLocation</code> \| <code>Promise</code>
+## rendition.currentLocation() ⇒ <code>object</code> \| <code>Promise.&lt;object&gt;</code>
 Get the Current Location object
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
-**Returns**: <code>displayedLocation</code> \| <code>Promise</code> - location (may be a promise)  
+**Returns**: <code>object</code> \| <code>Promise.&lt;object&gt;</code> - location (may be a promise)  
 <a name="Rendition+getRange"></a>
 
 ## rendition.getRange(epubcfi, ignoreClass) ⇒ <code>Range</code>
@@ -253,6 +253,37 @@ Adds Hook methods to the Rendition prototype
 ## Rendition.epubcfi : <code>EpubCFI</code>
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
 **Read only**: true  
+<a name="Rendition.this.location"></a>
+
+## Rendition.this.location : <code>object</code>
+A Rendered Location Range
+
+**Kind**: static property of [<code>Rendition</code>](#Rendition)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| start | <code>object</code> |  |
+| start.index | <code>string</code> |  |
+| start.href | <code>string</code> |  |
+| start.displayed | <code>object</code> |  |
+| start.displayed.page | <code>number</code> |  |
+| start.displayed.total | <code>number</code> |  |
+| start.cfi | <code>string</code> | EpubCFI string format |
+| start.location | <code>number</code> |  |
+| start.percentage | <code>number</code> |  |
+| end | <code>object</code> |  |
+| end.index | <code>string</code> |  |
+| end.href | <code>string</code> |  |
+| end.displayed | <code>object</code> |  |
+| end.displayed.page | <code>number</code> |  |
+| end.displayed.total | <code>number</code> |  |
+| end.cfi | <code>string</code> | EpubCFI string format |
+| end.location | <code>number</code> |  |
+| end.percentage | <code>number</code> |  |
+| atStart | <code>boolean</code> | Location at start position |
+| atEnd | <code>boolean</code> | Location at end position |
+
 <a name="Rendition.started"></a>
 
 ## Rendition.started : <code>Promise.&lt;any&gt;</code>
@@ -390,35 +421,4 @@ Emit that a mark was clicked
 | cfiRange | <code>EpubCFI</code> | 
 | data | <code>object</code> | 
 | contents | <code>Contents</code> | 
-
-<a name="Rendition.location"></a>
-
-## Rendition.location : <code>object</code>
-A Rendered Location Range
-
-**Kind**: static typedef of [<code>Rendition</code>](#Rendition)  
-**Properties**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| start | <code>object</code> |  |
-| start.index | <code>string</code> |  |
-| start.href | <code>string</code> |  |
-| start.displayed | <code>object</code> |  |
-| start.displayed.page | <code>number</code> |  |
-| start.displayed.total | <code>number</code> |  |
-| start.cfi | <code>string</code> | EpubCFI string format |
-| start.location | <code>number</code> |  |
-| start.percentage | <code>number</code> |  |
-| end | <code>object</code> |  |
-| end.index | <code>string</code> |  |
-| end.href | <code>string</code> |  |
-| end.displayed | <code>object</code> |  |
-| end.displayed.page | <code>number</code> |  |
-| end.displayed.total | <code>number</code> |  |
-| end.cfi | <code>string</code> | EpubCFI string format |
-| end.location | <code>number</code> |  |
-| end.percentage | <code>number</code> |  |
-| atStart | <code>boolean</code> | Location at start position |
-| atEnd | <code>boolean</code> | Location at end position |
 

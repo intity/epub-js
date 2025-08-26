@@ -1,4 +1,5 @@
 import EventEmitter from "event-emitter";
+import Rendition from "./rendition";
 import Url from "./utils/url";
 import { EVENTS } from "./utils/constants";
 

@@ -1,3 +1,5 @@
+import Mark from "./mark";
+
 const rectContains = (rect, x, y, offset) => {
 
     const top = rect.top - offset.top;

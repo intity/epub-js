@@ -108,7 +108,7 @@ class Navigation {
 
 	/**
 	 * forEach pass through
-	 * @param {IArguments} args
+	 * @param {Array} args
 	 */
 	forEach(...args) {
 
@@ -116,7 +116,7 @@ class Navigation {
 	}
 
 	/**
-	 * destroy
+	 * Destroy the Navigation object
 	 */
 	destroy() {
 

@@ -1,5 +1,9 @@
 import EventEmitter from "event-emitter";
+import Book from "../../book";
+import Contents from "../../contents";
+import Section from "../../section";
 import Mapping from "../../mapping";
+import View from "../views/view";
 import Views from "../helpers/views";
 import Queue from "../../utils/queue";
 import IframeView from "../views/iframe";
@@ -114,7 +118,7 @@ class DefaultViewManager {
 	 * display
 	 * @param {Section} section 
 	 * @param {string|number} [target] 
-	 * @returns {Promise<view|null>} displaying promise
+	 * @returns {Promise<View|null>} displaying promise
 	 */
 	display(section, target) {
 
@@ -124,7 +128,8 @@ class DefaultViewManager {
 			target = undefined;
 		}
 
-		const view = this.views.find(section);
+		const cb = (view, index, views) => {};
+		const view = this.views.find(cb, section.index);
 		if (view) {
 			const offset = view.offset();
 			let x, y = offset.top;
@@ -267,7 +272,6 @@ class DefaultViewManager {
 	 * @param {number} offset.top
 	 * @param {number} offset.left
 	 * @param {number} width 
-	 * @private
 	 */
 	moveTo(offset, width) {
 
@@ -378,7 +382,7 @@ class DefaultViewManager {
 
 	/**
 	 * next
-	 * @returns {Promise<view|null>} next view
+	 * @returns {Promise<View|null>} next view
 	 */
 	next() {
 
@@ -464,7 +468,7 @@ class DefaultViewManager {
 
 	/**
 	 * prev
-	 * @returns {Promise<view|null>}
+	 * @returns {Promise<View|null>}
 	 */
 	prev() {
 
@@ -558,7 +562,7 @@ class DefaultViewManager {
 
 	/**
 	 * Get current visible view
-	 * @returns {view|null} view
+	 * @returns {View|null} view
 	 */
 	current() {
 

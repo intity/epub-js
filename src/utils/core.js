@@ -594,7 +594,7 @@ export const treeWalker = (root, func, filter) => {
 
 /**
  * @param {Node} node
- * @param {method} callback false for continue,true for break inside callback
+ * @param {function} callback false for continue,true for break inside callback
  * @returns {boolean}
  */
 export const walk = (node, callback) => {
@@ -617,8 +617,8 @@ export const walk = (node, callback) => {
 
 /**
  * Convert a blob to a base64 encoded string
- * @param {Blog} blob
- * @returns {Promise}
+ * @param {Blob} blob
+ * @returns {Promise<string>}
  */
 export const blob2base64 = (blob) => {
 

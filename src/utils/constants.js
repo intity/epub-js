@@ -4,7 +4,14 @@
  */
 
 /**
- * epub-js library version
+ * The epub-js library name
+ * @constant
+ * @type {string}
+ */
+export const EPUBJS_NAME = "epub-js";
+
+/**
+ * The epub-js library version
  * @constant
  * @type {string}
  */

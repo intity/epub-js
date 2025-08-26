@@ -1,11 +1,15 @@
 import EventEmitter from "event-emitter";
 import Annotations from "./annotations";
+import Contents from "./contents";
 import EpubCFI from "./epubcfi";
+import Section from "./section";
 import Layout from "./layout";
 import Themes from "./themes";
+import Book from "./book";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
 import Viewport from "./viewport";
+import Views from "./managers/helpers/views";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";
@@ -118,7 +122,6 @@ class Rendition {
 		this.epubcfi = new EpubCFI();
 		/**
 		 * A Rendered Location Range
-		 * @typedef location
 		 * @type {object}
 		 * @property {object} start
 		 * @property {string} start.index
@@ -525,7 +528,7 @@ class Rendition {
 
 	/**
 	 * Get the Current Location object
-	 * @return {displayedLocation|Promise} location (may be a promise)
+	 * @return {object|Promise<object>} location (may be a promise)
 	 */
 	currentLocation() {
 

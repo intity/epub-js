@@ -1,3 +1,5 @@
+import Section from "../../section";
+
 /**
  * Views
  */
@@ -121,22 +123,6 @@ class Views extends Array {
 		for (let i = 0; i < len; ++i) {
 			const view = this[i];
 			if (view) this.remove(view, i);
-		}
-	}
-
-	/**
-	 * find
-	 * @param {Section} section 
-	 * @returns {object} view
-	 */
-	find(section) {
-
-		for (let i = 0; i < this.length; i++) {
-			const view = this[i];
-			if (view.displayed &&
-				view.section.index == section.index) {
-				return view;
-			}
 		}
 	}
 

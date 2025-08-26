@@ -19,7 +19,7 @@ Find Locations for a Book
         * [.cfiFromPercentage(value)](#Locations+cfiFromPercentage) ⇒ <code>string</code> \| <code>null</code>
         * [.load(locations)](#Locations+load) ⇒ [<code>Locations</code>](#Locations)
         * [.save()](#Locations+save) ⇒ <code>string</code>
-        * [.set([options])](#Locations+set) ⇒ [<code>Locations</code>](#Locations)
+        * [.set(key, val)](#Locations+set) ⇒ <code>any</code>
         * [.clear()](#Locations+clear)
         * [.destroy()](#Locations+destroy)
     * _static_
@@ -155,18 +155,33 @@ Save locations to JSON
 **Returns**: <code>string</code> - A JSON string  
 <a name="Locations+set"></a>
 
-## locations.set([options]) ⇒ [<code>Locations</code>](#Locations)
+## locations.set(key, val) ⇒ <code>any</code>
 Set current location
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
+**Returns**: <code>any</code> - Locations  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [options] | <code>object</code> |  |
-| [options.cfi] | <code>string</code> | EpubCFI string format |
-| [options.index] | <code>number</code> | Location index |
-| [options.percentage] | <code>number</code> | Percentage |
+| key | <code>any</code> | EpubCFI to string |
+| val | <code>any</code> | Location |
 
+**Example**  
+```js
+locations.set(key, val)
+```
+**Example**  
+```js
+locations.set({ cfi })
+```
+**Example**  
+```js
+locations.set({ index })
+```
+**Example**  
+```js
+locations.set({ percentage })
+```
 <a name="Locations+clear"></a>
 
 ## locations.clear()

@@ -1,3 +1,6 @@
+import Book from "../../book";
+import View from "../views/view";
+import Section from "../../section";
 import { extend } from "../../utils/core";
 import Defer from "../../utils/defer";
 import DefaultViewManager from "../default";
@@ -62,7 +65,7 @@ class ContinuousViewManager extends DefaultViewManager {
 	 * display
 	 * @param {Section} section 
 	 * @param {string|number} [target] 
-	 * @returns {Promise<view|null>} displaying promise
+	 * @returns {Promise<View|null>} displaying promise
 	 * @override
 	 */
 	async display(section, target) {

@@ -12,8 +12,13 @@ import Rendition from "./rendition";
 import Archive from "./archive";
 import request from "./utils/request";
 import EpubCFI from "./epubcfi";
+import Section from "./section";
 import Storage from "./storage";
-import { EPUBJS_VERSION, EVENTS } from "./utils/constants";
+import {
+	EPUBJS_NAME,
+	EPUBJS_VERSION,
+	EVENTS
+} from "./utils/constants";
 import Sections from "./sections";
 
 const CONTAINER_PATH_0 = "META-INF/container.xml";
@@ -291,7 +296,7 @@ class Book {
 	 * Open an archived epub
 	 * @param {string|ArrayBuffer} input
 	 * @param {string} [type] input type: `"base64"`
-	 * @returns {Promise<any>}
+	 * @returns {Promise<Book>}
 	 * @private
 	 */
 	async openEpub(input, type) {
@@ -631,7 +636,7 @@ class Book {
 		const ident = identifier ||
 			this.packaging.metadata.get("identifier") ||
 			this.url.filename;
-		return `epubjs:${EPUBJS_VERSION}:${ident}`;
+		return `${EPUBJS_NAME}:${EPUBJS_VERSION}:${ident}`;
 	}
 
 	/**

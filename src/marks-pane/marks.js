@@ -1,3 +1,4 @@
+import Mark from "./mark";
 import proxyMouse from "./events";
 
 const NS_URI = "http://www.w3.org/2000/svg";

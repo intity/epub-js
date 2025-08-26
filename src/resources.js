@@ -1,3 +1,6 @@
+import Archive from "./archive";
+import Section from "./section";
+import Manifest from "./packaging/manifest";
 import { substitute } from "./utils/replacements";
 import {
 	blob2base64,
@@ -13,8 +16,8 @@ import mime from "./utils/mime";
 class Resources extends Map {
 	/**
 	 * Constructor
-	 * @param {Function} request
-	 * @param {Function} resolve
+	 * @param {function} request
+	 * @param {function} resolve
 	 * @param {string} [replacements=null]
 	 */
 	constructor(request, resolve, replacements) {

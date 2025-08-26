@@ -9,10 +9,11 @@ Default View Manager
     * [new DefaultViewManager(book, [options])](#new_DefaultViewManager_new)
     * _instance_
         * [.render(element, size)](#DefaultViewManager+render)
-        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
-        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
-        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
-        * [.current()](#DefaultViewManager+current) ⇒ <code>view</code> \| <code>null</code>
+        * [.display(section, [target])](#DefaultViewManager+display) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
+        * [.moveTo(offset, width)](#DefaultViewManager+moveTo)
+        * [.next()](#DefaultViewManager+next) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
+        * [.prev()](#DefaultViewManager+prev) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
+        * [.current()](#DefaultViewManager+current) ⇒ <code>View</code> \| <code>null</code>
         * [.clear()](#DefaultViewManager+clear)
         * [.currentLocation()](#DefaultViewManager+currentLocation) ⇒ <code>Array.&lt;object&gt;</code>
         * [.visible()](#DefaultViewManager+visible) ⇒ <code>Array.&lt;object&gt;</code>
@@ -60,37 +61,51 @@ render
 
 <a name="DefaultViewManager+display"></a>
 
-## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
 display
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - displaying promise  
 
 | Param | Type |
 | --- | --- |
 | section | <code>Section</code> | 
 | [target] | <code>string</code> \| <code>number</code> | 
 
+<a name="DefaultViewManager+moveTo"></a>
+
+## defaultViewManager.moveTo(offset, width)
+moveTo
+
+**Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+
+| Param | Type |
+| --- | --- |
+| offset | <code>object</code> | 
+| offset.top | <code>number</code> | 
+| offset.left | <code>number</code> | 
+| width | <code>number</code> | 
+
 <a name="DefaultViewManager+next"></a>
 
-## defaultViewManager.next() ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+## defaultViewManager.next() ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
 next
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - next view  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - next view  
 <a name="DefaultViewManager+prev"></a>
 
-## defaultViewManager.prev() ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+## defaultViewManager.prev() ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
 prev
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+current"></a>
 
-## defaultViewManager.current() ⇒ <code>view</code> \| <code>null</code>
+## defaultViewManager.current() ⇒ <code>View</code> \| <code>null</code>
 Get current visible view
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>view</code> \| <code>null</code> - view  
+**Returns**: <code>View</code> \| <code>null</code> - view  
 <a name="DefaultViewManager+clear"></a>
 
 ## defaultViewManager.clear()

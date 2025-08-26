@@ -1,4 +1,5 @@
 import Annotation from "./annotation";
+import Rendition from "./rendition";
 
 /**
  * Handles managing adding & removing Annotations

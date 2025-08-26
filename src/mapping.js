@@ -1,4 +1,6 @@
+import Contents from "./contents";
 import EpubCFI from "./epubcfi";
+import Layout from "./layout";
 import { nodeBounds } from "./utils/core";
 
 /**

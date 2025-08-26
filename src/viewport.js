@@ -1,4 +1,5 @@
 import EventEmitter from "event-emitter";
+import Layout from "./layout";
 import { isNumber } from "./utils/core";
 import { EVENTS } from "./utils/constants";
 

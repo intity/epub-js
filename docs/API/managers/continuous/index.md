@@ -10,7 +10,7 @@ Continuous view manager
     * [new ContinuousViewManager(book, [options])](#new_ContinuousViewManager_new)
     * _instance_
         * [.render(element, size)](#ContinuousViewManager+render)
-        * [.display(section, [target])](#ContinuousViewManager+display) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+        * [.display(section, [target])](#ContinuousViewManager+display) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
         * [.fill(value)](#ContinuousViewManager+fill) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.moveTo(offset)](#ContinuousViewManager+moveTo)
         * [.removeShownListeners(view)](#ContinuousViewManager+removeShownListeners)
@@ -53,11 +53,11 @@ render
 
 <a name="ContinuousViewManager+display"></a>
 
-## continuousViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(view\|null)&gt;</code>
+## continuousViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
 display
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-**Returns**: <code>Promise.&lt;(view\|null)&gt;</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - displaying promise  
 
 | Param | Type |
 | --- | --- |
