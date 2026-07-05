@@ -1,97 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,themes,example">
     <meta name="description" content="example of themes">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/epub.js"></script>
+    <script type="text/javascript" src="../dist/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-examples : Themes</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="l-item">
-                    <label for="theme">Theme:</label>
-                    <select name="theme" id="theme">
-                        <option value="light">light</option>
-                        <option value="dark">dark</option>
-                        <option value="none">none</option>
-                    </select>
-                </li>
-                <li class="l-item">
-                    <label for="font-size">Font size (%):</label>
-                    <input type="number" value="100" min="1" max="999" id="font-size">
-                </li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/themes.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox" name="b-menu"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/themes.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content" class="ltr" dir="ltr">
-        <div id="viewport" class="scrolled ltr" dir="ltr">
-            <div id="loader"></div>
-        </div>
+      <div id="viewport" class="scrolled ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+      <div id="sidebar">
+      </div>
     </main>
-    <footer></footer>
+    <footer>
+      <nav>
+        <ul>
+          <li class="l-item">
+            <label for="theme">Theme:</label>
+            <select name="theme" id="theme">
+              <option value="light">light</option>
+              <option value="dark">dark</option>
+              <option value="none">none</option>
+            </select>
+          </li>
+          <li>
+            <label for="font-size">Font size (%):</label>
+            <input id="font-size" type="number" value="100" min="1" max="999"/>
+          </li>
+        </ul>
+      </nav>
+    </footer>
     <script>
-        const theme = document.getElementById("theme")
-        const loader = document.getElementById("loader")
-        const fontSize = document.getElementById("font-size")
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewport", {
-            manager: "continuous",
-            flow: "scrolled",
-            width: 908,
-            height: window.innerHeight - 102
-        })
-        book.opened.then(() => {
-
-            loader.style.display = "none"
-        })
-        theme.onchange = (e) => {
-
-            let name = e.target.value
-            if (name === "none") {
-                rendition.themes.select(null)
-            } else {
-                rendition.themes.select(name)
-            }
+      const theme = document.getElementById("theme");
+      const loader = document.getElementById("loader");
+      const fontSize = document.getElementById("font-size");
+      const size = window.innerHeight - 160;
+      const book = ePub("../assets/alice/");
+      const rendition = book.renderTo("viewport", {
+        manager: "continuous",
+        flow: "scrolled",
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size
+      });
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      theme.onchange = (e) => {
+        let name = e.target.value;
+        if (name === "none") {
+          rendition.themes.select(null);
+        } else {
+          rendition.themes.select(name);
         }
-        fontSize.onchange = (e) => {
-
-            rendition.themes.fontSize(e.target.value + "%")
-        }
-        rendition.display().then((section) => {
-
-            rendition.themes.select("light")
-            rendition.themes.fontSize("100%")
-            console.log(rendition.themes)
-        })
-        rendition.themes.register("light", "themes.css")
-        rendition.themes.register("dark", "themes.css")
-        rendition.themes.on("selected", (key, value) => {
-
-            console.log(`theme: ${key}`)
-            console.log(value)
-        })
-        rendition.themes.on("injected", (key, value, contents) => {
-
-            console.log(contents)
-        })
-        rendition.themes.on("rejected", (key, value, contents) => {
-
-            console.log(contents)
-        })
+      };
+      fontSize.onchange = (e) => {
+        rendition.themes.fontSize(e.target.value + "%");
+      };
+      rendition.display().then((section) => {
+        rendition.themes.select("light");
+        rendition.themes.fontSize("100%");
+        console.log(rendition.themes)
+      });
+      rendition.themes.register("light", "themes.css");
+      rendition.themes.register("dark", "themes.css");
+      rendition.themes.on("selected", (key, value) => {
+        console.log(`theme: ${key}`);
+        console.log(value);
+      });
+      rendition.themes.on("injected", (key, value, contents) => {
+        console.log(contents);
+      });
+      rendition.themes.on("rejected", (key, value, contents) => {
+        console.log(contents);
+      });
     </script>
-</body>
+  </body>
 
 </html>
+

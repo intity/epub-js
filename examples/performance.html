@@ -1,133 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,performance,example">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/jszip.min.js"></script>
-    <script src="../dist/localforage.min.js"></script>
-    <script src="../dist/epub.js"></script>
-    <title>epub-js-examples : Performance</title>
-</head>
-
-<body id="app">
-    <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/performance.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
-    </header>
-    <main id="content" class="ltr" dir="ltr">
-        <div id="viewport" class="paginated ltr" dir="ltr">
-            <div id="loader"></div>
-        </div>
-        <a id="prev" href="#prev" class="arrow"></a>
-        <a id="next" href="#next" class="arrow"></a>
-    </main>
-    <footer></footer>
+    <script type="text/javascript" src="../dist/jszip.min.js"></script>
+    <script type="text/javascript" src="../dist/localforage.min.js"></script>
+    <script type="text/javascript" src="../dist/epub.js"></script>
     <script type="module">
-        import { put, gen } from "./performance.js"
-        const loader = document.getElementById("loader")
-        const prev = document.getElementById("prev")
-        const next = document.getElementById("next")
-        put("init", 0, false)
-        const book = ePub("../assets/handbook/", {
-            store: "epub-js"
-        })
-        book.opened.then(() => {
-
-            loader.style.display = "none"
-        })
-        book.loaded.packaging.then((packaging) => {
-
-            put("book.loaded.packaging")
-        })
-        book.loaded.resources.then((resources) => {
-
-            put("book.loaded.resources")
-        })
-        book.loaded.sections.then((sections) => {
-
-            put("book.loaded.sections")
-        })
-        book.loaded.navigation.then((navigation) => {
-
-            put("book.loaded.navigation")
-        })
-        const rendition = book.renderTo("viewport", {
-            width: 908,
-            height: 600,
-            spread: "none"
-        })
-        const keybinding = (e) => {
-
-            switch (e.key) {
-                case "ArrowLeft":
-                    put("book.rendition.relocated", 0)
-                    rendition.prev()
-                    break
-                case "ArrowRight":
-                    put("book.rendition.relocated", 0)
-                    rendition.next()
-                    break
-            }
+      import { put, gen } from "./performance.js";
+      const loader = document.getElementById("loader");
+      put("init", 0, false);
+      const book = ePub("../assets/alice/", {
+        store: "epub-js"
+      });
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      book.loaded.packaging.then((packaging) => {
+        put("book.loaded.packaging");
+      });
+      book.loaded.resources.then((resources) => {
+        put("book.loaded.resources");
+      });
+      book.loaded.sections.then((sections) => {
+        put("book.loaded.sections");
+      });
+      book.loaded.navigation.then((navigation) => {
+        put("book.loaded.navigation");
+      });
+      const rendition = book.renderTo("viewport", {
+        flow: "paginated",
+        height: "100vh",
+        spread: "none",
+        magager: "continuous"
+      });
+      const keybinding = (e) => {
+        switch (e.key) {
+          case "ArrowLeft":
+            put("book.rendition.relocated", 0);
+            rendition.prev();
+            break;
+          case "ArrowRight":
+            put("book.rendition.relocated", 0);
+            rendition.next();
+            break;
         }
-        prev.onclick = (e) => {
-
-            put("book.rendition.relocated", 0)
-            rendition.prev()
-            e.preventDefault()
-        }
-        next.onclick = (e) => {
-
-            put("book.rendition.relocated", 0)
-            rendition.next()
-            e.preventDefault()
-        }
-        const update = (loc) => {
-
-            prev.style.display = loc.atStart ? "none" : "block"
-            next.style.display = loc.atEnd ? "none" : "block"
-        }
-        rendition.display().then(() => {
-
-            document.onkeyup = keybinding
-            rendition.on("keyup", keybinding)
-        })
-        rendition.on("started", () => {
-
-            put("book.rendition.started")
-        })
-        rendition.on("attached", () => {
-
-            put("book.rendition.attached")
-        })
-        rendition.on("displayed", (section) => {
-
-            put("book.rendition.displayed")
-        })
-        rendition.on("rendered", (view) => {
-
-            put("book.rendition.rendered")
-        })
-        rendition.on("relocated", (location) => {
-
-            put("book.rendition.relocated")
-            const { table, total } = gen()
-            console.table(table)
-            console.log(`total time: ${total} ms`)
-            console.log(book)
-            update(location)
-        })
+      }
+      rendition.display().then(() => {
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("started", () => {
+        put("book.rendition.started");
+      });
+      rendition.on("attached", () => {
+        put("book.rendition.attached");
+      });
+      rendition.on("displayed", (section) => {
+        put("book.rendition.displayed");
+      });
+      rendition.on("rendered", (view) => {
+        put("book.rendition.rendered");
+      });
+      rendition.on("relocated", (loc) => {
+        put("book.rendition.relocated");
+        const { table, total } = gen();
+        console.table(table);
+        console.log(`total time: ${total} ms`);
+        //console.log(book);
+      });
     </script>
-</body>
+    <title>epub-js-examples : Performance</title>
+  </head>
+
+  <body id="viewport" class="paginated ltr" dir="ltr">
+    <div id="loader"></div>
+  </body>
 
 </html>

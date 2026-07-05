@@ -4,16 +4,15 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js,epub-js,storage,indexdb,archive,example">
-    <meta name="description" content="example of loading a book from storage">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
+    <meta name="keywords" content="epub.js,epub-js,storage,indexdb,unarchive,example">
+    <meta name="description" content="example of loading an unarchive book from storage">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script type="text/javascript" src="../dist/jszip.min.js"></script>
     <script type="text/javascript" src="../dist/localforage.min.js"></script>
     <script type="text/javascript" src="../dist/epub.js"></script>
     <script type="module" src="../assets/js/main.js"></script>
-    <title>epub-js-examples : Storage</title>
+    <title>epub-js-examples : Storage when unarchive</title>
   </head>
 
   <body id="app">
@@ -34,10 +33,10 @@
             <a href="./">Examples</a>
           </li>
           <li id="mi-4">
-            <a href="../test">Test</a>
+            <a href="../">Test</a>
           </li>
           <li id="mi-5">
-            <a href="https://github.com/intity/epub-js/blob/master/examples/storage.html" id="gh-link" target="_blank"></a>
+            <a href="https://github.com/intity/epub-js/blob/master/examples/storage-when-unarchive.html" id="gh-link" target="_blank"></a>
           </li>
         </ul>
       </nav>
@@ -54,16 +53,24 @@
       const loader = document.getElementById("loader");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
-      const book = ePub("../assets/alice.epub", {
+      const size = window.innerHeight - 160;
+      const book = ePub("../assets/alice/", {
+        replacements: "base64",
         store: "epub-js"
-      });
-      const rendition = book.renderTo("viewport", {
-        width: 908,
-        height: 600,
-        spread: "none"
       });
       book.opened.then(() => {
         loader.style.display = "none";
+      });
+      book.storage.on("online", () => {
+        console.log(book.storage);
+      });
+      book.storage.on("offline", () => {
+        console.log(book.storage);
+      });
+      const rendition = book.renderTo("viewport", {
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size,
+        spread: "none"
       });
       prev.onclick = (e) => {
         rendition.prev();
@@ -87,16 +94,10 @@
             break;
         }
       }
-      rendition.display(5).then(() => {
+      rendition.display().then(() => {
         document.onkeyup = keybinding;
         rendition.on("keyup", keybinding);
       });
-      book.storage.on("online", () => {
-        console.log(book.storage);
-      });
-      book.storage.on("offline", () => {
-        console.log(book.storage);
-      })
       rendition.on("relocated", (loc) => {
         update(loc);
         console.log(book);

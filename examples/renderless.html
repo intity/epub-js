@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,renderless,example">
@@ -9,167 +9,179 @@
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/epub.js"></script>
+    <script type="text/javascript" src="../dist/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-examples : Renderless</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="l-item">
-                    <label for="toc">Table of Contents:</label>
-                    <select id="toc" style="width: 218px;"></select>
-                </li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/renderless.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/renderless.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content" class="ltr" dir="ltr">
-        <div id="viewport" class="scrolled ltr" dir="ltr">
-            <div id="loader"></div>
-        </div>
-        <div id="prev" class="arrow"></div>
-        <div id="next" class="arrow"></div>
+      <div id="viewport" class="scrolled ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+      <div id="prev" class="arrow"></div>
+      <div id="next" class="arrow"></div>
     </main>
-    <footer></footer>
-    <script>
-        const viewer = document.getElementById("viewport")
-        const loader = document.getElementById("loader")
-        const list = document.getElementById("toc")
-        const prev = document.getElementById("prev")
-        const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
-        const update = () => {
-
-            const index = list.selectedIndex
-            const hasPrev = index === 0
-            const hasNext = index === list.length - 1
-            prev.style.display = hasPrev ? "none" : "block"
-            next.style.display = hasNext ? "none" : "block"
+    <footer>
+      <nav>
+        <ul>
+          <li class="c-item">
+            <label for="toc"></label>
+            <select id="toc" style="width: 218px;"></select>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="text/javascript">
+      const viewer = document.getElementById("viewport");
+      const loader = document.getElementById("loader");
+      const list = document.getElementById("toc");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const size = window.innerHeight - 160;
+      const book = ePub("../assets/alice/", {
+        replacements: "blobUrl"
+      });
+      const update = () => {
+        const index = list.selectedIndex;
+        const hasPrev = index === 0;
+        const hasNext = index === list.length - 1;
+        prev.style.display = hasPrev ? "none" : "block";
+        next.style.display = hasNext ? "none" : "block";
+      }
+      const init = () => {
+        const vpc = document.createElement("div");
+        const lsc = document.createElement("div");
+        lsc.className = "views-container";
+        lsc.style.width = "100%";
+        lsc.style.height = "100%";
+        vpc.className = "viewport-container";
+        vpc.style.width = Math.floor(1/Math.sqrt(2)*size) + "px";
+        vpc.style.height = size + "px";
+        vpc.style.display = "flex";
+        vpc.style.overflow = "hidden";
+        vpc.style.position = "relative";
+        vpc.style.flexWrap = "nowrap";
+        vpc.appendChild(lsc);
+        viewer.appendChild(vpc);
+        return { lsc, rect: vpc.getBoundingClientRect() };
+      }
+      const { lsc, rect } = init();
+      const load = (html) => {
+        const view = document.createElement("div");
+        const iframe = document.createElement("iframe");
+        view.className = "view-container";
+        view.style.visibility = "hidden";
+        iframe.style.width = rect.width + "px";
+        iframe.style.height = rect.height + "px";
+        iframe.style.border = "none";
+        iframe.style.overflow = "hidden";
+        iframe.srcdoc = html;
+        iframe.onload = (e) => {
+          const body = e.target.contentDocument.body;
+          body.style.padding = "37px";
+          body.style.margin = "0";
+          view.style.width = body.clientWidth + "px";
+          view.style.height = body.clientHeight + "px";
+          view.style.visibility = "visible";
         }
-        const init = () => {
-
-            const vpc = document.createElement("div")
-            const lsc = document.createElement("div")
-            lsc.className = "views-container"
-            lsc.style.width = "100%"
-            lsc.style.height = "100%"
-            vpc.className = "viewport-container"
-            vpc.style.width = "908px"
-            vpc.style.height = (window.innerHeight - 100) + "px"
-            vpc.style.display = "flex"
-            vpc.style.overflow = "hidden"
-            vpc.style.position = "relative"
-            vpc.style.flexWrap = "nowrap"
-            vpc.appendChild(lsc)
-            viewer.appendChild(vpc)
-            return { lsc, rect: vpc.getBoundingClientRect() }
+        view.appendChild(iframe);
+        return Promise.resolve(view);
+      }
+      const display = (target) => {
+        if (lsc.firstChild) {
+          lsc.removeChild(lsc.firstChild);
         }
-        const { lsc, rect } = init()
-        const load = (html) => {
-
-            const view = document.createElement("div")
-            const iframe = document.createElement("iframe")
-            view.className = "view-container"
-            view.style.visibility = "hidden"
-            iframe.style.width = rect.width + "px"
-            iframe.style.height = rect.height + "px"
-            iframe.style.border = "none"
-            iframe.style.overflow = "hidden"
-            iframe.srcdoc = html
-            iframe.onload = (e) => {
-
-                const body = e.target.contentDocument.body
-                body.style.padding = "37px"
-                body.style.margin = "0"
-                view.style.width = body.clientWidth + "px"
-                view.style.height = body.clientHeight + "px"
-                view.style.visibility = "visible"
-            }
-            view.appendChild(iframe)
-            return Promise.resolve(view)
+        const section = book.sections.get(target);
+        if (section) {
+          console.log(section);
+          return section.render(book.request).then((html) => {
+            return load(html);
+          }).then((view) => {
+            lsc.appendChild(view);
+            return section;
+          });
         }
-        const display = (target) => {
-
-            if (lsc.firstChild) {
-                lsc.removeChild(lsc.firstChild)
-            }
-
-            const section = book.sections.get(target)
-            if (section) {
-                console.log(section)
-                return section.render(book.request).then((html) => {
-                    return load(html)
-                }).then((view) => {
-                    lsc.appendChild(view)
-                    return section
-                })
-            }
-            return Promise.resolve(null);
+        return Promise.resolve(null);
+      }
+      book.loaded.navigation.then((toc) => {
+        toc.forEach((chapter) => {
+          const option = document.createElement("option");
+          option.textContent = chapter.label;
+          option.ref = chapter.href;
+          list.appendChild(option);
+        });
+        list.onchange = (e) => {
+          const ind = e.target.selectedIndex;
+          const url = e.target[ind].ref;
+          display(url).then((s) => {
+            if (s) update();
+          });
         }
-        book.loaded.navigation.then((toc) => {
-
-            toc.forEach((chapter) => {
-
-                const option = document.createElement("option")
-                option.textContent = chapter.label
-                option.ref = chapter.href
-                list.appendChild(option)
-            })
-            list.onchange = (e) => {
-
-                const ind = e.target.selectedIndex
-                const url = e.target[ind].ref
-                display(url).then((s) => {
-                    if (s) update()
-                })
+        prev.onclick = (e) => {
+          let index = list.selectedIndex - 1;
+          if (index >= 0) {
+            const url = list[index].ref;
+            display(url).then((s) => {
+              if (!s) return;
+              list.selectedIndex = index;
+              update();
+            });
+          }
+          e.preventDefault();
+        }
+        next.onclick = (e) => {
+          let index = list.selectedIndex + 1;
+          if (index < list.length) {
+            const url = list[index].ref;
+            display(url).then((s) => {
+              if (!s) return;
+              list.selectedIndex = index;
+              update();
+            });
+          }
+          e.preventDefault();
+        }
+      });
+      book.opened.then(() => {
+        const section = display();
+        if (section) {
+          for (const opt of list.children) {
+            if (section.href === opt.ref) {
+              list.selectedIndex = opt.index;
+              break;
             }
-            prev.onclick = (e) => {
-
-                let index = list.selectedIndex - 1
-                if (index >= 0) {
-                    const url = list[index].ref
-                    display(url).then((s) => {
-                        if (!s) return
-                        list.selectedIndex = index
-                        update()
-                    })
-                }
-                e.preventDefault()
-            }
-            next.onclick = (e) => {
-
-                let index = list.selectedIndex + 1
-                if (index < list.length) {
-                    const url = list[index].ref
-                    display(url).then((s) => {
-                        if (!s) return
-                        list.selectedIndex = index
-                        update()
-                    })
-                }
-                e.preventDefault()
-            }
-        })
-        book.opened.then(() => {
-
-            const section = display()
-            if (section) {
-                for (const opt of list.children) {
-                    if (section.href === opt.ref) {
-                        list.selectedIndex = opt.index
-                        break
-                    }
-                }
-                update()
-            }
-            loader.style.display = "none"
-        })
+          }
+          update();
+        }
+        loader.style.display = "none";
+      });
     </script>
-</body>
+  </body>
 
 </html>
