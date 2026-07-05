@@ -5,126 +5,126 @@ import { parents } from "./core";
  */
 class RangeObject {
 
-    constructor() {
+  constructor() {
 
-        this.collapsed = false;
-        this.commonAncestorContainer = undefined;
-        this.endContainer = undefined;
-        this.endOffset = undefined;
-        this.startContainer = undefined;
-        this.startOffset = undefined;
+    this.collapsed = false;
+    this.commonAncestorContainer = undefined;
+    this.endContainer = undefined;
+    this.endOffset = undefined;
+    this.startContainer = undefined;
+    this.startOffset = undefined;
+  }
+
+  /**
+   * Set start
+   * @param {Node} startNode
+   * @param {Node} startOffset
+   */
+  setStart(startNode, startOffset) {
+
+    this.startContainer = startNode;
+    this.startOffset = startOffset;
+
+    if (!this.endContainer) {
+      this.collapse(true);
+    } else {
+      this.commonAncestorContainer = this._commonAncestorContainer();
     }
 
-    /**
-     * Set start
-     * @param {Node} startNode 
-     * @param {Node} startOffset 
-     */
-    setStart(startNode, startOffset) {
+    this._checkCollapsed();
+  }
 
-        this.startContainer = startNode;
-        this.startOffset = startOffset;
+  /**
+   * Set end
+   * @param {Node} endNode
+   * @param {Node} endOffset
+   */
+  setEnd(endNode, endOffset) {
 
-        if (!this.endContainer) {
-            this.collapse(true);
-        } else {
-            this.commonAncestorContainer = this._commonAncestorContainer();
-        }
+    this.endContainer = endNode;
+    this.endOffset = endOffset;
 
-        this._checkCollapsed();
+    if (!this.startContainer) {
+      this.collapse(false);
+    } else {
+      this.collapsed = false;
+      this.commonAncestorContainer = this._commonAncestorContainer();
     }
 
-    /**
-     * Set end
-     * @param {Node} endNode 
-     * @param {Node} endOffset 
-     */
-    setEnd(endNode, endOffset) {
+    this._checkCollapsed();
+  }
 
-        this.endContainer = endNode;
-        this.endOffset = endOffset;
+  /**
+   * collapse
+   * @param {boolean} toStart
+   */
+  collapse(toStart) {
 
-        if (!this.startContainer) {
-            this.collapse(false);
-        } else {
-            this.collapsed = false;
-            this.commonAncestorContainer = this._commonAncestorContainer();
-        }
+    this.collapsed = true;
 
-        this._checkCollapsed();
+    if (toStart) {
+      this.endContainer = this.startContainer;
+      this.endOffset = this.startOffset;
+      this.commonAncestorContainer = this.startContainer.parentNode;
+    } else {
+      this.startContainer = this.endContainer;
+      this.startOffset = this.endOffset;
+      this.commonAncestorContainer = this.endOffset.parentNode;
     }
+  }
 
-    /**
-     * collapse
-     * @param {boolean} toStart 
-     */
-    collapse(toStart) {
+  /**
+   * Select Node
+   * @param {Node} referenceNode
+   */
+  selectNode(referenceNode) {
 
-        this.collapsed = true;
+    const parent = referenceNode.parentNode;
+    const index = Array.prototype.indexOf.call(parent.childNodes, referenceNode);
+    this.setStart(parent, index);
+    this.setEnd(parent, index + 1);
+  }
 
-        if (toStart) {
-            this.endContainer = this.startContainer;
-            this.endOffset = this.startOffset;
-            this.commonAncestorContainer = this.startContainer.parentNode;
-        } else {
-            this.startContainer = this.endContainer;
-            this.startOffset = this.endOffset;
-            this.commonAncestorContainer = this.endOffset.parentNode;
-        }
+  /**
+   * Select Node Contents
+   * @param {Node} referenceNode
+   */
+  selectNodeContents(referenceNode) {
+
+    const endIndex = (referenceNode.nodeType === Node.TEXT_NODE)
+      ? referenceNode.textContent.length
+      : parent.childNodes.length;
+    this.setStart(referenceNode, 0);
+    this.setEnd(referenceNode, endIndex);
+  }
+
+  _commonAncestorContainer(startContainer, endContainer) {
+
+    const startParents = parents(startContainer || this.startContainer);
+    const endParents = parents(endContainer || this.endContainer);
+
+    if (startParents[0] != endParents[0]) return undefined;
+
+    for (let i = 0; i < startParents.length; i++) {
+      if (startParents[i] != endParents[i]) {
+        return startParents[i - 1];
+      }
     }
+  }
 
-    /**
-     * Select Node
-     * @param {Node} referenceNode 
-     */
-    selectNode(referenceNode) {
+  _checkCollapsed() {
 
-        const parent = referenceNode.parentNode;
-        const index = Array.prototype.indexOf.call(parent.childNodes, referenceNode);
-        this.setStart(parent, index);
-        this.setEnd(parent, index + 1);
+    if (this.startContainer === this.endContainer &&
+      this.startOffset === this.endOffset) {
+      this.collapsed = true;
+    } else {
+      this.collapsed = false;
     }
+  }
 
-    /**
-     * Select Node Contents
-     * @param {Node} referenceNode 
-     */
-    selectNodeContents(referenceNode) {
-
-        const endIndex = (referenceNode.nodeType === Node.TEXT_NODE)
-            ? referenceNode.textContent.length
-            : parent.childNodes.length;
-        this.setStart(referenceNode, 0);
-        this.setEnd(referenceNode, endIndex);
-    }
-
-    _commonAncestorContainer(startContainer, endContainer) {
-
-        const startParents = parents(startContainer || this.startContainer);
-        const endParents = parents(endContainer || this.endContainer);
-
-        if (startParents[0] != endParents[0]) return undefined;
-
-        for (let i = 0; i < startParents.length; i++) {
-            if (startParents[i] != endParents[i]) {
-                return startParents[i - 1];
-            }
-        }
-    }
-
-    _checkCollapsed() {
-
-        if (this.startContainer === this.endContainer &&
-            this.startOffset === this.endOffset) {
-            this.collapsed = true;
-        } else {
-            this.collapsed = false;
-        }
-    }
-
-    toString() {
-        // TODO: implement walking between start and end to find text
-    }
+  toString() {
+    // TODO: implement walking between start and end to find text
+  }
 }
 
 export default RangeObject;

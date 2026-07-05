@@ -1,54 +1,55 @@
 import { extend } from "./utils/core";
+import Mapping from "./mapping";
 
 /**
  * Location class
  */
 class Location {
+  /**
+   * Constructor
+   */
+  constructor() {
     /**
-     * Constructor
+     * @member {string} cfi EpubCFI string format
+     * @memberof Location
+     * @readonly
      */
-    constructor() {
-        /**
-         * @member {string} cfi EpubCFI string format
-         * @memberof Location
-         * @readonly
-         */
-        this.cfi = null;
-        /**
-         * @member {number} index Location index
-         * @memberof Location
-         * @readonly
-         */
-        this.index = 0;
-        /**
-         * Percentage in the range from 0 to 1
-         * @member {number} percentage
-         * @memberof Location
-         * @readonly
-         */
-        this.percentage = 0;
-    }
-
+    this.cfi = null;
     /**
-     * Set location properties
-     * @param {object} [props]
-     * @param {string} [props.cfi]
-     * @param {number} [props.index]
-     * @param {number} [props.percentage]
+     * @member {number} index Location index
+     * @memberof Location
+     * @readonly
      */
-    set(props) {
-
-        extend(this, props || {});
-        return this;
-    }
-
+    this.index = 0;
     /**
-     * Destroy the Location object
+     * Percentage in the range from 0 to 1
+     * @member {number} percentage
+     * @memberof Location
+     * @readonly
      */
-    destroy() {
+    this.percentage = 0;
+  }
 
-        Object.keys(this).forEach(p => (this[p] = undefined));
-    }
+  /**
+   * Set location properties
+   * @param {object} [props]
+   * @param {string} [props.cfi]
+   * @param {number} [props.index]
+   * @param {number} [props.percentage]
+   */
+  set(props) {
+
+    extend(this, props || {});
+    return this;
+  }
+
+  /**
+   * Destroy the Location object
+   */
+  destroy() {
+
+    Object.keys(this).forEach(p => (this[p] = undefined));
+  }
 }
 
 export default Location;

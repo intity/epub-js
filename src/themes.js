@@ -1,5 +1,4 @@
 import EventEmitter from "event-emitter";
-import Rendition from "./rendition";
 import Url from "./utils/url";
 import { EVENTS } from "./utils/constants";
 
@@ -7,322 +6,322 @@ import { EVENTS } from "./utils/constants";
  * Themes to apply to displayed content
  */
 class Themes extends Map {
-	/**
-	 * Constructor
-	 * @param {Rendition} rendition
-	 */
-	constructor(rendition) {
+  /**
+   * Constructor
+   * @param {Rendition} rendition
+   */
+  constructor(rendition) {
 
-		super();
-		this.rendition = rendition;
-		/**
-		 * @member {string} current
-		 * @memberof Themes
-		 * @readonly
-		 */
-		this.current = null;
-		/**
-		 * Injected css rules
-		 * @member {object} rules
-		 * @memberof Themes
-		 * @readonly
-		 */
-		this.rules = {};
-		this.rendition.hooks.content.register(this.inject.bind(this));
-		this.rendition.hooks.content.register(this.update.bind(this));
-	}
+    super();
+    this.rendition = rendition;
+    /**
+     * @member {string} current
+     * @memberof Themes
+     * @readonly
+     */
+    this.current = null;
+    /**
+     * Injected css rules
+     * @member {object} rules
+     * @memberof Themes
+     * @readonly
+     */
+    this.rules = {};
+    this.rendition.hooks.content.register(this.inject.bind(this));
+    this.rendition.hooks.content.register(this.update.bind(this));
+  }
 
-	/**
-	 * Add themes to be used by a rendition
-	 * @param {IArguments} args
-	 * @example register("light", "/path/to/light.css")
-	 * @example register("light", "https://example.com/to/light.css")
-	 * @example register("light", { body: { color: "purple"}})
-	 * @example register({ light: {...}, dark: {...}})
-	 */
-	register() {
+  /**
+   * Add themes to be used by a rendition
+   * @param {IArguments} args
+   * @example register("light", "/path/to/light.css")
+   * @example register("light", "https://example.com/to/light.css")
+   * @example register("light", { body: { color: "purple"}})
+   * @example register({ light: {...}, dark: {...}})
+   */
+  register() {
 
-		if (arguments.length === 0) {
-			return;
-		}
-		if (arguments.length === 1 && typeof (arguments[0]) === "object") {
-			return this.registerThemes(arguments[0]);
-		}
-		if (arguments.length === 2 && typeof (arguments[1]) === "string") {
-			return this.registerUrl(arguments[0], arguments[1]);
-		}
-		if (arguments.length === 2 && typeof (arguments[1]) === "object") {
-			return this.registerRules(arguments[0], arguments[1]);
-		}
-	}
+    if (arguments.length === 0) {
+      return;
+    }
+    if (arguments.length === 1 && typeof (arguments[0]) === "object") {
+      return this.registerThemes(arguments[0]);
+    }
+    if (arguments.length === 2 && typeof (arguments[1]) === "string") {
+      return this.registerUrl(arguments[0], arguments[1]);
+    }
+    if (arguments.length === 2 && typeof (arguments[1]) === "object") {
+      return this.registerRules(arguments[0], arguments[1]);
+    }
+  }
 
-	/**
-	 * Register themes object
-	 * @param {object} themes
-	 */
-	registerThemes(themes) {
+  /**
+   * Register themes object
+   * @param {object} themes
+   */
+  registerThemes(themes) {
 
-		for (const theme in themes) {
-			if (themes.hasOwnProperty(theme)) {
-				if (typeof (themes[theme]) === "string") {
-					this.registerUrl(theme, themes[theme]);
-				} else {
-					this.registerRules(theme, themes[theme]);
-				}
-			}
-		}
-	}
+    for (const theme in themes) {
+      if (themes.hasOwnProperty(theme)) {
+        if (typeof (themes[theme]) === "string") {
+          this.registerUrl(theme, themes[theme]);
+        } else {
+          this.registerRules(theme, themes[theme]);
+        }
+      }
+    }
+  }
 
-	/**
-	 * Register a url
-	 * @param {string} name Theme name
-	 * @param {string} input URL string
-	 * @example registerUrl("light", "light.css")
-	 * @example registerUrl("light", "http://example.com/light.css")
-	 */
-	registerUrl(name, input) {
+  /**
+   * Register a url
+   * @param {string} name Theme name
+   * @param {string} input URL string
+   * @example registerUrl("light", "light.css")
+   * @example registerUrl("light", "http://example.com/light.css")
+   */
+  registerUrl(name, input) {
 
-		const url = new Url(input);
-		this.set(name, {
-			injected: false,
-			url: url.toString()
-		});
-	}
+    const url = new Url(input);
+    this.set(name, {
+      injected: false,
+      url: url.toString()
+    });
+  }
 
-	/**
-	 * Register rule
-	 * @param {string} name
-	 * @param {object} rules
-	 * @example registerRules("light", { body: { color: "purple"}})
-	 */
-	registerRules(name, rules) {
+  /**
+   * Register rule
+   * @param {string} name
+   * @param {object} rules
+   * @example registerRules("light", { body: { color: "purple"}})
+   */
+  registerRules(name, rules) {
 
-		this.set(name, {
-			injected: false,
-			rules: rules
-		});
-	}
+    this.set(name, {
+      injected: false,
+      rules: rules
+    });
+  }
 
-	/**
-	 * Select a theme
-	 * @param {string} [name] Theme name
-	 * @description Use null to reject the current selected theme
-	 */
-	select(name) {
+  /**
+   * Select a theme
+   * @param {string} [name] Theme name
+   * @description Use null to reject the current selected theme
+   */
+  select(name) {
 
-		const prev = this.current;
+    const prev = this.current;
 
-		let theme;
-		if (name) {
-			theme = this.get(name);
-		} else if (prev && name === null) {
-			theme = this.get(prev);
-		}
-		if (this.current === name || !theme) {
-			return;
-		}
+    let theme;
+    if (name) {
+      theme = this.get(name);
+    } else if (prev && name === null) {
+      theme = this.get(prev);
+    }
+    if (this.current === name || !theme) {
+      return;
+    }
 
-		this.current = name;
+    this.current = name;
 
-		const contents = this.rendition.getContents();
-		contents.forEach((content) => {
-			if (!content) return;
-			if (name) {
-				content.removeClass(prev);
-				content.appendClass(name);
-				this.append(name, theme, content);
-			} else if (prev) {
-				content.removeClass(prev);
-				this.remove(prev, theme, content);
-			}
-		});
-		/**
-		 * Emit which occurs when theme is selected
-		 * @event selected
-		 * @param {string} name Theme key
-		 * @param {object} theme Theme value
-		 * @memberof Themes
-		 */
-		this.emit(EVENTS.THEMES.SELECTED, name, theme);
-	}
+    const contents = this.rendition.getContents();
+    contents.forEach((content) => {
+      if (!content) return;
+      if (name) {
+        content.removeClass(prev);
+        content.appendClass(name);
+        this.append(name, theme, content);
+      } else if (prev) {
+        content.removeClass(prev);
+        this.remove(prev, theme, content);
+      }
+    });
+    /**
+     * Emit which occurs when theme is selected
+     * @event selected
+     * @param {string} name Theme key
+     * @param {object} theme Theme value
+     * @memberof Themes
+     */
+    this.emit(EVENTS.THEMES.SELECTED, name, theme);
+  }
 
-	/**
-	 * Append theme to contents
-	 * @param {string} key
-	 * @param {object} theme 
-	 * @param {Contents} contents
-	 * @private
-	 */
-	append(key, theme, contents) {
+  /**
+   * Append theme to contents
+   * @param {string} key
+   * @param {object} theme
+   * @param {Contents} contents
+   * @private
+   */
+  append(key, theme, contents) {
 
-		if (theme.url) {
-			contents.appendStylesheet(key, theme.url);
-			theme.injected = true;
-		}
-		if (theme.rules) {
-			contents.appendStylesheet(key, theme.rules);
-			theme.injected = true;
-		}
-		if (theme.injected) {
-			/**
-			 * Emit of injected a stylesheet into contents
-			 * @event injected
-			 * @param {string} key Theme key
-			 * @param {object} theme Theme value
-			 * @param {Contents} contents
-			 * @memberof Themes
-			 */
-			this.emit(EVENTS.THEMES.INJECTED, key, theme, contents);
-		}
-	}
+    if (theme.url) {
+      contents.appendStylesheet(key, theme.url);
+      theme.injected = true;
+    }
+    if (theme.rules) {
+      contents.appendStylesheet(key, theme.rules);
+      theme.injected = true;
+    }
+    if (theme.injected) {
+      /**
+       * Emit of injected a stylesheet into contents
+       * @event injected
+       * @param {string} key Theme key
+       * @param {object} theme Theme value
+       * @param {Contents} contents
+       * @memberof Themes
+       */
+      this.emit(EVENTS.THEMES.INJECTED, key, theme, contents);
+    }
+  }
 
-	/**
-	 * Remove theme from contents
-	 * @param {string} key 
-	 * @param {object} theme 
-	 * @param {Contents} contents 
-	 * @private
-	 */
-	remove(key, theme, contents) {
+  /**
+   * Remove theme from contents
+   * @param {string} key
+   * @param {object} theme
+   * @param {Contents} contents
+   * @private
+   */
+  remove(key, theme, contents) {
 
-		if (contents.removeStylesheet(key)) {
-			theme.injected = false;
-			/**
-			 * Emit of rejected a stylesheet into contents
-			 * @event rejected
-			 * @param {string} key Theme key
-			 * @param {object} theme Theme value
-			 * @param {Contents} contents
-			 * @memberof Themes
-			 */
-			this.emit(EVENTS.THEMES.REJECTED, key, theme, contents);
-		}
-	}
+    if (contents.removeStylesheet(key)) {
+      theme.injected = false;
+      /**
+       * Emit of rejected a stylesheet into contents
+       * @event rejected
+       * @param {string} key Theme key
+       * @param {object} theme Theme value
+       * @param {Contents} contents
+       * @memberof Themes
+       */
+      this.emit(EVENTS.THEMES.REJECTED, key, theme, contents);
+    }
+  }
 
-	/**
-	 * Clear all themes
-	 */
-	clear() {
+  /**
+   * Clear all themes
+   */
+  clear() {
 
-		this.select(null);
-		super.clear();
-	}
+    this.select(null);
+    super.clear();
+  }
 
-	/**
-	 * Inject all themes into contents
-	 * @param {Contents} contents
-	 * @private
-	 */
-	inject(contents) {
+  /**
+   * Inject all themes into contents
+   * @param {Contents} contents
+   * @private
+   */
+  inject(contents) {
 
-		if (!this.current) return;
-		
-		this.forEach((theme, key) => {
+    if (!this.current) return;
 
-			if (this.current === key) {
-				this.append(key, theme, contents);
-			}
-		});
+    this.forEach((theme, key) => {
 
-		contents.appendClass(this.current);
-	}
+      if (this.current === key) {
+        this.append(key, theme, contents);
+      }
+    });
 
-	/**
-	 * Update all themes into contents
-	 * @param {Contents} contents
-	 * @private
-	 */
-	update(contents) {
+    contents.appendClass(this.current);
+  }
 
-		const rules = this.rules;
+  /**
+   * Update all themes into contents
+   * @param {Contents} contents
+   * @private
+   */
+  update(contents) {
 
-		for (const rule in rules) {
-			if (rules.hasOwnProperty(rule)) {
-				contents.css(rule,
-					rules[rule].value,
-					rules[rule].priority
-				);
-			}
-		}
-	}
+    const rules = this.rules;
 
-	/**
-	 * Append rule
-	 * @param {string} name
-	 * @param {string} value
-	 * @param {boolean} [priority=false]
-	 */
-	appendRule(name, value, priority = false) {
+    for (const rule in rules) {
+      if (rules.hasOwnProperty(rule)) {
+        contents.css(rule,
+          rules[rule].value,
+          rules[rule].priority
+        );
+      }
+    }
+  }
 
-		const rule = {
-			value: value,
-			priority: priority
-		};
-		const contents = this.rendition.getContents();
-		contents.forEach((content) => {
-			if (content) {
-				content.css(name,
-					rule.value,
-					rule.priority
-				);
-			}
-		});
-		this.rules[name] = rule;
-	}
+  /**
+   * Append rule
+   * @param {string} name
+   * @param {string} value
+   * @param {boolean} [priority=false]
+   */
+  appendRule(name, value, priority = false) {
 
-	/**
-	 * Remove rule
-	 * @param {string} name
-	 */
-	removeRule(name) {
+    const rule = {
+      value: value,
+      priority: priority
+    };
+    const contents = this.rendition.getContents();
+    contents.forEach((content) => {
+      if (content) {
+        content.css(name,
+          rule.value,
+          rule.priority
+        );
+      }
+    });
+    this.rules[name] = rule;
+  }
 
-		delete this.rules[name];
-		const contents = this.rendition.getContents();
-		contents.forEach((content) => {
-			if (content) {
-				content.css(name);
-			}
-		});
-	}
+  /**
+   * Remove rule
+   * @param {string} name
+   */
+  removeRule(name) {
 
-	/**
-	 * Remove all rules
-	 */
-	removeRules() {
+    delete this.rules[name];
+    const contents = this.rendition.getContents();
+    contents.forEach((content) => {
+      if (content) {
+        content.css(name);
+      }
+    });
+  }
 
-		Object.keys(this.rules).forEach((key) => {
-			this.removeRule(key);
-		});
-	}
+  /**
+   * Remove all rules
+   */
+  removeRules() {
 
-	/**
-	 * Adjust the font size of a rendition
-	 * @param {string} size
-	 */
-	fontSize(size) {
+    Object.keys(this.rules).forEach((key) => {
+      this.removeRule(key);
+    });
+  }
 
-		this.appendRule("font-size", size);
-	}
+  /**
+   * Adjust the font size of a rendition
+   * @param {string} size
+   */
+  fontSize(size) {
 
-	/**
-	 * Adjust the font-family of a rendition
-	 * @param {string} f
-	 */
-	font(f) {
+    this.appendRule("font-size", size);
+  }
 
-		this.appendRule("font-family", f, true);
-	}
+  /**
+   * Adjust the font-family of a rendition
+   * @param {string} f
+   */
+  font(f) {
 
-	/**
-	 * destroy
-	 */
-	destroy() {
+    this.appendRule("font-family", f, true);
+  }
 
-		this.clear();
-		this.removeRules();
-		this.current = undefined;
-		this.rules = undefined;
-	}
+  /**
+   * destroy
+   */
+  destroy() {
+
+    this.clear();
+    this.removeRules();
+    this.current = undefined;
+    this.rules = undefined;
+  }
 }
 
 EventEmitter(Themes.prototype);

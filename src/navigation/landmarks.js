@@ -1,6 +1,6 @@
 import {
-    qsa,
-    filterChildren
+  qsa,
+  filterChildren
 } from "../utils/core";
 
 /**
@@ -9,89 +9,89 @@ import {
  * @extends {Map}
  */
 class Landmarks extends Map {
-    /**
-     * Constructor
-     */
-    constructor() { super(); }
+  /**
+   * Constructor
+   */
+  constructor() { super(); }
 
-    /**
-     * Parse Landmarks
-     * @param {Node|object[]} target nav
-     * @returns {Promise<Landmarks>}
-     */
-    parse(target) {
+  /**
+   * Parse Landmarks
+   * @param {Node|object[]} target nav
+   * @returns {Promise<Landmarks>}
+   */
+  parse(target) {
 
-        if (Array.isArray(target)) {
-            this.load(target);
-        } else if (target.nodeName === "nav") {
-            this.parseNav(target);
-        }
-
-        return new Promise((resolve, reject) => {
-            resolve(this);
-        });
+    if (Array.isArray(target)) {
+      this.load(target);
+    } else if (target.nodeName === "nav") {
+      this.parseNav(target);
     }
 
-    /**
-     * Parse landmarks from a Epub >= 3.0 Nav
-     * @param {Node} node nav
-     * @private
-     */
-    parseNav(node) {
+    return new Promise((resolve, reject) => {
+      resolve(this);
+    });
+  }
 
-        const navItems = node ? qsa(node, "li") : [];
+  /**
+   * Parse landmarks from a Epub >= 3.0 Nav
+   * @param {Node} node nav
+   * @private
+   */
+  parseNav(node) {
 
-        navItems.forEach((item) => {
-            const entry = this.navItem(item);
-            if (entry) {
-                this.set(entry.type, entry);
-            }
-        });
-    }
+    const navItems = node ? qsa(node, "li") : [];
 
-    /**
-     * Create a LandmarkItem
-     * @param {Node} node li
-     * @return {object|null} LandmarkItem
-     * @private
-     */
-    navItem(node) {
+    navItems.forEach((item) => {
+      const entry = this.navItem(item);
+      if (entry) {
+        this.set(entry.type, entry);
+      }
+    });
+  }
 
-        const link = filterChildren(node, "a", true);
+  /**
+   * Create a LandmarkItem
+   * @param {Node} node li
+   * @return {object|null} LandmarkItem
+   * @private
+   */
+  navItem(node) {
 
-        if (!link) return null;
+    const link = filterChildren(node, "a", true);
 
-        const type = link.getAttribute("epub:type");
-        const href = link.getAttribute("href") || "";
+    if (!link) return null;
 
-        if (!type) return null;
+    const type = link.getAttribute("epub:type");
+    const href = link.getAttribute("href") || "";
 
-        return {
-            type,
-            href,
-            label: link.textContent || ""
-        };
-    }
+    if (!type) return null;
 
-    /**
-     * Load Landmarks from JSON
-     * @param {object[]} items Serialized items
-     * @private
-     */
-    load(items) {
+    return {
+      type,
+      href,
+      label: link.textContent || ""
+    };
+  }
 
-        items.forEach((item) => {
-            this.set(item.type, item);
-        });
-    }
+  /**
+   * Load Landmarks from JSON
+   * @param {object[]} items Serialized items
+   * @private
+   */
+  load(items) {
 
-    /**
-     * destroy
-     */
-    destroy() {
+    items.forEach((item) => {
+      this.set(item.type, item);
+    });
+  }
 
-        this.clear();
-    }
+  /**
+   * destroy
+   */
+  destroy() {
+
+    this.clear();
+  }
 }
 
 export default Landmarks;
