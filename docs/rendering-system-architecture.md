@@ -1,6 +1,6 @@
 # Rendering System Architecture
 
->Document status: draft
+>Document status: Draft
 
 The architecture of the rendering system contains many abstractions that help to solve complex problems. In particular, customizing the layout of pages in different views. The central place in the rendering system is occupied by the [Layout](API/layout.md) class, which provides the basic infrastructure for performing derivative calculations.
 
