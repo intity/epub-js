@@ -7,8 +7,7 @@ This is the main section of the documentation.
 ## Sections
 
 - [API Reference](API/index.md)
+- [EPUB Reading System](epub-reading-system.md)
 - [Hooks](hooks.md)
-- [Reading System Features](reading-system-features.md)
-- [Rendering System Architecture](rendering-system-architecture.md)
 - [Input types Configuration](input-types-configuration.md)
-- [Development](development.md)
+- [Rendering System Architecture](rendering-system-architecture.md)
