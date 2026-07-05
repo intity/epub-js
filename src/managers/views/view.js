@@ -15,8 +15,8 @@ import { EVENTS } from "../../utils/constants";
 class View {
     /**
      * Constructor
-     * @param {Layout} layout 
-     * @param {Section} section 
+     * @param {Layout} layout
+     * @param {Section} section
      */
     constructor(layout, section) {
         /**
@@ -102,6 +102,7 @@ class View {
         this.container.style.width = "0";
         this.container.style.overflow = "hidden";
         this.container.style.position = "relative";
+        this.container.style.flexShrink = "0";
         this.container.setAttribute("ref", this.section.index);
     }
 
@@ -135,7 +136,7 @@ class View {
 
     /**
 	 * render
-	 * @param {function} request 
+	 * @param {function} request
 	 * @returns {Promise<string>} section render
      * @abstract
 	 */
@@ -210,7 +211,7 @@ class View {
 
     /**
      * Update mode
-     * @param {string} value 
+     * @param {string} value
      * @abstract
      */
     mode(value) {}
@@ -254,8 +255,8 @@ class View {
 
     /**
 	 * reframe
-	 * @param {number} width 
-	 * @param {number} height 
+	 * @param {number} width
+	 * @param {number} height
 	 * @abstract
 	 */
     reframe(width, height) {
@@ -276,7 +277,7 @@ class View {
 
     /**
      * Load frame
-     * @param {string} contents 
+     * @param {string} contents
      * @returns {Promise<any>} loading promise
      * @abstract
      */
@@ -287,7 +288,7 @@ class View {
 
     /**
 	 * Display view
-	 * @param {function} request 
+	 * @param {function} request
 	 * @returns {Promise<View>} displayed promise
 	 */
 	display(request) {
@@ -371,7 +372,7 @@ class View {
 
     /**
 	 * locationOf
-	 * @param {string|EpubCFI} target 
+	 * @param {string|EpubCFI} target
 	 * @returns {{ top: number, left: number }}
 	 */
 	locationOf(target) {
@@ -386,11 +387,11 @@ class View {
 
     /**
      * highlight
-     * @param {string} cfiRange 
-     * @param {object} [data={}] 
+     * @param {string} cfiRange
+     * @param {object} [data={}]
      * @param {function} [cb=null] callback function
-     * @param {string} [className='epubjs-hl'] 
-     * @param {object} [styles={}] 
+     * @param {string} [className='epubjs-hl']
+     * @param {object} [styles={}]
      * @returns {object}
      */
     highlight(cfiRange, data = {}, cb = null, className = "epubjs-hl", styles = {}) {
@@ -441,7 +442,7 @@ class View {
 
     /**
      * unhighlight
-     * @param {string} cfiRange 
+     * @param {string} cfiRange
      * @returns {boolean}
      */
     unhighlight(cfiRange) {
@@ -464,11 +465,11 @@ class View {
 
     /**
      * underline
-     * @param {string} cfiRange 
-     * @param {object} [data={}] 
+     * @param {string} cfiRange
+     * @param {object} [data={}]
      * @param {function} [cb=null]
-     * @param {string} [className='epubjs-ul'] 
-     * @param {object} [styles={}] 
+     * @param {string} [className='epubjs-ul']
+     * @param {object} [styles={}]
      * @returns {object}
      */
     underline(cfiRange, data = {}, cb = null, className = "epubjs-ul", styles = {}) {
@@ -518,7 +519,7 @@ class View {
 
     /**
      * ununderline
-     * @param {string} cfiRange 
+     * @param {string} cfiRange
      * @returns {boolean}
      */
     ununderline(cfiRange) {
