@@ -577,7 +577,7 @@ class Rendition {
     };
 
     const locations = this.book.locations;
-    if (locations.size) {
+    if (this.layout.name === "reflowable" && locations.size) {
       const locStart = locations.locationFromCfi(start.mapping.start);
       const locEnd = locations.locationFromCfi(end.mapping.end);
 
@@ -592,7 +592,7 @@ class Rendition {
     }
 
     const pageList = this.book.navigation.pageList;
-    if (pageList.length) {
+    if (this.layout.name === "pre-paginated" && pageList.length) {
       const pageStart = pageList.pageFromCfi(start.mapping.start);
       const pageEnd = pageList.pageFromCfi(end.mapping.end);
 
