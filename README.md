@@ -1,4 +1,4 @@
-# Introduction to the epub-js library
+# epub-js library
 
 The **epub-js** is an open-source JavaScript library for rendering [EPUB](https://en.wikipedia.org/wiki/EPUB) documents in the browser on many devices.
 
