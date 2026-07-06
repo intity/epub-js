@@ -1,123 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js,epub-js,test,testing">
+    <meta name="keywords" content="epub.js,epub-js,test,test-mocha,mocha-browser">
     <meta name="description" content="testing epub-js library with mocha-browser">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="stylesheet" type="text/css" href="../dist/mocha.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/test.css">
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
-    <script src="../dist/jszip.min.js"></script>
-    <script src="../dist/localforage.min.js"></script>
-    <script src="../dist/mocha.js"></script>
-    <script type="module">
-        import * as m from "../dist/test.js"
-        const menu = document.getElementById("b-menu")
-        const list = document.getElementById("m-list")
-        window.onload = (e) => {
-
-            menu.onclick = (e) => {
-
-                if (e.target.checked) {
-                    list.style["display"] = "grid"
-                } else {
-                    list.style["display"] = "none"
-                }
-            }
-            mocha.run()
-        }
-    </script>
+    <script type="text/javascript" src="../assets/js/test.js"></script>
+    <script type="text/javascript" src="../dist/jszip.min.js"></script>
+    <script type="text/javascript" src="../dist/localforage.min.js"></script>
+    <script type="text/javascript" src="../dist/mocha.js"></script>
+    <script type="module" src="../dist/test.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-test : testing to the mocha-browser model</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul class="l-menu">
-                <li class="l-item">
-                    <input type="checkbox" id="b-menu">
-                    <label for="b-menu"></label>
-                </li>
-            </ul>
-            <ul class="c-menu" id="m-list">
-                <li class="l-item"><a href="../">Home</a></li>
-                <li class="l-item"><a href="../docs/">Docs</a></li>
-                <li class="l-item"><a href="./" class="active">Test</a></li>
-                <li class="l-item"><a href="../examples/">Examples</a></li>
-                <li class="l-item">
-                    <label for="reporter-list">Reporter:</label>
-                    <select name="rp-type" id="reporter-list">
-                        <option value="html">html</option>
-                        <option value="spec">spec</option>
-                    </select>
-                </li>
-            </ul>
-            <ul class="r-menu">
-                <li class="r-item">
-                    <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/test" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a href="../" id="s-logo" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs/">Docs</a>
+          </li>
+          <li id="mi-3">
+            <a href="../examples/">Examples</a>
+          </li>
+          <li id="mi-4" class="active">
+            <a href="./" class="active">Test</a>
+            <label for="reporter-mode"></label>
+            <select name="rp-type" id="reporter-mode">
+              <option value="html">html</option>
+              <option value="spec">spec</option>
+            </select>
+            <label for="reporter-target"></label>
+            <select name="rp-list" id="reporter-target">
+              <option value="main">main</option>
+            </select>
+          </li>
+          <li id="mi-5">
+            <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/test" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="mocha">
-        <script class="mocha-init">
-            const hash = (input) => {
-
-                let val = 0, i, chr
-                const len = input.length
-                if (len === 0) return val
-                for (i = 0; i < len; i++) {
-                    chr = input.charCodeAt(i)
-                    val = ((val << 5) - val) + chr
-                    val |= 0    // convert to 32-bit integer
-                }
-                return Math.abs(val).toString()
-            }
-            const name = "epub-js-test"
-            const init = localforage.createInstance({
-                name
-            })
-            const data = {
-                host: location.host,
-                href: location.href,
-                reporter: "html"
-            }
-            const rpl = document.getElementById("reporter-list")
-            const val = rpl.value
-            const key = hash(location.href)
-            rpl.onchange = (e) => {
-
-                data.reporter = e.target.value
-                init.setItem(key, data).then(() => {
-                    location.reload()
-                })
-            }
-            init.getItem(key).then((d) => {
-
-                if (d === null) {
-                    init.setItem(key, data) // default data
-                } else if (data.reporter !== d.reporter) {
-                    data.reporter = d.reporter
-                    rpl.value = d.reporter
-                }
-            }).then(() => {
-
-                mocha.setup({
-                    bail: true,
-                    color: true,
-                    checkLeaks: true,
-                    reporter: data.reporter,
-                    ui: "bdd"
-                })
-            })
-        </script>
+      <script type="text/javascript" class="mocha-init">
+        const rpm = document.getElementById("reporter-mode");
+        const rpt = document.getElementById("reporter-target");
+        const name = "epub-js-test";
+        const inst = localforage.createInstance({ name });
+        qtar.forEach((t, i) => {
+          if (i) {
+            const opt = document.createElement("option");
+            opt.value = qtar[i].toLowerCase();
+            opt.text = t;
+            rpt.append(opt);
+          }
+        });
+        const data = {
+          host: location.host,
+          href: location.href,
+          rpti: 0,
+          rpmi: 0,
+          rptq: grep(location.search)
+        };
+        const pkey = hash(location.origin);
+        rpm.onchange = (e) => {
+          data.rpmi = e.target.selectedIndex; // save mod_index
+          inst.setItem(pkey, data).then(() => {
+            location.reload(); // recursive call
+          });
+        };
+        rpt.onchange = (e) => {
+          data.rpti = e.target.selectedIndex; // save tar_index
+          data.rptq = data.rpti ? `?grep=%5E${qtar[data.rpti]}` : "";
+          inst.setItem(pkey, data).then(() => {
+            location.search = data.rptq; // recursive call
+          });
+        };
+        inst.getItem(pkey).then(d => {
+          let mi = 0, ti = 0;
+          if (!d) {
+            inst.setItem(pkey, data); // default dataset
+          } else if (grep(location.search) === d.rptq) {
+            data.rpmi = mi = d.rpmi;
+            data.rpti = ti = d.rpti;
+            data.rptq = d.rptq;
+          } else {
+            data.rpmi = mi = d.rpmi;
+            data.rptq = location.search;
+          }
+          rpm.value = mtar[mi];
+          rpt.value = qtar[ti].toLowerCase();
+          //rpt.disabled = data.rpmi === 0;
+        }).then(() => {
+          mocha.setup({
+            bail: true,
+            color: true,
+            checkLeaks: true,
+            reporter: rpm.value,
+            ui: "bdd"
+          });
+        });
+      </script>
     </main>
     <div id="viewport"></div>
-</body>
+  </body>
 
 </html>
