@@ -102,6 +102,7 @@
         sbtn.checked = rendition.layout.spread === "auto";
         prev.style.display = loc.atStart ? "none" : "block";
         next.style.display = loc.atEnd ? "none" : "block";
+        divider.style.height = `${rendition.layout.height - 10}px`;
         divider.style.display = div === 1 ? "none" : "block";
       };
       const keybinding = (e) => {
@@ -119,7 +120,7 @@
         rendition.on("keyup", keybinding);
       });
       rendition.on("attached", () => {
-        //console.log(rendition);
+        console.log(rendition);
       });
       rendition.on("resized", (rect) => {
         update(rendition.currentLocation());
@@ -127,7 +128,6 @@
       });
       rendition.on("relocated", (loc) => {
         update(loc);
-        console.log(rendition);
         console.log(loc);
       });
     </script>
