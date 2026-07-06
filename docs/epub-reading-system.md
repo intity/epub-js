@@ -10,7 +10,7 @@ Supported features of the reading system.
 
 >Feature status: `develop`
 
-Concept the REST API
+The REST API concept.
 
 1. Request book metadata by `pubId`:
 
@@ -18,65 +18,78 @@ Concept the REST API
 curl http://localhost/?pubId=edu.nyu.itp.future-of-publishing.alice-in-wonderland
 ```
 
-Response metadata to JSON format:
+Response metadata in JSON format:
 
 ```json
 {
-  contributor: "Gordon Robinson",
-  creator: "Lewis Carroll",
-  identifier: "edu.nyu.itp.future-ofpublishing.alice-in-wonderland",
-  language: "en-US",
-  license: "",
-  rights: "Public domain in the USA.",
-  source: "http://www.gutenberg.org/files/19033/19033-h/19033-h.htm",
-  subject: "fantasy",
-  spine: ["titlepage", "chapter_001", "chapter_002", "chapter_00N"],
-  title: "Alice's Adventures in Wonderland",
-  type: "@book"
+  "contributor": "Gordon Robinson",
+  "creator": "Lewis Carroll",
+  "identifier": "edu.nyu.itp.future-ofpublishing.alice-in-wonderland",
+  "language": "en-US",
+  "license": "",
+  "rights": "Public domain in the USA.",
+  "source": "http://www.gutenberg.org/files/19033/19033-h/19033-h.htm",
+  "subject": "fantasy",
+  "title": "Alice's Adventures in Wonderland",
+  "type": "@book"
 }
 ```
 
-2. Request **chapter** by `itemref`:
+2. Request `spine` by `pubId` and `package`:
 
 ```sh
-curl http://localhost/?pubId=identifier_str&itemref=chapter_001
+curl http://localhost/?pubId=identifier_str&package=spine
 ```
 
-Response to `chapter_001`:
+Response:
 
 ```json
 {
-  index: 1,
-  idref: "chapter_001",
-  title: "",
-  range: [],
-  type: "chapter"
+  "spine": [
+    {"0": "cover"},
+    {"1": "nav"},
+    {"2": "titlepage"},
+    {"3": "chapter_001"},
+    {"N": "chapter_00N"}
+  ]
 }
 ```
 
-3. Request `section` by `index`:
+3. Request `itemref` by `pubId` and `index`:
 
 ```sh
-curl http://localhost/?pubId=identifier_str&index=1
+curl http://localhost/?pubId=identifier_str&index=3
 ```
 
-Response to (2)
+Response:
 
-4. Request range by `epubcfi`:
+```json
+{
+  "index": 3,
+  "idref": "chapter_001",
+  "title": "Down The Rabbit-Hole",
+  "range": ["/6/8!/4/2/2[pgepubid00004]/1:0", "/6/8!/4/2/44/1:281"],
+  "data": "",
+  "type": "chapter"
+}
+```
+
+4. Request range by `pubId` and `index` and `epubcfi`:
 
 ```sh
-curl http://localhost/?pubId=identifier_str&epubcfi=/6/8!/4/2/16/1:0
+curl http://localhost/?pubId=identifier_str&index=3&epubcfi=...
 ```
 
 Response to range format:
 
 ```json
 {
-  index: 1,
-  idref: "chapter_001",
-  title: "",
-  range: [],
-  type: "chapter"
+  "index": 3,
+  "idref": "chapter_003",
+  "title": "Down The Rabbit-Hole",
+  "range": ["A...", "...B"],
+  "data": "A...B",
+  "type": "chapter"
 }
 ```
 
