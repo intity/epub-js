@@ -59,10 +59,11 @@
       const loader = document.getElementById("loader");
       const list = document.getElementById("toc");
       const book = ePub("../assets/alice/");
+      const size = window.innerHeight - 160;
       const rendition = book.renderTo("viewport", {
         flow: "scrolled",
-        width: 454,
-        height: 600
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size
       });
       book.opened.then(() => {
         loader.style.display = "none";
