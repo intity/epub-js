@@ -614,6 +614,51 @@ class DefaultViewManager {
   }
 
   /**
+   * Get location from paginated flow
+   * @returns {object[]} sections
+   * @private
+   */
+  paginatedLocation() {
+
+    const lsc = this.views.container;
+    const rect = this.viewport.rect;
+    const left = lsc.scrollLeft;
+    const views = this.visible();
+    const sections = views.map((view) => {
+
+      const { href, index } = view.section;
+      const total = this.layout.count(view.width).pages;
+      const startPos = Math.abs(left);
+      const endPos = Math.abs(left) + rect.width;
+      const startPage = Math.floor(startPos / this.layout.pageWidth);
+      const endPage = Math.floor(endPos / this.layout.pageWidth);
+
+      const pages = [];
+      for (let i = startPage; i < endPage; i++) {
+        pages.push({ index: i });
+      }
+
+      const mapping = this.mapping.page(
+        view.contents,
+        view.section.cfiBase,
+        startPos,
+        endPos
+      );
+
+      return {
+        axis: this.layout.axis,
+        href,
+        index,
+        pages,
+        total,
+        mapping
+      };
+    });
+
+    return sections;
+  }
+
+  /**
    * Get location from scrolled flow
    * @returns {object[]} Location sections
    * @private
@@ -647,51 +692,6 @@ class DefaultViewManager {
         endPage = Math.ceil(endPos / lsc.clientWidth);
         total = this.layout.count(view.height, lsc.clientWidth).pages;
       }
-
-      const pages = [];
-      for (let i = startPage; i < endPage; i++) {
-        pages.push({ index: i });
-      }
-
-      const mapping = this.mapping.page(
-        view.contents,
-        view.section.cfiBase,
-        startPos,
-        endPos
-      );
-
-      return {
-        axis: this.layout.axis,
-        href,
-        index,
-        pages,
-        total,
-        mapping
-      };
-    });
-
-    return sections;
-  }
-
-  /**
-   * Get location from paginated flow
-   * @returns {object[]} sections
-   * @private
-   */
-  paginatedLocation() {
-
-    const lsc = this.views.container;
-    const rect = this.viewport.rect;
-    const left = lsc.scrollLeft;
-    const views = this.visible();
-    const sections = views.map((view) => {
-
-      const { href, index } = view.section;
-      const total = this.layout.count(view.width).pages;
-      const startPos = Math.abs(left);
-      const endPos = Math.abs(left) + rect.width;
-      const startPage = Math.floor(startPos / this.layout.pageWidth);
-      const endPage = Math.floor(endPos / this.layout.pageWidth);
 
       const pages = [];
       for (let i = startPage; i < endPage; i++) {
