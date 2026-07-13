@@ -51,6 +51,12 @@
           <li class="l-item">
             <a id="prev" href="#prev"></a>
           </li>
+          <li class="c-item">
+            <label for="sec-index" style="display: none;"></label>
+            <input id="sec-index" type="number" min="0" max="99" readonly/>
+            <label for="sec-total">/</label>
+            <input id="sec-total" type="number" min="0" max="99" readonly/>
+          </li>
           <li class="r-item">
             <a id="next" href="#next"></a>
           </li>
@@ -59,6 +65,8 @@
     </footer>
     <script type="text/javascript">
       const loader = document.getElementById("loader");
+      const seci = document.getElementById("sec-index");
+      const sect = document.getElementById("sec-total");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
       const book = ePub("../assets/alice/");
@@ -74,15 +82,29 @@
       next.onclick = (e) => {
         rendition.next();
         e.preventDefault();
-      }
+      };
       prev.onclick = (e) => {
         rendition.prev();
         e.preventDefault();
-      }
+      };
       const update = (loc) => {
         prev.style.display = loc.atStart ? "none" : "block";
         next.style.display = loc.atEnd ? "none" : "block";
-      }
+        const s_index = loc.start ? loc.start.index : 0;
+        const e_index = loc.end ? loc.end.index : 0;
+        const n_index = s_index + e_index;
+        if (n_index) {
+          let delta = 0;
+          book.sections.forEach((v,k) => {
+            if (!v.linear) {
+              delta += 1;
+            }
+          });
+          const tval = book.sections.size - delta;
+          seci.value = (n_index / 2) - (delta - 1);
+          sect.value = tval;
+        }
+      };
       const keybinding = (e) => {
         switch (e.key) {
           case "ArrowLeft":
@@ -92,7 +114,7 @@
             rendition.next();
             break;
         }
-      }
+      };
       rendition.display().then(() => {
         document.onkeyup = keybinding;
         rendition.on("keyup", keybinding);
