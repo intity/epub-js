@@ -33,45 +33,6 @@
   background: white;
 }
 
-.ltr #prev,
-.rtl #next {
-  left: 0;
-}
-
-.rtl #prev,
-.ltr #next {
-  right: 0;
-}
-
-.arrow {
-  position: fixed;
-  margin: 0 20px;
-  font-size: 64px;
-  color: #E2E2E2;
-  font-family: arial, sans-serif;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  text-decoration: none;
-  z-index: 10;
-}
-
-.arrow:hover {
-  color: #777;
-}
-
-.arrow:active {
-  color: #000;
-}
-
-/*#prev::before {
-  content: '<';
-}
-
-#next::before {
-  content: '>';
-}*/
-
 #divider {
   left: 50%;
   width: 1px;

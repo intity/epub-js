@@ -23,27 +23,39 @@ th {
   text-align: left;
 }
 
+#sidebar {
+  display: flex;
+  margin: 0;
+}
+
 #sidebar a {
   display: block;
 }
 
-#sidebar {
-  width: 454px;
-  height: 600px;
-}
-
 #sidebar ul {
+  display: grid;
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
   overflow: auto;
+  grid-auto-rows: max-content;
 }
 
 #sidebar li {
-  padding: 18px;
+  width: auto;
+  padding: 0;
   list-style: none;
   background-color: thistle;
+  border-bottom: 1px solid #f2f3f4;
+  border-top: 0;
+}
+
+#sidebar nav {
+  background-color: thistle;
+}
+
+#sidebar label {
+  min-width: 30px;
 }
 
 /**
