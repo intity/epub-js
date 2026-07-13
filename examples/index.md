@@ -67,7 +67,7 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
 
 7. [Table of Contents](toc.html)
 
-    >Feature status: `stable`
+    >Feature status: `develop`
 
     This example represents table of contents as a drop-down list of sections.
 
@@ -99,15 +99,9 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
 
     Allows you to select an epub file from your local computer that gets rendered in the browser.
 
-12. [Open book from File with Storage](input-with-storage.html)
+12. [Open book from Search options](path.html)
 
-    >Feature status: `stable`
-
-    This example is similar to example (11), but using the `Storage` interface.
-
-    >The `book-0` key is constant for any open book. If the user reloads the page, the book will be loaded from the browser storage using the already known key. However, if the user opens another book, the data in the storage will be overwritten.
-
-13. [Open book from Search options](path.html)
+    >Feature status: `develop`
 
     Use the `URI` search option to override the path from the remote server.
 
@@ -120,6 +114,14 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
     By default, the relative path to the **Alice** book located on the local server is used.
 
 ## Storage
+
+13. [Open book from File with Storage](input-with-storage.html)
+
+    >Feature status: `stable`
+
+    This example is similar to example (11), but using the `Storage` interface.
+
+    >The `book-0` key is constant for any open book. If the user reloads the page, the book will be loaded from the browser storage using the already known key. However, if the user opens another book, the data in the storage will be overwritten.
 
 14. [Storage from epub file](storage.html)
 

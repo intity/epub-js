@@ -44,8 +44,61 @@
       <div id="viewport" class="paginated ltr" dir="ltr">
         <div id="loader"></div>
       </div>
-      <div id="sidebar">
-        <label id="range-value" for="range"></label>
+      <div id="sidebar" style="display: none;">
+        <nav>
+          <ul>
+            <li>
+              <label for="start-cfi" title="Start CFI">S0:</label>
+              <input id="start-cfi" type="textbox" size="22" readonly/>
+            </li>
+            <li>
+              <label for="end-cfi" title="End CFI">E0:</label>
+              <input id="end-cfi" type="textbox" size="22" readonly/>
+            </li>
+            <li>
+              <label for="start-index" title="Start Index">S1:</label>
+              <input id="start-index" type="number" min="0" max="9999" size="7" readonly/>
+              <label for="end-index" title="End Index">E1:</label>
+              <input id="end-index" type="number" min="0" max="9999" size="7" readonly/>
+            </li>
+            <li>
+              <label for="start-p" title="Start Percentage">S2:</label>
+              <input id="start-p" type="number" min="0" max="1" value="0" size="22" readonly/>
+            </li>
+            <li>
+              <label for="end-p" title="End Percentage">E2:</label>
+              <input id="end-p" type="number" min="0" max="1" value="0" size="22" readonly/>
+            </li>
+            <li>
+              <label for="start-page" title="Start Page">S3:</label>
+              <input id="start-page" type="number" min="0" max="9999" size="7" readonly/>
+              <label for="end-page" title="End Page">E3:</label>
+              <input id="end-page" type="number" min="0" max="9999" size="7" readonly/>
+            </li>
+            <li>
+              <label for="start-page-l" title="Start Total">S4:</label>
+              <input id="start-page-l" type="number" min="0" max="9999" size="7" readonly/>
+              <label for="end-page-l" title="End Total">E4:</label>
+              <input id="end-page-l" type="number" min="0" max="9999" size="7" readonly/>
+            </li>
+            <li>
+              <label for="start-bin" title="Start BIN">S5:</label>
+              <input id="start-bin" type="number" min="0" max="1" size="7" readonly/>
+              <label for="end-bin" title="End BIN">E5:</label>
+              <input id="end-bin" type="number" min="0" max="1" size="7" readonly/>
+            </li>
+            <li>
+              <code>
+                S0/E0: start/end cfi<br>
+                S1/E1: start/end index<br>
+                S2/E2: start/end percentage<br>
+                S3/E3: start/end page<br>
+                S4/E4: start/end total<br>
+                S5/E5: start/end bin
+              </code>
+            </li>
+          </ul>
+        </nav>
       </div>
     </main>
     <footer>
@@ -56,7 +109,7 @@
           </li>
           <li id="ti-1" class="c-item">
             <input id="range" type="range" min="0" max="100" value="0"/>
-            <!--<label id="range-value" for="range"></label>-->
+            <label for="range" style="display: none;"></label>
           </li>
           <li id="ti-2" class="r-item">
             <a id="next" href="#next"></a>
@@ -66,8 +119,21 @@
     </footer>
     <script type="text/javascript">
       const loader = document.getElementById("loader");
-      const sidebar = document.getElementById("sidebar");
-      const label = document.getElementById("range-value");
+      const sbox = document.getElementById("sidebar");
+      const data = {
+        s_cfi: document.getElementById("start-cfi"),
+        e_cfi: document.getElementById("end-cfi"),
+        s_idx: document.getElementById("start-index"),
+        e_idx: document.getElementById("end-index"),
+        s_pvl: document.getElementById("start-p"),
+        e_pvl: document.getElementById("end-p"),
+        s_pgi: document.getElementById("start-page"),
+        e_pgi: document.getElementById("end-page"),
+        s_pgl: document.getElementById("start-page-l"),
+        e_pgl: document.getElementById("end-page-l"),
+        s_bin: document.getElementById("start-bin"),
+        e_bin: document.getElementById("end-bin")
+      };
       const range = document.getElementById("range");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
@@ -98,7 +164,7 @@
           // 10:[77-81-84-88]
           // 11:[89-92]
           // 12:[95-98-100]
-          return book.locations.generate(550); // 549
+          return book.locations.generate(880); // default 549 -- 66/880 [424 x 600]
         }
       }).then((locations) => {
         // Save out the generated locations to JSON
@@ -121,45 +187,85 @@
         height: size,
         spread: "none"
       });
-      let percentage;
       range.onchange = (e) => {
-        percentage = parseInt(e.target.value) / 100;
-        book.locations.set({ percentage });
+        const percentage = parseInt(e.target.value) / 100;
+        const cfi = book.locations.cfiFromPercentage(percentage);
+        const index = book.locations.locationFromCfi(cfi);
+        book.locations.set({
+          percentage,
+          start: {cfi, index, percentage}
+        });
         rendition.display(book.locations.current.cfi);
+        //console.log("range:", book.locations.current);
+      };
+      const prev_a = () => {
+        rendition.prev().then(() => {
+          const cfi = rendition.location.start.cfi;
+          const index = book.locations.locationFromCfi(cfi);
+          const percentage = rendition.location.start.percentage;
+          const start = { cfi, index, percentage };
+          //const loc = book.locations.get(cfi);
+          range.value = Math.floor(percentage * 100);
+          //console.log("prev:", start);
+        });
       };
       prev.onclick = (e) => {
-        rendition.prev();
+        prev_a();
         e.preventDefault();
       };
+      const next_a = () => {
+        rendition.next().then(() => {
+          const cfi = rendition.location.end.cfi;
+          const index = book.locations.locationFromCfi(cfi);
+          const percentage = rendition.location.end.percentage || 1;
+          const end = { cfi, index, percentage };
+          //const loc = book.locations.get(cfi);
+          range.value = Math.floor(percentage * 100);
+          //console.log("next:", loc);
+        });
+      };
       next.onclick = (e) => {
-        rendition.next();
+        next_a();
         e.preventDefault();
       };
       const update = (loc) => {
         prev.style.display = loc.atStart ? "none" : "block";
         next.style.display = loc.atEnd ? "none" : "block";
 
-        if (typeof percentage === "undefined") {
-          book.locations.set({ cfi: loc.start.cfi });
-          percentage = book.locations.current.percentage || 0;
-        }
-
-        const value = Math.floor(percentage * 100);
-        range.value = value;
-        label.textContent = percentage;
-        percentage = undefined;
+        const regex = /epubcfi\(([^)]+)\)/;
+        data.s_cfi.value = loc.start.cfi.match(regex)[1];
+        data.e_cfi.value = loc.end.cfi.match(regex)[1];
+        data.s_idx.value = loc.start.index;
+        data.e_idx.value = loc.end.index;
+        data.s_pvl.value = loc.start.percentage;
+        data.e_pvl.value = loc.end.percentage;
+        data.s_pgi.value = loc.start.displayed.page.index;
+        data.e_pgi.value = loc.end.displayed.page.index;
+        data.s_pgl.value = loc.start.displayed.total;
+        data.e_pgl.value = loc.end.displayed.total;
+        data.s_bin.value = loc.start.bin ? 1 : 0;
+        data.e_bin.value = loc.end.bin ? 1 : 0;
       };
       const keybinding = (e) => {
+        if (!(e.target.id === "app" ||
+          e.target.id === "prev" ||
+          e.target.id === "next")) {
+          return;
+        }
         switch (e.key) {
           case "ArrowLeft":
-            rendition.prev();
+            prev_a();
             break;
           case "ArrowRight":
-            rendition.next();
+            next_a();
             break;
         }
       };
       rendition.display().then(() => {
+        const rect = rendition.viewport.rect;
+        sbox.style.width = `${rect.width}px`;
+        sbox.style.height = `${rect.height}px`;
+        sbox.style.display = "flex";
         document.onkeyup = keybinding;
         rendition.on("keyup", keybinding);
       });
@@ -167,6 +273,7 @@
         console.log(rect)
       });*/
       rendition.on("relocated", (loc) => {
+        console.log(loc);
         update(loc);
       });
     </script>

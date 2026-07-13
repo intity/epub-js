@@ -44,7 +44,7 @@
       <div id="viewport" class="paginated ltr" dir="ltr">
         <div id="loader"></div>
       </div>
-      <div id="sidebar">
+      <div id="sidebar" style="display: none;">
         <ul id="list"></ul>
       </div>
     </main>
@@ -103,6 +103,7 @@
         const rect = rendition.viewport.rect;
         sbox.style.width = rect.width + "px";
         sbox.style.height = rect.height + "px";
+        sbox.style.display = "flex";
         document.onkeyup = keybinding;
         rendition.on("keyup", keybinding);
       });

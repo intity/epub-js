@@ -45,10 +45,19 @@
       <div id="viewport" class="paginated ltr" dir="ltr">
         <div id="loader"></div>
       </div>
-      <a id="prev" href="#prev" class="arrow"></a>
-      <a id="next" href="#next" class="arrow"></a>
     </main>
-    <footer></footer>
+    <footer>
+      <nav>
+        <ul>
+          <li class="l-item">
+            <a id="prev" href="#prev"></a>
+          </li>
+          <li class="r-item">
+            <a id="next" href="#next"></a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
     <script type="text/javascript">
       const url = new URL(window.location);
       const uri = url.searchParams.get("URI") || "../assets/alice/";
