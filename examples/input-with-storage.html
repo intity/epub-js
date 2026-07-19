@@ -87,8 +87,8 @@
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
         const loc = l || rendition.currentLocation();
-        prev.style.display = loc.atStart ? "none" : "block";
-        next.style.display = loc.atEnd ? "none" : "block";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
         divider.style.display = div === 1 ? "none" : "block";
         content.className = dir;
         content.dir = dir;

@@ -53,6 +53,13 @@
             <a id="prev" href="#prev"></a>
           </li>
           <li>
+            <label for="direction">Direction:</label>
+            <select id="direction" name="direction">
+              <option value="ltr">ltr</option>
+              <option value="rtl">rtl</option>
+            </select>
+          </li>
+          <li>
             <label for="flow">Flow:</label>
             <select name="flow" id="flow">
               <option value="paginated">paginated</option>
@@ -79,13 +86,6 @@
             <label for="pgNumber" title="Page Number">PN:</label>
             <input id="pgNumber" type="number" value="0" min="0" max="9999"/>
           </li>-->
-          <li>
-            <label for="direction">Direction:</label>
-            <select id="direction" name="direction">
-              <option value="ltr">ltr</option>
-              <option value="rtl">rtl</option>
-            </select>
-          </li>
           <li class="r-item">
             <a id="next" href="#next"></a>
           </li>
@@ -147,7 +147,7 @@
           rendition.resize(props.width, props.height);
         }
         rendition.updateLayout(props);
-      }
+      };
       spread.onchange = (e) => {
         const value = e.target.value;
         const props = {
@@ -157,35 +157,35 @@
         };
         rendition.resize(props.width, props.height);
         rendition.updateLayout(props);
-      }
+      };
       minSpreadWidth.onchange = (e) => {
         rendition.updateLayout({
           minSpreadWidth: parseInt(e.target.value)
         });
-      }
+      };
       direction.onchange = (e) => {
         rendition.updateLayout({
           direction: e.target.value
         });
-      }
+      };
       prev.onclick = (e) => {
         rendition.prev();
         e.preventDefault();
-      }
+      };
       next.onclick = (e) => {
         rendition.next();
         e.preventDefault();
-      }
+      };
       const update = (loc) => {
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
-        prev.style.display = loc.atStart ? "none" : "block";
-        next.style.display = loc.atEnd ? "none" : "block";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
         divider.style.display = div === 1 ? "none" : "block";
         content.dir = dir;
         content.className = dir;
         minSpreadWidth.value = rendition.layout.minSpreadWidth;
-      }
+      };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
         switch (e.key) {
@@ -196,7 +196,7 @@
             dir === "ltr" ? rendition.next() : rendition.prev();
             break;
         }
-      }
+      };
       rendition.display().then((section) => {
         document.onkeyup = keybinding;
         rendition.on("keyup", keybinding);
@@ -207,7 +207,7 @@
       rendition.on("layout", (props, changed) => {
         console.log(changed);
         const loc = rendition.location;
-        if (loc) { update(loc); }
+        if (loc) update(loc);
       });
       rendition.on("relocated", (loc) => {
         console.log(loc);

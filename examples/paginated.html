@@ -100,8 +100,8 @@
       const update = (loc) => {
         const div = rendition.layout.divisor;
         sbtn.checked = rendition.layout.spread === "auto";
-        prev.style.display = loc.atStart ? "none" : "block";
-        next.style.display = loc.atEnd ? "none" : "block";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
         divider.style.height = `${rendition.layout.height - 10}px`;
         divider.style.display = div === 1 ? "none" : "block";
       };

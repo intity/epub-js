@@ -87,8 +87,8 @@
       }
       const update = (loc) => {
         const dir = rendition.layout.direction;
-        prev.style.display = loc.atStart ? "none" : "block";
-        next.style.display = loc.atEnd ? "none" : "block";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
         content.className = dir;
         content.dir = dir;
       }

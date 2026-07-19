@@ -90,8 +90,8 @@
         e.preventDefault();
       }
       const update = (loc) => {
-        prev.style.display = loc.atStart ? "none" : "block";
-        next.style.display = loc.atEnd ? "none" : "block";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
       }
       rendition.display().then(() => {
         console.log(book);
