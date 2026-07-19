@@ -623,16 +623,15 @@ class DefaultViewManager {
     const lsc = this.views.container;
     const rect = this.viewport.rect;
     const left = lsc.scrollLeft;
+    const startPos = Math.abs(left);
+    const endPos = Math.abs(left) + rect.width;
+    const startPage = Math.floor(startPos / this.layout.pageWidth);
+    const endPage = Math.floor(endPos / this.layout.pageWidth);
     const views = this.visible();
     const sections = views.map((view) => {
 
       const { href, index } = view.section;
       const total = this.layout.count(view.width).pages;
-      const startPos = Math.abs(left);
-      const endPos = Math.abs(left) + rect.width;
-      const startPage = Math.floor(startPos / this.layout.pageWidth);
-      const endPage = Math.floor(endPos / this.layout.pageWidth);
-
       const pages = [];
       for (let i = startPage; i < endPage; i++) {
         pages.push({ index: i });
