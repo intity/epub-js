@@ -114,21 +114,20 @@
           document.onkeyup = keybinding;
           loader.style.display = "none";
         });
+        const size = window.innerHeight - 160;
         rendition = book.renderTo("viewport", {
-          width: 908,
-          height: 600
+          width: Math.floor(1/Math.sqrt(2)*size),
+          height: size
         });
         rendition.display().then((section) => {
           console.log(section);
         });
-        rendition.on("relocated", (location) => {
-          update(location);
-          console.log(location);
+        rendition.on("relocated", (loc) => {
+          update(loc);
+          console.log(loc);
         });
-      }
-      const onload = (e) => {
-        init(e.target.result);
-      }
+      };
+      const onload = (e) => init(e.target.result);
       openbook.onchange = (e) => {
         const file = e.target.files[0];
         if (window.FileReader) {
@@ -136,7 +135,7 @@
           reader.onload = onload;
           reader.readAsArrayBuffer(file);
         }
-      }
+      };
     </script>
   </body>
 
