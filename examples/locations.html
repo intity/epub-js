@@ -49,43 +49,43 @@
           <ul>
             <li>
               <label for="start-cfi" title="Start CFI">S0:</label>
-              <input id="start-cfi" type="textbox" size="24" readonly/>
+              <input id="start-cfi" type="textbox" style="width: 208px;" readonly/>
             </li>
             <li>
               <label for="end-cfi" title="End CFI">E0:</label>
-              <input id="end-cfi" type="textbox" size="24" readonly/>
+              <input id="end-cfi" type="textbox" style="width: 208px;" readonly/>
             </li>
             <li>
               <label for="start-index" title="Start Index">S1:</label>
-              <input id="start-index" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="start-index" type="number" min="0" max="9999" style="width: 75px;" readonly/>
               <label for="end-index" title="End Index">E1:</label>
-              <input id="end-index" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="end-index" type="number" min="0" max="9999" style="width: 75px;" readonly/>
             </li>
             <li>
               <label for="start-p" title="Start Percentage">S2:</label>
-              <input id="start-p" type="number" min="0" max="1" value="0" size="24" readonly/>
+              <input id="start-p" type="number" min="0" max="1" value="0" style="width: 208px;" readonly/>
             </li>
             <li>
               <label for="end-p" title="End Percentage">E2:</label>
-              <input id="end-p" type="number" min="0" max="1" value="0" size="24" readonly/>
+              <input id="end-p" type="number" min="0.0" max="1.0" value="0.0" style="width: 208px;" readonly/>
             </li>
             <li>
               <label for="start-page" title="Start Page">S3:</label>
-              <input id="start-page" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="start-page" type="number" min="0" max="9999" style="width: 75px;" readonly/>
               <label for="end-page" title="End Page">E3:</label>
-              <input id="end-page" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="end-page" type="number" min="0" max="9999" style="width: 75px;" readonly/>
             </li>
             <li>
               <label for="start-page-l" title="Start Total">S4:</label>
-              <input id="start-page-l" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="start-page-l" type="number" min="0" max="9999" style="width: 75px;" readonly/>
               <label for="end-page-l" title="End Total">E4:</label>
-              <input id="end-page-l" type="number" min="0" max="9999" size="8" readonly/>
+              <input id="end-page-l" type="number" min="0" max="9999" style="width: 75px;" readonly/>
             </li>
             <li>
               <label for="start-bin" title="Start BIN">S5:</label>
-              <input id="start-bin" type="number" min="0" max="1" size="8" readonly/>
+              <input id="start-bin" type="number" min="0" max="1" style="width: 75px;" readonly/>
               <label for="end-bin" title="End BIN">E5:</label>
-              <input id="end-bin" type="number" min="0" max="1" size="8" readonly/>
+              <input id="end-bin" type="number" min="0" max="1" style="width: 75px;" readonly/>
             </li>
             <li>
               <code>
@@ -142,7 +142,7 @@
       book.open("../assets/alice/").then(() => {
         loader.style.display = "none";
         // Load in stored locations from json or local storage
-        const key = book.key() + "-locations";
+        const key = `${book.key()}-locations`;
         stored = localStorage.getItem(key);
         if (stored) {
           timeStamp = Date.now();
@@ -169,7 +169,8 @@
       }).then((locations) => {
         // Save out the generated locations to JSON
         const data = locations.save();
-        localStorage.setItem(`${book.key()}-locations`, data);
+        const key = `${book.key()}-locations`;
+        localStorage.setItem(key, data);
         console.log("locations.length: " + locations.size);
         if (stored) {
           console.log(`locations.load: ${Date.now() - timeStamp} ms`);
@@ -178,9 +179,10 @@
         }
         console.log(book);
       });
-      book.locations.on("changed", (current, changed) => {
-        console.log(current, changed);
-      });
+      /*book.locations.on("changed", (current, changed) => {
+        console.log("current:", current);
+        console.log("changed:", changed);
+      });*/
       const size = window.innerHeight - 160;
       const rendition = book.renderTo("viewport", {
         width: Math.floor(1/Math.sqrt(2)*size),
