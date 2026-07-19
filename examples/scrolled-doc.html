@@ -45,9 +45,22 @@
         <div id="loader"></div>
       </div>
     </main>
-    <footer></footer>
+    <footer>
+      <nav>
+        <ul>
+          <li class="c-item">
+            <label for="sec-index" style="display: none;"></label>
+            <input id="sec-index" type="number" min="0" max="99" value="0" readonly/>
+            <label for="sec-total">/</label>
+            <input id="sec-total" type="number" min="0" max="99" value="0" readonly/>
+          </li>
+        </ul>
+      </nav>
+    </footer>
     <script type="text/javascript">
       const loader = document.getElementById("loader");
+      const seci = document.getElementById("sec-index");
+      const sect = document.getElementById("sec-total");
       const book = ePub("../assets/alice/");
       const size = window.innerHeight - 160;
       const rendition = book.renderTo("viewport", {
@@ -63,6 +76,20 @@
         console.log(rendition);
       });
       rendition.on("relocated", (loc) => {
+        const s_index = loc.start ? loc.start.index : 0;
+        const e_index = loc.end ? loc.end.index : 0;
+        const n_index = s_index + e_index;
+        if (n_index) {
+          let delta = 0;
+          book.sections.forEach((v,k) => {
+            if (!v.linear) {
+              delta += 1;
+            }
+          });
+          const tval = book.sections.size - delta;
+          seci.value = (n_index / 2) - (delta - 1);
+          sect.value = tval;
+        }
         console.log(loc);
       });
     </script>
