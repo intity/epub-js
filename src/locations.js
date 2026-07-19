@@ -6,7 +6,7 @@ import Section from "./section";
 import Defer from "./utils/defer";
 import Queue from "./utils/queue";
 import { EVENTS } from "./utils/constants";
-import { qs, locationOf } from "./utils/core";
+import { qs } from "./utils/core";
 
 /**
  * Find Locations for a Book
@@ -25,10 +25,12 @@ class Locations extends Map {
     this.sections = sections;
     this.request = request;
     this.pause = pause || 100;
-    this.break = 150;
+    this.chars = 150;
     this.processing = new Defer();
     /**
      * @member {Location} current Current Location
+     * @property {object} start
+     * @property {object} end
      * @memberof Locations
      * @readonly
      */
@@ -50,10 +52,12 @@ class Locations extends Map {
   async generate(chars) {
 
     if (Number.isInteger(chars)) {
-      this.break = chars;
+      this.chars = chars;
+    } else if (typeof chars === "object") {
+      this.pause = parseInt(chars.pause) || this.pause;
+      this.chars = parseInt(chars.chars) || this.chars;
     } else {
-      this.break = parseInt(chars)
-      console.warn("The input value type is not an integer")
+      console.warn("The input value type is not an integer or object:", chars);
     }
 
     this.q.pause();
@@ -69,8 +73,8 @@ class Locations extends Map {
       const len = this.size === 1 ? 1 : this.size - 1;
       const arr = [...this.values()];
       arr.forEach((loc, index) => {
-        loc.index = index;
-        loc.percentage = index / len;
+        loc.start.index = index;
+        loc.start.percentage = index / len;
       });
       if (this.size) {
         this.current.set(arr[0]);
@@ -116,7 +120,7 @@ class Locations extends Map {
    */
   async parse(contents, cfiBase, chars) {
 
-    chars = chars || this.break;
+    chars = chars || this.chars;
 
     let range;
     let counter = 0;
@@ -173,7 +177,7 @@ class Locations extends Map {
           range.endContainer = node;
           range.endOffset = pos;
           const cfi = new EpubCFI(range, cfiBase).toString();
-          const loc = new Location().set({ cfi });
+          const loc = new Location().set({ start: { cfi } });
           this.set(cfi, loc);
           counter = 0;
         }
@@ -193,7 +197,7 @@ class Locations extends Map {
         range.endContainer = prev;
         range.endOffset = prev.length;
         const cfi = new EpubCFI(range, cfiBase).toString();
-        const loc = new Location().set({ cfi });
+        const loc = new Location().set({ start: { cfi } });
         this.set(cfi, loc);
         counter = 0;
       }
@@ -220,6 +224,56 @@ class Locations extends Map {
   }
 
   /**
+   * Finds where something would fit into a sorted array
+   * @param {Location} item
+   * @param {Location[]} array
+   * @param {function} [compareFunc] colback func
+   * @param {function} [start]
+   * @param {function} [end]
+   * @return {number} location (index in array)
+   */
+  locationOf(item, array, compareFunc, start, end) {
+
+    const _start = start || 0;
+    const _end   = end || array.length;
+    const pivot  = parseInt(_start + (_end - _start) / 2);
+
+    if (!compareFunc) {
+      compareFunc = (a, b) => {
+        if (a >  b) return  1;
+        if (a <  b) return -1;
+        if (a == b) return  0;
+      };
+    }
+
+    if (_end - _start <= 0) {
+      return pivot;
+    }
+
+    const compared = compareFunc(array[pivot], item);
+
+    if (_end - _start === 1) {
+      return compared >= 0 ? pivot : pivot + 1;
+    }
+
+    if (compared === 0) {
+      return pivot;
+    }
+
+    if (compared === -1) {
+      return this.locationOf(
+        item, array,
+        compareFunc,
+        pivot, _end); // recursive call
+    } else {
+      return this.locationOf(
+        item, array,
+        compareFunc,
+        _start, pivot); // recursive call
+    }
+  }
+
+  /**
    * Get a location from an EpubCFI
    * @param {string|EpubCFI} value EpubCFI
    * @return {number} Location index or -1 otherwise
@@ -230,7 +284,7 @@ class Locations extends Map {
 
     const cfi = new EpubCFI(value);
     const arr = [...this.keys()];
-    const ind = locationOf(cfi, arr, cfi.compare);
+    const ind = this.locationOf(cfi, arr, cfi.compare);
     const max = this.size - 1;
     return ind > max ? -1 : ind;
   }
@@ -310,10 +364,11 @@ class Locations extends Map {
     if (typeof locations === "string") {
       this.clear();
       const data = JSON.parse(locations);
-      data.items.forEach(i => this.set(i.cfi, new Location().set(i)));
-      this.break = data.break;
+      data.items.forEach(i => this.set(i.start.cfi, new Location().set(i)));
+      this.chars = data.chars;
       this.pause = data.pause;
-      this.current.set(this.get(data.idref));
+      const loc = this.get(data.idref);
+      this.current.set(loc);
     } else {
       console.error("Invalid argument type");
     }
@@ -329,8 +384,8 @@ class Locations extends Map {
 
     return JSON.stringify({
       items: [...this.values()],
-      idref: this.current.cfi,
-      break: this.break,
+      idref: this.current.start.cfi,
+      chars: this.chars,
       pause: this.pause
     });
   }
@@ -356,36 +411,48 @@ class Locations extends Map {
       options = typeof key === "object" ? key : {};
     }
 
+    const set_cfi = (value) => {
+      let ret = null;
+      const ind = this.locationFromCfi(value);
+      const loc = [...this.values()][ind];
+      if (loc) ret = this.current.set(loc);
+      return ret;
+    };
+
+    const set_index = (value) => {
+      let ret = null;
+      const cfi = this.cfiFromLocation(value);
+      const loc = this.get(cfi);
+      if (loc) ret = this.current.set(loc);
+      return ret;
+    };
+
+    const set_percentage = (value) => {
+      let ret = null;
+      const cfi = this.cfiFromPercentage(value);
+      const loc = this.get(cfi);
+      if (loc) ret = this.current.set(loc);
+      return ret;
+    };
+
     Object.keys(options).forEach(opt => {
       const value = options[opt];
       if (this.current[opt] === value || typeof value === "undefined") {
         delete options[opt];
-      } else if (typeof value === "string") {
-        if (opt === "cfi" && EpubCFI.prototype.isCfiString(value)) {
-          const ind = this.locationFromCfi(value);
-          const loc = [...this.values()][ind];
-          if (loc) {
-            this.current.set(loc);
-          } else {
-            delete options[opt];
+      } else if (typeof value === "object" && (opt === "start" || opt === "end")) {
+        if (typeof value.cfi === "string") {
+          if (!set_cfi(value.cfi)) {
+            delete value.cfi;
           }
         }
-      } else if (typeof value === "number") {
-        if (opt === "index") {
-          const cfi = this.cfiFromLocation(value);
-          const loc = this.get(cfi);
-          if (loc) {
-            this.current.set(loc);
-          } else {
-            delete options[opt];
+        if (typeof value.index === "number") {
+          if (!set_index(value.index)) {
+            delete value.index;
           }
-        } else if (opt === "percentage") {
-          const cfi = this.cfiFromPercentage(value);
-          const loc = this.get(cfi);
-          if (loc) {
-            this.current.set(loc);
-          } else {
-            delete options[opt];
+        }
+        if (typeof value.percentage === "number") {
+          if (!set_percentage(value.percentage)) {
+            delete value.percentage;
           }
         }
       } else {
@@ -414,9 +481,7 @@ class Locations extends Map {
   clear() {
 
     super.clear();
-    this.current.cfi = null;
-    this.current.index = -1;
-    this.current.percentage = 0;
+    this.current.clear();
   }
 
   /**
@@ -426,7 +491,7 @@ class Locations extends Map {
 
     this.clear();
     this.pause = undefined;
-    this.break = undefined;
+    this.chars = undefined;
     this.current && this.current.destroy();
     this.current = undefined;
     this.q.stop();
