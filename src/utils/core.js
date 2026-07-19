@@ -135,47 +135,6 @@ export const extend = (target, ...args) => {
 }
 
 /**
- * Finds where something would fit into a sorted array
- * @param {any} item
- * @param {array} array
- * @param {function} [compareFunction]
- * @param {function} [start]
- * @param {function} [end]
- * @returns {number} location (in array)
- */
-export const locationOf = (item, array, compareFunction, start, end) => {
-
-  const _start = start || 0;
-  const _end = end || array.length;
-  const pivot = parseInt(_start + (_end - _start) / 2);
-
-  if (!compareFunction) {
-    compareFunction = (a, b) => {
-      if (a > b) return 1;
-      if (a < b) return -1;
-      if (a == b) return 0;
-    };
-  }
-  if (_end - _start <= 0) {
-    return pivot;
-  }
-
-  const compared = compareFunction(array[pivot], item);
-
-  if (_end - _start === 1) {
-    return compared >= 0 ? pivot : pivot + 1;
-  }
-  if (compared === 0) {
-    return pivot;
-  }
-  if (compared === -1) {
-    return locationOf(item, array, compareFunction, pivot, _end);
-  } else {
-    return locationOf(item, array, compareFunction, _start, pivot);
-  }
-}
-
-/**
  * Fast quicksort insert for sorted array -- based on:
  * @link https://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers
  * @param {any} item
