@@ -4,6 +4,7 @@ import Contents from "./contents";
 import EpubCFI from "./epubcfi";
 import Section from "./section";
 import Layout from "./layout";
+import Location from "./location";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
@@ -123,25 +124,23 @@ class Rendition {
      * A Rendered Location Range
      * @type {object}
      * @property {object} start
+     * @property {number} start.bin
+     * @property {string} start.cfi EpubCFI string format
      * @property {string} start.index
      * @property {string} start.href
      * @property {object} start.displayed
      * @property {number} start.displayed.page
      * @property {number} start.displayed.total
-     * @property {string} start.cfi EpubCFI string format
-     * @property {number} start.location
      * @property {number} start.percentage
      * @property {object} end
+     * @property {number} end.bin
+     * @property {string} end.cfi EpubCFI string format
      * @property {string} end.index
      * @property {string} end.href
      * @property {object} end.displayed
      * @property {number} end.displayed.page
      * @property {number} end.displayed.total
-     * @property {string} end.cfi EpubCFI string format
-     * @property {number} end.location
      * @property {number} end.percentage
-     * @property {boolean} atStart Location at start position
-     * @property {boolean} atEnd Location at end position
      * @memberof Rendition
      */
     this.location = null;
@@ -554,9 +553,8 @@ class Rendition {
     const start = target[0];
     const end = target[target.length - 1];
     const loc = {
-      atStart: false,
-      atEnd: false,
       start: {
+        bin: 0,
         cfi: start.mapping.start,
         href: start.href,
         index: start.index,
@@ -566,6 +564,7 @@ class Rendition {
         }
       },
       end: {
+        bin: 0,
         cfi: end.mapping.end,
         href: end.href,
         index: end.index,
@@ -577,21 +576,23 @@ class Rendition {
     };
 
     const locations = this.book.locations;
+
     if (this.layout.name === "reflowable" && locations.size) {
       const locStart = locations.locationFromCfi(start.mapping.start);
       const locEnd = locations.locationFromCfi(end.mapping.end);
 
       if (locStart !== -1) {
-        loc.start.location = locStart;
+        loc.start.index = locStart;
         loc.start.percentage = locations.percentageFromLocation(locStart);
       }
       if (locEnd !== -1) {
-        loc.end.location = locEnd;
+        loc.end.index = locEnd;
         loc.end.percentage = locations.percentageFromLocation(locEnd);
       }
     }
 
     const pageList = this.book.navigation.pageList;
+
     if (this.layout.name === "pre-paginated" && pageList.length) {
       const pageStart = pageList.pageFromCfi(start.mapping.start);
       const pageEnd = pageList.pageFromCfi(end.mapping.end);
@@ -605,15 +606,17 @@ class Rendition {
     }
 
     const startPage = loc.start.displayed.page;
+
     if (this.book.sections.first().index === start.index &&
       startPage.index === 0) {
-      loc.atStart = true;
+      loc.start.bin = 1;
     }
 
     const endPage = loc.end.displayed.page;
+
     if (this.book.sections.last().index === end.index &&
       endPage.index === loc.end.displayed.total - 1) {
-      loc.atEnd = true;
+      loc.end.bin = 1;
     }
 
     return loc;
@@ -627,11 +630,11 @@ class Rendition {
    */
   relocated(loc) {
 
-    const located = this.located(loc);
-    if (!located && (!located.start || !located.end)) {
+    const _loc = this.located(loc);
+    if (!_loc || (!_loc.start || !_loc.end)) {
       return;
     }
-    this.location = located;
+    this.location = new Location().set(_loc);
     /**
      * @event relocated
      * @param {object} location
