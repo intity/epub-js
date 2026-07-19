@@ -2,9 +2,9 @@ import EpubCFI from "../epubcfi";
 import {
   qs,
   qsa,
-  indexOfSorted,
-  locationOf
+  indexOfSorted
 } from "../utils/core";
+import Locations from "../locations";
 
 /**
  * Page List Parser
@@ -191,7 +191,7 @@ class PageList extends Array {
     } else {
       // Otherwise add it to the list of locations
       // Insert it in the correct position in the locations page
-      index = locationOf(cfi, this.locations, this.epubcfi.compare);
+      index = Locations.prototype.locationOf(cfi, this.locations, this.epubcfi.compare);
       // Get the page at the location just before the new one, or return the first
       pg = (index - 1 >= 0) ? this.pages[index - 1] : this.pages[0];
       if (pg !== undefined) {
