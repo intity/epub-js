@@ -12,6 +12,7 @@ Find Locations for a Book
         * [.generate([chars])](#Locations+generate) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.process(section)](#Locations+process) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.parse(contents, cfiBase, [chars])](#Locations+parse) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
+        * [.locationOf(item, array, [compareFunc], [start], [end])](#Locations+locationOf) ⇒ <code>number</code>
         * [.locationFromCfi(value)](#Locations+locationFromCfi) ⇒ <code>number</code>
         * [.percentageFromCfi(cfi)](#Locations+percentageFromCfi) ⇒ <code>number</code>
         * [.percentageFromLocation(index)](#Locations+percentageFromLocation) ⇒ <code>number</code>
@@ -74,6 +75,22 @@ parse
 | contents | <code>Element</code> | 
 | cfiBase | <code>string</code> | 
 | [chars] | <code>number</code> | 
+
+<a name="Locations+locationOf"></a>
+
+## locations.locationOf(item, array, [compareFunc], [start], [end]) ⇒ <code>number</code>
+Finds where something would fit into a sorted array
+
+**Kind**: instance method of [<code>Locations</code>](#Locations)  
+**Returns**: <code>number</code> - location (index in array)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| item | <code>Location</code> |  |
+| array | <code>Array.&lt;Location&gt;</code> |  |
+| [compareFunc] | <code>function</code> | colback func |
+| [start] | <code>function</code> |  |
+| [end] | <code>function</code> |  |
 
 <a name="Locations+locationFromCfi"></a>
 
@@ -201,6 +218,13 @@ Current Location
 
 **Kind**: static property of [<code>Locations</code>](#Locations)  
 **Read only**: true  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| start | <code>object</code> | 
+| end | <code>object</code> | 
+
 <a name="Locations.generated"></a>
 
 ## Locations.generated : [<code>Promise.&lt;Locations&gt;</code>](#Locations)

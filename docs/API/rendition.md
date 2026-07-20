@@ -88,8 +88,8 @@ Container must be attached before rendering can begin.
 <a name="Rendition+display"></a>
 
 ## rendition.display([target]) ⇒ <code>Promise.&lt;Section&gt;</code>
-The request will be added to the rendering Queue, so it will wait until 
-book is opened, rendering started and all other rendering tasks have 
+The request will be added to the rendering Queue, so it will wait until
+book is opened, rendering started and all other rendering tasks have
 finished to be called.
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
@@ -264,25 +264,23 @@ A Rendered Location Range
 | Name | Type | Description |
 | --- | --- | --- |
 | start | <code>object</code> |  |
+| start.bin | <code>number</code> |  |
+| start.cfi | <code>string</code> | EpubCFI string format |
 | start.index | <code>string</code> |  |
 | start.href | <code>string</code> |  |
 | start.displayed | <code>object</code> |  |
 | start.displayed.page | <code>number</code> |  |
 | start.displayed.total | <code>number</code> |  |
-| start.cfi | <code>string</code> | EpubCFI string format |
-| start.location | <code>number</code> |  |
 | start.percentage | <code>number</code> |  |
 | end | <code>object</code> |  |
+| end.bin | <code>number</code> |  |
+| end.cfi | <code>string</code> | EpubCFI string format |
 | end.index | <code>string</code> |  |
 | end.href | <code>string</code> |  |
 | end.displayed | <code>object</code> |  |
 | end.displayed.page | <code>number</code> |  |
 | end.displayed.total | <code>number</code> |  |
-| end.cfi | <code>string</code> | EpubCFI string format |
-| end.location | <code>number</code> |  |
 | end.percentage | <code>number</code> |  |
-| atStart | <code>boolean</code> | Location at start position |
-| atEnd | <code>boolean</code> | Location at end position |
 
 <a name="Rendition.started"></a>
 

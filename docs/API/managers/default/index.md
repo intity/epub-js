@@ -106,12 +106,14 @@ Get current visible view
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Returns**: <code>View</code> \| <code>null</code> - view  
+**Access**: public  
 <a name="DefaultViewManager+clear"></a>
 
 ## defaultViewManager.clear()
 clear views
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
+**Access**: public  
 <a name="DefaultViewManager+currentLocation"></a>
 
 ## defaultViewManager.currentLocation() ⇒ <code>Array.&lt;object&gt;</code>
@@ -171,6 +173,8 @@ Manager name
 <a name="DefaultViewManager.location"></a>
 
 ## DefaultViewManager.location : <code>Array.&lt;object&gt;</code>
+Location
+
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
 <a name="DefaultViewManager.mapping"></a>

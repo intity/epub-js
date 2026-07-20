@@ -11,7 +11,6 @@
     * [.prefixed](#module_core.prefixed) ⇒ <code>string</code>
     * [.defaults](#module_core.defaults) ⇒ <code>object</code>
     * [.extend](#module_core.extend) ⇒ <code>object</code>
-    * [.locationOf](#module_core.locationOf) ⇒ <code>number</code>
     * [.insert](#module_core.insert) ⇒ <code>number</code>
     * [.indexOfSorted](#module_core.indexOfSorted) ⇒ <code>number</code>
     * [.bounds](#module_core.bounds) ⇒ <code>Object</code>
@@ -121,22 +120,6 @@ Extend properties of an object
 | Param | Type |
 | --- | --- |
 | target | <code>object</code> | 
-
-<a name="module_core.locationOf"></a>
-
-## core.locationOf ⇒ <code>number</code>
-Finds where something would fit into a sorted array
-
-**Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - location (in array)  
-
-| Param | Type |
-| --- | --- |
-| item | <code>any</code> | 
-| array | <code>array</code> | 
-| [compareFunction] | <code>function</code> | 
-| [start] | <code>function</code> | 
-| [end] | <code>function</code> | 
 
 <a name="module_core.insert"></a>
 
