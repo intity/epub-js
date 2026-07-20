@@ -145,7 +145,7 @@ class Mapping {
   findStart(root, start, end) {
 
     const stack = [root];
-    const hor = this.layout.axis === "horizontal";
+    const ish = this.layout.axis === "horizontal";
     const ltr = this.layout.direction === "ltr";
     const rtl = this.layout.direction === "rtl";
     let prev = root;
@@ -158,10 +158,10 @@ class Mapping {
         let left, right, top, bottom;
         const elPos = nodeBounds(node);
 
-        if (hor && ltr) {
+        if (ish && ltr) {
 
-          left = hor ? elPos.left : elPos.top;
-          right = hor ? elPos.right : elPos.bottom;
+          left = ish ? elPos.left : elPos.top;
+          right = ish ? elPos.right : elPos.bottom;
 
           if (left >= start && left <= end) {
             return node;
@@ -171,7 +171,7 @@ class Mapping {
             prev = node;
             stack.push(node);
           }
-        } else if (hor && rtl) {
+        } else if (ish && rtl) {
 
           left = elPos.left;
           right = elPos.right;
@@ -219,7 +219,7 @@ class Mapping {
   findEnd(root, start, end) {
 
     const stack = [root];
-    const hor = this.layout.axis === "horizontal";
+    const ish = this.layout.axis === "horizontal";
     const ltr = this.layout.direction === "ltr";
     const rtl = this.layout.direction === "rtl";
     let prev = root;
@@ -232,7 +232,7 @@ class Mapping {
         let left, right, top, bottom;
         const elPos = nodeBounds(node);
 
-        if (hor && ltr) {
+        if (ish && ltr) {
 
           left = Math.round(elPos.left);
           right = Math.round(elPos.right);
@@ -245,10 +245,10 @@ class Mapping {
             prev = node;
             stack.push(node);
           }
-        } else if (hor && rtl) {
+        } else if (ish && rtl) {
 
-          left = Math.round(hor ? elPos.left : elPos.top);
-          right = Math.round(hor ? elPos.right : elPos.bottom);
+          left = Math.round(ish ? elPos.left : elPos.top);
+          right = Math.round(ish ? elPos.right : elPos.bottom);
 
           if (right < start && prev) {
             return prev;
@@ -293,7 +293,7 @@ class Mapping {
   findTextStartRange(node, start, end) {
 
     const ranges = this.splitTextNodeIntoRanges(node);
-    const hor = this.layout.axis === "horizontal";
+    const ish = this.layout.axis === "horizontal";
     const ltr = this.layout.direction === "ltr";
     const rtl = this.layout.direction === "rtl";
 
@@ -302,11 +302,11 @@ class Mapping {
       const range = ranges[i];
       const pos = range.getBoundingClientRect();
 
-      if (hor && ltr) {
+      if (ish && ltr) {
         if (pos.left >= start) {
           return range;
         }
-      } else if (hor && rtl) {
+      } else if (ish && rtl) {
         if (pos.right <= end) {
           return range;
         }
@@ -331,7 +331,7 @@ class Mapping {
   findTextEndRange(node, start, end) {
 
     const ranges = this.splitTextNodeIntoRanges(node);
-    const hor = this.layout.axis === "horizontal";
+    const ish = this.layout.axis === "horizontal";
     const ltr = this.layout.direction === "ltr";
     const rtl = this.layout.direction === "rtl";
     let prev;
@@ -341,13 +341,13 @@ class Mapping {
       const range = ranges[i];
       const pos = range.getBoundingClientRect();
 
-      if (hor && ltr) {
+      if (ish && ltr) {
         if (pos.left > end && prev) {
           return prev;
         } else if (pos.right > end) {
           return range;
         }
-      } else if (hor && rtl) {
+      } else if (ish && rtl) {
         if (pos.right < start && prev) {
           return prev;
         } else if (pos.left < start) {
