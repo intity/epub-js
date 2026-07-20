@@ -66,25 +66,30 @@ const docs = [
 "utils/url"
 ];
 
-for (const doc of docs) {
-  const time = Date.now();
-  const item = doc.split('/');
-  let opath = path.resolve(__dirname, "docs/API");
-  let ifile = "src";
-  let ofile = opath;
-  for (let i = 0, len = item.length; i < len; ++i) {
-    if (i === (len - 1)) {
-      ifile = path.join(ifile, item[i]) + ".js";
-      ofile = path.join(ofile, item[i]) + ".md";
-    } else {
-      opath = path.join(opath, item[i]);
-      ifile = path.join(ifile, item[i]);
-      ofile = path.join(ofile, item[i]);
+(async () => {
+  const tasks = [];
+  for (const doc of docs) {
+    const time = Date.now();
+    const item = doc.split('/');
+    let opath = path.resolve(__dirname, "docs/API");
+    let ifile = "src";
+    let ofile = opath;
+    for (let i = 0, len = item.length; i < len; ++i) {
+      if (i === (len - 1)) {
+        ifile = path.join(ifile, item[i]) + ".js";
+        ofile = path.join(ofile, item[i]) + ".md";
+      } else {
+        opath = path.join(opath, item[i]);
+        ifile = path.join(ifile, item[i]);
+        ofile = path.join(ofile, item[i]);
+      }
     }
+    const files = path.resolve(__dirname, ifile);
+    tasks.push(jsdoc2md.render({ files, "heading-depth": 1 }).then(data => {
+      output(opath, ofile, data);
+      const t = (Date.now() - time).toString().padStart(3);
+      console.log("output [time:%s ms, path:%s]", t, ofile);
+    }));
   }
-  jsdoc2md.render({ files: ifile, "heading-depth": 1 }).then(data => {
-    output(opath, ofile, data);
-    const t = (Date.now() - time).toString().padStart(3);
-    console.log("output [time:%s ms, path:%s]", t, ofile);
-  });
-}
+  await Promise.all(tasks);
+})();
