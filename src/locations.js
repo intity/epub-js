@@ -24,6 +24,7 @@ class Locations extends Map {
     super();
     this.sections = sections;
     this.request = request;
+    this.idref = null;
     this.pause = pause || 100;
     this.chars = 150;
     this.processing = new Defer();
@@ -365,9 +366,10 @@ class Locations extends Map {
       this.clear();
       const data = JSON.parse(locations);
       data.items.forEach(i => this.set(i.start.cfi, new Location().set(i)));
-      this.chars = data.chars;
-      this.pause = data.pause;
-      const loc = this.get(data.idref);
+      this.idref = data.idref || data.items.length ? data.items[0].start.cfi : null;
+      this.chars = data.chars || this.chars;
+      this.pause = data.pause || this.pause;
+      const loc = this.get(this.idref);
       this.current.set(loc);
     } else {
       console.error("Invalid argument type");
@@ -378,16 +380,32 @@ class Locations extends Map {
 
   /**
    * Save locations to JSON
+   * @param {number} [type] default 0, compact array 1
    * @return {string} A JSON string
    */
-  save() {
+  save(type) {
 
-    return JSON.stringify({
-      items: [...this.values()],
-      idref: this.current.start.cfi,
-      chars: this.chars,
-      pause: this.pause
-    });
+    const items = [...this.values()];
+    const idref = this.current.start.cfi;
+    const chars = this.chars;
+    const pause = this.pause;
+    const array = [];
+    let ret;
+    switch (type) {
+      default:
+        ret = JSON.stringify({ items, idref, chars, pause });
+        break;
+      case 1:
+        items.forEach((v, i) => {
+          array.push({
+            start: v.start,
+            end: v.end
+          });
+        });
+        ret = JSON.stringify(array);
+        break;
+    }
+    return ret;
   }
 
   /**
