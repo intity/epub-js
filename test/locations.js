@@ -1,6 +1,7 @@
 import assert from "assert";
 import Book from "../src/book";
 import Locations from "../src/locations";
+import request from "../src/utils/request";
 
 describe("Locations", function () {
   let book, rendition, locations, sections = {};
@@ -155,15 +156,25 @@ describe("Locations", function () {
     });
   });
   describe("#clear()", () => {
-    it("should clear locations", () => {
+    it("should clear locations #1", () => {
       book.locations.clear();
       assert.equal(book.locations.size, 0);
     });
   });
   describe("#load()", () => {
-    it("should load locations", () => {
+    it("should load locations from string", () => {
       book.locations.load(locations);
       assert.equal(book.locations.size, 101);
+    });
+    it("should clear locations #2", () => {
+      book.locations.clear();
+      assert.equal(book.locations.size, 0);
+    });
+    it("should load locations from ./data.json", async () => {
+      const items = await request("./data.json", "json");
+      const data = JSON.stringify({ items });
+      book.locations.load(data);
+      assert.equal(book.locations.size, 66);
     });
   });
 });
