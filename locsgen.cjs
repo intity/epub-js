@@ -24,7 +24,7 @@ globalThis.cancelAnimationFrame = dom.window.cancelAnimationFrame = (id) => {
 };
 
 (async () => {
-  const obj = require("./dist/epub.cjs");
+  const obj = require("./dist/server/epub.cjs");
   const time = Date.now();
   const ePub = obj.ePub;
   const absolutePath = path.resolve("./assets/alice/");
@@ -32,18 +32,6 @@ globalThis.cancelAnimationFrame = dom.window.cancelAnimationFrame = (id) => {
   const book = ePub(directoryUrl);
   await book.opened;
   await book.locations.generate(880); // chars/pages -- 880/66
-  /*
-  const items = [...book.locations.values()];
-  const array = [];
-  items.forEach((v, i) => {
-    const loc = {
-      start: v.start,
-      end: v.end
-    };
-    array.push(loc);
-  });
-  const data = JSON.stringify(array);
-  */
   const data = book.locations.save(1);
   const outp = path.resolve(__dirname, "test/data.json");
   fs.writeFile(outp, data, "utf8", (err) => {
