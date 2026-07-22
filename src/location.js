@@ -22,7 +22,7 @@ class Location {
     this.start = {};
     /**
      * End location
-     * @member {object} start
+     * @member {object} end
      * @property {number} bin
      * @property {string} cfi
      * @property {string} href

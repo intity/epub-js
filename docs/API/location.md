@@ -13,7 +13,7 @@ Location class
         * [.destroy()](#Location+destroy)
     * _static_
         * [.start](#Location.start) : <code>object</code>
-        * [.start](#Location.start) : <code>object</code>
+        * [.end](#Location.end) : <code>object</code>
 
 <a name="new_Location_new"></a>
 
@@ -68,9 +68,9 @@ Start location
 | index | <code>number</code> | 
 | percentage | <code>number</code> | 
 
-<a name="Location.start"></a>
+<a name="Location.end"></a>
 
-## Location.start : <code>object</code>
+## Location.end : <code>object</code>
 End location
 
 **Kind**: static property of [<code>Location</code>](#Location)  
