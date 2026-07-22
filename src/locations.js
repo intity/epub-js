@@ -413,9 +413,10 @@ class Locations extends Map {
    * @param {any} key EpubCFI to string
    * @param {any} val Location
    * @example locations.set(key, val)
-   * @example locations.set({ cfi })
-   * @example locations.set({ index })
-   * @example locations.set({ percentage })
+   * @example locations.set({ start: { cfi } })
+   * @example locations.set({ start: { index } })
+   * @example locations.set({ start: { percentage } })
+   * @example locations.set({ start, end })
    * @returns {any} Locations
    * @override
    */
