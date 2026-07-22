@@ -3,16 +3,62 @@ const webpack = require("webpack");
 const path = require("path");
 const PROD = (process.env.NODE_ENV === "production");
 const MINIMIZE = (process.env.MINIMIZE === "true");
+const COMMONJS = (process.env.TARGET === "cjs");
 let filename = "[name]";
 let sourceMapFilename = "[name]";
 
 if (MINIMIZE) {
-  filename += ".min.js";
-  sourceMapFilename += ".min.js.map";
+  filename += COMMONJS ? ".min.cjs" : ".min.js";
+  sourceMapFilename += COMMONJS ? ".min.cjs.map" : ".min.js.map";
 } else {
-  filename += ".js";
-  sourceMapFilename += ".js.map";
+  filename += COMMONJS ? ".cjs" : ".js";
+  sourceMapFilename += COMMONJS ? ".cjs.map" : ".js.map";
 }
+
+const patterns = [
+  {
+    from: "node_modules/jszip/dist/jszip.min.js",
+    to: "jszip.min.js",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/localforage/dist/localforage.min.js",
+    to: "localforage.min.js",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/mocha/mocha.js",
+    to: "mocha.js",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/mocha/mocha.js.map",
+    to: "mocha.js.map",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/mocha/mocha.css",
+    to: "mocha.css",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/marked/lib/marked.umd.js",
+    to: "marked.umd.js",
+    toType: "file",
+    force: true
+  },
+  {
+    from: "node_modules/marked/lib/marked.umd.js.map",
+    to: "marked.umd.js.map",
+    toType: "file",
+    force: true
+  }
+];
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -33,72 +79,28 @@ module.exports = {
     ]
   },
   devtool: PROD ? "source-map" : "eval-source-map",
+  target: COMMONJS ? "node" : "web",
   output: {
-    path: path.resolve("dist"),
+    path: path.resolve(__dirname, COMMONJS ? "dist/server" : "dist/public"),
     filename: filename,
     sourceMapFilename: sourceMapFilename,
     library: "ePub",
-    libraryTarget: "umd",
+    libraryTarget: COMMONJS ? "commonjs" : "umd",
     libraryExport: "default",
-    publicPath: "/dist/"
+    publicPath: "/dist/public/"
   },
   optimization: {
     minimize: MINIMIZE
   },
   externals: {
-    "jszip": "JSZip",
+    "jszip": COMMONJS ? "jszip" : "JSZip",
     "localforage": "localforage"
   },
   plugins: [
     new webpack.ProvidePlugin({
       process: "process/browser"
     }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: "node_modules/jszip/dist/jszip.min.js",
-          to: "jszip.min.js",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/localforage/dist/localforage.min.js",
-          to: "localforage.min.js",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/mocha/mocha.js",
-          to: "mocha.js",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/mocha/mocha.js.map",
-          to: "mocha.js.map",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/mocha/mocha.css",
-          to: "mocha.css",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/marked/lib/marked.umd.js",
-          to: "marked.umd.js",
-          toType: "file",
-          force: true
-        },
-        {
-          from: "node_modules/marked/lib/marked.umd.js.map",
-          to: "marked.umd.js.map",
-          toType: "file",
-          force: true
-        }
-      ]
-    })
+    !COMMONJS && new CopyPlugin({ patterns })
   ],
   resolve: {
     alias: {
