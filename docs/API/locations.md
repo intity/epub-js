@@ -19,7 +19,7 @@ Find Locations for a Book
         * [.cfiFromLocation(index)](#Locations+cfiFromLocation) ⇒ <code>string</code> \| <code>null</code>
         * [.cfiFromPercentage(value)](#Locations+cfiFromPercentage) ⇒ <code>string</code> \| <code>null</code>
         * [.load(locations)](#Locations+load) ⇒ [<code>Locations</code>](#Locations)
-        * [.save()](#Locations+save) ⇒ <code>string</code>
+        * [.save([type])](#Locations+save) ⇒ <code>string</code>
         * [.set(key, val)](#Locations+set) ⇒ <code>any</code>
         * [.clear()](#Locations+clear)
         * [.destroy()](#Locations+destroy)
@@ -165,11 +165,16 @@ Load locations from JSON
 
 <a name="Locations+save"></a>
 
-## locations.save() ⇒ <code>string</code>
+## locations.save([type]) ⇒ <code>string</code>
 Save locations to JSON
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 **Returns**: <code>string</code> - A JSON string  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [type] | <code>number</code> | default 0, compact array 1 |
+
 <a name="Locations+set"></a>
 
 ## locations.set(key, val) ⇒ <code>any</code>
