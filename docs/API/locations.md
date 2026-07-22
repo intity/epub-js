@@ -194,15 +194,19 @@ locations.set(key, val)
 ```
 **Example**  
 ```js
-locations.set({ cfi })
+locations.set({ start: { cfi } })
 ```
 **Example**  
 ```js
-locations.set({ index })
+locations.set({ start: { index } })
 ```
 **Example**  
 ```js
-locations.set({ percentage })
+locations.set({ start: { percentage } })
+```
+**Example**  
+```js
+locations.set({ start, end })
 ```
 <a name="Locations+clear"></a>
 
