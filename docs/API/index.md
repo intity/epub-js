@@ -1,5 +1,7 @@
 # API Reference
 
+<img src="../assets/img/deps.svg" class="horizontal"/>
+
 ## Global functions
 
 - [ePub](epub.md)
