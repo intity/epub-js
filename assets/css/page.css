@@ -42,6 +42,10 @@
   vertical-align: top;
 }
 
+.page img.horizontal {
+  width: 908px;
+}
+
 /**
  * iPhone 5             : 320 x 568
  * iPhone 6/7/8         : 375 x 667
