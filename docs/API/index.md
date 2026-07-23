@@ -1,6 +1,6 @@
 # API Reference
 
-<img src="../assets/img/deps.svg" class="horizontal"/>
+<img src="../../assets/img/deps.svg" class="horizontal" alt=""/>
 
 ## Global functions
 
