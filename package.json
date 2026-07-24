@@ -21,6 +21,7 @@
     "lint": "eslint src",
     "test": "mocha",
     "dtsg": "npx -p typescript tsc",
+    "locg": "node locsgen.cjs",
     "start": "NODE_ENV=development webpack serve",
     "build": "NODE_ENV=production webpack --progress",
     "build2": "NODE_ENV=production TARGET=cjs webpack --progress",
