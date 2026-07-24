@@ -1,81 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="keywords" content="epub.js,epub-js,outline,example">
-	<meta name="description" content="table of contents example">
-	<meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-	<link rel="icon" type="image/png" href="../assets/img/favicon.png">
-	<link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-	<script src="../dist/epub.js"></script>
-	<title>epub-js-examples : Table of Contents</title>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,outline,example">
+    <meta name="description" content="table of contents example">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+    <title>epub-js-examples : Table of Contents</title>
+  </head>
 
-<body id="app">
-	<header>
-		<nav>
-			<ul>
-				<li class="l-item"><a href="./">Examples</a></li>
-				<li class="l-item">
-					<label for="toc">Toc:</label>
-					<select id="toc"></select>
-				</li>
-				<li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/toc.html" id="gh-link" target="_blank"></a>
-                </li>
-			</ul>
-		</nav>
-	</header>
-	<main id="content" class="ltr" dir="ltr">
-		<div id="viewport" class="scrolled ltr" dir="ltr">
-			<div id="loader"></div>
-		</div>
-	</main>
-	<script>
-		const loader = document.getElementById("loader")
-		const list = document.getElementById("toc")
-		const book = ePub("../assets/alice/")
-		const rendition = book.renderTo("viewport", {
-			flow: "scrolled",
-			width: 908,
-			height: window.innerHeight - 102
-		})
-		book.opened.then(() => {
-
-			loader.style.display = "none"
-		})
-		book.loaded.navigation.then((toc) => {
-
-			const fragment = document.createDocumentFragment()
-
-			toc.forEach((chapter) => {
-
-				const option = document.createElement("option")
-				option.textContent = chapter.label
-				option.ref = chapter.href
-				fragment.appendChild(option)
-			})
-			list.appendChild(fragment)
-			list.onchange = (e) => {
-
-				const ind = e.target.selectedIndex
-				const url = e.target[ind].ref
-				rendition.display(url)
-			}
-		})
-		rendition.display()
-		rendition.on("attached", () => {
-
-			console.log(rendition)
-		})
-		rendition.on("relocated", (location) => {
-
-			console.log(location)
-		})
-	</script>
-	<footer></footer>
-</body>
+  <body id="app">
+    <header>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/toc.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+      <div id="viewport" class="scrolled ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li class="c-item">
+            <label for="toc"></label>
+            <select id="toc"></select>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="text/javascript">
+      const loader = document.getElementById("loader");
+      const list = document.getElementById("toc");
+      const book = ePub("../assets/alice/");
+      const size = window.innerHeight - 160;
+      const rendition = book.renderTo("viewport", {
+        flow: "scrolled",
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size
+      });
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      book.loaded.navigation.then((toc) => {
+        toc.forEach((chapter) => {
+          const opt = document.createElement("option");
+          opt.textContent = chapter.label;
+          opt.ref = chapter.href;
+          list.appendChild(opt);
+        });
+        list.onchange = (e) => {
+          const idx = e.target.selectedIndex;
+          const url = e.target[idx].ref;
+          rendition.display(url);
+        }
+      });
+      rendition.display();
+      rendition.on("attached", () => {
+        console.log(rendition);
+      });
+      rendition.on("relocated", (loc) => {
+        console.log(loc);
+      });
+    </script>
+  </body>
 
 </html>

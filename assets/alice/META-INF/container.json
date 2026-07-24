@@ -1,7 +1,7 @@
 {
-    "directory": "OPS/",
-    "encoding": "UTF-8",
-    "full-path": "OPS/package.json",
-    "media-type": "application/json",
-    "version": "1.0"
+  "directory": "OPS/",
+  "encoding": "UTF-8",
+  "full-path": "OPS/package.json",
+  "media-type": "application/json",
+  "version": "1.0"
 }

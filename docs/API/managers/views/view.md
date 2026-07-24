@@ -56,8 +56,8 @@ Constructor
 
 | Param | Type |
 | --- | --- |
-| layout | <code>layout</code> | 
-| section | <code>section</code> | 
+| layout | <code>Layout</code> | 
+| section | <code>Section</code> | 
 
 <a name="View+clear"></a>
 

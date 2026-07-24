@@ -11,7 +11,7 @@ The **epub.js** library supports the following input types:
 | `binary`    | `object` | `ArrayBuffer` | auto      |
 | `base64`    | `string` |               | require   |
 | `epub`      | `string` |               | auto      |
-| `directiry` | `string` |               | auto      |
+| `directory` | `string` |               | auto      |
 
 ## Open book from ArrayBuffer
 

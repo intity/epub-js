@@ -2,84 +2,85 @@
  * @module replacements
  */
 
+import Section from "../section";
 import { qs } from "./core";
 
 /**
  * replaceBase
- * @param {Document} doc 
- * @param {Section} section 
+ * @param {Document} doc
+ * @param {Section} section
  */
 export const replaceBase = (doc, section) => {
 
-	if (!doc) return;
+  if (!doc) return;
 
-	let head = qs(doc, "head");
-	let base = qs(head, "base");
+  let head = qs(doc, "head");
+  let base = qs(head, "base");
 
-	if (!base) {
-		base = doc.createElement("base");
-		head.insertBefore(base, head.firstChild);
-	}
+  if (!base) {
+    base = doc.createElement("base");
+    head.insertBefore(base, head.firstChild);
+  }
 
-	let url = section.url;
-	const absolute = (url.indexOf("://") > -1);
+  let url = section.url;
+  const absolute = (url.indexOf("://") > -1);
 
-	if (!absolute) {
-		const uri = new URL(url, doc.baseURI);
-		url = uri.href;
-	}
+  if (!absolute) {
+    const uri = new URL(url, doc.baseURI);
+    url = uri.href;
+  }
 
-	base.setAttribute("href", url);
+  base.setAttribute("href", url);
 }
 
 /**
  * replaceCanonical
- * @param {Document} doc 
- * @param {Section} section 
+ * @param {Document} doc
+ * @param {Section} section
  */
 export const replaceCanonical = (doc, section) => {
 
-	if (!doc) return;
+  if (!doc) return;
 
-	let url = section.canonical;
-	let head = qs(doc, "head");
-	let link = qs(head, "link[rel='canonical']");
+  let url = section.canonical;
+  let head = qs(doc, "head");
+  let link = qs(head, "link[rel='canonical']");
 
-	if (link) {
-		link.setAttribute("href", url);
-	} else {
-		link = doc.createElement("link");
-		link.setAttribute("rel", "canonical");
-		link.setAttribute("href", url);
-		head.appendChild(link);
-	}
+  if (link) {
+    link.setAttribute("href", url);
+  } else {
+    link = doc.createElement("link");
+    link.setAttribute("rel", "canonical");
+    link.setAttribute("href", url);
+    head.appendChild(link);
+  }
 }
 
 /**
  * replaceMeta
- * @param {Document} doc 
- * @param {Section} section 
+ * @param {Document} doc
+ * @param {Section} section
  */
 export const replaceMeta = (doc, section) => {
 
-	if (!doc) return;
+  if (!doc) return;
 
-	let head = qs(doc, "head");
-	let meta = qs(head, "link[property='dc.identifier']");
+  let head = qs(doc, "head");
+  let meta = qs(head, "link[property='dc.identifier']");
 
-	if (meta) {
-		meta.setAttribute("content", section.idref);
-	} else {
-		meta = doc.createElement("meta");
-		meta.setAttribute("name", "dc.identifier");
-		meta.setAttribute("content", section.idref);
-		head.appendChild(meta);
-	}
+  if (meta) {
+    meta.setAttribute("content", section.idref);
+  } else {
+    meta = doc.createElement("meta");
+    meta.setAttribute("name", "dc.identifier");
+    meta.setAttribute("content", section.idref);
+    head.appendChild(meta);
+  }
 }
 
 /**
  * Replace links from node
- * @param {Node} contents 
+ * @param {Node} contents
  * @param {function} cb Callback function
  * @returns {NodeList} Replace links
  * @example replaceLinks(node, (href) => { actions })
@@ -87,40 +88,40 @@ export const replaceMeta = (doc, section) => {
  */
 export const replaceLinks = (contents, cb) => {
 
-	const links = contents.querySelectorAll("a[href]");
-	const len = links.length;
+  const links = contents.querySelectorAll("a[href]");
+  const len = links.length;
 
-	if (!len) return links;
+  if (!len) return links;
 
-	const repl = (link) => {
+  const repl = (link) => {
 
-		const href = link.getAttribute("href");
+    const href = link.getAttribute("href");
 
-		if (href.indexOf("mailto:") === 0) {
-			return 0;
-		}
-		if (href.indexOf("://") > -1) { // is absolute
-			link.setAttribute("target", "_blank");
-		} else {
-			link.onclick = (e) => {
-				cb(href);
-				return false;
-			};
-		}
-	};
+    if (href.indexOf("mailto:") === 0) {
+      return 0;
+    }
+    if (href.indexOf("://") > -1) { // is absolute
+      link.setAttribute("target", "_blank");
+    } else {
+      link.onclick = (e) => {
+        cb(href);
+        return false;
+      };
+    }
+  };
 
-	links.forEach(ln => repl(ln));
-	return links;
+  links.forEach(ln => repl(ln));
+  return links;
 }
 
 const relative = (p1, p2) => {
 
-	const arr = p1.split("/");
-	let result = "";
-	for (let i = 1; i < arr.length; ++i) {
-		result += "../";
-	}
-	return result + p2;
+  const arr = p1.split("/");
+  let result = "";
+  for (let i = 1; i < arr.length; ++i) {
+    result += "../";
+  }
+  return result + p2;
 };
 
 /**
@@ -135,14 +136,14 @@ const relative = (p1, p2) => {
  */
 export const substitute = (content, section, urls, repl) => {
 
-	urls.forEach((url, i) => {
-		if (url && repl[i]) {
-			// Account for special characters in the file name.
-			// See https://stackoverflow.com/a/6318729
-			url = relative(section.href, url);
-			url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-			content = content.replace(new RegExp(url, "g"), repl[i]);
-		}
-	});
-	return content;
+  urls.forEach((url, i) => {
+    if (url && repl[i]) {
+      // Account for special characters in the file name.
+      // See https://stackoverflow.com/a/6318729
+      url = relative(section.href, url);
+      url = url.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+      content = content.replace(new RegExp(url, "g"), repl[i]);
+    }
+  });
+  return content;
 }

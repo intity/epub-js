@@ -1,152 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="keywords" content="epub.js,epub-js,locations,example">
-	<meta name="description" content="generate epubcfi locations example">
-	<meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
-	<link rel="icon" type="image/png" href="../assets/img/favicon.png">
-	<link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-	<script src="../dist/epub.js"></script>
-	<title>epub-js-examples : Locations</title>
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,locations,example">
+    <meta name="description" content="generate epubcfi locations example">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+    <title>epub-js-examples : Locations</title>
+  </head>
 
-<body id="app">
-	<header>
-		<nav>
-			<ul>
-				<li class="l-item"><a href="./">Examples</a></li>
-				<li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/locations.html" id="gh-link" target="_blank"></a>
-                </li>
-			</ul>
-		</nav>
-	</header>
-	<main id="content" class="ltr" dir="ltr">
-		<div id="viewport" class="paginated ltr" dir="ltr">
-			<div id="divider" style="display: block;"></div>
-			<div id="loader"></div>
-		</div>
-		<a id="prev" href="#prev" class="arrow"></a>
-		<a id="next" href="#next" class="arrow"></a>
-	</main>
-	<footer id="toolbar">
-		<div class="box">
-			<input type="range" min="0" max="100" value="0" id="range" />
-			<label id="current-percent" for="range"></label>
-		</div>
-	</footer>
-	<script>
-		const loader = document.getElementById("loader")
-		const label = document.getElementById("current-percent")
-		const range = document.getElementById("range")
-		const prev = document.getElementById("prev")
-		const next = document.getElementById("next")
-		const book = ePub()
-		let stored, timeStamp
-		book.open("../assets/alice/").then(() => {
+  <body id="app">
+    <header>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/locations.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+      <div id="viewport" class="paginated ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+      <div id="sidebar" style="display: none;">
+        <nav>
+          <ul>
+            <li>
+              <label for="start-cfi" title="Start CFI">S0:</label>
+              <input id="start-cfi" type="textbox" style="width: 208px;" readonly/>
+            </li>
+            <li>
+              <label for="end-cfi" title="End CFI">E0:</label>
+              <input id="end-cfi" type="textbox" style="width: 208px;" readonly/>
+            </li>
+            <li>
+              <label for="start-index" title="Start Index">S1:</label>
+              <input id="start-index" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+              <label for="end-index" title="End Index">E1:</label>
+              <input id="end-index" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+            </li>
+            <li>
+              <label for="start-p" title="Start Percentage">S2:</label>
+              <input id="start-p" type="number" min="0" max="1" value="0" style="width: 208px;" readonly/>
+            </li>
+            <li>
+              <label for="end-p" title="End Percentage">E2:</label>
+              <input id="end-p" type="number" min="0.0" max="1.0" value="0.0" style="width: 208px;" readonly/>
+            </li>
+            <li>
+              <label for="start-page" title="Start Page">S3:</label>
+              <input id="start-page" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+              <label for="end-page" title="End Page">E3:</label>
+              <input id="end-page" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+            </li>
+            <li>
+              <label for="start-page-l" title="Start Total">S4:</label>
+              <input id="start-page-l" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+              <label for="end-page-l" title="End Total">E4:</label>
+              <input id="end-page-l" type="number" min="0" max="9999" style="width: 75px;" readonly/>
+            </li>
+            <li>
+              <label for="start-bin" title="Start BIN">S5:</label>
+              <input id="start-bin" type="number" min="0" max="1" style="width: 75px;" readonly/>
+              <label for="end-bin" title="End BIN">E5:</label>
+              <input id="end-bin" type="number" min="0" max="1" style="width: 75px;" readonly/>
+            </li>
+            <li>
+              <code>
+                S0/E0: start/end cfi<br>
+                S1/E1: start/end index<br>
+                S2/E2: start/end percentage<br>
+                S3/E3: start/end page<br>
+                S4/E4: start/end total<br>
+                S5/E5: start/end bin
+              </code>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </main>
+    <footer>
+      <nav>
+        <ul id="tbox" class="m-line">
+          <li id="ti-0" class="l-item">
+            <a id="prev" href="#prev"></a>
+          </li>
+          <li id="ti-1" class="c-item">
+            <input id="range" type="range" min="0" max="100" value="0"/>
+            <label for="range" style="display: none;"></label>
+          </li>
+          <li id="ti-2" class="r-item">
+            <a id="next" href="#next"></a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="text/javascript">
+      const loader = document.getElementById("loader");
+      const sbox = document.getElementById("sidebar");
+      const data = {
+        s_cfi: document.getElementById("start-cfi"),
+        e_cfi: document.getElementById("end-cfi"),
+        s_idx: document.getElementById("start-index"),
+        e_idx: document.getElementById("end-index"),
+        s_pvl: document.getElementById("start-p"),
+        e_pvl: document.getElementById("end-p"),
+        s_pgi: document.getElementById("start-page"),
+        e_pgi: document.getElementById("end-page"),
+        s_pgl: document.getElementById("start-page-l"),
+        e_pgl: document.getElementById("end-page-l"),
+        s_bin: document.getElementById("start-bin"),
+        e_bin: document.getElementById("end-bin")
+      };
+      const range = document.getElementById("range");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const book = ePub();
+      let stored, timeStamp;
+      book.open("../assets/alice/").then(() => {
+        loader.style.display = "none";
+        // Load in stored locations from json or local storage
+        const key = `${book.key()}-locations`;
+        stored = localStorage.getItem(key);
+        if (stored) {
+          timeStamp = Date.now();
+          return book.locations.load(stored);
+        } else {
+          timeStamp = Date.now();
+          // Or generate the locations on the fly
+          // Can pass an option number of chars to break sections by
+          // default is 150 chars
+          // test: [break:549,items:101] (sections:2-12,pages:37)
+          //  2:[0]
+          //  3:[1-4-8-12]
+          //  4:[14-18-21-24]
+          //  5:[25-28-31-34-35]
+          //  6:[36-41-44-48]
+          //  7:[50-53-56-60]
+          //  8:[61-65-69]
+          //  9:[71-74-76]
+          // 10:[77-81-84-88]
+          // 11:[89-92]
+          // 12:[95-98-100]
+          return book.locations.generate(880); // default 549 -- 66/880 [424 x 600]
+        }
+      }).then((locations) => {
+        // Save out the generated locations to JSON
+        const data = locations.save();
+        const key = `${book.key()}-locations`;
+        localStorage.setItem(key, data);
+        console.log("locations.length: " + locations.size);
+        if (stored) {
+          console.log(`locations.load: ${Date.now() - timeStamp} ms`);
+        } else {
+          console.log(`locations.generate: ${Date.now() - timeStamp} ms`);
+        }
+        console.log(book);
+      });
+      /*book.locations.on("changed", (current, changed) => {
+        console.log("current:", current);
+        console.log("changed:", changed);
+      });*/
+      const size = window.innerHeight - 160;
+      const rendition = book.renderTo("viewport", {
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size,
+        spread: "none"
+      });
+      range.onchange = (e) => {
+        const percentage = parseInt(e.target.value) / 100;
+        const cfi = book.locations.cfiFromPercentage(percentage);
+        const index = book.locations.locationFromCfi(cfi);
+        const start = { cfi, index, percentage };
+        book.locations.set({ start });
+        rendition.display(cfi);
+      };
+      const prev_a = () => {
+        rendition.prev().then(() => {
+          const cfi = rendition.location.start.cfi;
+          const index = book.locations.locationFromCfi(cfi);
+          if (index === -1) return;
+          const percentage = book.locations.percentageFromLocation(index);
+          const start = { cfi, index, percentage };
+          book.locations.set({ start });
+          range.value = Math.floor(percentage * 100);
+        });
+      };
+      prev.onclick = (e) => {
+        prev_a();
+        e.preventDefault();
+      };
+      const next_a = () => {
+        rendition.next().then(() => {
+          const cfi = rendition.location.end.cfi;
+          const index = book.locations.locationFromCfi(cfi);
+          if (index === -1) return;
+          const percentage = book.locations.percentageFromLocation(index);
+          const end = { cfi, index, percentage };
+          book.locations.set({ end });
+          range.value = Math.floor(percentage * 100);
+        });
+      };
+      next.onclick = (e) => {
+        next_a();
+        e.preventDefault();
+      };
+      const update = (loc) => {
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
 
-			loader.style.display = "none"
-			// Load in stored locations from json or local storage
-			const key = book.key() + "-locations"
-			stored = localStorage.getItem(key)
-			if (stored) {
-				timeStamp = Date.now()
-				return book.locations.load(stored)
-			} else {
-				timeStamp = Date.now()
-				// Or generate the locations on the fly
-				// Can pass an option number of chars to break sections by
-				// default is 150 chars
-				// test: [break:549,items:101] (sections:2-12,pages:37)
-				//  2:[0]
-				//  3:[1-4-8-12]
-				//  4:[14-18-21-24]
-				//  5:[25-28-31-34-35]
-				//  6:[36-41-44-48]
-				//  7:[50-53-56-60]
-				//  8:[61-65-69]
-				//  9:[71-74-76]
-				// 10:[77-81-84-88]
-				// 11:[89-92]
-				// 12:[95-98-100]
-				return book.locations.generate(549)
-			}
-		}).then((locations) => {
-
-			// Save out the generated locations to JSON
-			localStorage.setItem(book.key() + '-locations', book.locations.save())
-			console.log("locations.length: " + locations.size)
-			if (stored) {
-				console.log(`locations.load: ${Date.now() - timeStamp} ms`)
-			} else {
-				console.log(`locations.generate: ${Date.now() - timeStamp} ms`)
-			}
-			console.log(book)
-		})
-		book.locations.on("changed", (current, changed) => {
-
-			console.log(current, changed)
-		})
-		const rendition = book.renderTo("viewport", {
-			width: 908,
-			height: 600
-		})
-		let percentage
-		range.onchange = (e) => {
-
-			percentage = parseInt(e.target.value) / 100
-			book.locations.set({ percentage })
-			rendition.display(book.locations.current.cfi)
-		}
-		prev.onclick = (e) => {
-
-			rendition.prev()
-			e.preventDefault()
-		}
-		next.onclick = (e) => {
-
-			rendition.next()
-			e.preventDefault()
-		}
-		const update = (loc) => {
-
-			prev.style.display = loc.atStart ? "none" : "block"
-			next.style.display = loc.atEnd ? "none" : "block"
-
-			if (typeof percentage === "undefined") {
-				book.locations.set({ cfi: loc.start.cfi })
-				percentage = book.locations.current.percentage || 0
-			}
-
-			const value = Math.floor(percentage * 100)
-			range.value = value
-			label.textContent = value + " %"
-			percentage = undefined
-		}
-		const keybinding = (e) => {
-
-			switch (e.key) {
-				case "ArrowLeft":
-					rendition.prev()
-					break;
-				case "ArrowRight":
-					rendition.next()
-					break;
-			}
-		}
-		rendition.display().then(() => {
-
-			document.onkeyup = keybinding
-			rendition.on("keyup", keybinding)
-		})
-		rendition.on("relocated", (location) => {
-
-			update(location)
-		})
-	</script>
-</body>
+        const regex = /epubcfi\(([^)]+)\)/;
+        data.s_cfi.value = loc.start.cfi.match(regex)[1];
+        data.e_cfi.value = loc.end.cfi.match(regex)[1];
+        data.s_idx.value = loc.start.index;
+        data.e_idx.value = loc.end.index;
+        data.s_pvl.value = loc.start.percentage;
+        data.e_pvl.value = loc.end.percentage;
+        data.s_pgi.value = loc.start.displayed.page.index;
+        data.e_pgi.value = loc.end.displayed.page.index;
+        data.s_pgl.value = loc.start.displayed.total;
+        data.e_pgl.value = loc.end.displayed.total;
+        data.s_bin.value = loc.start.bin ? 1 : 0;
+        data.e_bin.value = loc.end.bin ? 1 : 0;
+      };
+      const keybinding = (e) => {
+        if (!(e.target.id === "app" ||
+          e.target.id === "prev" ||
+          e.target.id === "next")) {
+          return;
+        }
+        switch (e.key) {
+          case "ArrowLeft":
+            prev_a();
+            break;
+          case "ArrowRight":
+            next_a();
+            break;
+        }
+      };
+      rendition.display().then(() => {
+        const rect = rendition.viewport.rect;
+        sbox.style.width = `${rect.width}px`;
+        sbox.style.height = `${rect.height}px`;
+        sbox.style.display = "flex";
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("resized", (rect) => {
+        console.log(rect);
+      });
+      rendition.on("relocated", (loc) => {
+        console.log(loc);
+        update(loc);
+      });
+    </script>
+  </body>
 
 </html>

@@ -4,51 +4,74 @@ import { extend } from "./utils/core";
  * Location class
  */
 class Location {
+  /**
+   * Constructor
+   */
+  constructor() {
     /**
-     * Constructor
+     * Start location
+     * @member {object} start
+     * @property {number} bin
+     * @property {string} cfi
+     * @property {string} href
+     * @property {number} index
+     * @property {number} percentage
+     * @memberof Location
+     * @readonly
      */
-    constructor() {
-        /**
-         * @member {string} cfi EpubCFI string format
-         * @memberof Location
-         * @readonly
-         */
-        this.cfi = null;
-        /**
-         * @member {number} index Location index
-         * @memberof Location
-         * @readonly
-         */
-        this.index = 0;
-        /**
-         * Percentage in the range from 0 to 1
-         * @member {number} percentage
-         * @memberof Location
-         * @readonly
-         */
-        this.percentage = 0;
-    }
-
+    this.start = {};
     /**
-     * Set location properties
-     * @param {object} [props]
-     * @param {string} [props.cfi]
-     * @param {number} [props.index]
-     * @param {number} [props.percentage]
+     * End location
+     * @member {object} end
+     * @property {number} bin
+     * @property {string} cfi
+     * @property {string} href
+     * @property {number} index
+     * @property {number} percentage
+     * @memberof Location
+     * @readonly
      */
-    set(props) {
+    this.end = {};
+  }
 
-        extend(this, props || {});
-        return this;
-    }
+  /**
+   * Set location properties
+   * @param {object} [props]
+   * @param {number} [props.start.bin]
+   * @param {string} [props.start.cfi]
+   * @param {number} [props.start.index]
+   * @param {number} [props.start.percentage]
+   * @param {number} [props.end.bin]
+   * @param {string} [props.end.cfi]
+   * @param {number} [props.end.index]
+   * @param {number} [props.end.percentage]
+   */
+  set(props) {
 
-    /**
-     * Destroy the Location object
-     */
-    destroy() {
+    extend(this, props || {});
+    return this;
+  }
 
-        Object.keys(this).forEach(p => (this[p] = undefined));
-    }
+  /**
+   * Clear locations
+   */
+  clear() {
+
+    this.start.cfi = null;
+    this.start.index = -1;
+    this.start.percentage = 0;
+    this.end.cfi = null;
+    this.end.index = -1;
+    this.end.percentage = 0;
+  }
+
+  /**
+   * Destroy the Location object
+   */
+  destroy() {
+
+    Object.keys(this).forEach(p => (this[p] = undefined));
+  }
 }
 
 export default Location;

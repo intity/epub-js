@@ -1,7 +1,7 @@
 <a name="Book"></a>
 
 # Book
-An Epub representation with methods for the loading, 
+An Epub representation with methods for the loading,
 parsing and manipulation of its contents.
 
 **Kind**: global class  

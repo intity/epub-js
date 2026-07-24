@@ -87,7 +87,7 @@ Find a string in a section
 
 ## section.search(query, [maxSeqEle]) ⇒ <code>Array.&lt;object&gt;</code>
 Search a string in multiple sequential Element of the section.
-If the document.createTreeWalker api is missed(eg: IE8), use 
+If the document.createTreeWalker api is missed(eg: IE8), use
 `find` as a fallback.
 
 **Kind**: instance method of [<code>Section</code>](#Section)  

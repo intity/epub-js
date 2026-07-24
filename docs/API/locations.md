@@ -12,14 +12,15 @@ Find Locations for a Book
         * [.generate([chars])](#Locations+generate) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.process(section)](#Locations+process) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
         * [.parse(contents, cfiBase, [chars])](#Locations+parse) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
+        * [.locationOf(item, array, [compareFunc], [start], [end])](#Locations+locationOf) ⇒ <code>number</code>
         * [.locationFromCfi(value)](#Locations+locationFromCfi) ⇒ <code>number</code>
         * [.percentageFromCfi(cfi)](#Locations+percentageFromCfi) ⇒ <code>number</code>
         * [.percentageFromLocation(index)](#Locations+percentageFromLocation) ⇒ <code>number</code>
         * [.cfiFromLocation(index)](#Locations+cfiFromLocation) ⇒ <code>string</code> \| <code>null</code>
         * [.cfiFromPercentage(value)](#Locations+cfiFromPercentage) ⇒ <code>string</code> \| <code>null</code>
         * [.load(locations)](#Locations+load) ⇒ [<code>Locations</code>](#Locations)
-        * [.save()](#Locations+save) ⇒ <code>string</code>
-        * [.set([options])](#Locations+set) ⇒ [<code>Locations</code>](#Locations)
+        * [.save([type])](#Locations+save) ⇒ <code>string</code>
+        * [.set(key, val)](#Locations+set) ⇒ <code>any</code>
         * [.clear()](#Locations+clear)
         * [.destroy()](#Locations+destroy)
     * _static_
@@ -74,6 +75,22 @@ parse
 | contents | <code>Element</code> | 
 | cfiBase | <code>string</code> | 
 | [chars] | <code>number</code> | 
+
+<a name="Locations+locationOf"></a>
+
+## locations.locationOf(item, array, [compareFunc], [start], [end]) ⇒ <code>number</code>
+Finds where something would fit into a sorted array
+
+**Kind**: instance method of [<code>Locations</code>](#Locations)  
+**Returns**: <code>number</code> - location (index in array)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| item | <code>Location</code> |  |
+| array | <code>Array.&lt;Location&gt;</code> |  |
+| [compareFunc] | <code>function</code> | colback func |
+| [start] | <code>function</code> |  |
+| [end] | <code>function</code> |  |
 
 <a name="Locations+locationFromCfi"></a>
 
@@ -148,25 +165,49 @@ Load locations from JSON
 
 <a name="Locations+save"></a>
 
-## locations.save() ⇒ <code>string</code>
+## locations.save([type]) ⇒ <code>string</code>
 Save locations to JSON
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 **Returns**: <code>string</code> - A JSON string  
-<a name="Locations+set"></a>
-
-## locations.set([options]) ⇒ [<code>Locations</code>](#Locations)
-Set current location
-
-**Kind**: instance method of [<code>Locations</code>](#Locations)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [options] | <code>object</code> |  |
-| [options.cfi] | <code>string</code> | EpubCFI string format |
-| [options.index] | <code>number</code> | Location index |
-| [options.percentage] | <code>number</code> | Percentage |
+| [type] | <code>number</code> | default 0, compact array 1 |
 
+<a name="Locations+set"></a>
+
+## locations.set(key, val) ⇒ <code>any</code>
+Set current location
+
+**Kind**: instance method of [<code>Locations</code>](#Locations)  
+**Returns**: <code>any</code> - Locations  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| key | <code>any</code> | EpubCFI to string |
+| val | <code>any</code> | Location |
+
+**Example**  
+```js
+locations.set(key, val)
+```
+**Example**  
+```js
+locations.set({ start: { cfi } })
+```
+**Example**  
+```js
+locations.set({ start: { index } })
+```
+**Example**  
+```js
+locations.set({ start: { percentage } })
+```
+**Example**  
+```js
+locations.set({ start, end })
+```
 <a name="Locations+clear"></a>
 
 ## locations.clear()
@@ -186,6 +227,13 @@ Current Location
 
 **Kind**: static property of [<code>Locations</code>](#Locations)  
 **Read only**: true  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| start | <code>object</code> | 
+| end | <code>object</code> | 
+
 <a name="Locations.generated"></a>
 
 ## Locations.generated : [<code>Promise.&lt;Locations&gt;</code>](#Locations)

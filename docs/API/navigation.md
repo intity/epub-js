@@ -61,12 +61,12 @@ forEach pass through
 
 | Param | Type |
 | --- | --- |
-| ...args | <code>IArguments</code> | 
+| ...args | <code>Array</code> | 
 
 <a name="Navigation+destroy"></a>
 
 ## navigation.destroy()
-destroy
+Destroy the Navigation object
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation.landmarks"></a>

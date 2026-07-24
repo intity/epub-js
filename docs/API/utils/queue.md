@@ -8,7 +8,7 @@ Queue for handling tasks one at a time
 
 * [Queue](#Queue) ⇐ <code>Array</code>
     * [new Queue(context)](#new_Queue_new)
-    * [.enqueue(task, [...args])](#Queue+enqueue) ⇒ <code>Promise.&lt;any&gt;</code>
+    * [.enqueue(task, ...args)](#Queue+enqueue) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.dequeue()](#Queue+dequeue) ⇒ <code>Promise.&lt;any&gt;</code>
     * [.dump()](#Queue+dump)
     * [.run()](#Queue+run) ⇒ <code>Promise.&lt;any&gt;</code>
@@ -29,7 +29,7 @@ Constructor
 
 <a name="Queue+enqueue"></a>
 
-## queue.enqueue(task, [...args]) ⇒ <code>Promise.&lt;any&gt;</code>
+## queue.enqueue(task, ...args) ⇒ <code>Promise.&lt;any&gt;</code>
 Add an item to the queue
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
@@ -37,7 +37,7 @@ Add an item to the queue
 | Param | Type |
 | --- | --- |
 | task | <code>any</code> | 
-| [...args] | <code>Array.&lt;any&gt;</code> | 
+| ...args | <code>Array</code> | 
 
 <a name="Queue+dequeue"></a>
 

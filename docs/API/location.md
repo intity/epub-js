@@ -9,11 +9,11 @@ Location class
     * [new Location()](#new_Location_new)
     * _instance_
         * [.set([props])](#Location+set)
+        * [.clear()](#Location+clear)
         * [.destroy()](#Location+destroy)
     * _static_
-        * [.cfi](#Location.cfi) : <code>string</code>
-        * [.index](#Location.index) : <code>number</code>
-        * [.percentage](#Location.percentage) : <code>number</code>
+        * [.start](#Location.start) : <code>object</code>
+        * [.end](#Location.end) : <code>object</code>
 
 <a name="new_Location_new"></a>
 
@@ -30,34 +30,58 @@ Set location properties
 | Param | Type |
 | --- | --- |
 | [props] | <code>object</code> | 
-| [props.cfi] | <code>string</code> | 
-| [props.index] | <code>number</code> | 
-| [props.percentage] | <code>number</code> | 
+| [props.start.bin] | <code>number</code> | 
+| [props.start.cfi] | <code>string</code> | 
+| [props.start.index] | <code>number</code> | 
+| [props.start.percentage] | <code>number</code> | 
+| [props.end.bin] | <code>number</code> | 
+| [props.end.cfi] | <code>string</code> | 
+| [props.end.index] | <code>number</code> | 
+| [props.end.percentage] | <code>number</code> | 
 
+<a name="Location+clear"></a>
+
+## location.clear()
+Clear locations
+
+**Kind**: instance method of [<code>Location</code>](#Location)  
 <a name="Location+destroy"></a>
 
 ## location.destroy()
 Destroy the Location object
 
 **Kind**: instance method of [<code>Location</code>](#Location)  
-<a name="Location.cfi"></a>
+<a name="Location.start"></a>
 
-## Location.cfi : <code>string</code>
-EpubCFI string format
-
-**Kind**: static property of [<code>Location</code>](#Location)  
-**Read only**: true  
-<a name="Location.index"></a>
-
-## Location.index : <code>number</code>
-Location index
+## Location.start : <code>object</code>
+Start location
 
 **Kind**: static property of [<code>Location</code>](#Location)  
 **Read only**: true  
-<a name="Location.percentage"></a>
+**Properties**
 
-## Location.percentage : <code>number</code>
-Percentage in the range from 0 to 1
+| Name | Type |
+| --- | --- |
+| bin | <code>number</code> | 
+| cfi | <code>string</code> | 
+| href | <code>string</code> | 
+| index | <code>number</code> | 
+| percentage | <code>number</code> | 
+
+<a name="Location.end"></a>
+
+## Location.end : <code>object</code>
+End location
 
 **Kind**: static property of [<code>Location</code>](#Location)  
 **Read only**: true  
+**Properties**
+
+| Name | Type |
+| --- | --- |
+| bin | <code>number</code> | 
+| cfi | <code>string</code> | 
+| href | <code>string</code> | 
+| index | <code>number</code> | 
+| percentage | <code>number</code> | 
+

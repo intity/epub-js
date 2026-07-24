@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="epub.js,epub-js,storage,indexdb,unarchive,example">
+    <meta name="description" content="example of loading an unarchive book from storage">
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
+    <script type="text/javascript" src="../dist/public/localforage.min.js"></script>
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
+    <title>epub-js-examples : Storage when unarchive</title>
+  </head>
+
+  <body id="app">
+    <header>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/storage-when-unarchive.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main id="content" class="ltr" dir="ltr">
+      <div id="viewport" class="paginated ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li class="l-item">
+            <a id="prev" href="#prev"></a>
+          </li>
+          <li class="r-item">
+            <a id="next" href="#next"></a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="text/javascript">
+      const loader = document.getElementById("loader");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const size = window.innerHeight - 160;
+      const book = ePub("../assets/alice/", {
+        replacements: "base64",
+        store: "epub-js"
+      });
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      book.storage.on("online", () => {
+        console.log(book.storage);
+      });
+      book.storage.on("offline", () => {
+        console.log(book.storage);
+      });
+      const rendition = book.renderTo("viewport", {
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size,
+        spread: "none"
+      });
+      prev.onclick = (e) => {
+        rendition.prev();
+        e.preventDefault();
+      }
+      next.onclick = (e) => {
+        rendition.next();
+        e.preventDefault();
+      }
+      const update = (loc) => {
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
+      }
+      const keybinding = (e) => {
+        switch (e.key) {
+          case "ArrowLeft":
+            rendition.prev();
+            break;
+          case "ArrowRight":
+            rendition.next();
+            break;
+        }
+      }
+      rendition.display().then(() => {
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("relocated", (loc) => {
+        update(loc);
+        console.log(book);
+      });
+    </script>
+  </body>
+
+</html>

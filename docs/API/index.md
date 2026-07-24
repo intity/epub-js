@@ -1,10 +1,12 @@
 # API Reference
 
-### Global functions
+<img src="../../assets/img/deps.svg" class="horizontal" alt=""/>
+
+## Global functions
 
 - [ePub](epub.md)
 
-### Global classes (dependencies graph)
+## Global classes
 
 - [Annotation](annotation.md) `from ./annotation`
     - [EpubCFI](epubcfi.md)
@@ -115,7 +117,6 @@
     - [constants](utils/constants.md) `from ./utils/constants`
         - EVENTS
     - [core](utils/core.md) `from ./utils/core`
-        - locationOf
         - sprint
         - qs
     - [Defer](utils/defer.md) `from ./utils/defer`
@@ -150,10 +151,11 @@
 - [PageList](navigation/pagelist.md) `from ./navigation/pagelist`
     - [core](utils/core.md) `from ../utils/core`
         - indexOfSorted
-        - locationOf
         - qs
         - qsa
     - [EpubCFI](epubcfi.md)
+    - [Locations](locations.md)
+        - locationOf
 - [Rendition](rendition.md) `from ./rendition`
     - [Annotations](annotations.md)
     - [constants](utils/constants.md) `from ./utils/constants`
@@ -231,7 +233,7 @@
     - [constants](utils/constants.md) `from ./utils/constants`
         - EVENTS
 
-### Utils classes
+## Utils classes
 
 - [Defer](utils/defer.md) `from ./utils/defer`
 - [Hook](utils/hook.md) `from ./utils/hook`

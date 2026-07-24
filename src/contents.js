@@ -1,6 +1,8 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Mapping from "./mapping";
+import Section from "./section";
+import Layout from "./layout";
 import Defer from "./utils/defer";
 import { replaceLinks } from "./utils/replacements";
 import { EVENTS, DOM_EVENTS } from "./utils/constants";

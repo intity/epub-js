@@ -1,50 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,scrolled-continuous,example,mobile">
     <meta name="description" content="continuous scrolling of documents example for mobile devices">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/viewport.css">
-    <script src="../dist/epub.js"></script>
-    <script>
-        window.onload = (e) => {
-            const loader = document.getElementById("loader")
-            const book = ePub("../assets/alice/")
-            const rendition = book.renderTo(document.body, {
-                height: "100vh",
-                manager: "continuous",
-                flow: "scrolled"
-            })
-            book.opened.then(() => {
-
-                loader.style.display = "none"
-            })
-            rendition.display()
-            rendition.on("attached", () => {
-
-                console.log(rendition)
-            })
-            rendition.on("rendered", (view) => {
-
-                console.log(view)
-            })
-            rendition.on("relocated", (location) => {
-
-                console.log(location)
-            })
-        }
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="text/javascript">
+      window.onload = (e) => {
+        const loader = document.getElementById("loader");
+        const book = ePub("../assets/alice/");
+        const rendition = book.renderTo(document.body, {
+          height: "100vh",
+          manager: "continuous",
+          flow: "scrolled"
+        });
+        book.opened.then(() => {
+          loader.style.display = "none";
+        });
+        rendition.display();
+        rendition.on("attached", () => {
+          console.log(rendition);
+        })
+        rendition.on("rendered", (view) => {
+          console.log(view);
+        });
+        rendition.on("relocated", (loc) => {
+          console.log(loc);
+        });
+      }
     </script>
     <title>epub-js-examples : Continuous scrolling of documents (mobile)</title>
-</head>
+  </head>
 
-<body id="viewport" class="scrolled ltr" dir="ltr">
+  <body id="viewport" class="scrolled ltr" dir="ltr">
     <div id="loader"></div>
-</body>
+  </body>
 
 </html>

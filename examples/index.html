@@ -1,65 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,examples">
     <meta name="description" content="epub-js example list">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/marked.min.js"></script>
-    <script type="module">
-        import load from "../assets/js/main.js"
-        const menu = document.getElementById("b-menu")
-        const list = document.getElementById("m-list")
-        window.onload = (e) => {
-
-            menu.onclick = (e) => {
-
-                if (e.target.checked) {
-                    list.style["display"] = "grid"
-                } else {
-                    list.style["display"] = "none"
-                }
-            }
-            load(e, "./index.md")
-        }
-    </script>
+    <script type="text/javascript" src="../dist/public/marked.umd.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-examples</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul class="l-menu">
-                <li class="l-item">
-                    <input type="checkbox" id="b-menu">
-                    <label for="b-menu"></label>
-                </li>
-            </ul>
-            <ul class="c-menu" id="m-list">
-                <li class="l-item"><a href="../">Home</a></li>
-                <li class="l-item"><a href="../docs/">Docs</a></li>
-                <!-- <li class="l-item"><a href="../test/">Test</a></li> -->
-                <li class="l-item"><a href="./" class="active">Examples</a></li>
-            </ul>
-            <ul class="r-menu">
-                <li class="r-item">
-                    <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/examples" target="_blank"></a>
-                </li>
-            </div>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a href="../" id="s-logo" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs/">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./" class="active">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test/">Test</a>
+          </li>
+          <li id="mi-5">
+            <a id="gh-link" href="https://github.com/intity/epub-js/tree/master/examples" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content"></main>
     <footer>
-        <div class="box">
-            <p>&copy; 2025 epub-js community</p>
-        </div>
+      <nav>
+        <ul>
+          <li class="c-item">
+            <p>&copy; 2026 epub-js community</p>
+          </li>
+        </ul>
+      </nav>
     </footer>
-</body>
+  </body>
 
 </html>

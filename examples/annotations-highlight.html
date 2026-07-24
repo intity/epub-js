@@ -1,131 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,annotations,highlight,example">
     <meta name="description" content="example of annotation for highlighting">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/epub.js"></script>
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" scr="../assets/js/main.js"></script>
     <title>epub-js-examples : Highlight</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/annotations-highlight.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js library"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/annotations-highlight.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content" class="ltr" dir="ltr">
-        <div id="viewport" class="paginated ltr" dir="ltr">
-            <div id="loader"></div>
-        </div>
-        <a id="prev" href="#prev" class="arrow"></a>
-        <a id="next" href="#next" class="arrow"></a>
-    </main>
-    <footer id="notes">
+      <div id="viewport" class="paginated ltr" dir="ltr">
+        <div id="loader"></div>
+      </div>
+      <div id="sidebar" style="display: none;">
         <ul id="list"></ul>
+      </div>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li class="l-item">
+            <a id="prev" href="#prev"></a>
+          </li>
+          <li class="r-item">
+            <a id="next" href="#next"></a>
+          </li>
+        </ul>
+      </nav>
     </footer>
-    <script>
-        const loader = document.getElementById("loader")
-        const list = document.getElementById("list")
-        const prev = document.getElementById("prev")
-        const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewport", {
-            width: 908,
-            height: 600,
-            spread: "none"
-        })
-        book.opened.then(() => {
-
-            loader.style.display = "none"
-        })
-        prev.onclick = (e) => {
-            rendition.prev()
-            e.preventDefault()
+    <script type="text/javascript">
+      const loader = document.getElementById("loader");
+      const sbox = document.getElementById("sidebar");
+      const list = document.getElementById("list");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const size = window.innerHeight - 160;
+      const book = ePub("../assets/alice/");
+      const rendition = book.renderTo("viewport", {
+        width: Math.floor(1/Math.sqrt(2)*size),
+        height: size,
+        spread: "none"
+      });
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      prev.onclick = (e) => {
+        rendition.prev();
+        e.preventDefault();
+      }
+      next.onclick = (e) => {
+        rendition.next();
+        e.preventDefault();
+      }
+      const update = (loc) => {
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
+      }
+      const keybinding = (e) => {
+        switch (e.key) {
+          case "ArrowLeft":
+            rendition.prev();
+            break;
+          case "ArrowRight":
+            rendition.next();
+            break;
         }
-        next.onclick = (e) => {
-            rendition.next()
-            e.preventDefault()
-        }
-        const update = (loc) => {
-
-            prev.style.display = loc.atStart ? "none" : "block"
-            next.style.display = loc.atEnd ? "none" : "block"
-        }
-        const keybinding = (e) => {
-
-            switch (e.key) {
-                case "ArrowLeft":
-                    rendition.prev()
-                    break
-                case "ArrowRight":
-                    rendition.next()
-                    break
+      }
+      rendition.display(6).then(() => {
+        console.log(book);
+        const rect = rendition.viewport.rect;
+        sbox.style.width = rect.width + "px";
+        sbox.style.height = rect.height + "px";
+        sbox.style.display = "flex";
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("selected", (cfiRange, contents) => {
+        const note = rendition.annotations.append("highlight", cfiRange, {
+          cb: (e) => console.log(e.target)
+        });
+        book.getRange(cfiRange).then((range) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          const ctrl = document.createElement("a");
+          if (range) {
+            const text = range.toString();
+            const node = document.createTextNode(text);
+            link.textContent = cfiRange;
+            link.href = "#" + cfiRange;
+            link.onclick = (e) => {
+              rendition.display(cfiRange);
+              e.preventDefault();
             }
-        }
-        rendition.display(6).then(() => {
-
-            console.log(book)
-            document.onkeyup = keybinding
-            rendition.on("keyup", keybinding)
-        })
-        rendition.on("selected", (cfiRange, contents) => {
-
-            const note = rendition.annotations.append("highlight", cfiRange, {
-                cb: (e) => console.log(e.target)
-            })
-            book.getRange(cfiRange).then((range) => {
-
-                const item = document.createElement("li")
-                const link = document.createElement("a")
-                const ctrl = document.createElement("a")
-
-                if (range) {
-                    const text = range.toString()
-                    const node = document.createTextNode(text)
-
-                    link.textContent = cfiRange
-                    link.href = "#" + cfiRange
-                    link.onclick = (e) => {
-
-                        rendition.display(cfiRange)
-                        e.preventDefault()
-                    }
-
-                    ctrl.textContent = "remove"
-                    ctrl.href = "#"
-                    ctrl.onclick = (e) => {
-
-                        rendition.annotations.remove("highlight", cfiRange)
-                        list.removeChild(item)
-                        e.preventDefault()
-                    }
-
-                    item.appendChild(link)
-                    item.appendChild(node)
-                    item.appendChild(ctrl)
-                    list.appendChild(item)
-                }
-            })
-            contents.window.getSelection().removeAllRanges()
-            console.log(note)
-        })
-        rendition.on("relocated", (location) => {
-
-            update(location)
-            console.log(location)
-        })
+            ctrl.textContent = "remove";
+            ctrl.href = "#";
+            ctrl.onclick = (e) => {
+              rendition.annotations.remove("highlight", cfiRange);
+              list.removeChild(item);
+              e.preventDefault();
+            }
+            item.appendChild(link);
+            item.appendChild(node);
+            item.appendChild(ctrl);
+            list.appendChild(item);
+          }
+        });
+        contents.window.getSelection().removeAllRanges();
+        console.log(note);
+      });
+      rendition.on("relocated", (loc) => {
+        update(loc);
+        console.log(loc);
+      });
     </script>
-</body>
+  </body>
 
 </html>

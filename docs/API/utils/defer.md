@@ -49,7 +49,7 @@ If the promise is already settled it does nothing.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>any</code> | : This value is used to resolve the promise If the value is a Promise then the associated promise assumes  the state of Promise passed as value. |
+| value | <code>any</code> | : This value is used to resolve the promise If the value is a Promise then the associated promise assumes the state of Promise passed as value. |
 
 <a name="Defer.reject"></a>
 
@@ -62,7 +62,7 @@ If the promise is already settled it does nothing.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| reason | <code>any</code> | : The reason for the rejection of the Promise. Generally its an Error object. If however a Promise is passed, then  the Promise itself will be the reason for rejection no matter  the state of the Promise. |
+| reason | <code>any</code> | : The reason for the rejection of the Promise. Generally its an Error object. If however a Promise is passed, then the Promise itself will be the reason for rejection no matter the state of the Promise. |
 
 <a name="Defer.promise"></a>
 

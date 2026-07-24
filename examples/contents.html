@@ -1,47 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,contents,example">
     <meta name="description" content="example of contents">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/epub.js"></script>
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-examples : Contents</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/contents.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checked"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/contents.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content"></main>
     <footer></footer>
-    <script>
-        const main = document.getElementById("content")
-        const book = ePub()
-        const cfi = "epubcfi(/6/14!/4/2,/2[pgepubid00007]/1:4,/12/1:243)"
-        book.open("../assets/alice/").then(() => {
-            console.log(book)
-            book.getRange(cfi).then((range) => {
-                const text = range.toString()
-                const page = document.createElement("div")
-                page.className = "page"
-                page.innerText = text
-                main.appendChild(page)
-                console.log(text)
-            })
-        })
+    <script type="text/javascript">
+      const main = document.getElementById("content");
+      const book = ePub();
+      const cfi = "epubcfi(/6/14!/4/2,/2[pgepubid00007]/1:4,/12/1:142)";
+      book.open("../assets/alice/").then(() => {
+        console.log(book);
+        book.getRange(cfi).then((range) => {
+          const text = range.toString();
+          const page = document.createElement("div");
+          page.className = "page";
+          page.innerText = text;
+          main.appendChild(page);
+          console.log(text);
+        });
+      });
     </script>
-</body>
+  </body>
 
 </html>

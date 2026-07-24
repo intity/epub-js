@@ -22,13 +22,13 @@ import { EPUBJS_VERSION } from "./utils/constants";
  */
 function ePub(input, options) {
 
-	return new Book(input, options);
+  return new Book(input, options);
 }
 
 ePub.VERSION = EPUBJS_VERSION;
 
 if (typeof (global) !== "undefined") {
-	global.EPUBJS_VERSION = EPUBJS_VERSION;
+  global.EPUBJS_VERSION = EPUBJS_VERSION;
 }
 
 ePub.Book = Book;
@@ -36,30 +36,30 @@ ePub.Rendition = Rendition;
 ePub.Contents = Contents;
 ePub.EpubCFI = EpubCFI;
 ePub.manager = (t) => {
-	let ret;
-	switch(t)
-	{
-		default:
-			ret = DefaultViewManager;
-			break;
-		case "continuous":
-			ret = ContinuousViewManager;
-			break;
-	}
-	return ret;
+  let ret;
+  switch(t)
+  {
+    default:
+      ret = DefaultViewManager;
+      break;
+    case "continuous":
+      ret = ContinuousViewManager;
+      break;
+  }
+  return ret;
 };
 ePub.view = (t) => {
-	let ret;
-	switch(t)
-	{
-		default:
-			ret = IframeView;
-			break;
-		case "inline":
-			ret = InlineView;
-			break;
-	}
-	return ret;
+  let ret;
+  switch(t)
+  {
+    default:
+      ret = IframeView;
+      break;
+    case "inline":
+      ret = InlineView;
+      break;
+  }
+  return ret;
 };
 ePub.utils = utils;
 

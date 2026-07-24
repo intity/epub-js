@@ -1,34 +1,49 @@
+
 .page {
-    display: block;
-    padding: 26px;
-    overflow: hidden;
+  display: block;
+  padding: 26px;
+  overflow: hidden;
+	background-color: white;
 }
 
 .page h1,
 .page h2 {
-    text-transform: uppercase;
-    border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  font-weight: bold;
 }
 
-.page h1 {
-    font-size: 1.6em;
-    font-weight: 100;
-}
-
-.page h2 {
-    font-size: 1.2em;
-    font-weight: 400;
+.page ol,
+.page ul {
+  padding-left: 20px;
 }
 
 .page code {
-    font-size: 1.2em;
-    font-weight: bold;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
 .page pre {
-    padding: 10px;
-    background: #f2f3f4;
-    overflow-x: auto;
+  padding: 10px;
+  background: #f2f3f4;
+  overflow-x: auto;
+}
+
+.page blockquote {
+  margin-left: 0;
+}
+
+.page blockquote p {
+  opacity: .8;
+  padding: 10px;
+  border-left: #aed6f1 solid 6px;
+}
+
+.page td {
+  vertical-align: top;
+}
+
+.page img.horizontal {
+  width: 908px;
 }
 
 /**
@@ -41,19 +56,29 @@
  * iPhone 12/14         : 390 x 844
  * iPhone 14/15 Pro Max : 430 x 932
  */
-@media
-only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
-only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
-    .page {
-        padding: 12px;
-    }
-    .page h1 {
-        font-size: 1.5em;
-    }
-    .page h2 {
-        font-size: 1.2em;
-    }
-    .page img.horizontal {
-        width: 100% !important;
-    }
+@media only screen and (min-width: 320px) and (max-width: 667px) {
+  .page {
+    padding: 12px;
+  }
+  .page h1 {
+    font-size: 1.5em;
+  }
+  .page h2 {
+    font-size: 1.2em;
+  }
+  .page blockquote {
+    margin-right: 20px;
+  }
+}
+
+@media only screen and (max-width: 960px) {
+  .page img.horizontal {
+    width: 100% !important;
+  }
+}
+
+@media only screen and (max-width: 412px) {
+  .page img {
+    width: 100% !important;
+  }
 }

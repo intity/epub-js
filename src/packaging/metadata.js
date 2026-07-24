@@ -4,112 +4,112 @@
  */
 class Metadata extends Map {
 
-    constructor() {
-        super();
-        /**
-         * Legacy spec (2.x) support
-         * @member {Node} cover
-         * @memberof Metadata
-         * @readonly
-         */
-        this.cover = null;
-    }
-
+  constructor() {
+    super();
     /**
-     * Parse the metadata node
-     * @param {Node} node metadata
-     * @returns {Promise<Metadata>}
+     * Legacy spec (2.x) support
+     * @member {Node} cover
+     * @memberof Metadata
+     * @readonly
      */
-    parse(node) {
+    this.cover = null;
+  }
 
-        const items = [...node.children];
+  /**
+   * Parse the metadata node
+   * @param {Node} node metadata
+   * @returns {Promise<Metadata>}
+   */
+  parse(node) {
 
-        items.forEach((item) => {
-            if (item.nodeName === "meta") {
-                this.parseMeta(item);
-            } else if (/dc:/.test(item.nodeName)) {
-                // dc:title
-                // dc:creator
-                // dc:coverage
-                // dc:contributor
-                // dc:description
-                // dc:publisher
-                // dc:identifier
-                // dc:language
-                // dc:relation
-                // dc:subject
-                // dc:format
-                // dc:rights
-                // dc:source
-                // dc:date
-                // dc:type
-                const key = item.nodeName.substring(3);
-                this.set(key, item.textContent);
-            }
-        });
+    const items = [...node.children];
 
-        return Promise.resolve(this);
+    items.forEach((item) => {
+      if (item.nodeName === "meta") {
+        this.parseMeta(item);
+      } else if (/dc:/.test(item.nodeName)) {
+        // dc:title
+        // dc:creator
+        // dc:coverage
+        // dc:contributor
+        // dc:description
+        // dc:publisher
+        // dc:identifier
+        // dc:language
+        // dc:relation
+        // dc:subject
+        // dc:format
+        // dc:rights
+        // dc:source
+        // dc:date
+        // dc:type
+        const key = item.nodeName.substring(3);
+        this.set(key, item.textContent);
+      }
+    });
+
+    return Promise.resolve(this);
+  }
+
+  /**
+   * Parse the meta node
+   * @param {Node} item
+   * @returns {void}
+   * @private
+   */
+  parseMeta(item) {
+
+    const name = item.getAttribute("name");
+    const prop = item.getAttribute("property");
+
+    if (typeof prop === "undefined" ||
+      typeof prop !== "string") {
+      if (name === "cover") {
+        this.cover = item;
+      }
+    } else if (/rendition:/.test(prop)) {
+      // rendition:layout
+      // rendition:spread
+      // rendition:flow
+      // rendition:viewport
+      // rendition:orientation
+      const key = prop.substring(10);
+      this.set(key, item.textContent);
+    } else if (/dcterms:/.test(prop)) {
+      // dcterms:modified
+      const key = prop.substring(8);
+      this.set(key, item.textContent);
+    } else if (/media:/.test(prop)) {
+      // media:active-class
+      // media:duration
+      // media:narrator
+      // media:playback-active-class
+      this.set(prop, item.textContent);
     }
+  }
 
-    /**
-     * Parse the meta node
-     * @param {Node} item 
-     * @returns {void}
-     * @private
-     */
-    parseMeta(item) {
+  /**
+   * Load metadata from JSON
+   * @param {object} metadata
+   * @returns {Promise<Metadata>}
+   */
+  load(metadata) {
 
-        const name = item.getAttribute("name");
-        const prop = item.getAttribute("property");
+    Object.keys(metadata).forEach((prop) => {
+      this.set(prop, metadata[prop]);
+    });
 
-        if (typeof prop === "undefined" ||
-            typeof prop !== "string") {
-            if (name === "cover") {
-                this.cover = item;
-            }
-        } else if (/rendition:/.test(prop)) {
-            // rendition:layout
-            // rendition:spread
-            // rendition:flow
-            // rendition:viewport
-            // rendition:orientation
-            const key = prop.substring(10);
-            this.set(key, item.textContent);
-        } else if (/dcterms:/.test(prop)) {
-            // dcterms:modified
-            const key = prop.substring(8);
-            this.set(key, item.textContent);
-        } else if (/media:/.test(prop)) {
-            // media:active-class
-            // media:duration
-            // media:narrator
-            // media:playback-active-class
-            this.set(prop, item.textContent);
-        }
-    }
+    return Promise.resolve(this);
+  }
 
-    /**
-     * Load metadata from JSON
-     * @param {object} metadata 
-     * @returns {Promise<Metadata>}
-     */
-    load(metadata) {
+  /**
+   * destroy
+   */
+  destroy() {
 
-        Object.keys(metadata).forEach((prop) => {
-            this.set(prop, metadata[prop]);
-        });
-
-        return Promise.resolve(this);
-    }
-
-    /**
-     * destroy
-     */
-    destroy() {
-
-        this.clear();
-        this.cover = undefined;
-    }
+    this.clear();
+    this.cover = undefined;
+  }
 }
 
 export default Metadata;

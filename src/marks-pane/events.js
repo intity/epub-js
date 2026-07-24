@@ -1,11 +1,13 @@
+import Mark from "./mark";
+
 const rectContains = (rect, x, y, offset) => {
 
-    const top = rect.top - offset.top;
-    const left = rect.left - offset.left;
-    const bottom = top + rect.height;
-    const right = left + rect.width;
+  const top = rect.top - offset.top;
+  const left = rect.left - offset.left;
+  const bottom = top + rect.height;
+  const right = left + rect.width;
 
-    return (top <= y && left <= x && bottom > y && right > x);
+  return (top <= y && left <= x && bottom > y && right > x);
 }
 
 /**
@@ -18,24 +20,24 @@ const rectContains = (rect, x, y, offset) => {
  */
 const contains = (mark, target, x, y) => {
 
-    const rect = mark.getBoundingClientRect();
-    const offset = target.getBoundingClientRect();
+  const rect = mark.getBoundingClientRect();
+  const offset = target.getBoundingClientRect();
 
-    // Check overall bounding box first
-    if (!rectContains(rect, x, y, offset)) {
-        return false;
-    }
-
-    // Then continue to check each child rect
-    const rects = mark.getClientRects();
-
-    for (let i = 0, len = rects.length; i < len; i++) {
-        if (rectContains(rects[i], x, y, offset)) {
-            return true;
-        }
-    }
-
+  // Check overall bounding box first
+  if (!rectContains(rect, x, y, offset)) {
     return false;
+  }
+
+  // Then continue to check each child rect
+  const rects = mark.getClientRects();
+
+  for (let i = 0, len = rects.length; i < len; i++) {
+    if (rectContains(rects[i], x, y, offset)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -46,28 +48,28 @@ const contains = (mark, target, x, y) => {
  */
 const clone = (e) => {
 
-    const opts = Object.assign({}, e, {
-        bubbles: false
-    });
+  const opts = Object.assign({}, e, {
+    bubbles: false
+  });
 
-    return new MouseEvent(e.type, opts);
+  return new MouseEvent(e.type, opts);
 }
 
 const dispatch = (e, target, marks) => {
 
-    let x = e.clientX;
-    let y = e.clientY;
+  let x = e.clientX;
+  let y = e.clientY;
 
-    if (e.touches && e.touches.length) {
-        x = e.touches[0].clientX;
-        y = e.touches[0].clientY;
+  if (e.touches && e.touches.length) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
+  }
+
+  marks.forEach((mark, key) => {
+    if (contains(mark, target, x, y)) {
+      mark.dispatchEvent(clone(e));
     }
-
-    marks.forEach((mark, key) => {
-        if (contains(mark, target, x, y)) {
-            mark.dispatchEvent(clone(e));
-        }
-    });
+  });
 }
 
 /**
@@ -82,25 +84,25 @@ const dispatch = (e, target, marks) => {
  */
 const proxyMouse = (target, marks) => {
 
-    let node;
-    if (target.nodeName === "iframe" ||
-        target.nodeName === "IFRAME") {
-        node = target.contentDocument;
-    } else {
-        node = target;
-    }
+  let node;
+  if (target.nodeName === "iframe" ||
+    target.nodeName === "IFRAME") {
+    node = target.contentDocument;
+  } else {
+    node = target;
+  }
 
-    const events = [
-        "mouseup",
-        "mousedown",
-        "click",
-        "touchstart"
-    ];
+  const events = [
+    "mouseup",
+    "mousedown",
+    "click",
+    "touchstart"
+  ];
 
-    for (const event of events) {
-        node.addEventListener(event,
-            (e) => dispatch(e, target, marks), false);
-    }
+  for (const event of events) {
+    node.addEventListener(event,
+      (e) => dispatch(e, target, marks), false);
+  }
 }
 
 export default proxyMouse;

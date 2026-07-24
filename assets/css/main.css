@@ -5,85 +5,57 @@
 @import url("viewport.css");
 
 #content {
-    display: flex;
-    min-height: calc(100vh - 100px);
-    align-items: center;
-    justify-content: center;
-}
-
-blockquote {
-    margin-left: 0;
-}
-
-blockquote p {
-    opacity: .8;
-    padding: 10px;
-    border-left: #aed6f1 solid 6px;
+  display: flex;
+  min-height: calc(100vh - 100px);
+  align-items: center;
+  justify-content: center;
 }
 
 table {
-    width: 100%;
+  width: 100%;
 }
 
 thead {
-    background: #f2f3f4;
+  background: #f2f3f4;
 }
 
 th {
-    text-align: left;
+  text-align: left;
 }
 
-.box {
-    display: flex;
-    margin: 10px;
-    align-items: center;
+#sidebar {
+  display: flex;
+  margin: 0;
 }
 
-.box input[type=range] {
-    width: 100%;
+#sidebar a {
+  display: block;
 }
 
-.box label {
-    text-align: right;
-    width: 50px;
+#sidebar ul {
+  display: grid;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  grid-auto-rows: max-content;
 }
 
-#toolbar {
-    height: 50px;
-    align-content: center;
+#sidebar li {
+  width: auto;
+  padding: 0;
+  list-style: none;
+  background-color: thistle;
+  border-bottom: 1px solid #f2f3f4;
+  border-top: 0;
 }
 
-#toolbar .box {
-    padding: 0 26px;
+#sidebar nav {
+  background-color: thistle;
 }
 
-#notes {
-    width: 960px;
-    height: calc((100% - 600px)/2 - 50px);
-    margin: 0 auto;
-    bottom: 0;
-    display: flex;
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-}
-
-#notes ul {
-    width: 600px;
-    height: 100%;
-    margin-left: 0;
-    padding: 0;
-    overflow: auto;
-}
-
-#notes li {
-    padding: 10px;
-    list-style: none;
-    border-top: 1px solid #ccc;
-}
-
-#notes a {
-    display: block;
+#sidebar label {
+  min-width: 30px;
 }
 
 /**
@@ -98,9 +70,7 @@ th {
  */
 @media
 only screen and (min-width: 320px) and (max-width: 430px) and (orientation: portrait),
-only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {
-    
-}
+only screen and (min-width: 568px) and (max-width: 932px) and (orientation: landscape) {}
 
 /**
  * iPad Mini       :  768 x 1024
@@ -112,6 +82,4 @@ only screen and (min-width: 568px) and (max-width: 932px) and (orientation: land
  */
 @media
 only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait),
-only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
-    
-}
+only screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {}

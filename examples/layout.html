@@ -1,181 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="epub.js,epub-js,layout,example">
     <meta name="description" content="example of dynamic layout from the UI">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
-    <script src="../dist/epub.js"></script>
+    <script type="text/javascript" src="../dist/public/epub.js"></script>
+    <script type="module" src="../assets/js/main.js"></script>
     <title>epub-js-examples : Layout</title>
-</head>
+  </head>
 
-<body id="app">
+  <body id="app">
     <header>
-        <nav>
-            <ul>
-                <li class="l-item"><a href="./">Examples</a></li>
-                <li class="l-item">
-                    <label for="flow">Flow:</label>
-                    <select name="flow" id="flow">
-                        <option value="paginated">paginated</option>
-                        <option value="scrolled">scrolled</option>
-                        <option value="scrolled-doc">scrolled-doc</option>
-                    </select>
-                </li>
-                <li class="l-item">
-                    <label for="spread">Spread:</label>
-                    <select name="spread" id="spread">
-                        <option value="auto">auto</option>
-                        <option value="none">none</option>
-                    </select>
-                </li>
-                <li class="l-item">
-                    <label for="minSpreadWidth">Min spread width:</label>
-                    <input type="number" id="minSpreadWidth" value="800" min="0" max="9999" />
-                </li>
-                <li class="l-item">
-                    <label for="direction">Direction:</label>
-                    <select name="direction" id="direction">
-                        <option value="ltr">ltr</option>
-                        <option value="rtl">rtl</option>
-                    </select>
-                </li>
-                <li class="r-item">
-                    <a href="https://github.com/intity/epub-js/blob/master/examples/layout.html" id="gh-link" target="_blank"></a>
-                </li>
-            </ul>
-        </nav>
+      <nav>
+        <ul id="mbox" class="m-line">
+          <li id="mi-0">
+            <input id="b-menu" type="checkbox"/>
+            <label for="b-menu"></label>
+          </li>
+          <li id="mi-1">
+            <a id="s-logo" href="../" title="epub-js libray"></a>
+          </li>
+          <li id="mi-2">
+            <a href="../docs">Docs</a>
+          </li>
+          <li id="mi-3" class="active">
+            <a href="./">Examples</a>
+          </li>
+          <li id="mi-4">
+            <a href="../test">Test</a>
+          </li>
+          <li id="mi-5">
+            <a href="https://github.com/intity/epub-js/blob/master/examples/layout.html" id="gh-link" target="_blank"></a>
+          </li>
+        </ul>
+      </nav>
     </header>
     <main id="content" class="ltr" dir="ltr">
-        <div id="viewport" class="paginated">
-            <div id="divider"></div>
-            <div id="loader"></div>
-        </div>
-        <a id="prev" href="#prev" class="arrow"></a>
-        <a id="next" href="#next" class="arrow"></a>
+      <div id="viewport" class="paginated">
+        <div id="divider"></div>
+        <div id="loader"></div>
+      </div>
     </main>
-    <script>
-        const content = document.getElementById("content")
-        const loader = document.getElementById("loader")
-        const flow = document.getElementById("flow")
-        const spread = document.getElementById("spread")
-        const minSpreadWidth = document.getElementById("minSpreadWidth")
-        const direction = document.getElementById("direction")
-        const divider = document.getElementById("divider")
-        const prev = document.getElementById("prev")
-        const next = document.getElementById("next")
-        const book = ePub("../assets/alice/")
-        const rendition = book.renderTo("viewport", {
-            width: 908,
-            height: 600
-        })
-        book.opened.then(() => {
-
-            loader.style.display = "none"
-        })
-        flow.onchange = (e) => {
-
-            const value = e.target.value
-            const props = {
-                flow: value
-            }
-            if (value === "paginated") {
-                props.width = 908
-                props.height = 600
-                spread.disabled = false
-                rendition.resize(props.width, props.height)
-            } else if (value === "scrolled") {
-                props.width = 908
-                props.height = window.innerHeight - 160
-                spread.disabled = true
-                spread.value = "none"
-                rendition.resize(props.width, props.height)
-            } else {
-                props.width = window.innerWidth
-                props.height = window.innerHeight - 100
-                props.pageWidth = 908
-                spread.disabled = true
-                spread.value = "none"
-                rendition.resize(props.width, props.height)
-            }
-            rendition.updateLayout(props)
+    <footer>
+      <nav>
+        <ul>
+          <li class="l-item">
+            <a id="prev" href="#prev"></a>
+          </li>
+          <li>
+            <label for="direction" title="Layout Direction">LD:</label>
+            <select id="direction" name="direction">
+              <option value="ltr">ltr</option>
+              <option value="rtl">rtl</option>
+            </select>
+          </li>
+          <li>
+            <label for="flow" title="Layout Flow">LF:</label>
+            <select name="flow" id="flow">
+              <option value="paginated">paginated</option>
+              <option value="scrolled">scrolled</option>
+              <option value="scrolled-doc">scrolled-doc</option>
+            </select>
+          </li>
+          <li>
+            <label for="spread" title="Layout Spread">LS:</label>
+            <select id="spread" name="spread">
+              <option value="auto">auto</option>
+              <option value="none">none</option>
+            </select>
+          </li>
+          <li>
+            <label for="minSpreadWidth" title="Min Spread Width">SW:</label>
+            <input id="minSpreadWidth" type="number" value="0" min="0" max="9999"/>
+          </li>
+          <li>
+            <label for="loc-index" title="Location Index">LI:</label>
+            <input id="loc-index" type="number" value="0" min="0" max="9999" readonly/>
+          </li>
+          <li>
+            <label for="page-index" title="Page Index">PI:</label>
+            <input id="page-index" type="number" value="0" min="0" max="9999" readonly/>
+          </li>
+          <li>
+            <label for="page-total" title="Page Total">PT:</label>
+            <input id="page-total" type="number" value="0" min="0" max="9999" readonly/>
+          </li>
+          <li class="r-item">
+            <a id="next" href="#next"></a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="text/javascript">
+      const content = document.getElementById("content");
+      const loader = document.getElementById("loader");
+      const flow = document.getElementById("flow");
+      const spread = document.getElementById("spread");
+      const minSpreadWidth = document.getElementById("minSpreadWidth");
+      const locIndex = document.getElementById("loc-index");
+      const page = {
+        index: document.getElementById("page-index"),
+        total: document.getElementById("page-total")
+      };
+      const direction = document.getElementById("direction");
+      const divider = document.getElementById("divider");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const book = ePub("../assets/alice/");
+      const size = window.innerHeight - 160;
+      const func = (n) => Math.floor(1/Math.sqrt(2)*size)*n;
+      const rect = (p) => {
+        const fv = flow.value;
+        const sp = spread.value === "auto";
+        p.width  = fv === "scrolled-doc" ? window.innerWidth : (sp ? func(2) : func(1));
+        p.height = fv === "scrolled-doc" ? window.innerHeight - 100 : size;
+        return p;
+      };
+      const props = {
+        flow: flow.value,
+        spread: spread.value,
+        pageWidth: func(1),
+        minSpreadWidth: func(1)
+      };
+      const rendition = book.renderTo("viewport", rect(props));
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      flow.onchange = (e) => {
+        const value = e.target.value;
+        const props = {
+          flow: value
+        };
+        if (value === "paginated") {
+          props.width = spread.value === "none" ? func(1) : func(2);
+          props.height = size;
+          spread.disabled = false;
+          rendition.resize(props.width, props.height);
+        } else if (value === "scrolled") {
+          props.width = func(1);
+          props.height = size;
+          spread.disabled = true;
+          spread.value = "none";
+          rendition.resize(props.width, props.height);
+        } else {
+          props.width = window.innerWidth;
+          props.height = window.innerHeight - 100;
+          props.pageWidth = func(1);
+          spread.disabled = true;
+          spread.value = "none";
+          rendition.resize(props.width, props.height);
         }
-        spread.onchange = (e) => {
-
-            rendition.updateLayout({
-                spread: e.target.value
-            })
+        rendition.updateLayout(props);
+      };
+      spread.onchange = (e) => {
+        const value = e.target.value;
+        const props = {
+          width: value === "none" ? func(1) : func(2),
+          height: size,
+          spread: value
+        };
+        rendition.resize(props.width, props.height);
+        rendition.updateLayout(props);
+      };
+      minSpreadWidth.onchange = (e) => {
+        rendition.updateLayout({
+          minSpreadWidth: parseInt(e.target.value)
+        });
+      };
+      direction.onchange = (e) => {
+        rendition.updateLayout({
+          direction: e.target.value
+        });
+      };
+      prev.onclick = (e) => {
+        rendition.prev();
+        e.preventDefault();
+      };
+      next.onclick = (e) => {
+        rendition.next();
+        e.preventDefault();
+      };
+      const update = (loc) => {
+        const dir = rendition.layout.direction;
+        const div = rendition.layout.divisor;
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
+        divider.style.display = div === 1 ? "none" : "block";
+        content.dir = dir;
+        content.className = dir;
+        minSpreadWidth.value = rendition.layout.minSpreadWidth;
+        locIndex.value = loc.start.index;
+        page.index.value = loc.start.displayed.page.index;
+        page.total.value = loc.start.displayed.total;
+      };
+      const keybinding = (e) => {
+        const dir = rendition.layout.direction;
+        switch (e.key) {
+          case "ArrowLeft":
+            dir === "ltr" ? rendition.prev() : rendition.next();
+            break;
+          case "ArrowRight":
+            dir === "ltr" ? rendition.next() : rendition.prev();
+            break;
         }
-        minSpreadWidth.onchange = (e) => {
-
-            rendition.updateLayout({
-                minSpreadWidth: parseInt(e.target.value)
-            })
-        }
-        direction.onchange = (e) => {
-
-            rendition.updateLayout({
-                direction: e.target.value
-            })
-        }
-        prev.onclick = (e) => {
-
-            rendition.prev()
-            e.preventDefault()
-        }
-        next.onclick = (e) => {
-
-            rendition.next()
-            e.preventDefault()
-        }
-        const update = (loc) => {
-
-            const dir = rendition.layout.direction
-            const div = rendition.layout.divisor
-            prev.style.display = loc.atStart ? "none" : "block"
-            next.style.display = loc.atEnd ? "none" : "block"
-            divider.style.display = div === 1 ? "none" : "block"
-            content.dir = dir
-            content.className = dir
-        }
-        const keybinding = (e) => {
-
-            const dir = rendition.layout.direction
-            switch (e.key) {
-                case "ArrowLeft":
-                    dir === "ltr" ? rendition.prev() : rendition.next()
-                    break;
-                case "ArrowRight":
-                    dir === "ltr" ? rendition.next() : rendition.prev()
-                    break;
-            }
-        }
-        rendition.display().then((section) => {
-
-            document.onkeyup = keybinding
-            rendition.on("keyup", keybinding)
-        })
-        rendition.on("attached", () => {
-
-            console.log(rendition)
-        })
-        rendition.on("layout", (props, changed) => {
-
-            console.log(changed)
-            const loc = rendition.location
-            if (loc) update(loc)
-        })
-        rendition.on("relocated", (location) => {
-
-            console.log(location)
-            update(location)
-        })
+      };
+      rendition.display().then((section) => {
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("attached", () => {
+        console.log(rendition);
+      });
+      rendition.on("layout", (props, changed) => {
+        console.log(changed);
+        const loc = rendition.location;
+        if (loc) update(loc);
+      });
+      rendition.on("relocated", (loc) => {
+        console.log(loc);
+        update(loc);
+      })
     </script>
-    <footer></footer>
-</body>
+  </body>
 
 </html>
