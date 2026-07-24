@@ -105,7 +105,8 @@ module.exports = {
   resolve: {
     alias: {
       process: "process/browser"
-    }
+    },
+    tsconfig: false
   },
   devServer: {
     hot: false,
