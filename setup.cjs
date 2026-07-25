@@ -15,10 +15,10 @@ globalThis.Blob = Blob;
 //--JSDOM
 globalThis.requestAnimationFrame = wind.requestAnimationFrame = (fn) => {
     return setTimeout(fn, 1000 / 60);
-}
+};
 globalThis.cancelAnimationFrame = wind.cancelAnimationFrame = (id) => {
     clearTimeout(id);
-}
+};
 globalThis.window = wind;
 globalThis.document = wind.document;
 globalThis.location = wind.location;
@@ -41,6 +41,6 @@ globalThis.ResizeObserver = ResizeObserver;
 
 function init() {
   console.log("setup: pre-init jsdom");
-}
+};
 
 module.exports = { init };
