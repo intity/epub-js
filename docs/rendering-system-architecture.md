@@ -30,7 +30,9 @@ var rendition = book.renderTo("viewport", {
     height: "100%", // default
     layout: "reflowable", // default
     spread: "none",
-    manager: "default"
+    manager: "default",
+    direction: "ltr", // default
+    writingMode: "horizontal-tb" // default
 })
 ```
 
@@ -46,6 +48,18 @@ PH:layout.pageHeight = CH
 ```
 
 <img src="../assets/img/rendition-flow-painated.svg" class="horizontal" />
+
+### writing-mode horizontal-tb
+
+<img src="../assets/img/writing-mode_horizontal-tb.svg" class="vertical" />
+
+### writing-mode vertical-rl
+
+<img src="../assets/img/writing-mode_vertical-rl.svg" class="vertical" />
+
+### writing-mode vertical-lr
+
+<img src="../assets/img/writing-mode_vertical-lr.svg" class="vertical" />
 
 ## Vertical axis
 
