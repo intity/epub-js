@@ -85,12 +85,6 @@ class DefaultViewManager {
      */
     this.views = new Views();
     this.viewport = book.rendition.viewport;
-    /**
-     * @member {string} writingMode
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.writingMode = null;
     this.q = new Queue(this);
   }
 
@@ -331,9 +325,7 @@ class DefaultViewManager {
       this.resized(view);
     });
 
-    view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
-      this.updateWritingMode(mode);
-    });
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
 
     this.views.append(view);
 
@@ -359,9 +351,7 @@ class DefaultViewManager {
       this.resized(view);
     });
 
-    view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
-      this.updateWritingMode(mode);
-    });
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
 
     this.views.prepend(view);
 
@@ -877,16 +867,6 @@ class DefaultViewManager {
   }
 
   /**
-   * Update writing mode
-   * @param {string} mode
-   * @private
-   */
-  updateWritingMode(mode) {
-
-    this.writingMode = mode;
-  }
-
-  /**
    * Get contents array from views
    * @returns {Array<Contents>} [view.contents]
    */
@@ -925,7 +905,6 @@ class DefaultViewManager {
     this.rendered = undefined;
     this.paginated = undefined;
     this.scrollType = undefined;
-    this.writingMode = undefined;
   }
 }
 

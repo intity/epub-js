@@ -211,10 +211,9 @@ class View {
 
   /**
    * Update mode
-   * @param {string} value
    * @abstract
    */
-  mode(value) {}
+  mode() {}
 
   /**
    * Expanding

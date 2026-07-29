@@ -842,9 +842,9 @@ class Contents {
 
     if (this.mode === mode) return this.mode;
     const WRITING_MODE = prefixed("writing-mode");
-    const elt = this.document.documentElement;
-    elt.style[WRITING_MODE] = mode;
-    this.mode = this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+    const element = this.document.documentElement;
+    element.style[WRITING_MODE] = mode;
+    this.mode = this.window.getComputedStyle(element)[WRITING_MODE] || mode;
     return this.mode;
   }
 
@@ -1003,8 +1003,8 @@ class Contents {
   transitionListeners() {
 
     const body = this.content;
-
-    body.style["transitionProperty"] = "font, font-size, font-size-adjust, font-stretch, font-variation-settings, font-weight, width, height";
+    const list = "font, font-size, font-size-adjust, font-stretch, font-variation-settings, font-weight, width, height";
+    body.style["transitionProperty"] = list;
     body.style["transitionDuration"] = "0.001ms";
     body.style["transitionTimingFunction"] = "linear";
     body.style["transitionDelay"] = "0";

@@ -15,6 +15,7 @@ class Layout {
    * @param {number} [options.minSpreadWidth=800]
    * @param {number} [options.pageWidth] page width
    * @param {number} [options.pageHeight] page height
+   * @param {string} [options.writingMode='horizontal-tb'] values: `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
    */
   constructor(options) {
     /**
@@ -125,6 +126,12 @@ class Layout {
      * @readonly
      */
     this.divisor = 1;
+    /**
+     * @member {string} writingMode
+     * @memberof Layout
+     * @readonly
+     */
+    this.writingMode = "horizontal-tb";
     this.set(options || {});
   }
 
@@ -134,7 +141,7 @@ class Layout {
    */
   set(options) {
 
-    const error = (name) => console.error(`Invalid '${name}' property type`);
+    const error = (name, t) => console.error(`Invalid '${name}' property type '${t}'`);
     Object.keys(options).forEach(opt => {
       const value = options[opt];
       if (this[opt] === value || typeof value === "undefined") {
@@ -144,7 +151,7 @@ class Layout {
         opt === "orientation") {
         if (typeof value === "string") {
           this[opt] = options[opt];
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "flow") {
         if (typeof value === "string") {
           switch (value) {
@@ -167,7 +174,7 @@ class Layout {
               this.style = "paginated"; // autocomplete
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "spread") {
         if (typeof value === "string") {
           switch (value) {
@@ -179,7 +186,20 @@ class Layout {
               this.spread = "none";
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
+      } else if (opt === "writingMode") {
+        if (typeof value === "string") {
+          switch (value) {
+            default:
+              this.writingMode = "horizontal-tb";
+              break;
+            case "horizontal-tb":
+            case "vertical-rl":
+            case "vertical-lr":
+              this.writingMode = value;
+              break;
+          }
+        } else error(opt, typeof value);
       } else if (
         opt === "width" ||
         opt === "height" ||
@@ -191,7 +211,7 @@ class Layout {
           if (value >= 0) {
             this[opt] = options[opt];
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       }
     });
 

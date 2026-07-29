@@ -42,12 +42,6 @@ class IframeView extends View {
      * @readonly
      */
     this.method = this.settings.method || "write";
-    /**
-     * @member {string} writingMode
-     * @memberof IframeView
-     * @readonly
-     */
-    this.writingMode = "";
   }
 
   /**
@@ -73,15 +67,14 @@ class IframeView extends View {
 
   /**
    * Update writing mode
-   * @param {string} value
    * @override
    */
-  mode(value) {
+  mode() {
 
-    const mode = value || this.contents.mode;
+    const mode = this.layout.writingMode;
 
-    if (this.writingMode !== mode) {
-      this.writingMode = mode;
+    if (this.contents.mode !== mode) {
+      this.contents.writingMode(mode);
       this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
     }
   }
@@ -183,7 +176,6 @@ class IframeView extends View {
     if (this.displayed) {
       super.destroy();
       this.method = undefined;
-      this.writingMode = undefined;
     }
   }
 }
