@@ -95,7 +95,7 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
 
 11. [Open book from File](input.html)
 
-    >Feature status: `stable`
+    >Feature status: `develop`
 
     Allows you to select an epub file from your local computer that gets rendered in the browser.
 
@@ -117,7 +117,7 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
 
 13. [Open book from File with Storage](input-with-storage.html)
 
-    >Feature status: `stable`
+    >Feature status: `develop`
 
     This example is similar to example (11), but using the `Storage` interface.
 

@@ -46,42 +46,90 @@
         <div id="divider"></div>
         <div id="loader" style="display: none;"></div>
       </div>
+      <div id="sidebar">
+        <label for="openbook"></label>
+        <input id="openbook" type="file" accept=".epub"/>
+      </div>
     </main>
     <footer>
       <nav>
-        <ul>
-          <li class="l-item">
+        <ul id="tbox" class="m-line">
+          <li id="ti-0" class="l-item">
             <a id="prev" href="#prev"></a>
           </li>
-          <li class="c-item">
-            <label for="openbook"></label>
-            <input id="openbook" type="file" accept=".epub"/>
+          <li id="ti-1" class="c-item" style="display: none;">
+            <label for="layout-wrm" title="Layout Writing Mode">LWM:</label>
+            <select id="layout-wrm">
+              <option value="horizintal-tb">horizontal-tb</option>
+              <option value="vertical-rl">vertical-rl</option>
+              <option value="vertical-lr">vertical-lr</option>
+            </select>
+            <label for="layout-dir" title="Layout Direction">LD:</label>
+            <select id="layout-dir">
+              <option value="ltr">ltr</option>
+              <option value="rtl">rtl</option>
+            </select>
+            <label for="spread" title="Layout Spread">LS:</label>
+            <select id="spread">
+              <option value="none">none</option>
+              <option value="auto">auto</option>
+            </select>
           </li>
-          <li class="r-item">
+          <li id="ti-2" class="r-item">
             <a id="next" href="#next"></a>
           </li>
         </ul>
       </nav>
     </footer>
     <script type="text/javascript">
+      const sbox = document.getElementById("sidebar");
+      const tbox = document.getElementById("ti-1");
       const openbook = document.getElementById("openbook");
+      const lwrm = document.getElementById("layout-wrm");
+      const ldir = document.getElementById("layout-dir");
       const content = document.getElementById("content");
       const divider = document.getElementById("divider");
       const loader = document.getElementById("loader");
+      const spread = document.getElementById("spread");
       const next = document.getElementById("next");
       const prev = document.getElementById("prev");
       const book = ePub();
+      const size = window.innerHeight - 160;
+      const func = (n) => Math.floor(1/Math.sqrt(2)*size)*n;
       let rendition;
       prev.style.display = "none";
       prev.onclick = (e) => {
         rendition.prev();
         e.preventDefault();
-      }
+      };
       next.style.display = "none";
       next.onclick = (e) => {
         rendition.next();
         e.preventDefault();
-      }
+      };
+      lwrm.onchange = (e) => {
+        const value = e.target.value;
+        rendition.updateLayout({
+          writingMode: value
+        });
+        ldir.value = rendition.layout.direction;
+      };
+      ldir.onchange = (e) => {
+        rendition.updateLayout({
+          direction: e.target.value
+        });
+      };
+      spread.onchange = (e) => {
+        const value = e.target.value;
+        const props = {
+          direction: ldir.value,
+          width: value === "none" ? func(1) : func(2),
+          height: size,
+          spread: value
+        };
+        rendition.resize(props.width, props.height);
+        rendition.updateLayout(props);
+      };
       const update = (loc) => {
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
@@ -90,7 +138,7 @@
         divider.style.display = div === 1 ? "none" : "block";
         content.className = dir;
         content.dir = dir;
-      }
+      };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
         switch (e.key) {
@@ -101,7 +149,7 @@
             dir === "ltr" ? rendition.next() : rendition.prev();
             break;
         }
-      }
+      };
       const init = (data) => {
         loader.style.display = "block";
         if (rendition) {
@@ -113,26 +161,37 @@
           rendition.on("keyup", keybinding);
           document.onkeyup = keybinding;
           loader.style.display = "none";
+          sbox.style.display = "none";
+          tbox.style.display = "flex";
         });
-        const size = window.innerHeight - 160;
         rendition = book.renderTo("viewport", {
-          width: Math.floor(1/Math.sqrt(2)*size),
-          height: size
+          width: spread.value === "none" ? func(1) : func(2),
+          height: size,
+          spread: spread.value,
+          writingMode: lwrm.value
         });
         rendition.display().then((section) => {
           console.log(section);
         });
         rendition.on("relocated", (loc) => {
-          update(loc);
           console.log(loc);
+          update(loc);
         });
       };
-      const onload = (e) => init(e.target.result);
+      const load = (e) => {
+        init(e.target.result);
+        openbook.style.display = "none";
+      };
+      const error = (e) => {
+        console.error(e);
+        openbook.style.display = "block";
+      };
       openbook.onchange = (e) => {
         const file = e.target.files[0];
         if (window.FileReader) {
           const reader = new FileReader();
-          reader.onload = onload;
+          reader.onload = load;
+          reader.onerror = error;
           reader.readAsArrayBuffer(file);
         }
       };
