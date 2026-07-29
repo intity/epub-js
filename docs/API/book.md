@@ -1,8 +1,8 @@
 <a name="Book"></a>
 
 # Book
-An Epub representation with methods for the loading,
-parsing and manipulation of its contents.
+<p>An Epub representation with methods for the loading,
+parsing and manipulation of its contents.</p>
 
 **Kind**: global class  
 
@@ -44,22 +44,22 @@ parsing and manipulation of its contents.
 <a name="new_Book_new"></a>
 
 ## new Book([input], [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [input] | <code>string</code> \| <code>ArrayBuffer</code> |  | Url, Path or ArrayBuffer |
+| [input] | <code>string</code> \| <code>ArrayBuffer</code> |  | <p>Url, Path or ArrayBuffer</p> |
 | [options] | <code>object</code> |  |  |
-| [options.format] | <code>string</code> | <code>&quot;&#x27;xml&#x27;&quot;</code> | epub container format |
-| [options.request] | <code>object</code> |  | object options to xhr request |
-| [options.request.method] | <code>function</code> |  | a request function to use instead of the default |
-| [options.request.withCredentials] | <code>boolean</code> | <code>false</code> | send the xhr request withCredentials |
-| [options.request.headers] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | send the xhr request headers |
-| [options.encoding] | <code>string</code> | <code>&quot;&#x27;binary&#x27;&quot;</code> | optional to pass `"binary"` or `"base64"` for archived Epubs |
-| [options.replacements] | <code>string</code> | <code>null</code> | use `"base64"` or `"blobUrl"` for replacing assets |
-| [options.canonical] | <code>function</code> |  | optional function to determine canonical urls for a path |
-| [options.store] | <code>string</code> | <code>null</code> | cache the contents in local storage, value should be the name of the reader |
+| [options.format] | <code>string</code> | <code>&quot;&#x27;xml&#x27;&quot;</code> | <p>epub container format</p> |
+| [options.request] | <code>object</code> |  | <p>object options to xhr request</p> |
+| [options.request.method] | <code>function</code> |  | <p>a request function to use instead of the default</p> |
+| [options.request.withCredentials] | <code>boolean</code> | <code>false</code> | <p>send the xhr request withCredentials</p> |
+| [options.request.headers] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | <p>send the xhr request headers</p> |
+| [options.encoding] | <code>string</code> | <code>&quot;&#x27;binary&#x27;&quot;</code> | <p>optional to pass <code>&quot;binary&quot;</code> or <code>&quot;base64&quot;</code> for archived Epubs</p> |
+| [options.replacements] | <code>string</code> | <code>null</code> | <p>use <code>&quot;base64&quot;</code> or <code>&quot;blobUrl&quot;</code> for replacing assets</p> |
+| [options.canonical] | <code>function</code> |  | <p>optional function to determine canonical urls for a path</p> |
+| [options.store] | <code>string</code> | <code>null</code> | <p>cache the contents in local storage, value should be the name of the reader</p> |
 
 **Example**  
 ```js
@@ -76,21 +76,21 @@ new Book({ replacements: "base64", store: "epub-js" })
 <a name="Book+clear"></a>
 
 ## book.clear()
-Clear parts
+<p>Clear parts</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 <a name="Book+open"></a>
 
 ## book.open(input, [openAs]) ⇒ [<code>Promise.&lt;Book&gt;</code>](#Book)
-Open a epub or url
+<p>Open a epub or url</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: [<code>Promise.&lt;Book&gt;</code>](#Book) - of when the book has been loaded  
+**Returns**: [<code>Promise.&lt;Book&gt;</code>](#Book) - <p>of when the book has been loaded</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| input | <code>string</code> \| <code>ArrayBuffer</code> | Url, Path or ArrayBuffer |
-| [openAs] | <code>string</code> | input type: `"binary"` OR `"base64"` OR `"epub"` OR `"json"` OR `"directory"` |
+| input | <code>string</code> \| <code>ArrayBuffer</code> | <p>Url, Path or ArrayBuffer</p> |
+| [openAs] | <code>string</code> | <p>input type: <code>&quot;binary&quot;</code> OR <code>&quot;base64&quot;</code> OR <code>&quot;epub&quot;</code> OR <code>&quot;json&quot;</code> OR <code>&quot;directory&quot;</code></p> |
 
 **Example**  
 ```js
@@ -115,36 +115,36 @@ book.open([arraybuffer], "binary")
 <a name="Book+load"></a>
 
 ## book.load(path, [type]) ⇒ <code>Promise.&lt;any&gt;</code>
-Load a resource from the Book
+<p>Load a resource from the Book</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - returns a promise with the requested resource  
+**Returns**: <code>Promise.&lt;any&gt;</code> - <p>returns a promise with the requested resource</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| path | <code>string</code> |  | path to the resource to load |
+| path | <code>string</code> |  | <p>path to the resource to load</p> |
 | [type] | <code>string</code> | <code>null</code> |  |
 
 <a name="Book+resolve"></a>
 
 ## book.resolve(path, [absolute]) ⇒ <code>string</code>
-Resolve a path to it's absolute position in the Book
+<p>Resolve a path to it's absolute position in the Book</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>string</code> - the resolved path string  
+**Returns**: <code>string</code> - <p>the resolved path string</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | path | <code>string</code> |  |  |
-| [absolute] | <code>boolean</code> | <code>false</code> | force resolving the full URL |
+| [absolute] | <code>boolean</code> | <code>false</code> | <p>force resolving the full URL</p> |
 
 <a name="Book+canonical"></a>
 
 ## book.canonical(path) ⇒ <code>string</code>
-Get a canonical link to a path
+<p>Get a canonical link to a path</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>string</code> - the canonical path string  
+**Returns**: <code>string</code> - <p>the canonical path string</p>  
 
 | Param | Type |
 | --- | --- |
@@ -153,8 +153,8 @@ Get a canonical link to a path
 <a name="Book+section"></a>
 
 ## book.section([target]) ⇒ <code>Section</code> \| <code>null</code>
-Gets a Section of the Book from the Spine
-Alias for `book.sections.get`
+<p>Gets a Section of the Book from the Spine
+Alias for <code>book.sections.get</code></p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 
@@ -185,19 +185,19 @@ book.section("epubcfi(/6/8!/4/2/16/1:0)")
 <a name="Book+renderTo"></a>
 
 ## book.renderTo(element, [options]) ⇒ <code>Rendition</code>
-Sugar to render a book to an element
+<p>Sugar to render a book to an element</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Element</code> \| <code>string</code> | element or string to add a rendition to |
+| element | <code>Element</code> \| <code>string</code> | <p>element or string to add a rendition to</p> |
 | [options] | <code>object</code> |  |
 
 <a name="Book+setRequestCredentials"></a>
 
 ## book.setRequestCredentials(credentials)
-Set if request should use withCredentials
+<p>Set if request should use withCredentials</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 
@@ -208,7 +208,7 @@ Set if request should use withCredentials
 <a name="Book+setRequestHeaders"></a>
 
 ## book.setRequestHeaders(headers)
-Set headers request should use
+<p>Set headers request should use</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 
@@ -219,37 +219,37 @@ Set headers request should use
 <a name="Book+coverUrl"></a>
 
 ## book.coverUrl() ⇒ <code>Promise.&lt;string&gt;</code>
-Get the cover url
+<p>Get the cover url</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>Promise.&lt;string&gt;</code> - coverUrl  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>coverUrl</p>  
 <a name="Book+getRange"></a>
 
 ## book.getRange(cfiRange) ⇒ <code>Promise.&lt;Range&gt;</code>
-Find a DOM Range for a given CFI Range
+<p>Find a DOM Range for a given CFI Range</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfiRange | <code>EpubCFI</code> | a epub cfi range |
+| cfiRange | <code>EpubCFI</code> | <p>a epub cfi range</p> |
 
 <a name="Book+key"></a>
 
 ## book.key([identifier]) ⇒ <code>string</code>
-Generates the Book Key using the identifier in the manifest or other string provided
+<p>Generates the Book Key using the identifier in the manifest or other string provided</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
-**Returns**: <code>string</code> - key  
+**Returns**: <code>string</code> - <p>key</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [identifier] | <code>string</code> | to use instead of metadata identifier |
+| [identifier] | <code>string</code> | <p>to use instead of metadata identifier</p> |
 
 <a name="Book+destroy"></a>
 
 ## book.destroy()
-Destroy the Book and all associated objects
+<p>Destroy the Book and all associated objects</p>
 
 **Kind**: instance method of [<code>Book</code>](#Book)  
 <a name="Book.request"></a>
@@ -325,14 +325,14 @@ Destroy the Book and all associated objects
 <a name="Book.opened"></a>
 
 ## Book.opened : [<code>Promise.&lt;Book&gt;</code>](#Book)
-returns after the book is loaded
+<p>returns after the book is loaded</p>
 
 **Kind**: static property of [<code>Book</code>](#Book)  
 **Read only**: true  
 <a name="Book.loaded"></a>
 
 ## Book.loaded : <code>object</code>
-Sequential loading of tasks
+<p>Sequential loading of tasks</p>
 
 **Kind**: static property of [<code>Book</code>](#Book)  
 **Read only**: true  

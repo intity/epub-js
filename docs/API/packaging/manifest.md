@@ -1,7 +1,7 @@
 <a name="Manifest"></a>
 
 # Manifest ⇐ <code>Map</code>
-Manifest class
+<p>Manifest class</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -19,24 +19,24 @@ Manifest class
 <a name="Manifest+clear"></a>
 
 ## manifest.clear()
-Clear manifest
+<p>Clear manifest</p>
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 <a name="Manifest+parse"></a>
 
 ## manifest.parse(node) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
-Parse the manifest node
+<p>Parse the manifest node</p>
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| node | <code>Node</code> | manifest |
+| node | <code>Node</code> | <p>manifest</p> |
 
 <a name="Manifest+load"></a>
 
 ## manifest.load(manifest) ⇒ [<code>Promise.&lt;Manifest&gt;</code>](#Manifest)
-Load manifest from JSON
+<p>Load manifest from JSON</p>
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 
@@ -47,7 +47,7 @@ Load manifest from JSON
 <a name="Manifest+destroy"></a>
 
 ## manifest.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Manifest</code>](#Manifest)  
 <a name="Manifest.navPath"></a>

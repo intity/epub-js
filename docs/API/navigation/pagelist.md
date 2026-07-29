@@ -1,7 +1,7 @@
 <a name="PageList"></a>
 
 # PageList ⇐ <code>Array</code>
-Page List Parser
+<p>Page List Parser</p>
 
 **Kind**: global class  
 **Extends**: <code>Array</code>  
@@ -28,12 +28,12 @@ Page List Parser
 <a name="new_PageList_new"></a>
 
 ## new PageList()
-Constructor
+<p>Constructor</p>
 
 <a name="PageList+parse"></a>
 
 ## pageList.parse(target) ⇒ [<code>Promise.&lt;PageList&gt;</code>](#PageList)
-Parse Page List
+<p>Parse Page List</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
 
@@ -44,79 +44,79 @@ Parse Page List
 <a name="PageList+pageFromCfi"></a>
 
 ## pageList.pageFromCfi(cfi) ⇒ <code>number</code>
-Get a page index from a EpubCFI
+<p>Get a page index from a EpubCFI</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - Page index  
+**Returns**: <code>number</code> - <p>Page index</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> | EpubCFI |
+| cfi | <code>string</code> | <p>EpubCFI</p> |
 
 <a name="PageList+cfiFromPage"></a>
 
 ## pageList.cfiFromPage(pg) ⇒ <code>string</code> \| <code>null</code>
-Get a EpubCFI by Page index
+<p>Get a EpubCFI by Page index</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>string</code> \| <code>null</code> - cfi  
+**Returns**: <code>string</code> \| <code>null</code> - <p>cfi</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| pg | <code>string</code> \| <code>number</code> | Page index |
+| pg | <code>string</code> \| <code>number</code> | <p>Page index</p> |
 
 <a name="PageList+pageFromPercentage"></a>
 
 ## pageList.pageFromPercentage(value) ⇒ <code>number</code>
-Get a Page index from Book percentage
+<p>Get a Page index from Book percentage</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - Page index  
+**Returns**: <code>number</code> - <p>Page index</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>number</code> | Percentage |
+| value | <code>number</code> | <p>Percentage</p> |
 
 <a name="PageList+percentageFromPage"></a>
 
 ## pageList.percentageFromPage(pg) ⇒ <code>number</code>
-Returns a value between 0 - 1 corresponding to the location of a page
+<p>Returns a value between 0 - 1 corresponding to the location of a page</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - Percentage  
+**Returns**: <code>number</code> - <p>Percentage</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| pg | <code>number</code> | the page |
+| pg | <code>number</code> | <p>the page</p> |
 
 <a name="PageList+percentageFromCfi"></a>
 
 ## pageList.percentageFromCfi(cfi) ⇒ <code>number</code>
-Returns a value between 0 - 1 corresponding to the location of a cfi
+<p>Returns a value between 0 - 1 corresponding to the location of a cfi</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
-**Returns**: <code>number</code> - Percentage  
+**Returns**: <code>number</code> - <p>Percentage</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> | EpubCFI |
+| cfi | <code>string</code> | <p>EpubCFI</p> |
 
 <a name="PageList+clear"></a>
 
 ## pageList.clear()
-Clear PageList
+<p>Clear PageList</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
 <a name="PageList+destroy"></a>
 
 ## pageList.destroy()
-Destroy
+<p>Destroy</p>
 
 **Kind**: instance method of [<code>PageList</code>](#PageList)  
 <a name="PageList.pages"></a>
 
 ## PageList.pages : <code>Array.&lt;number&gt;</code>
-Page indexes
+<p>Page indexes</p>
 
 **Kind**: static property of [<code>PageList</code>](#PageList)  
 **Read only**: true  

@@ -1,7 +1,7 @@
 <a name="Locations"></a>
 
 # Locations ⇐ <code>Map</code>
-Find Locations for a Book
+<p>Find Locations for a Book</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -31,7 +31,7 @@ Find Locations for a Book
 <a name="new_Locations_new"></a>
 
 ## new Locations([sections], [request], [pause])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default |
@@ -43,19 +43,19 @@ Constructor
 <a name="Locations+generate"></a>
 
 ## locations.generate([chars]) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
-Load all of sections in the book to generate locations
+<p>Load all of sections in the book to generate locations</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: [<code>Promise.&lt;Locations&gt;</code>](#Locations) - Locations  
+**Returns**: [<code>Promise.&lt;Locations&gt;</code>](#Locations) - <p>Locations</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [chars] | <code>number</code> | how many chars to split on (default:150) |
+| [chars] | <code>number</code> | <p>how many chars to split on (default:150)</p> |
 
 <a name="Locations+process"></a>
 
 ## locations.process(section) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
-process
+<p>process</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 
@@ -66,7 +66,7 @@ process
 <a name="Locations+parse"></a>
 
 ## locations.parse(contents, cfiBase, [chars]) ⇒ [<code>Promise.&lt;Locations&gt;</code>](#Locations)
-parse
+<p>parse</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 
@@ -79,83 +79,83 @@ parse
 <a name="Locations+locationOf"></a>
 
 ## locations.locationOf(item, array, [compareFunc], [start], [end]) ⇒ <code>number</code>
-Finds where something would fit into a sorted array
+<p>Finds where something would fit into a sorted array</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>number</code> - location (index in array)  
+**Returns**: <code>number</code> - <p>location (index in array)</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | item | <code>Location</code> |  |
 | array | <code>Array.&lt;Location&gt;</code> |  |
-| [compareFunc] | <code>function</code> | colback func |
+| [compareFunc] | <code>function</code> | <p>colback func</p> |
 | [start] | <code>function</code> |  |
 | [end] | <code>function</code> |  |
 
 <a name="Locations+locationFromCfi"></a>
 
 ## locations.locationFromCfi(value) ⇒ <code>number</code>
-Get a location from an EpubCFI
+<p>Get a location from an EpubCFI</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>number</code> - Location index or -1 otherwise  
+**Returns**: <code>number</code> - <p>Location index or -1 otherwise</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>string</code> \| <code>EpubCFI</code> | EpubCFI |
+| value | <code>string</code> \| <code>EpubCFI</code> | <p>EpubCFI</p> |
 
 <a name="Locations+percentageFromCfi"></a>
 
 ## locations.percentageFromCfi(cfi) ⇒ <code>number</code>
-Get a percentage position in locations from an EpubCFI
+<p>Get a percentage position in locations from an EpubCFI</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>number</code> - Percentage  
+**Returns**: <code>number</code> - <p>Percentage</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cfi | <code>string</code> \| <code>EpubCFI</code> | EpubCFI |
+| cfi | <code>string</code> \| <code>EpubCFI</code> | <p>EpubCFI</p> |
 
 <a name="Locations+percentageFromLocation"></a>
 
 ## locations.percentageFromLocation(index) ⇒ <code>number</code>
-Get a percentage position from a location index
+<p>Get a percentage position from a location index</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>number</code> - Percentage  
+**Returns**: <code>number</code> - <p>Percentage</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| index | <code>number</code> | Location index |
+| index | <code>number</code> | <p>Location index</p> |
 
 <a name="Locations+cfiFromLocation"></a>
 
 ## locations.cfiFromLocation(index) ⇒ <code>string</code> \| <code>null</code>
-Get an EpubCFI from location index
+<p>Get an EpubCFI from location index</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>string</code> \| <code>null</code> - EpubCFI string format  
+**Returns**: <code>string</code> \| <code>null</code> - <p>EpubCFI string format</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| index | <code>number</code> | Location index |
+| index | <code>number</code> | <p>Location index</p> |
 
 <a name="Locations+cfiFromPercentage"></a>
 
 ## locations.cfiFromPercentage(value) ⇒ <code>string</code> \| <code>null</code>
-Get an EpubCFI from location percentage
+<p>Get an EpubCFI from location percentage</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>string</code> \| <code>null</code> - EpubCFI string format  
+**Returns**: <code>string</code> \| <code>null</code> - <p>EpubCFI string format</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| value | <code>number</code> | Percentage in ranging from 0 to 1 |
+| value | <code>number</code> | <p>Percentage in ranging from 0 to 1</p> |
 
 <a name="Locations+load"></a>
 
 ## locations.load(locations) ⇒ [<code>Locations</code>](#Locations)
-Load locations from JSON
+<p>Load locations from JSON</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 
@@ -166,27 +166,27 @@ Load locations from JSON
 <a name="Locations+save"></a>
 
 ## locations.save([type]) ⇒ <code>string</code>
-Save locations to JSON
+<p>Save locations to JSON</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>string</code> - A JSON string  
+**Returns**: <code>string</code> - <p>A JSON string</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [type] | <code>number</code> | default 0, compact array 1 |
+| [type] | <code>number</code> | <p>default 0, compact array 1</p> |
 
 <a name="Locations+set"></a>
 
 ## locations.set(key, val) ⇒ <code>any</code>
-Set current location
+<p>Set current location</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
-**Returns**: <code>any</code> - Locations  
+**Returns**: <code>any</code> - <p>Locations</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>any</code> | EpubCFI to string |
-| val | <code>any</code> | Location |
+| key | <code>any</code> | <p>EpubCFI to string</p> |
+| val | <code>any</code> | <p>Location</p> |
 
 **Example**  
 ```js
@@ -211,19 +211,19 @@ locations.set({ start, end })
 <a name="Locations+clear"></a>
 
 ## locations.clear()
-Clear locations
+<p>Clear locations</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations+destroy"></a>
 
 ## locations.destroy()
-Destroy the Locations object
+<p>Destroy the Locations object</p>
 
 **Kind**: instance method of [<code>Locations</code>](#Locations)  
 <a name="Locations.current"></a>
 
 ## Locations.current : <code>Location</code>
-Current Location
+<p>Current Location</p>
 
 **Kind**: static property of [<code>Locations</code>](#Locations)  
 **Read only**: true  
@@ -242,12 +242,12 @@ Current Location
 <a name="Locations.event_changed"></a>
 
 ## "changed" (current, changed)
-Current location changed
+<p>Current location changed</p>
 
 **Kind**: event emitted by [<code>Locations</code>](#Locations)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| current | <code>object</code> | Current location |
-| changed | <code>object</code> | Changed properties |
+| current | <code>object</code> | <p>Current location</p> |
+| changed | <code>object</code> | <p>Changed properties</p> |
 

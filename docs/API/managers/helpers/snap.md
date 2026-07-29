@@ -1,7 +1,7 @@
 <a name="Snap"></a>
 
 # Snap
-Snap
+<p>Snap</p>
 
 **Kind**: global class  
 
@@ -19,7 +19,7 @@ Snap
 <a name="new_Snap_new"></a>
 
 ## new Snap(manager, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default |
@@ -33,7 +33,7 @@ Constructor
 <a name="Snap+setup"></a>
 
 ## snap.setup(manager)
-setup
+<p>setup</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 
@@ -44,25 +44,25 @@ setup
 <a name="Snap+supportsTouch"></a>
 
 ## snap.supportsTouch() ⇒ <code>boolean</code>
-supportsTouch
+<p>supportsTouch</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 <a name="Snap+wasSwiped"></a>
 
 ## snap.wasSwiped() ⇒ <code>number</code>
-wasSwiped
+<p>wasSwiped</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 <a name="Snap+needsSnap"></a>
 
 ## snap.needsSnap() ⇒ <code>boolean</code>
-needsSnap
+<p>needsSnap</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 <a name="Snap+snap"></a>
 
 ## snap.snap([howMany]) ⇒ <code>Promise</code>
-snap
+<p>snap</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 
@@ -73,7 +73,7 @@ snap
 <a name="Snap+smoothScrollTo"></a>
 
 ## snap.smoothScrollTo(destination) ⇒ <code>Promise</code>
-smoothScrollTo
+<p>smoothScrollTo</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 
@@ -84,7 +84,7 @@ smoothScrollTo
 <a name="Snap+scrollTo"></a>
 
 ## snap.scrollTo([left], [top])
-scrollTo
+<p>scrollTo</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  
 
@@ -96,6 +96,6 @@ scrollTo
 <a name="Snap+destroy"></a>
 
 ## snap.destroy() ⇒ <code>void</code>
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Snap</code>](#Snap)  

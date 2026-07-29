@@ -1,7 +1,7 @@
 <a name="Rendition"></a>
 
 # Rendition
-Rendition class
+<p>Rendition class</p>
 
 **Kind**: global class  
 
@@ -47,56 +47,57 @@ Rendition class
 <a name="new_Rendition_new"></a>
 
 ## new Rendition(book, [options])
-Displays an Epub as a series of Views for each Section.
+<p>Displays an Epub as a series of Views for each Section.
 Requires Manager and View class to handle specifics of rendering
-the section content.
+the section content.</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | book | <code>Book</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.width] | <code>string</code> \| <code>number</code> |  | viewport width |
-| [options.height] | <code>string</code> \| <code>number</code> |  | viewport height |
-| [options.ignoreClass] | <code>string</code> |  | class for the cfi parser to ignore |
-| [options.manager] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | string values: default / continuous |
+| [options.width] | <code>string</code> \| <code>number</code> |  | <p>viewport width</p> |
+| [options.height] | <code>string</code> \| <code>number</code> |  | <p>viewport height</p> |
+| [options.ignoreClass] | <code>string</code> |  | <p>class for the cfi parser to ignore</p> |
+| [options.manager] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | <p>string values: default / continuous</p> |
 | [options.view] | <code>string</code> \| <code>function</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
-| [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | values: `"write"` OR `"srcdoc"` |
-| [options.layout] | <code>string</code> |  | layout to force |
-| [options.spread] | <code>string</code> |  | force spread value |
-| [options.direction] | <code>string</code> |  | direction `"ltr"` OR `"rtl"` |
-| [options.pageWidth] | <code>number</code> |  | page width |
-| [options.pageHeight] | <code>number</code> |  | page height |
-| [options.minSpreadWidth] | <code>number</code> |  | overridden by spread: none (never) / both (always) |
-| [options.stylesheet] | <code>string</code> |  | url of stylesheet to be injected |
-| [options.script] | <code>string</code> |  | url of script to be injected |
-| [options.snap] | <code>object</code> |  | use snap scrolling |
-| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
+| [options.method] | <code>string</code> | <code>&quot;&#x27;write&#x27;&quot;</code> | <p>values: <code>&quot;write&quot;</code> OR <code>&quot;srcdoc&quot;</code></p> |
+| [options.layout] | <code>string</code> |  | <p>layout to force</p> |
+| [options.spread] | <code>string</code> |  | <p>force spread value</p> |
+| [options.direction] | <code>string</code> |  | <p>direction <code>&quot;ltr&quot;</code> OR <code>&quot;rtl&quot;</code></p> |
+| [options.pageWidth] | <code>number</code> |  | <p>page width</p> |
+| [options.pageHeight] | <code>number</code> |  | <p>page height</p> |
+| [options.minSpreadWidth] | <code>number</code> |  | <p>overridden by spread: none (never) / both (always)</p> |
+| [options.stylesheet] | <code>string</code> |  | <p>url of stylesheet to be injected</p> |
+| [options.script] | <code>string</code> |  | <p>url of script to be injected</p> |
+| [options.snap] | <code>object</code> |  | <p>use snap scrolling</p> |
+| [options.writingMode] | <code>string</code> | <code>&quot;&#x27;horizontal-tb&#x27;&quot;</code> |  |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | <p>iframe sandbox policy list</p> |
 
 <a name="Rendition+attachTo"></a>
 
 ## rendition.attachTo(element) ⇒ <code>Promise.&lt;any&gt;</code>
-Call to attach the container to an element in the dom.
-Container must be attached before rendering can begin.
+<p>Call to attach the container to an element in the dom.
+Container must be attached before rendering can begin.</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Element</code> \| <code>string</code> | viewport element |
+| element | <code>Element</code> \| <code>string</code> | <p>viewport element</p> |
 
 <a name="Rendition+display"></a>
 
 ## rendition.display([target]) ⇒ <code>Promise.&lt;Section&gt;</code>
-The request will be added to the rendering Queue, so it will wait until
+<p>The request will be added to the rendering Queue, so it will wait until
 book is opened, rendering started and all other rendering tasks have
-finished to be called.
+finished to be called.</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [target] | <code>string</code> \| <code>number</code> | `Section.index` OR `Section.idref` OR `Section.href` OR EpubCFI |
+| [target] | <code>string</code> \| <code>number</code> | <p><code>Section.index</code> OR <code>Section.idref</code> OR <code>Section.href</code> OR EpubCFI</p> |
 
 **Example**  
 ```js
@@ -121,8 +122,8 @@ rendition.display("epubcfi(/6/8!/4/2/16/1:0)")
 <a name="Rendition+moveTo"></a>
 
 ## rendition.moveTo(offset)
-Move the Rendition to a specific offset
-Usually you would be better off calling display()
+<p>Move the Rendition to a specific offset
+Usually you would be better off calling display()</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
@@ -133,7 +134,7 @@ Usually you would be better off calling display()
 <a name="Rendition+resize"></a>
 
 ## rendition.resize([width], [height]) ⇒ <code>Object</code>
-Resize viewport container
+<p>Resize viewport container</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
@@ -153,25 +154,25 @@ rendition.resize("90%", 600)
 <a name="Rendition+clear"></a>
 
 ## rendition.clear()
-Clear all rendered views
+<p>Clear all rendered views</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+next"></a>
 
 ## rendition.next() ⇒ <code>Promise.&lt;any&gt;</code>
-Go to the next "page" in the rendition
+<p>Go to the next &quot;page&quot; in the rendition</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+prev"></a>
 
 ## rendition.prev() ⇒ <code>Promise.&lt;any&gt;</code>
-Go to the previous "page" in the rendition
+<p>Go to the previous &quot;page&quot; in the rendition</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+updateLayout"></a>
 
 ## rendition.updateLayout(options)
-Layout configuration
+<p>Layout configuration</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
@@ -182,38 +183,38 @@ Layout configuration
 <a name="Rendition+currentLocation"></a>
 
 ## rendition.currentLocation() ⇒ <code>object</code> \| <code>Promise.&lt;object&gt;</code>
-Get the Current Location object
+<p>Get the Current Location object</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
-**Returns**: <code>object</code> \| <code>Promise.&lt;object&gt;</code> - location (may be a promise)  
+**Returns**: <code>object</code> \| <code>Promise.&lt;object&gt;</code> - <p>location (may be a promise)</p>  
 <a name="Rendition+getRange"></a>
 
 ## rendition.getRange(epubcfi, ignoreClass) ⇒ <code>Range</code>
-Get a Range from a Visible CFI
+<p>Get a Range from a Visible CFI</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| epubcfi | <code>string</code> | EpubCfi string |
+| epubcfi | <code>string</code> | <p>EpubCfi string</p> |
 | ignoreClass | <code>string</code> |  |
 
 <a name="Rendition+getContents"></a>
 
 ## rendition.getContents() ⇒ <code>Array.&lt;Contents&gt;</code>
-Get the Contents object of each rendered view
+<p>Get the Contents object of each rendered view</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+views"></a>
 
 ## rendition.views() ⇒ <code>Views</code>
-Get the views member from the manager
+<p>Get the views member from the manager</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition+destroy"></a>
 
 ## rendition.destroy()
-Remove and Clean Up the Rendition
+<p>Remove and Clean Up the Rendition</p>
 
 **Kind**: instance method of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition.settings"></a>
@@ -224,7 +225,7 @@ Remove and Clean Up the Rendition
 <a name="Rendition.hooks"></a>
 
 ## Rendition.hooks : <code>object</code>
-Adds Hook methods to the Rendition prototype
+<p>Adds Hook methods to the Rendition prototype</p>
 
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
 **Properties**
@@ -256,7 +257,7 @@ Adds Hook methods to the Rendition prototype
 <a name="Rendition.this.location"></a>
 
 ## Rendition.this.location : <code>object</code>
-A Rendered Location Range
+<p>A Rendered Location Range</p>
 
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
 **Properties**
@@ -265,7 +266,7 @@ A Rendered Location Range
 | --- | --- | --- |
 | start | <code>object</code> |  |
 | start.bin | <code>number</code> |  |
-| start.cfi | <code>string</code> | EpubCFI string format |
+| start.cfi | <code>string</code> | <p>EpubCFI string format</p> |
 | start.index | <code>string</code> |  |
 | start.href | <code>string</code> |  |
 | start.displayed | <code>object</code> |  |
@@ -274,7 +275,7 @@ A Rendered Location Range
 | start.percentage | <code>number</code> |  |
 | end | <code>object</code> |  |
 | end.bin | <code>number</code> |  |
-| end.cfi | <code>string</code> | EpubCFI string format |
+| end.cfi | <code>string</code> | <p>EpubCFI string format</p> |
 | end.index | <code>string</code> |  |
 | end.href | <code>string</code> |  |
 | end.displayed | <code>object</code> |  |
@@ -285,7 +286,7 @@ A Rendered Location Range
 <a name="Rendition.started"></a>
 
 ## Rendition.started : <code>Promise.&lt;any&gt;</code>
-returns after the rendition has started
+<p>returns after the rendition has started</p>
 
 **Kind**: static property of [<code>Rendition</code>](#Rendition)  
 <a name="Rendition.layout"></a>
@@ -301,7 +302,7 @@ returns after the rendition has started
 <a name="Rendition.event_layout"></a>
 
 ## "layout" (props, changed)
-Emit of updated the Layout state
+<p>Emit of updated the Layout state</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -313,7 +314,7 @@ Emit of updated the Layout state
 <a name="Rendition.event_resized"></a>
 
 ## "resized" (rect)
-Emit that the rendition has been resized
+<p>Emit that the rendition has been resized</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -333,19 +334,19 @@ Emit that the rendition has been resized
 <a name="Rendition.event_started"></a>
 
 ## "started"
-Emit that rendering has started
+<p>Emit that rendering has started</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 <a name="Rendition.event_attached"></a>
 
 ## "attached"
-Emit that rendering has attached to an element
+<p>Emit that rendering has attached to an element</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 <a name="Rendition.event_displayed"></a>
 
 ## "displayed" (section)
-Emit that a section has been displayed
+<p>Emit that a section has been displayed</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -356,7 +357,7 @@ Emit that a section has been displayed
 <a name="Rendition.event_displayError"></a>
 
 ## "displayError" (err)
-Emit that has been an error displaying
+<p>Emit that has been an error displaying</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -367,7 +368,7 @@ Emit that has been an error displaying
 <a name="Rendition.event_rendered"></a>
 
 ## "rendered" (view)
-Emit that a section has been rendered
+<p>Emit that a section has been rendered</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -378,7 +379,7 @@ Emit that a section has been rendered
 <a name="Rendition.event_removed"></a>
 
 ## "removed" (view)
-Emit that a section has been removed
+<p>Emit that a section has been removed</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -398,7 +399,7 @@ Emit that a section has been removed
 <a name="Rendition.event_selected"></a>
 
 ## "selected" (cfirange, contents)
-Emit that a text selection has occurred
+<p>Emit that a text selection has occurred</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 
@@ -410,7 +411,7 @@ Emit that a text selection has occurred
 <a name="Rendition.event_markClicked"></a>
 
 ## "markClicked" (cfiRange, data, contents)
-Emit that a mark was clicked
+<p>Emit that a mark was clicked</p>
 
 **Kind**: event emitted by [<code>Rendition</code>](#Rendition)  
 

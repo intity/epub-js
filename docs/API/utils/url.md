@@ -1,7 +1,7 @@
 <a name="Url"></a>
 
 # Url
-Creates a Url object for parsing and manipulation of a url string
+<p>Creates a Url object for parsing and manipulation of a url string</p>
 
 **Kind**: global class  
 
@@ -17,21 +17,21 @@ Creates a Url object for parsing and manipulation of a url string
 <a name="new_Url_new"></a>
 
 ## new Url(url, [base])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>string</code> | a url string (relative or absolute) |
-| [base] | <code>string</code> | optional base for the url, default to window.location.href |
+| url | <code>string</code> | <p>a url string (relative or absolute)</p> |
+| [base] | <code>string</code> | <p>optional base for the url, default to window.location.href</p> |
 
 <a name="Url+resolve"></a>
 
 ## url.resolve(path) ⇒ <code>string</code>
-Resolves a relative path to a absolute url
+<p>Resolves a relative path to a absolute url</p>
 
 **Kind**: instance method of [<code>Url</code>](#Url)  
-**Returns**: <code>string</code> - url  
+**Returns**: <code>string</code> - <p>url</p>  
 
 | Param | Type |
 | --- | --- |
@@ -40,10 +40,10 @@ Resolves a relative path to a absolute url
 <a name="Url+relative"></a>
 
 ## url.relative(path) ⇒ <code>string</code>
-Resolve a path relative to the url
+<p>Resolve a path relative to the url</p>
 
 **Kind**: instance method of [<code>Url</code>](#Url)  
-**Returns**: <code>string</code> - path  
+**Returns**: <code>string</code> - <p>path</p>  
 
 | Param | Type |
 | --- | --- |
@@ -52,7 +52,7 @@ Resolve a path relative to the url
 <a name="Url+toString"></a>
 
 ## url.toString() ⇒ <code>string</code>
-toString
+<p>toString</p>
 
 **Kind**: instance method of [<code>Url</code>](#Url)  
 <a name="Url.path"></a>

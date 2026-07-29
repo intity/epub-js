@@ -1,7 +1,7 @@
 <a name="Themes"></a>
 
 # Themes
-Themes to apply to displayed content
+<p>Themes to apply to displayed content</p>
 
 **Kind**: global class  
 
@@ -30,7 +30,7 @@ Themes to apply to displayed content
 <a name="new_Themes_new"></a>
 
 ## new Themes(rendition)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type |
@@ -40,7 +40,7 @@ Constructor
 <a name="Themes+register"></a>
 
 ## themes.register(args)
-Add themes to be used by a rendition
+<p>Add themes to be used by a rendition</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -67,7 +67,7 @@ register({ light: {...}, dark: {...}})
 <a name="Themes+registerThemes"></a>
 
 ## themes.registerThemes(themes)
-Register themes object
+<p>Register themes object</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -78,14 +78,14 @@ Register themes object
 <a name="Themes+registerUrl"></a>
 
 ## themes.registerUrl(name, input)
-Register a url
+<p>Register a url</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>string</code> | Theme name |
-| input | <code>string</code> | URL string |
+| name | <code>string</code> | <p>Theme name</p> |
+| input | <code>string</code> | <p>URL string</p> |
 
 **Example**  
 ```js
@@ -98,7 +98,7 @@ registerUrl("light", "http://example.com/light.css")
 <a name="Themes+registerRules"></a>
 
 ## themes.registerRules(name, rules)
-Register rule
+<p>Register rule</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -114,24 +114,24 @@ registerRules("light", { body: { color: "purple"}})
 <a name="Themes+select"></a>
 
 ## themes.select([name])
-Use null to reject the current selected theme
+<p>Use null to reject the current selected theme</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [name] | <code>string</code> | Theme name |
+| [name] | <code>string</code> | <p>Theme name</p> |
 
 <a name="Themes+clear"></a>
 
 ## themes.clear()
-Clear all themes
+<p>Clear all themes</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 <a name="Themes+appendRule"></a>
 
 ## themes.appendRule(name, value, [priority])
-Append rule
+<p>Append rule</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -144,7 +144,7 @@ Append rule
 <a name="Themes+removeRule"></a>
 
 ## themes.removeRule(name)
-Remove rule
+<p>Remove rule</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -155,13 +155,13 @@ Remove rule
 <a name="Themes+removeRules"></a>
 
 ## themes.removeRules()
-Remove all rules
+<p>Remove all rules</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 <a name="Themes+fontSize"></a>
 
 ## themes.fontSize(size)
-Adjust the font size of a rendition
+<p>Adjust the font size of a rendition</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -172,7 +172,7 @@ Adjust the font size of a rendition
 <a name="Themes+font"></a>
 
 ## themes.font(f)
-Adjust the font-family of a rendition
+<p>Adjust the font-family of a rendition</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 
@@ -183,7 +183,7 @@ Adjust the font-family of a rendition
 <a name="Themes+destroy"></a>
 
 ## themes.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Themes</code>](#Themes)  
 <a name="Themes.current"></a>
@@ -194,45 +194,45 @@ destroy
 <a name="Themes.rules"></a>
 
 ## Themes.rules : <code>object</code>
-Injected css rules
+<p>Injected css rules</p>
 
 **Kind**: static property of [<code>Themes</code>](#Themes)  
 **Read only**: true  
 <a name="Themes.event_selected"></a>
 
 ## "selected" (name, theme)
-Emit which occurs when theme is selected
+<p>Emit which occurs when theme is selected</p>
 
 **Kind**: event emitted by [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>string</code> | Theme key |
-| theme | <code>object</code> | Theme value |
+| name | <code>string</code> | <p>Theme key</p> |
+| theme | <code>object</code> | <p>Theme value</p> |
 
 <a name="Themes.event_injected"></a>
 
 ## "injected" (key, theme, contents)
-Emit of injected a stylesheet into contents
+<p>Emit of injected a stylesheet into contents</p>
 
 **Kind**: event emitted by [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>string</code> | Theme key |
-| theme | <code>object</code> | Theme value |
+| key | <code>string</code> | <p>Theme key</p> |
+| theme | <code>object</code> | <p>Theme value</p> |
 | contents | <code>Contents</code> |  |
 
 <a name="Themes.event_rejected"></a>
 
 ## "rejected" (key, theme, contents)
-Emit of rejected a stylesheet into contents
+<p>Emit of rejected a stylesheet into contents</p>
 
 **Kind**: event emitted by [<code>Themes</code>](#Themes)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| key | <code>string</code> | Theme key |
-| theme | <code>object</code> | Theme value |
+| key | <code>string</code> | <p>Theme key</p> |
+| theme | <code>object</code> | <p>Theme value</p> |
 | contents | <code>Contents</code> |  |
 

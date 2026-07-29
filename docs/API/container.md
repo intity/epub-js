@@ -1,7 +1,7 @@
 <a name="Container"></a>
 
 # Container
-Parsing the Epub Container
+<p>Parsing the Epub Container</p>
 
 **Kind**: global class  
 **Link**: https://www.w3.org/TR/epub/#sec-container-metainf  
@@ -23,18 +23,18 @@ Parsing the Epub Container
 <a name="new_Container_new"></a>
 
 ## new Container()
-Constructor
+<p>Constructor</p>
 
 <a name="Container+clear"></a>
 
 ## container.clear()
-Clear parts
+<p>Clear parts</p>
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
 <a name="Container+parse"></a>
 
 ## container.parse(doc) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
-Parse the Container XML
+<p>Parse the Container XML</p>
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
 
@@ -45,7 +45,7 @@ Parse the Container XML
 <a name="Container+load"></a>
 
 ## container.load(container) ⇒ [<code>Promise.&lt;Container&gt;</code>](#Container)
-Load a container from JSON
+<p>Load a container from JSON</p>
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
 
@@ -56,34 +56,34 @@ Load a container from JSON
 <a name="Container+destroy"></a>
 
 ## container.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Container</code>](#Container)  
 <a name="Container.directory"></a>
 
 ## Container.directory : <code>string</code>
-Package directory
+<p>Package directory</p>
 
 **Kind**: static property of [<code>Container</code>](#Container)  
 **Read only**: true  
 <a name="Container.fullPath"></a>
 
 ## Container.fullPath : <code>string</code>
-Path to package file
+<p>Path to package file</p>
 
 **Kind**: static property of [<code>Container</code>](#Container)  
 **Read only**: true  
 <a name="Container.encoding"></a>
 
 ## Container.encoding : <code>string</code>
-Encoding
+<p>Encoding</p>
 
 **Kind**: static property of [<code>Container</code>](#Container)  
 **Read only**: true  
 <a name="Container.mediaType"></a>
 
 ## Container.mediaType : <code>string</code>
-Media type
+<p>Media type</p>
 
 **Kind**: static property of [<code>Container</code>](#Container)  
 **Read only**: true  

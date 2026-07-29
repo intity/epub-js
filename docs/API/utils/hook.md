@@ -1,9 +1,9 @@
 <a name="Hook"></a>
 
 # Hook
-Hooks allow for injecting functions that must all complete in order before finishing
+<p>Hooks allow for injecting functions that must all complete in order before finishing
 They will execute in parallel but all must finish before continuing
-Functions may return a promise if they are async.
+Functions may return a promise if they are async.</p>
 
 **Kind**: global class  
 
@@ -21,12 +21,12 @@ Functions may return a promise if they are async.
 <a name="new_Hook_new"></a>
 
 ## new Hook(context)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| context | <code>any</code> | scope of this |
+| context | <code>any</code> | <p>scope of this</p> |
 
 **Example**  
 ```js
@@ -35,7 +35,7 @@ this.content = new Hook(this);
 <a name="Hook+register"></a>
 
 ## hook.register()
-Adds a function to be run before a hook completes
+<p>Adds a function to be run before a hook completes</p>
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
 **Example**  
@@ -45,7 +45,7 @@ this.content.register(() => {...});
 <a name="Hook+deregister"></a>
 
 ## hook.deregister()
-Removes a function
+<p>Removes a function</p>
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
 **Example**  
@@ -55,7 +55,7 @@ this.content.deregister(() => {...});
 <a name="Hook+trigger"></a>
 
 ## hook.trigger() ⇒ <code>Array.&lt;Promise&gt;</code>
-Triggers a hook to run all functions
+<p>Triggers a hook to run all functions</p>
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
 **Example**  
@@ -65,13 +65,13 @@ this.content.trigger(args).then(() => {...});
 <a name="Hook+list"></a>
 
 ## hook.list() ⇒ <code>Array</code>
-list
+<p>list</p>
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
 <a name="Hook+clear"></a>
 
 ## hook.clear()
-clear
+<p>clear</p>
 
 **Kind**: instance method of [<code>Hook</code>](#Hook)  
 <a name="Hook.tasks"></a>

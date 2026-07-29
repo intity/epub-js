@@ -1,7 +1,7 @@
 <a name="Toc"></a>
 
 # Toc ⇐ <code>Array</code>
-Table Of Contents Parser
+<p>Table Of Contents Parser</p>
 
 **Kind**: global class  
 **Extends**: <code>Array</code>  
@@ -20,15 +20,15 @@ Table Of Contents Parser
 <a name="new_Toc_new"></a>
 
 ## new Toc()
-Constructor
+<p>Constructor</p>
 
 <a name="Toc+get"></a>
 
 ## toc.get(target) ⇒ <code>object</code>
-Get navigation item by href
+<p>Get navigation item by href</p>
 
 **Kind**: instance method of [<code>Toc</code>](#Toc)  
-**Returns**: <code>object</code> - navItem  
+**Returns**: <code>object</code> - <p>navItem</p>  
 
 | Param | Type |
 | --- | --- |
@@ -41,7 +41,7 @@ toc.get("chapter_001.xhtml")
 <a name="Toc+parse"></a>
 
 ## toc.parse(target) ⇒ [<code>Promise.&lt;Toc&gt;</code>](#Toc)
-Parse out the toc items
+<p>Parse out the toc items</p>
 
 **Kind**: instance method of [<code>Toc</code>](#Toc)  
 
@@ -52,13 +52,13 @@ Parse out the toc items
 <a name="Toc+clear"></a>
 
 ## toc.clear()
-Clear navigation items
+<p>Clear navigation items</p>
 
 **Kind**: instance method of [<code>Toc</code>](#Toc)  
 <a name="Toc+destroy"></a>
 
 ## toc.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Toc</code>](#Toc)  
 <a name="Toc.links"></a>

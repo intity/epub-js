@@ -1,7 +1,7 @@
 <a name="Mark"></a>
 
 # Mark
-Mark class
+<p>Mark class</p>
 
 **Kind**: global class  
 
@@ -20,37 +20,37 @@ Mark class
 <a name="Mark+bind"></a>
 
 ## mark.bind(element, container)
-bind
+<p>bind</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Node</code> | the mark container to rects |
-| container | <code>Node</code> | the epub-view container |
+| element | <code>Node</code> | <p>the mark container to rects</p> |
+| container | <code>Node</code> | <p>the epub-view container</p> |
 
 <a name="Mark+unbind"></a>
 
 ## mark.unbind() ⇒ <code>Node</code>
-unbind
+<p>unbind</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 <a name="Mark+clear"></a>
 
 ## mark.clear()
-Clear the mark container
+<p>Clear the mark container</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 <a name="Mark+render"></a>
 
 ## *mark.render()*
-render
+<p>render</p>
 
 **Kind**: instance abstract method of [<code>Mark</code>](#Mark)  
 <a name="Mark+dispatchEvent"></a>
 
 ## mark.dispatchEvent(e)
-Dispatch event
+<p>Dispatch event</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 
@@ -61,19 +61,19 @@ Dispatch event
 <a name="Mark+getBoundingClientRect"></a>
 
 ## mark.getBoundingClientRect() ⇒ <code>DOMRect</code>
-Get bounding client rect
+<p>Get bounding client rect</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 <a name="Mark+getClientRects"></a>
 
 ## mark.getClientRects() ⇒ <code>Array.&lt;object&gt;</code>
-Get client rects
+<p>Get client rects</p>
 
 **Kind**: instance method of [<code>Mark</code>](#Mark)  
 <a name="Mark.element"></a>
 
 ## Mark.element : <code>Node</code>
-the mark container to rects
+<p>the mark container to rects</p>
 
 **Kind**: static property of [<code>Mark</code>](#Mark)  
 **Read only**: true  

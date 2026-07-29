@@ -1,7 +1,7 @@
 <a name="Annotation"></a>
 
 # Annotation
-Annotation class
+<p>Annotation class</p>
 
 **Kind**: global class  
 
@@ -22,23 +22,23 @@ Annotation class
 <a name="new_Annotation_new"></a>
 
 ## new Annotation(type, cfiRange, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>string</code> | Type of annotation to add: `"highlight"` OR `"underline"` |
-| cfiRange | <code>string</code> | EpubCFI range to attach annotation to |
+| type | <code>string</code> | <p>Type of annotation to add: <code>&quot;highlight&quot;</code> OR <code>&quot;underline&quot;</code></p> |
+| cfiRange | <code>string</code> | <p>EpubCFI range to attach annotation to</p> |
 | [options] | <code>object</code> |  |
-| [options.data] | <code>object</code> | Data to assign to annotation |
-| [options.cb] | <code>function</code> | Callback after annotation is clicked |
-| [options.className] | <code>string</code> | CSS class to assign to annotation |
-| [options.styles] | <code>object</code> | CSS styles to assign to annotation |
+| [options.data] | <code>object</code> | <p>Data to assign to annotation</p> |
+| [options.cb] | <code>function</code> | <p>Callback after annotation is clicked</p> |
+| [options.className] | <code>string</code> | <p>CSS class to assign to annotation</p> |
+| [options.styles] | <code>object</code> | <p>CSS styles to assign to annotation</p> |
 
 <a name="Annotation+update"></a>
 
 ## annotation.update(data)
-Update stored data
+<p>Update stored data</p>
 
 **Kind**: instance method of [<code>Annotation</code>](#Annotation)  
 
@@ -49,7 +49,7 @@ Update stored data
 <a name="Annotation+attach"></a>
 
 ## annotation.attach(view) ⇒ <code>object</code> \| <code>null</code>
-Add to a view
+<p>Add to a view</p>
 
 **Kind**: instance method of [<code>Annotation</code>](#Annotation)  
 
@@ -60,7 +60,7 @@ Add to a view
 <a name="Annotation+detach"></a>
 
 ## annotation.detach(view) ⇒ <code>boolean</code>
-Remove from a view
+<p>Remove from a view</p>
 
 **Kind**: instance method of [<code>Annotation</code>](#Annotation)  
 
@@ -71,7 +71,7 @@ Remove from a view
 <a name="Annotation+text"></a>
 
 ## annotation.text()
-[Not Implemented] Get text of an annotation
+<p>[Not Implemented] Get text of an annotation</p>
 
 **Kind**: instance method of [<code>Annotation</code>](#Annotation)  
 **Todo:**: needs implementation in contents  

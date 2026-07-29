@@ -1,7 +1,7 @@
 <a name="Contents"></a>
 
 # Contents
-Handles DOM manipulation, queries and events for View contents
+<p>Handles DOM manipulation, queries and events for View contents</p>
 
 **Kind**: global class  
 
@@ -47,22 +47,22 @@ Handles DOM manipulation, queries and events for View contents
 <a name="new_Contents_new"></a>
 
 ## new Contents(doc, content, section)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| doc | <code>Document</code> | Document |
-| content | <code>Element</code> | Parent Element (typically Body) |
-| section | <code>Section</code> | Section object reference |
+| doc | <code>Document</code> | <p>Document</p> |
+| content | <code>Element</code> | <p>Parent Element (typically Body)</p> |
+| section | <code>Section</code> | <p>Section object reference</p> |
 
 <a name="Contents+width"></a>
 
 ## contents.width([w]) ⇒ <code>number</code>
-Get or Set width
+<p>Get or Set width</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - width  
+**Returns**: <code>number</code> - <p>width</p>  
 
 | Param | Type |
 | --- | --- |
@@ -71,10 +71,10 @@ Get or Set width
 <a name="Contents+height"></a>
 
 ## contents.height([h]) ⇒ <code>number</code>
-Get or Set height
+<p>Get or Set height</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - height  
+**Returns**: <code>number</code> - <p>height</p>  
 
 | Param | Type |
 | --- | --- |
@@ -83,27 +83,27 @@ Get or Set height
 <a name="Contents+textSize"></a>
 
 ## contents.textSize() ⇒ <code>Object</code>
-Get size of the text using Range
+<p>Get size of the text using Range</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 <a name="Contents+scrollWidth"></a>
 
 ## contents.scrollWidth() ⇒ <code>number</code>
-Get documentElement scrollWidth
+<p>Get documentElement scrollWidth</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - width  
+**Returns**: <code>number</code> - <p>width</p>  
 <a name="Contents+scrollHeight"></a>
 
 ## contents.scrollHeight() ⇒ <code>number</code>
-Get documentElement scrollHeight
+<p>Get documentElement scrollHeight</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>number</code> - height  
+**Returns**: <code>number</code> - <p>height</p>  
 <a name="Contents+overflow"></a>
 
 ## contents.overflow([overflow]) ⇒ <code>string</code>
-Set overflow css style of the contents
+<p>Set overflow css style of the contents</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -114,7 +114,7 @@ Set overflow css style of the contents
 <a name="Contents+overflowX"></a>
 
 ## contents.overflowX([overflow]) ⇒ <code>string</code>
-Set overflowX css style of the documentElement
+<p>Set overflowX css style of the documentElement</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -125,7 +125,7 @@ Set overflowX css style of the documentElement
 <a name="Contents+overflowY"></a>
 
 ## contents.overflowY([overflow]) ⇒ <code>string</code>
-Set overflowY css style of the documentElement
+<p>Set overflowY css style of the documentElement</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -136,7 +136,7 @@ Set overflowY css style of the documentElement
 <a name="Contents+css"></a>
 
 ## contents.css(property, value, [priority]) ⇒ <code>any</code>
-Set Css styles on the contents element (typically Body)
+<p>Set Css styles on the contents element (typically Body)</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -144,12 +144,12 @@ Set Css styles on the contents element (typically Body)
 | --- | --- | --- |
 | property | <code>string</code> |  |
 | value | <code>string</code> |  |
-| [priority] | <code>boolean</code> | set as "important" |
+| [priority] | <code>boolean</code> | <p>set as &quot;important&quot;</p> |
 
 <a name="Contents+viewport"></a>
 
 ## contents.viewport([options]) ⇒ <code>object</code>
-Get or Set the viewport element
+<p>Get or Set the viewport element</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -166,34 +166,34 @@ Get or Set the viewport element
 <a name="Contents+root"></a>
 
 ## contents.root() ⇒ <code>Element</code>
-Get the documentElement
+<p>Get the documentElement</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>Element</code> - documentElement  
+**Returns**: <code>Element</code> - <p>documentElement</p>  
 <a name="Contents+locationOf"></a>
 
 ## contents.locationOf(target, [ignoreClass]) ⇒ <code>Object</code>
-Get the location offset of a EpubCFI or an #id
+<p>Get the location offset of a EpubCFI or an #id</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>Object</code> - target position left and top  
+**Returns**: <code>Object</code> - <p>target position left and top</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | target | <code>string</code> \| <code>EpubCFI</code> |  |
-| [ignoreClass] | <code>string</code> | for the cfi |
+| [ignoreClass] | <code>string</code> | <p>for the cfi</p> |
 
 <a name="Contents+appendStylesheet"></a>
 
 ## contents.appendStylesheet(key, input) ⇒ <code>Promise.&lt;Node&gt;</code>
-Append a stylesheet link/rules to the document head
+<p>Append a stylesheet link/rules to the document head</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | key | <code>string</code> |  |
-| input | <code>string</code> \| <code>object</code> | url or rules |
+| input | <code>string</code> \| <code>object</code> | <p>url or rules</p> |
 
 **Example**  
 ```js
@@ -210,7 +210,7 @@ appendStylesheet("common", { h1: { "font-size": "1.5em" }})
 <a name="Contents+removeStylesheet"></a>
 
 ## contents.removeStylesheet(key) ⇒ <code>boolean</code>
-Remove a stylesheet link from the document head
+<p>Remove a stylesheet link from the document head</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -221,21 +221,21 @@ Remove a stylesheet link from the document head
 <a name="Contents+clearStylesheets"></a>
 
 ## contents.clearStylesheets()
-Clear all injected stylesheets
+<p>Clear all injected stylesheets</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 <a name="Contents+appendScript"></a>
 
 ## contents.appendScript(key, src) ⇒ <code>Promise.&lt;Node&gt;</code>
-Append a script node to the document head
+<p>Append a script node to the document head</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>Promise.&lt;Node&gt;</code> - loaded  
+**Returns**: <code>Promise.&lt;Node&gt;</code> - <p>loaded</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | key | <code>string</code> |  |
-| src | <code>string</code> | url |
+| src | <code>string</code> | <p>url</p> |
 
 **Example**  
 ```js
@@ -248,7 +248,7 @@ appendScript("common", "https://examples.com/to/script.js")
 <a name="Contents+removeScript"></a>
 
 ## contents.removeScript(key) ⇒ <code>boolean</code>
-Remove a script node from the document head
+<p>Remove a script node from the document head</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -259,13 +259,13 @@ Remove a script node from the document head
 <a name="Contents+clearScripts"></a>
 
 ## contents.clearScripts()
-Clear all injected scripts
+<p>Clear all injected scripts</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 <a name="Contents+appendClass"></a>
 
 ## contents.appendClass(className)
-Append a class to the contents container
+<p>Append a class to the contents container</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -276,7 +276,7 @@ Append a class to the contents container
 <a name="Contents+removeClass"></a>
 
 ## contents.removeClass(className)
-Remove a class from the contents container
+<p>Remove a class from the contents container</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -287,10 +287,10 @@ Remove a class from the contents container
 <a name="Contents+range"></a>
 
 ## contents.range(cfi, [ignoreClass]) ⇒ <code>Range</code>
-Get a Dom Range from EpubCFI
+<p>Get a Dom Range from EpubCFI</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>Range</code> - range  
+**Returns**: <code>Range</code> - <p>range</p>  
 
 | Param | Type |
 | --- | --- |
@@ -300,10 +300,10 @@ Get a Dom Range from EpubCFI
 <a name="Contents+cfiFromRange"></a>
 
 ## contents.cfiFromRange(range, [ignoreClass]) ⇒ <code>string</code>
-Get an EpubCFI from a Dom Range
+<p>Get an EpubCFI from a Dom Range</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>string</code> - EpubCFI  
+**Returns**: <code>string</code> - <p>EpubCFI</p>  
 
 | Param | Type |
 | --- | --- |
@@ -313,10 +313,10 @@ Get an EpubCFI from a Dom Range
 <a name="Contents+cfiFromNode"></a>
 
 ## contents.cfiFromNode(node, [ignoreClass]) ⇒ <code>string</code>
-Get an EpubCFI from a Dom node
+<p>Get an EpubCFI from a Dom node</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
-**Returns**: <code>string</code> - EpubCFI  
+**Returns**: <code>string</code> - <p>EpubCFI</p>  
 
 | Param | Type |
 | --- | --- |
@@ -326,7 +326,7 @@ Get an EpubCFI from a Dom node
 <a name="Contents+map"></a>
 
 ## contents.map(layout) ⇒ <code>Array.&lt;object&gt;</code>
-map
+<p>map</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 **Todo**
@@ -341,7 +341,7 @@ map
 <a name="Contents+format"></a>
 
 ## contents.format(layout)
-Apply CSS to a Document
+<p>Apply CSS to a Document</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -352,7 +352,7 @@ Apply CSS to a Document
 <a name="Contents+scale"></a>
 
 ## contents.scale(scale, offsetX, offsetY)
-Scale contents from center
+<p>Scale contents from center</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -365,18 +365,18 @@ Scale contents from center
 <a name="Contents+direction"></a>
 
 ## contents.direction([dir])
-Set the direction of the text
+<p>Set the direction of the text</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [dir] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | values: `"ltr"` OR `"rtl"` |
+| [dir] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | <p>values: <code>&quot;ltr&quot;</code> OR <code>&quot;rtl&quot;</code></p> |
 
 <a name="Contents+mapPage"></a>
 
 ## contents.mapPage(cfiBase, layout, start, end, dev) ⇒ <code>any</code>
-mapPage
+<p>mapPage</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
@@ -391,24 +391,24 @@ mapPage
 <a name="Contents+writingMode"></a>
 
 ## contents.writingMode([mode])
-Set the writingMode of the text
+<p>Set the writingMode of the text</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [mode] | <code>string</code> | <code>&quot;&#x27;horizontal-tb&#x27;&quot;</code> | `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"` |
+| [mode] | <code>string</code> | <code>&quot;&#x27;horizontal-tb&#x27;&quot;</code> | <p><code>&quot;horizontal-tb&quot;</code> OR <code>&quot;vertical-rl&quot;</code> OR <code>&quot;vertical-lr&quot;</code></p> |
 
 <a name="Contents+destroy"></a>
 
 ## contents.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
 <a name="Contents.content"></a>
 
 ## Contents.content : <code>Element</code>
-document.body by current location
+<p>document.body by current location</p>
 
 **Kind**: static property of [<code>Contents</code>](#Contents)  
 **Read only**: true  
@@ -425,7 +425,7 @@ document.body by current location
 <a name="Contents.mode"></a>
 
 ## Contents.mode : <code>string</code>
-writing-mode
+<p>writing-mode</p>
 
 **Kind**: static property of [<code>Contents</code>](#Contents)  
 **Read only**: true  

@@ -1,7 +1,7 @@
 <a name="Layout"></a>
 
 # Layout
-Figures out the CSS values to apply for a layout
+<p>Figures out the CSS values to apply for a layout</p>
 
 **Kind**: global class  
 
@@ -31,28 +31,30 @@ Figures out the CSS values to apply for a layout
         * [.columnWidth](#Layout.columnWidth) : <code>number</code>
         * [.gap](#Layout.gap) : <code>number</code>
         * [.divisor](#Layout.divisor) : <code>number</code>
+        * [.writingMode](#Layout.writingMode) : <code>string</code>
 
 <a name="new_Layout_new"></a>
 
 ## new Layout([options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | [options] | <code>object</code> |  |  |
-| [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | values: `"paginated"` OR `"scrolled"` OR `"scrolled-doc"` |
-| [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"none"` |
-| [options.direction] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | values: `"ltr"` OR `"rtl"` |
-| [options.orientation] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | values: `"auto"` OR `"landscape"` OR `"portrait"` |
+| [options.flow] | <code>string</code> | <code>&quot;&#x27;paginated&#x27;&quot;</code> | <p>values: <code>&quot;paginated&quot;</code> OR <code>&quot;scrolled&quot;</code> OR <code>&quot;scrolled-doc&quot;</code></p> |
+| [options.spread] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | <p>values: <code>&quot;auto&quot;</code> OR <code>&quot;none&quot;</code></p> |
+| [options.direction] | <code>string</code> | <code>&quot;&#x27;ltr&#x27;&quot;</code> | <p>values: <code>&quot;ltr&quot;</code> OR <code>&quot;rtl&quot;</code></p> |
+| [options.orientation] | <code>string</code> | <code>&quot;&#x27;auto&#x27;&quot;</code> | <p>values: <code>&quot;auto&quot;</code> OR <code>&quot;landscape&quot;</code> OR <code>&quot;portrait&quot;</code></p> |
 | [options.minSpreadWidth] | <code>number</code> | <code>800</code> |  |
-| [options.pageWidth] | <code>number</code> |  | page width |
-| [options.pageHeight] | <code>number</code> |  | page height |
+| [options.pageWidth] | <code>number</code> |  | <p>page width</p> |
+| [options.pageHeight] | <code>number</code> |  | <p>page height</p> |
+| [options.writingMode] | <code>string</code> | <code>&quot;&#x27;horizontal-tb&#x27;&quot;</code> | <p>values: <code>&quot;horizontal-tb&quot;</code> OR <code>&quot;vertical-rl&quot;</code> OR <code>&quot;vertical-lr&quot;</code></p> |
 
 <a name="Layout+set"></a>
 
 ## layout.set(options)
-Set options
+<p>Set options</p>
 
 **Kind**: instance method of [<code>Layout</code>](#Layout)  
 
@@ -63,20 +65,20 @@ Set options
 <a name="Layout+calculate"></a>
 
 ## layout.calculate([width], [height], [gap])
-Calculate the dimensions of the pagination
+<p>Calculate the dimensions of the pagination</p>
 
 **Kind**: instance method of [<code>Layout</code>](#Layout)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| [width] | <code>number</code> | width of the rendering |
-| [height] | <code>number</code> | height of the rendering |
-| [gap] | <code>number</code> | width of the gap between columns |
+| [width] | <code>number</code> | <p>width of the rendering</p> |
+| [height] | <code>number</code> | <p>height of the rendering</p> |
+| [gap] | <code>number</code> | <p>width of the gap between columns</p> |
 
 <a name="Layout+count"></a>
 
 ## layout.count(totalLength, [pageLength]) ⇒ <code>Object</code>
-Count number of pages
+<p>Count number of pages</p>
 
 **Kind**: instance method of [<code>Layout</code>](#Layout)  
 
@@ -88,7 +90,7 @@ Count number of pages
 <a name="Layout+destroy"></a>
 
 ## layout.destroy()
-destroty
+<p>destroty</p>
 
 **Kind**: instance method of [<code>Layout</code>](#Layout)  
 <a name="Layout.axis"></a>
@@ -99,7 +101,7 @@ destroty
 <a name="Layout.name"></a>
 
 ## Layout.name : <code>string</code>
-Layout name
+<p>Layout name</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
@@ -126,14 +128,14 @@ Layout name
 <a name="Layout.orientation"></a>
 
 ## Layout.orientation : <code>string</code>
-no implementation
+<p>no implementation</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
 <a name="Layout.viewport"></a>
 
 ## Layout.viewport : <code>string</code>
-no implementation
+<p>no implementation</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
@@ -145,14 +147,14 @@ no implementation
 <a name="Layout.width"></a>
 
 ## Layout.width : <code>number</code>
-Layout width
+<p>Layout width</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
 <a name="Layout.height"></a>
 
 ## Layout.height : <code>number</code>
-Layout height
+<p>Layout height</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
@@ -169,7 +171,7 @@ Layout height
 <a name="Layout.spreadWidth"></a>
 
 ## Layout.spreadWidth : <code>number</code>
-Spread width
+<p>Spread width</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
@@ -181,7 +183,7 @@ Spread width
 <a name="Layout.columnWidth"></a>
 
 ## Layout.columnWidth : <code>number</code>
-Column width
+<p>Column width</p>
 
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  
@@ -193,5 +195,10 @@ Column width
 <a name="Layout.divisor"></a>
 
 ## Layout.divisor : <code>number</code>
+**Kind**: static property of [<code>Layout</code>](#Layout)  
+**Read only**: true  
+<a name="Layout.writingMode"></a>
+
+## Layout.writingMode : <code>string</code>
 **Kind**: static property of [<code>Layout</code>](#Layout)  
 **Read only**: true  

@@ -1,7 +1,7 @@
 <a name="Resources"></a>
 
 # Resources ⇐ <code>Map</code>
-Assets container for URL replacements
+<p>Assets container for URL replacements</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -18,7 +18,7 @@ Assets container for URL replacements
 <a name="new_Resources_new"></a>
 
 ## new Resources(request, resolve, [replacements])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default |
@@ -30,16 +30,16 @@ Constructor
 <a name="Resources+clear"></a>
 
 ## resources.clear()
-Clear replacement URLs
+<p>Clear replacement URLs</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
 <a name="Resources+createUrl"></a>
 
 ## resources.createUrl(href, [mimeType]) ⇒ <code>Promise.&lt;string&gt;</code>
-Create a url to a resource
+<p>Create a url to a resource</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-**Returns**: <code>Promise.&lt;string&gt;</code> - Promise resolves with url string  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>Promise resolves with url string</p>  
 
 | Param | Type |
 | --- | --- |
@@ -49,14 +49,15 @@ Create a url to a resource
 <a name="Resources+revokeUrl"></a>
 
 ## resources.revokeUrl(url) ⇒ <code>Object</code>
-Revoke URL for a resource item
+<p>Revoke URL for a resource item</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
-**Returns**: <code>Object</code> - Result:
-
-0. no-replacements
-1. replacements
-2. success  
+**Returns**: <code>Object</code> - <p>Result:</p>
+<ol start="0">
+<li>no-replacements</li>
+<li>replacements</li>
+<li>success</li>
+</ol>  
 
 | Param | Type |
 | --- | --- |
@@ -65,8 +66,8 @@ Revoke URL for a resource item
 <a name="Resources+substitute"></a>
 
 ## resources.substitute(content, section)
-Substitute urls in content, with replacements,
-relative to a url if provided
+<p>Substitute urls in content, with replacements,
+relative to a url if provided</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
 
@@ -78,7 +79,7 @@ relative to a url if provided
 <a name="Resources+unpack"></a>
 
 ## resources.unpack(manifest, archive, storage) ⇒ [<code>Promise.&lt;Resources&gt;</code>](#Resources)
-Unpack resources from manifest
+<p>Unpack resources from manifest</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  
 
@@ -91,6 +92,6 @@ Unpack resources from manifest
 <a name="Resources+destroy"></a>
 
 ## resources.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Resources</code>](#Resources)  

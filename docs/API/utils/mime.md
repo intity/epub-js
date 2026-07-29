@@ -4,7 +4,7 @@
 <a name="module_mime..lookup"></a>
 
 ## mime~lookup(filename) ⇒ <code>string</code>
-lookup
+<p>lookup</p>
 
 **Kind**: inner method of [<code>mime</code>](#module_mime)  
 
