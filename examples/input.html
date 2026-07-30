@@ -60,7 +60,7 @@
           <li id="ti-1" class="c-item" style="display: none;">
             <label for="layout-wrm" title="Layout Writing Mode">LWM:</label>
             <select id="layout-wrm">
-              <option value="horizintal-tb">horizontal-tb</option>
+              <option value="horizontal-tb">horizontal-tb</option>
               <option value="vertical-rl">vertical-rl</option>
               <option value="vertical-lr">vertical-lr</option>
             </select>
@@ -113,6 +113,7 @@
           writingMode: value
         });
         ldir.value = rendition.layout.direction;
+        spread.disabled = !(value === "horizontal-tb");
       };
       ldir.onchange = (e) => {
         rendition.updateLayout({
@@ -138,6 +139,7 @@
         divider.style.display = div === 1 ? "none" : "block";
         content.className = dir;
         content.dir = dir;
+        spread.value = rendition.layout.spread;
       };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
