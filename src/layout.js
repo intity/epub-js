@@ -170,8 +170,12 @@ class Layout {
               break;
             default:
               this.flow = "paginated";
-              this.axis = "horizontal"; // autocomplete
               this.style = "paginated"; // autocomplete
+              if (this.writingMode === "horizontal-tb") {
+                this.axis = "horizontal"; // autocomplete
+              } else {
+                this.axis = "vertical"; // autocomplete
+              }
               break;
           }
         } else error(opt, typeof value);
@@ -279,14 +283,12 @@ class Layout {
    */
   count(totalLength, pageLength) {
 
-    let spreads, pages;
+    let pages;
+    const delta = pageLength || this.delta;
+    const spreads = Math.ceil(totalLength / delta);
     if (this.flow === "paginated") {
-      pageLength = pageLength || this.delta;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads * this.divisor;
     } else {
-      pageLength = pageLength || this.height;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads;
     }
     return { spreads, pages }
