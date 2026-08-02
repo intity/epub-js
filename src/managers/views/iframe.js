@@ -60,8 +60,6 @@ class IframeView extends View {
     this.frame.style.height = "0";
     this.settings.sandbox.forEach(p => p && (this.frame.sandbox.add(p)));
     this.frame.setAttribute("enable-annotation", "true");
-    this.width = 0;
-    this.height = 0;
     return this.frame;
   }
 
