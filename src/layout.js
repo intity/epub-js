@@ -191,11 +191,13 @@ class Layout {
         if (typeof value === "string") {
           switch (value) {
             default:
+              this.axis = "horizontal"; // autocomplete
               this.writingMode = "horizontal-tb";
               break;
-            case "horizontal-tb":
             case "vertical-rl":
             case "vertical-lr":
+              this.axis = "vertical"; // autocomplete
+              this.spread = "none"; // autocomplete
               this.writingMode = value;
               break;
           }
@@ -246,16 +248,25 @@ class Layout {
     }
 
     if (this.flow === "paginated") {
-      this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
-      this.columnWidth = (szw / this.divisor) - this.gap;
+      if (this.axis === "horizontal") {
+        this.delta = szw;
+        this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
+        this.columnWidth = (szw / this.divisor) - this.gap;
+        this.pageWidth = this.columnWidth + this.gap;
+        this.pageHeight = szh;
+      } else {
+        this.delta = szh;
+        this.divisor = 1;
+        this.columnWidth = (szh / this.divisor) - this.gap;
+        this.pageWidth = szw;
+        this.pageHeight = this.columnWidth + this.gap;
+      }
       this.spreadWidth = (this.columnWidth * this.divisor) + this.gap;
-      this.pageWidth = this.columnWidth + this.gap;
-      this.pageHeight = szh;
     } else {
+      this.delta = szw;
       this.divisor = 1;
     }
 
-    this.delta = szw;
     this.width = szw;
     this.height = szh;
   }

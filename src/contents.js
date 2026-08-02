@@ -12,6 +12,9 @@ const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
 
+const H_AXIS = "horizontal";
+const V_AXIS = "vertical";
+
 /**
  * Handles DOM manipulation, queries and events for View contents
  */
@@ -107,16 +110,26 @@ class Contents {
 
   /**
    * Get size of the text using Range
+   * @param {Layout} layout
    * @returns {{ width: number, height: number }}
    */
-  textSize() {
+  textSize(layout) {
 
     const range = this.document.createRange();
     range.selectNodeContents(this.content);
     const rect = range.getBoundingClientRect();
     const border = borders(this.content);
-    const width = rect.width + border.width;
-    const height = this.content.clientHeight;
+
+    let width;
+    let height;
+
+    if (layout.axis === H_AXIS) {
+      width = rect.width + border.width;
+      height = this.content.clientHeight;
+    } else {
+      width = this.content.clientWidth;
+      height = rect.height + border.height;
+    }
 
     return {
       width: Math.round(width),
@@ -776,12 +789,20 @@ class Contents {
     this.css("overflow", "hidden");
     this.css("margin", "0", true);
     this.css("box-sizing", "border-box");
-    this.css("max-height", "inherit");
     this.css("display", "block");
-    this.css("padding-top", "20px");
-    this.css("padding-bottom", "20px");
-    this.css("padding-left", (gap / 2) + "px", true);
-    this.css("padding-right", (gap / 2) + "px", true);
+    if (layout.axis === H_AXIS) {
+      this.css("max-height", "inherit");
+      this.css("padding-top", "20px");
+      this.css("padding-bottom", "20px");
+      this.css("padding-left", (gap / 2) + "px", true);
+      this.css("padding-right", (gap / 2) + "px", true);
+    } else {
+      this.css("max-width", "inherit");
+      this.css("padding-left", "20px");
+      this.css("padding-right", "20px");
+      this.css("padding-top", (gap / 2) + "px", true);
+      this.css("padding-bottom", (gap / 2) + "px", true);
+    }
     this.css("column-gap", gap + "px");
     this.css("column-fill", "auto");
     this.css("column-width", clw + "px");
