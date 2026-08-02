@@ -10,7 +10,7 @@
     * _instance_
         * [.width([w])](#Contents+width) ⇒ <code>number</code>
         * [.height([h])](#Contents+height) ⇒ <code>number</code>
-        * [.textSize()](#Contents+textSize) ⇒ <code>Object</code>
+        * [.textSize(layout)](#Contents+textSize) ⇒ <code>Object</code>
         * [.scrollWidth()](#Contents+scrollWidth) ⇒ <code>number</code>
         * [.scrollHeight()](#Contents+scrollHeight) ⇒ <code>number</code>
         * [.overflow([overflow])](#Contents+overflow) ⇒ <code>string</code>
@@ -82,10 +82,15 @@
 
 <a name="Contents+textSize"></a>
 
-## contents.textSize() ⇒ <code>Object</code>
+## contents.textSize(layout) ⇒ <code>Object</code>
 <p>Get size of the text using Range</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
+
+| Param | Type |
+| --- | --- |
+| layout | <code>Layout</code> | 
+
 <a name="Contents+scrollWidth"></a>
 
 ## contents.scrollWidth() ⇒ <code>number</code>
