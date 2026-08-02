@@ -140,6 +140,7 @@
         content.className = dir;
         content.dir = dir;
         spread.value = rendition.layout.spread;
+        spread.disabled = !(rendition.layout.writingMode === "horizontal-tb");
       };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
@@ -170,6 +171,7 @@
           width: spread.value === "none" ? func(1) : func(2),
           height: size,
           spread: spread.value,
+          direction: ldir.value,
           writingMode: lwrm.value
         });
         rendition.display().then((section) => {
