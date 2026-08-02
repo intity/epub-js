@@ -597,7 +597,7 @@ class DefaultViewManager {
 
     if (this.paginated) {
       this.location = this.paginatedLocation();
-    } else if (this.axis === "vertical") {
+    } else {
       this.location = this.scrolledLocation();
     }
     return this.location;
@@ -735,7 +735,7 @@ class DefaultViewManager {
     const vpos = view.position();
     const rect = this.viewport.rect;
 
-    if (this.layout.axis === V_AXIS &&
+    if (this.layout.axis === H_AXIS &&
       vpos.right > rect.left - offsetPrev &&
       vpos.left < rect.right + offsetNext) {
       return true;
