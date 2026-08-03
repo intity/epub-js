@@ -208,11 +208,12 @@ class Contents {
    * @param {string} property
    * @param {string} value
    * @param {boolean} [priority] set as "important"
+   * @param {Element} target
    * @returns {any}
    */
-  css(property, value, priority) {
+  css(property, value, priority, target) {
 
-    const content = this.content;
+    const content = target || this.content;
 
     if (value) {
       content.style.setProperty(property, value, priority ? "important" : "");
@@ -786,26 +787,32 @@ class Contents {
     });
     this.direction(dir);
 
-    this.css("overflow", "hidden");
     this.css("margin", "0", true);
-    this.css("box-sizing", "border-box");
-    this.css("display", "block");
+    this.css("margin", "0", true, this.root());
+    this.css("padding", "inherit", true, this.root());
+    this.css("display", "block", true);
+    this.css("overflow", "hidden", true);
+    this.css("box-sizing", "border-box", true);
     if (layout.axis === H_AXIS) {
-      this.css("max-height", "inherit");
-      this.css("padding-top", "20px");
-      this.css("padding-bottom", "20px");
+      const maxw = layout.count(pgw).pages * pgw;
+      this.css("max-width", maxw + "px", true, this.root());
+      this.css("max-height", "inherit", true, this.root());
+      this.css("padding-top", "20px", true);
+      this.css("padding-bottom", "20px", true);
       this.css("padding-left", (gap / 2) + "px", true);
       this.css("padding-right", (gap / 2) + "px", true);
     } else {
-      this.css("max-width", "inherit");
-      this.css("padding-left", "20px");
-      this.css("padding-right", "20px");
+      const maxh = layout.count(pgh).pages * pgh;
+      this.css("max-width", "inherit", true, this.root());
+      this.css("max-height", maxh + "px", true, this.root());
       this.css("padding-top", (gap / 2) + "px", true);
       this.css("padding-bottom", (gap / 2) + "px", true);
+      this.css("padding-left", "20px", true);
+      this.css("padding-right", "20px", true);
     }
-    this.css("column-gap", gap + "px");
-    this.css("column-fill", "auto");
-    this.css("column-width", clw + "px");
+    this.css("column-gap", gap + "px", true);
+    this.css("column-fill", "auto", true);
+    this.css("column-width", clw + "px", true);
 
     // Fix glyph clipping in WebKit
     // https://github.com/futurepress/epub.js/issues/983
