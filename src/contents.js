@@ -208,7 +208,7 @@ class Contents {
    * @param {string} property
    * @param {string} value
    * @param {boolean} [priority] set as "important"
-   * @param {Element} target
+   * @param {Element} [target]
    * @returns {any}
    */
   css(property, value, priority, target) {
