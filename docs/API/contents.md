@@ -16,7 +16,7 @@
         * [.overflow([overflow])](#Contents+overflow) ⇒ <code>string</code>
         * [.overflowX([overflow])](#Contents+overflowX) ⇒ <code>string</code>
         * [.overflowY([overflow])](#Contents+overflowY) ⇒ <code>string</code>
-        * [.css(property, value, [priority])](#Contents+css) ⇒ <code>any</code>
+        * [.css(property, value, [priority], target)](#Contents+css) ⇒ <code>any</code>
         * [.viewport([options])](#Contents+viewport) ⇒ <code>object</code>
         * [.root()](#Contents+root) ⇒ <code>Element</code>
         * [.locationOf(target, [ignoreClass])](#Contents+locationOf) ⇒ <code>Object</code>
@@ -140,7 +140,7 @@
 
 <a name="Contents+css"></a>
 
-## contents.css(property, value, [priority]) ⇒ <code>any</code>
+## contents.css(property, value, [priority], target) ⇒ <code>any</code>
 <p>Set Css styles on the contents element (typically Body)</p>
 
 **Kind**: instance method of [<code>Contents</code>](#Contents)  
@@ -150,6 +150,7 @@
 | property | <code>string</code> |  |
 | value | <code>string</code> |  |
 | [priority] | <code>boolean</code> | <p>set as &quot;important&quot;</p> |
+| target | <code>Element</code> |  |
 
 <a name="Contents+viewport"></a>
 
