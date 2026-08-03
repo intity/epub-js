@@ -112,8 +112,6 @@
         rendition.updateLayout({
           writingMode: value
         });
-        ldir.value = rendition.layout.direction;
-        spread.disabled = !(value === "horizontal-tb");
       };
       ldir.onchange = (e) => {
         rendition.updateLayout({
@@ -134,9 +132,11 @@
       const update = (loc) => {
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
+        ldir.value = dir;
         prev.style.display = loc.start.bin ? "none" : "block";
         next.style.display = loc.end.bin ? "none" : "block";
         divider.style.display = div === 1 ? "none" : "block";
+        divider.style.height = (rendition.layout.height - 20) + "px";
         content.className = dir;
         content.dir = dir;
         spread.value = rendition.layout.spread;
@@ -171,11 +171,17 @@
           width: spread.value === "none" ? func(1) : func(2),
           height: size,
           spread: spread.value,
+          minSpreadWidth: func(1),
           direction: ldir.value,
           writingMode: lwrm.value
         });
         rendition.display().then((section) => {
           console.log(section);
+        });
+        rendition.on("layout", (props, changed) => {
+          if (changed.writingMode) {
+            update(rendition.currentLocation());
+          }
         });
         rendition.on("relocated", (loc) => {
           console.log(loc);
