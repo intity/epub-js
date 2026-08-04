@@ -64,8 +64,8 @@ class Rendition {
       minSpreadWidth: 800,
       script: null,
       snap: null,
-      writingMode: "horizontal-tb",
       direction: null, // TODO: implement to 'auto' detection
+      writingMode: null,
       ignoreClass: "",
       sandbox: [],
       stylesheet: null
@@ -503,7 +503,7 @@ class Rendition {
    */
   determineLayoutProperties() {
 
-    const { metadata, direction } = this.book.packaging;
+    const { metadata, direction, writingMode } = this.book.packaging;
     return {
       name: this.settings.layout || metadata.get("layout"),
       flow: this.settings.flow || metadata.get("flow"),
@@ -514,7 +514,7 @@ class Rendition {
       minSpreadWidth: this.settings.minSpreadWidth,
       pageWidth: this.settings.pageWidth,
       pageHeight: this.settings.pageHeight,
-      writingMode: this.settings.writingMode
+      writingMode: this.settings.writingMode || writingMode || "horizontal-tb"
     };
   }
 
