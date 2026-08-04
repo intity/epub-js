@@ -8,7 +8,7 @@
     <!-- optional -->
     <dc:contributor>nuget@list.ru</dc:contributor>
     <dc:creator>epub-js community</dc:creator>
-    <dc:subject>computer-sci</dc:subject>
+    <dc:subject>manuals</dc:subject>
     <!-- <dc:coverage></dc:coverage> -->
     <dc:date>2024-08-21T00:00:00Z</dc:date>
     <dc:description>epub-js library handbook</dc:description>
