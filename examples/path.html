@@ -60,14 +60,15 @@
     </footer>
     <script type="text/javascript">
       const url = new URL(window.location);
-      const uri = url.searchParams.get("URI") || "../assets/alice/";
+      const uri = url.searchParams.get("URI") || "../assets/kusamakura/";
       const content = document.getElementById("content");
       const loader = document.getElementById("loader");
       const prev = document.getElementById("prev");
       const next = document.getElementById("next");
       const size = window.innerHeight - 160;
       const time = Date.now();
-      const book = ePub(uri);
+      const json = "../assets/kusamakura/" === uri;
+      const book = json ? ePub(uri, { format: "json" }) : ePub(uri);
       const rendition = book.renderTo("viewport", {
         width: Math.floor(1/Math.sqrt(2)*size),
         height: size
@@ -79,19 +80,19 @@
       prev.onclick = (e) => {
         rendition.prev();
         e.preventDefault();
-      }
+      };
       next.style.display = "none";
       next.onclick = (e) => {
         rendition.next();
         e.preventDefault();
-      }
+      };
       const update = (loc) => {
         const dir = rendition.layout.direction;
         prev.style.display = loc.start.bin ? "none" : "block";
         next.style.display = loc.end.bin ? "none" : "block";
         content.className = dir;
         content.dir = dir;
-      }
+      };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
         switch (e.key) {
@@ -102,7 +103,7 @@
             dir === "ltr" ? rendition.next() : rendition.prev();
             break;
         }
-      }
+      };
       rendition.display().then(() => {
         console.log(book);
         document.onkeyup = keybinding;
