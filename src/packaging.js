@@ -47,6 +47,12 @@ class Packaging {
      * @readonly
      */
     this.uniqueIdentifier = null;
+    /**
+     * @member {string} writingMode
+     * @memberof Packaging
+     * @readonly
+     */
+    this.writingMode = null;
   }
 
   /**
@@ -174,6 +180,10 @@ class Packaging {
     this.direction = data.direction;
     this.version = data.version;
     this.uniqueIdentifier = this.metadata.get("identifier");
+    const mode = data["writing-mode"];
+    if (mode === "horizontal-tb" || mode === "vertical-rl" || mode === "vertical-lr") {
+      this.writingMode = mode;
+    }
 
     return Promise.all(tasks).then(() => {
       return this;
@@ -195,6 +205,7 @@ class Packaging {
     this.direction = undefined;
     this.version = undefined;
     this.uniqueIdentifier = undefined;
+    this.writingMode = undefined;
   }
 }
 
