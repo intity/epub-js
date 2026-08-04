@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta name="dtb:uid" content="http://www.aozora.gr.jp/cards/000148/card776.html"/>
+    <meta name="dtb:depth" content="-1"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>草枕</text>
+  </docTitle>
+  <docAuthor>
+    <text>夏目漱石</text>
+  </docAuthor>
+  <navMap>
+
+    <navPoint id="fgyq_0000">
+      <navLabel>
+        <text>草枕</text>
+      </navLabel>
+      <content src="xhtml/sec_0000.xhtml"/>
+    </navPoint>
+
+    <navPoint id="fgyq_0001">
+      <navLabel>
+        <text>一</text>
+      </navLabel>
+      <content src="xhtml/sec_0001.xhtml"/>
+    </navPoint>
+
+  </navMap>
+</ncx>
