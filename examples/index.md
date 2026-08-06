@@ -111,7 +111,7 @@ Specification section: [Reflowable layouts](https://www.w3.org/TR/epub/#flow)
     localhost/examples/path.html?URI=url/to/book.epub
     ```
 
-    By default, the relative path to the **Alice** book located on the local server is used.
+    By default, the relative path to the **kusamakura** book (fragment) located on the local server is used.
 
 ## Storage
 
