@@ -23,13 +23,13 @@
     },
     {
       "id": "css-0000",
-      "href": "css/vertical.css",
+      "href": "css/horizontal.css",
       "media-type": "text/css",
       "properties": []
     },
     {
       "id": "css-0001",
-      "href": "css/horizontal.css",
+      "href": "css/vertical.css",
       "media-type": "text/css",
       "properties": []
     },
