@@ -16,6 +16,26 @@
   "directories": {
     "test": "test"
   },
+  "files": [
+    "!assets/",
+    "!docs/",
+    "dist/",
+    "!dist/**/*.map",
+    "!dist/public/jszip.*",
+    "!dist/public/localforage.*",
+    "!dist/public/marked.*",
+    "!dist/public/mocha.*",
+    "!dist/public/test.*",
+    "!dist/server/test.*",
+    "!examples/",
+    "!index.html",
+    "!docsgen.cjs",
+    "!locsgen.cjs",
+    "!setup.cjs",
+    "!src/",
+    "!test/",
+    "types/"
+  ],
   "scripts": {
     "docs": "node docsgen.cjs",
     "lint": "eslint src",
@@ -27,7 +47,7 @@
     "build2": "NODE_ENV=production TARGET=cjs webpack --progress",
     "minify": "NODE_ENV=production MINIMIZE=true webpack --progress",
     "compile": "babel -d lib/ src/",
-    "prepare": "npm run compile && npm run build && npm run minify && npm run dtsg",
+    "prepare": "npm run build && npm run build2 && npm run minify && npm run dtsg",
     "watch": "babel --watch -d lib/ src/"
   },
   "author": "fchasen@gmail.com",
