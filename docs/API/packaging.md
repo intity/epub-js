@@ -19,6 +19,7 @@
         * [.direction](#Packaging.direction) : <code>string</code>
         * [.version](#Packaging.version) : <code>string</code>
         * [.uniqueIdentifier](#Packaging.uniqueIdentifier) : <code>string</code>
+        * [.writingMode](#Packaging.writingMode) : <code>string</code>
 
 <a name="new_Packaging_new"></a>
 
@@ -89,5 +90,10 @@
 <a name="Packaging.uniqueIdentifier"></a>
 
 ## Packaging.uniqueIdentifier : <code>string</code>
+**Kind**: static property of [<code>Packaging</code>](#Packaging)  
+**Read only**: true  
+<a name="Packaging.writingMode"></a>
+
+## Packaging.writingMode : <code>string</code>
 **Kind**: static property of [<code>Packaging</code>](#Packaging)  
 **Read only**: true  
