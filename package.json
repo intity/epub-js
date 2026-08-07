@@ -1,6 +1,6 @@
 {
   "name": "@intity/epub-js",
-  "version": "0.3.96",
+  "version": "0.3.97",
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
   "type": "module",
