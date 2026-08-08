@@ -26980,7 +26980,7 @@ const arrayBufferToBase64 = buffer => {
 const url = path => {
   let result = location.origin;
   if (/github.io/.test(result)) {
-    result += "epub-js";
+    result += "/epub-js";
     result += path;
   } else {
     result += path;
