@@ -1481,18 +1481,6 @@ module.exports = SILENT_ON_NON_WRITABLE_LENGTH_SET ? function (O, length) {
 
 /***/ },
 
-/***/ 7680
-(module, __unused_webpack_exports, __webpack_require__) {
-
-"use strict";
-
-var uncurryThis = __webpack_require__(9504);
-
-module.exports = uncurryThis([].slice);
-
-
-/***/ },
-
 /***/ 6319
 (module, __unused_webpack_exports, __webpack_require__) {
 
@@ -2020,7 +2008,7 @@ var $Error = Error;
 var replace = uncurryThis(''.replace);
 
 var TEST = (function (arg) { return String(new $Error(arg).stack); })('zxcasd');
-// eslint-disable-next-line redos/no-vulnerable, sonarjs/slow-regex -- safe
+// eslint-disable-next-line redos/no-vulnerable -- safe
 var V8_OR_CHAKRA_STACK_ENTRY = /\n\s*at [^:]*:[^\n]*/;
 var IS_V8_OR_CHAKRA_STACK = V8_OR_CHAKRA_STACK_ENTRY.test(TEST);
 
@@ -2329,45 +2317,45 @@ module.exports = function (obj) {
 
 /***/ },
 
-/***/ 851
-(module, __unused_webpack_exports, __webpack_require__) {
-
-"use strict";
-
-var classof = __webpack_require__(6955);
-var getMethod = __webpack_require__(5966);
-var isNullOrUndefined = __webpack_require__(4117);
-var Iterators = __webpack_require__(6269);
-var wellKnownSymbol = __webpack_require__(8227);
-
-var ITERATOR = wellKnownSymbol('iterator');
-
-module.exports = function (it) {
-  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
-    || getMethod(it, '@@iterator')
-    || Iterators[classof(it)];
-};
-
-
-/***/ },
-
-/***/ 81
+/***/ 8563
 (module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 var call = __webpack_require__(9565);
-var aCallable = __webpack_require__(9306);
+var isCallable = __webpack_require__(4901);
 var anObject = __webpack_require__(8551);
 var tryToString = __webpack_require__(6823);
-var getIteratorMethod = __webpack_require__(851);
+var getIteratorMethod = __webpack_require__(3085);
 
 var $TypeError = TypeError;
 
 module.exports = function (argument, usingIterator) {
   var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
-  if (aCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
+  if (isCallable(iteratorMethod)) return anObject(call(iteratorMethod, argument));
   throw new $TypeError(tryToString(argument) + ' is not iterable');
+};
+
+
+/***/ },
+
+/***/ 3085
+(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var classof = __webpack_require__(2195);
+var isNullOrUndefined = __webpack_require__(4117);
+var getMethod = __webpack_require__(5966);
+var wellKnownSymbol = __webpack_require__(8227);
+
+var ITERATOR = wellKnownSymbol('iterator');
+var ArrayPrototype = Array.prototype;
+
+module.exports = function (it) {
+  if (!isNullOrUndefined(it)) return getMethod(it, ITERATOR)
+    || getMethod(it, '@@iterator')
+    || (classof(it) === 'Arguments' ? ArrayPrototype[ITERATOR] : undefined);
 };
 
 
@@ -2840,8 +2828,8 @@ var tryToString = __webpack_require__(6823);
 var isArrayIteratorMethod = __webpack_require__(4209);
 var lengthOfArrayLike = __webpack_require__(6198);
 var isPrototypeOf = __webpack_require__(1625);
-var getIterator = __webpack_require__(81);
-var getIteratorMethod = __webpack_require__(851);
+var getIterator = __webpack_require__(8563);
+var getIteratorMethod = __webpack_require__(3085);
 var iteratorClose = __webpack_require__(9539);
 
 var $TypeError = TypeError;
@@ -2905,6 +2893,20 @@ module.exports = function (iterable, unboundFunction, options) {
     }
     if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
   } return new Result(false);
+};
+
+
+/***/ },
+
+/***/ 6859
+(module) {
+
+"use strict";
+
+// release references held by exhausted / closed iterator helpers to allow GC of the source chain
+module.exports = function (state) {
+  state.iterator = state.next = state.nextHandler = state.mapper = state.predicate = state.inner =
+    state.iterables = state.iters = state.openIters = state.padding = state.finishResults = state.buffer = null;
 };
 
 
@@ -2982,6 +2984,7 @@ var IteratorPrototype = (__webpack_require__(7657).IteratorPrototype);
 var createIterResultObject = __webpack_require__(2529);
 var iteratorClose = __webpack_require__(9539);
 var iteratorCloseAll = __webpack_require__(1385);
+var cleanupState = __webpack_require__(6859);
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var ITERATOR_HELPER = 'IteratorHelper';
@@ -3003,29 +3006,34 @@ var createIteratorProxyPrototype = function (IS_ITERATOR) {
       if (state.done) return createIterResultObject(undefined, true);
       try {
         var result = state.nextHandler();
+        if (state.done) cleanupState(state);
         return state.returnHandlerResult ? result : createIterResultObject(result, state.done);
       } catch (error) {
         state.done = true;
+        cleanupState(state);
         throw error;
       }
     },
     'return': function () {
       var state = getInternalState(this);
       var iterator = state.iterator;
+      var inner = state.inner;
+      var openIters = state.openIters;
       var done = state.done;
       state.done = true;
       if (IS_ITERATOR) {
         var returnMethod = getMethod(iterator, 'return');
         return returnMethod ? call(returnMethod, iterator) : createIterResultObject(undefined, true);
       }
+      cleanupState(state);
       if (done) return createIterResultObject(undefined, true);
-      if (state.inner) try {
-        iteratorClose(state.inner.iterator, NORMAL);
+      if (inner) try {
+        iteratorClose(inner.iterator, NORMAL);
       } catch (error) {
         return iteratorClose(iterator, THROW, error);
       }
-      if (state.openIters) try {
-        iteratorCloseAll(state.openIters, NORMAL);
+      if (openIters) try {
+        iteratorCloseAll(openIters, NORMAL);
       } catch (error) {
         if (iterator) return iteratorClose(iterator, THROW, error);
         throw error;
@@ -3176,7 +3184,7 @@ module.exports = {
 
 "use strict";
 
-module.exports = {};
+module.exports = Object.create ? Object.create(null) : {};
 
 
 /***/ },
@@ -3918,10 +3926,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.49.0',
+  version: '3.50.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2013–2025 Denis Pushkarev (zloirock.ru), 2025–2026 CoreJS Company (core-js.io). All rights reserved.',
-  license: 'https://github.com/zloirock/core-js/blob/v3.49.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.50.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3934,9 +3942,11 @@ var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, 
 "use strict";
 
 var store = __webpack_require__(7629);
+// eslint-disable-next-line es/no-object-create -- safe
+var create = Object.create || Object;
 
 module.exports = function (key, value) {
-  return store[key] || (store[key] = value || {});
+  return store[key] || (store[key] = value || create(null));
 };
 
 
@@ -3989,6 +3999,20 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
+
+
+/***/ },
+
+/***/ 1240
+(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var uncurryThis = __webpack_require__(9504);
+
+// `thisNumberValue` abstract operation
+// https://tc39.es/ecma262/#sec-thisnumbervalue
+module.exports = uncurryThis(1.1.valueOf);
 
 
 /***/ },
@@ -4804,7 +4828,7 @@ var OBJECT = 1;
 
 var $parse = function (source, reviver) {
   source = toString(source);
-  var context = new Context(source, 0, '');
+  var context = new Context(source, 0);
   var root = context.parse();
   var value = root.value;
   var endIndex = context.skip(IS_WHITESPACE, root.end);
@@ -5038,38 +5062,54 @@ $({ target: 'JSON', stat: true, forced: NO_SOURCE_SUPPORT }, {
 
 var $ = __webpack_require__(6518);
 var getBuiltIn = __webpack_require__(7751);
-var apply = __webpack_require__(8745);
 var call = __webpack_require__(9565);
 var uncurryThis = __webpack_require__(9504);
 var fails = __webpack_require__(9039);
 var isArray = __webpack_require__(4376);
 var isCallable = __webpack_require__(4901);
+var isObject = __webpack_require__(34);
+var create = __webpack_require__(2360);
 var isRawJSON = __webpack_require__(5810);
 var isSymbol = __webpack_require__(757);
 var classof = __webpack_require__(2195);
+var thisNumberValue = __webpack_require__(1240);
+var includes = (__webpack_require__(9617).includes);
+var hasOwn = __webpack_require__(9297);
 var toString = __webpack_require__(655);
-var arraySlice = __webpack_require__(7680);
 var parseJSONString = __webpack_require__(8235);
 var uid = __webpack_require__(3392);
 var NATIVE_SYMBOL = __webpack_require__(4495);
 var NATIVE_RAW_JSON = __webpack_require__(7819);
 
 var $String = String;
+var $TypeError = TypeError;
 var $stringify = getBuiltIn('JSON', 'stringify');
+var $BigInt = getBuiltIn('BigInt');
+var stringValueOf = uncurryThis(''.valueOf);
+var booleanValueOf = uncurryThis(true.valueOf);
+var bigIntValueOf = $BigInt && uncurryThis($BigInt.prototype.valueOf);
 var exec = uncurryThis(/./.exec);
 var charAt = uncurryThis(''.charAt);
 var charCodeAt = uncurryThis(''.charCodeAt);
 var replace = uncurryThis(''.replace);
 var slice = uncurryThis(''.slice);
 var push = uncurryThis([].push);
+var pop = uncurryThis([].pop);
 var numberToString = uncurryThis(1.1.toString);
 
 var surrogates = /[\uD800-\uDFFF]/g;
 var leadingSurrogates = /^[\uD800-\uDBFF]$/;
 var trailingSurrogates = /^[\uDC00-\uDFFF]$/;
+var digits = /^\d+$/;
 
-var MARK = uid();
-var MARK_LENGTH = MARK.length;
+// a placeholder of a raw JSON value
+var RAW_MARK = uid();
+// a prefix of keys of a reordered object, see `createOrderedObject`
+var KEY_MARK = uid();
+// the last key of a reordered object, marks the end of its serialization
+var END_MARK = uid();
+var RAW_MARK_LENGTH = RAW_MARK.length;
+var KEY_MARK_LENGTH = KEY_MARK.length;
 
 var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails(function () {
   var symbol = getBuiltIn('Symbol')('stringify detection');
@@ -5087,16 +5127,13 @@ var ILL_FORMED_UNICODE = fails(function () {
     || $stringify('\uDEAD') !== '"\\udead"';
 });
 
-var stringifyWithProperSymbolsConversion = WRONG_SYMBOLS_CONVERSION ? function (it, replacer) {
-  var args = arraySlice(arguments);
-  var $replacer = getReplacerFunction(replacer);
-  if (!isCallable($replacer) && (it === undefined || isSymbol(it))) return; // IE8 returns string on undefined
-  args[1] = function (key, value) {
-    // some old implementations (like WebKit) could pass numbers as keys
-    if (isCallable($replacer)) value = call($replacer, this, $String(key), value);
-    if (!isSymbol(value)) return value;
-  };
-  return apply($stringify, null, args);
+var isRawJSONValue = NATIVE_RAW_JSON ? getBuiltIn('JSON', 'isRawJSON') : isRawJSON;
+
+var stringifyWithProperSymbolsConversion = WRONG_SYMBOLS_CONVERSION ? function (it, replacer, space) {
+  return $stringify(it, function (key, value) {
+    var replaced = call(replacer, this, key, value);
+    if (!isSymbol(replaced)) return replaced;
+  }, space);
 } : $stringify;
 
 var fixIllFormedJSON = function (match, offset, string) {
@@ -5110,26 +5147,92 @@ var fixIllFormedJSON = function (match, offset, string) {
   } return match;
 };
 
-var getReplacerFunction = function (replacer) {
-  if (isCallable(replacer)) return replacer;
+// `PropertyList` of `JSON.stringify`
+// https://tc39.es/ecma262/#sec-json.stringify
+var getPropertyList = function (replacer) {
   if (!isArray(replacer)) return;
   var rawLength = replacer.length;
-  var keys = [];
+  var propertyList = [];
+  // a null prototype object is used as a set of already added keys to keep the deduplication linear
+  var addedKeys = create(null);
   for (var i = 0; i < rawLength; i++) {
     var element = replacer[i];
-    if (typeof element == 'string') push(keys, element);
-    else if (typeof element == 'number' || classof(element) === 'Number' || classof(element) === 'String') push(keys, toString(element));
-  }
-  var keysLength = keys.length;
-  var root = true;
-  return function (key, value) {
-    if (root) {
-      root = false;
-      return value;
+    var key;
+    if (typeof element == 'string') key = element;
+    else if (typeof element == 'number' || classof(element) === 'Number' || classof(element) === 'String') key = toString(element);
+    else continue;
+    if (!hasOwn(addedKeys, key)) {
+      addedKeys[key] = true;
+      push(propertyList, key);
     }
-    if (isArray(this)) return value;
-    for (var j = 0; j < keysLength; j++) if (keys[j] === key) return value;
+  }
+  return propertyList;
+};
+
+// values with such an internal slot are unwrapped by `SerializeJSONProperty` instead of being serialized as objects
+var hasInternalSlot = function (valueOf, it) {
+  try {
+    valueOf(it);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// the slot check is expensive, so it's performed only for the kind reported by the value itself -
+// a value lying about its kind via `Symbol.toStringTag` is serialized as an ordinary object
+var isBoxedPrimitive = function (it) {
+  var kind = classof(it);
+  return (kind === 'Number' && hasInternalSlot(thisNumberValue, it))
+    || (kind === 'String' && hasInternalSlot(stringValueOf, it))
+    || (kind === 'Boolean' && hasInternalSlot(booleanValueOf, it))
+    || (!!bigIntValueOf && kind === 'BigInt' && hasInternalSlot(bigIntValueOf, it));
+};
+
+// only objects serialized by `SerializeJSONObject` are affected by the property list
+var isSerializedAsObject = function (it) {
+  if (!isObject(it) || isCallable(it) || isArray(it)) return false;
+  try {
+    return !isBoxedPrimitive(it);
+  // `classof` reads `Symbol.toStringTag`, so a proxy could throw - it has no internal slots anyway
+  } catch (error) {
+    return true;
+  }
+};
+
+// the engine unwraps it in the same order as it would read the original property,
+// so the property is read lazily and `toJSON` is called once and with the original key
+var createElementHolder = function (holder, key) {
+  return {
+    toJSON: function () {
+      var element = holder[key];
+      if (isObject(element) || typeof element == 'bigint') {
+        var elementToJSON = element.toJSON;
+        if (isCallable(elementToJSON)) element = call(elementToJSON, element, key);
+      } return element;
+    }
   };
+};
+
+// own keys of objects are sorted - integer-like keys are moved to the beginning,
+// so such keys should be marked and restored in the serialized string
+var getKeyPrefix = function (propertyList) {
+  for (var i = 0, length = propertyList.length; i < length; i++) {
+    if (exec(digits, propertyList[i])) return KEY_MARK;
+  } return '';
+};
+
+// `SerializeJSONObject` iterates the property list, so the value is replaced with an object with keys in this order
+var createOrderedObject = function (value, propertyList, keyPrefix) {
+  // keys are not marked if the property list has no integer-like keys, so `Object.prototype`
+  // with a setter, a non-writable property or `__proto__` should not intercept the assignment
+  var ordered = create(null);
+  for (var i = 0, length = propertyList.length; i < length; i++) {
+    var key = propertyList[i];
+    ordered[keyPrefix + key] = createElementHolder(value, key);
+  }
+  ordered[END_MARK] = null;
+  return ordered;
 };
 
 // `JSON.stringify` method
@@ -5137,20 +5240,57 @@ var getReplacerFunction = function (replacer) {
 // https://github.com/tc39/proposal-json-parse-with-source
 if ($stringify) $({ target: 'JSON', stat: true, arity: 3, forced: WRONG_SYMBOLS_CONVERSION || ILL_FORMED_UNICODE || !NATIVE_RAW_JSON }, {
   stringify: function stringify(text, replacer, space) {
-    var replacerFunction = getReplacerFunction(replacer);
+    var replacerFunction = isCallable(replacer) ? replacer : undefined;
+    var propertyList = replacerFunction ? undefined : getPropertyList(replacer);
+    var keyPrefix = propertyList && getKeyPrefix(propertyList);
     var rawStrings = [];
+    var openObjects = [];
+    var parentOrdered = [];
+    var currentOrdered;
+    var marked = false;
+    var root = true;
 
     var json = stringifyWithProperSymbolsConversion(text, function (key, value) {
       // some old implementations (like WebKit) could pass numbers as keys
-      var v = isCallable(replacerFunction) ? call(replacerFunction, this, $String(key), value) : value;
-      return !NATIVE_RAW_JSON && isRawJSON(v) ? MARK + (push(rawStrings, v.rawJSON) - 1) : v;
+      key = $String(key);
+
+      if (propertyList) {
+        if (key === END_MARK) {
+          pop(openObjects);
+          currentOrdered = pop(parentOrdered);
+          return;
+        }
+        if (root) root = false;
+        // the innermost reordered object already contains only keys of the property list and arrays are not
+        // affected by it, the rest of objects (like objects with a fake `Symbol.toStringTag`) are filtered here
+        else if (this !== currentOrdered && !isArray(this) && !includes(propertyList, key)) return;
+      } else if (replacerFunction) value = call(replacerFunction, this, key, value);
+
+      if (isRawJSONValue(value)) {
+        if (NATIVE_RAW_JSON) return value;
+        marked = true;
+        return RAW_MARK + (push(rawStrings, value.rawJSON) - 1);
+      }
+
+      if (propertyList && isSerializedAsObject(value)) {
+        // reordered objects are new each time, so cycles should be detected before the engine does it
+        if (includes(openObjects, value)) throw new $TypeError('Converting circular structure to JSON');
+        var ordered = createOrderedObject(value, propertyList, keyPrefix);
+        push(openObjects, value);
+        push(parentOrdered, currentOrdered);
+        currentOrdered = ordered;
+        if (keyPrefix) marked = true;
+        return ordered;
+      }
+
+      return value;
     }, space);
 
     if (typeof json != 'string') return json;
 
     if (ILL_FORMED_UNICODE) json = replace(json, surrogates, fixIllFormedJSON);
 
-    if (NATIVE_RAW_JSON) return json;
+    if (!marked) return json;
 
     var result = '';
     var length = json.length;
@@ -5160,9 +5300,9 @@ if ($stringify) $({ target: 'JSON', stat: true, arity: 3, forced: WRONG_SYMBOLS_
       if (chr === '"') {
         var end = parseJSONString(json, ++i).end - 1;
         var string = slice(json, i, end);
-        result += slice(string, 0, MARK_LENGTH) === MARK
-          ? rawStrings[slice(string, MARK_LENGTH)]
-          : '"' + string + '"';
+        if (slice(string, 0, RAW_MARK_LENGTH) === RAW_MARK) result += rawStrings[slice(string, RAW_MARK_LENGTH)];
+        else if (slice(string, 0, KEY_MARK_LENGTH) === KEY_MARK) result += '"' + slice(string, KEY_MARK_LENGTH) + '"';
+        else result += '"' + string + '"';
         i = end;
       } else result += chr;
     }
@@ -9424,6 +9564,12 @@ class Packaging {
      * @readonly
      */
     this.uniqueIdentifier = null;
+    /**
+     * @member {string} writingMode
+     * @memberof Packaging
+     * @readonly
+     */
+    this.writingMode = null;
   }
 
   /**
@@ -9477,7 +9623,7 @@ class Packaging {
   /**
    * Parse direction flow
    * @param {Document} packageXml
-   * @param {Node} node spine node 
+   * @param {Node} node spine node
    * @returns {string}
    * @private
    */
@@ -9492,7 +9638,7 @@ class Packaging {
 
   /**
    * Parse package version
-   * @param {Document} packageXml 
+   * @param {Document} packageXml
    * @returns {string}
    * @private
    */
@@ -9536,6 +9682,10 @@ class Packaging {
     this.direction = data.direction;
     this.version = data.version;
     this.uniqueIdentifier = this.metadata.get("identifier");
+    const mode = data["writing-mode"];
+    if (mode === "horizontal-tb" || mode === "vertical-rl" || mode === "vertical-lr") {
+      this.writingMode = mode;
+    }
     return Promise.all(tasks).then(() => {
       return this;
     });
@@ -9554,6 +9704,7 @@ class Packaging {
     this.direction = undefined;
     this.version = undefined;
     this.uniqueIdentifier = undefined;
+    this.writingMode = undefined;
   }
 }
 /* harmony default export */ const packaging = (Packaging);
@@ -11600,7 +11751,9 @@ class Input {
    * @returns {Promise<Blob|null>}
    * @abstract
    */
-  async getBlob(url, mimeType) {}
+  async getBlob(url, mimeType) {
+    return null;
+  }
 
   /**
    * Get a Text from entries by URL
@@ -11609,7 +11762,9 @@ class Input {
    * @returns {Promise<string|null>}
    * @abstract
    */
-  async getText(url, mimeType) {}
+  async getText(url, mimeType) {
+    return null;
+  }
 
   /**
    * Get a base64 encoded result from entries by URL
@@ -11618,7 +11773,9 @@ class Input {
    * @returns {Promise<string|null>} base64 encoded
    * @abstract
    */
-  async getBase64(url, mimeType) {}
+  async getBase64(url, mimeType) {
+    return null;
+  }
 
   /**
    * destroy
@@ -11967,6 +12124,7 @@ class Layout {
    * @param {number} [options.minSpreadWidth=800]
    * @param {number} [options.pageWidth] page width
    * @param {number} [options.pageHeight] page height
+   * @param {string} [options.writingMode='horizontal-tb'] values: `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
    */
   constructor(options) {
     /**
@@ -12077,6 +12235,12 @@ class Layout {
      * @readonly
      */
     this.divisor = 1;
+    /**
+     * @member {string} writingMode
+     * @memberof Layout
+     * @readonly
+     */
+    this.writingMode = "horizontal-tb";
     this.set(options || {});
   }
 
@@ -12085,7 +12249,7 @@ class Layout {
    * @param {object} options
    */
   set(options) {
-    const error = name => console.error(`Invalid '${name}' property type`);
+    const error = (name, t) => console.error(`Invalid '${name}' property type '${t}'`);
     Object.keys(options).forEach(opt => {
       const value = options[opt];
       if (this[opt] === value || typeof value === "undefined") {
@@ -12093,7 +12257,7 @@ class Layout {
       } else if (opt === "direction" || opt === "orientation") {
         if (typeof value === "string") {
           this[opt] = options[opt];
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "flow") {
         if (typeof value === "string") {
           switch (value) {
@@ -12112,11 +12276,15 @@ class Layout {
               break;
             default:
               this.flow = "paginated";
-              this.axis = "horizontal"; // autocomplete
               this.style = "paginated"; // autocomplete
+              if (this.writingMode === "horizontal-tb") {
+                this.axis = "horizontal"; // autocomplete
+              } else {
+                this.axis = "vertical"; // autocomplete
+              }
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "spread") {
         if (typeof value === "string") {
           switch (value) {
@@ -12128,13 +12296,28 @@ class Layout {
               this.spread = "none";
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
+      } else if (opt === "writingMode") {
+        if (typeof value === "string") {
+          switch (value) {
+            default:
+              this.axis = "horizontal"; // autocomplete
+              this.writingMode = "horizontal-tb";
+              break;
+            case "vertical-rl":
+            case "vertical-lr":
+              this.axis = "vertical"; // autocomplete
+              this.spread = "none"; // autocomplete
+              this.writingMode = value;
+              break;
+          }
+        } else error(opt, typeof value);
       } else if (opt === "width" || opt === "height" || opt === "pageWidth" || opt === "pageHeight" || opt === "gap" || opt === "minSpreadWidth") {
         if (typeof value === "number") {
           if (value >= 0) {
             this[opt] = options[opt];
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       }
     });
     this.calculate();
@@ -12164,15 +12347,24 @@ class Layout {
       this.gap = gap;
     }
     if (this.flow === "paginated") {
-      this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
-      this.columnWidth = szw / this.divisor - this.gap;
+      if (this.axis === "horizontal") {
+        this.delta = szw;
+        this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
+        this.columnWidth = szw / this.divisor - this.gap;
+        this.pageWidth = this.columnWidth + this.gap;
+        this.pageHeight = szh;
+      } else {
+        this.delta = szh;
+        this.divisor = 1;
+        this.columnWidth = szh / this.divisor - this.gap;
+        this.pageWidth = szw;
+        this.pageHeight = this.columnWidth + this.gap;
+      }
       this.spreadWidth = this.columnWidth * this.divisor + this.gap;
-      this.pageWidth = this.columnWidth + this.gap;
-      this.pageHeight = szh;
     } else {
+      this.delta = szw;
       this.divisor = 1;
     }
-    this.delta = szw;
     this.width = szw;
     this.height = szh;
   }
@@ -12184,14 +12376,12 @@ class Layout {
    * @return {{spreads: number, pages: number}}
    */
   count(totalLength, pageLength) {
-    let spreads, pages;
+    let pages;
+    const delta = pageLength || this.delta;
+    const spreads = Math.ceil(totalLength / delta);
     if (this.flow === "paginated") {
-      pageLength = pageLength || this.delta;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads * this.divisor;
     } else {
-      pageLength = pageLength || this.height;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads;
     }
     return {
@@ -12823,10 +13013,9 @@ class View {
 
   /**
    * Update mode
-   * @param {string} value
    * @abstract
    */
-  mode(value) {}
+  mode() {}
 
   /**
    * Expanding
@@ -12835,18 +13024,28 @@ class View {
   expand() {
     if (!this.frame || this.expanding) return;
     this.expanding = true;
-    const sz = this.contents.textSize();
+    const sz = this.contents.textSize(this.layout);
     const pw = this.layout.pageWidth;
+    const ph = this.layout.pageHeight;
     if (this.layout.flow === "paginated") {
-      if (sz.width % pw > 0) {
-        sz.width = Math.ceil(sz.width / pw) * pw;
-      }
-      if (this.settings.forceEvenPages) {
-        const columns = sz.width / pw;
-        if (this.layout.divisor > 1 && this.layout.name === "reflowable" && columns % 2 > 0) {
-          // add a blank page
-          sz.width += pw;
+      if (this.layout.axis === "horizontal") {
+        if (sz.width % pw > 0) {
+          sz.width = Math.ceil(sz.width / pw) * pw;
         }
+        if (this.settings.forceEvenPages) {
+          const columns = sz.width / pw;
+          if (this.layout.divisor > 1 && this.layout.name === "reflowable" && columns % 2 > 0) {
+            // add a blank page
+            sz.width += pw;
+          }
+        }
+      } else {
+        // vertical
+        if (sz.height % ph > 0) {
+          sz.height = Math.ceil(sz.height / ph) * ph;
+        }
+
+        /* divisor = 1 */
       }
     }
     if (this.width !== sz.width || this.height !== sz.height) {
@@ -13816,6 +14015,8 @@ class Mapping {
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
+const H_AXIS = "horizontal";
+const V_AXIS = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -13903,15 +14104,23 @@ class Contents {
 
   /**
    * Get size of the text using Range
+   * @param {Layout} layout
    * @returns {{ width: number, height: number }}
    */
-  textSize() {
+  textSize(layout) {
     const range = this.document.createRange();
     range.selectNodeContents(this.content);
     const rect = range.getBoundingClientRect();
     const border = borders(this.content);
-    const width = rect.width + border.width;
-    const height = this.content.clientHeight;
+    let width;
+    let height;
+    if (layout.axis === H_AXIS) {
+      width = rect.width + border.width;
+      height = this.content.clientHeight;
+    } else {
+      width = this.content.clientWidth;
+      height = rect.height + border.height;
+    }
     return {
       width: Math.round(width),
       height: Math.round(height)
@@ -13978,10 +14187,11 @@ class Contents {
    * @param {string} property
    * @param {string} value
    * @param {boolean} [priority] set as "important"
+   * @param {Element} [target]
    * @returns {any}
    */
-  css(property, value, priority) {
-    const content = this.content;
+  css(property, value, priority, target) {
+    const content = target || this.content;
     if (value) {
       content.style.setProperty(property, value, priority ? "important" : "");
     } else {
@@ -14206,8 +14416,8 @@ class Contents {
 
   /**
    * Create stylesheet link
-   * @param {string} key 
-   * @param {string} src 
+   * @param {string} key
+   * @param {string} src
    * @returns {Promise<Node>}
    * @private
    */
@@ -14235,8 +14445,8 @@ class Contents {
 
   /**
    * Create stylesheet rules
-   * @param {string} key 
-   * @param {object} rules 
+   * @param {string} key
+   * @param {object} rules
    * @returns {Promise<Node>}
    * @private
    */
@@ -14266,7 +14476,7 @@ class Contents {
   /**
    * Append a stylesheet link/rules to the document head
    * @param {string} key
-   * @param {string|object} input url or rules 
+   * @param {string|object} input url or rules
    * @returns {Promise<Node>}
    * @example appendStylesheet("common", "/pach/to/stylesheet.css")
    * @example appendStylesheet("common", "https://example.com/to/stylesheet.css")
@@ -14292,7 +14502,7 @@ class Contents {
 
   /**
    * Remove a stylesheet link from the document head
-   * @param {string} key 
+   * @param {string} key
    * @returns {boolean}
    */
   removeStylesheet(key) {
@@ -14321,7 +14531,7 @@ class Contents {
   /**
    * Append a script node to the document head
    * @param {string} key
-   * @param {string} src url 
+   * @param {string} src url
    * @example appendScript("common", "/path/to/script.js")
    * @example appendScript("common", "https://examples.com/to/script.js")
    * @returns {Promise<Node>} loaded
@@ -14352,7 +14562,7 @@ class Contents {
 
   /**
    * Remove a script node from the document head
-   * @param {string} key 
+   * @param {string} key
    * @returns {boolean}
    */
   removeScript(key) {
@@ -14435,7 +14645,7 @@ class Contents {
 
   /**
    * map
-   * @param {Layout} layout 
+   * @param {Layout} layout
    * @todo find where this is used - remove?
    * @returns {object[]}
    */
@@ -14446,7 +14656,7 @@ class Contents {
 
   /**
    * Apply CSS to a Document
-   * @param {Layout} layout 
+   * @param {Layout} layout
    */
   format(layout) {
     if (layout.flow === "paginated") {
@@ -14499,18 +14709,32 @@ class Contents {
       scalable: "no"
     });
     this.direction(dir);
-    this.css("overflow", "hidden");
     this.css("margin", "0", true);
-    this.css("box-sizing", "border-box");
-    this.css("max-height", "inherit");
-    this.css("display", "block");
-    this.css("padding-top", "20px");
-    this.css("padding-bottom", "20px");
-    this.css("padding-left", gap / 2 + "px", true);
-    this.css("padding-right", gap / 2 + "px", true);
-    this.css("column-gap", gap + "px");
-    this.css("column-fill", "auto");
-    this.css("column-width", clw + "px");
+    this.css("margin", "0", true, this.root());
+    this.css("padding", "inherit", true, this.root());
+    this.css("display", "block", true);
+    this.css("overflow", "hidden", true);
+    this.css("box-sizing", "border-box", true);
+    if (layout.axis === H_AXIS) {
+      const maxw = layout.count(pgw).pages * pgw;
+      this.css("max-width", maxw + "px", true, this.root());
+      this.css("max-height", "inherit", true, this.root());
+      this.css("padding-top", "20px", true);
+      this.css("padding-bottom", "20px", true);
+      this.css("padding-left", gap / 2 + "px", true);
+      this.css("padding-right", gap / 2 + "px", true);
+    } else {
+      const maxh = layout.count(pgh).pages * pgh;
+      this.css("max-width", "inherit", true, this.root());
+      this.css("max-height", maxh + "px", true, this.root());
+      this.css("padding-top", gap / 2 + "px", true);
+      this.css("padding-bottom", gap / 2 + "px", true);
+      this.css("padding-left", "20px", true);
+      this.css("padding-right", "20px", true);
+    }
+    this.css("column-gap", gap + "px", true);
+    this.css("column-fill", "auto", true);
+    this.css("column-width", clw + "px", true);
 
     // Fix glyph clipping in WebKit
     // https://github.com/futurepress/epub.js/issues/983
@@ -14543,11 +14767,11 @@ class Contents {
 
   /**
    * mapPage
-   * @param {string} cfiBase 
-   * @param {Layout} layout 
-   * @param {number} start 
-   * @param {number} end 
-   * @param {boolean} dev 
+   * @param {string} cfiBase
+   * @param {Layout} layout
+   * @param {number} start
+   * @param {number} end
+   * @param {boolean} dev
    * @returns {any}
    */
   mapPage(cfiBase, layout, start, end, dev) {
@@ -14562,9 +14786,9 @@ class Contents {
   writingMode(mode = "horizontal-tb") {
     if (this.mode === mode) return this.mode;
     const WRITING_MODE = prefixed("writing-mode");
-    const elt = this.document.documentElement;
-    elt.style[WRITING_MODE] = mode;
-    this.mode = this.window.getComputedStyle(elt)[WRITING_MODE] || "";
+    const element = this.document.documentElement;
+    element.style[WRITING_MODE] = mode;
+    this.mode = this.window.getComputedStyle(element)[WRITING_MODE] || mode;
     return this.mode;
   }
 
@@ -14711,7 +14935,8 @@ class Contents {
    */
   transitionListeners() {
     const body = this.content;
-    body.style["transitionProperty"] = "font, font-size, font-size-adjust, font-stretch, font-variation-settings, font-weight, width, height";
+    const list = "font, font-size, font-size-adjust, font-stretch, font-variation-settings, font-weight, width, height";
+    body.style["transitionProperty"] = list;
     body.style["transitionDuration"] = "0.001ms";
     body.style["transitionTimingFunction"] = "linear";
     body.style["transitionDelay"] = "0";
@@ -14720,7 +14945,7 @@ class Contents {
   }
 
   /**
-   * Use MutationObserver to listen for changes in 
+   * Use MutationObserver to listen for changes in
    * the DOM and check for resize (unused)
    * @private
    */
@@ -15580,12 +15805,6 @@ class IframeView extends view {
      * @readonly
      */
     this.method = this.settings.method || "write";
-    /**
-     * @member {string} writingMode
-     * @memberof IframeView
-     * @readonly
-     */
-    this.writingMode = "";
   }
 
   /**
@@ -15603,20 +15822,17 @@ class IframeView extends view {
     this.frame.style.height = "0";
     this.settings.sandbox.forEach(p => p && this.frame.sandbox.add(p));
     this.frame.setAttribute("enable-annotation", "true");
-    this.width = 0;
-    this.height = 0;
     return this.frame;
   }
 
   /**
    * Update writing mode
-   * @param {string} value
    * @override
    */
-  mode(value) {
-    const mode = value || this.contents.mode;
-    if (this.writingMode !== mode) {
-      this.writingMode = mode;
+  mode() {
+    const mode = this.layout.writingMode;
+    if (this.contents.mode !== mode) {
+      this.contents.writingMode(mode);
       this.emit(EVENTS.VIEWS.WRITING_MODE, mode);
     }
   }
@@ -15706,7 +15922,6 @@ class IframeView extends view {
     if (this.displayed) {
       super.destroy();
       this.method = undefined;
-      this.writingMode = undefined;
     }
   }
 }
@@ -15864,8 +16079,8 @@ var debounce = __webpack_require__(8221);
 
 
 
-const AXIS_H = "horizontal";
-const AXIS_V = "vertical";
+const default_H_AXIS = "horizontal";
+const default_V_AXIS = "vertical";
 
 /**
  * Default View Manager
@@ -15936,12 +16151,6 @@ class DefaultViewManager {
      */
     this.views = new views();
     this.viewport = book.rendition.viewport;
-    /**
-     * @member {string} writingMode
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.writingMode = null;
     this.q = new queue(this);
   }
 
@@ -16150,9 +16359,9 @@ class DefaultViewManager {
     view.on(EVENTS.VIEWS.RESIZED, rect => {
       this.resized(view);
     });
-    view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
-      this.updateWritingMode(mode);
-    });
+
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
+
     this.views.append(view);
     return view.display(this.load);
   }
@@ -16172,9 +16381,9 @@ class DefaultViewManager {
       this.counter(view);
       this.resized(view);
     });
-    view.on(EVENTS.VIEWS.WRITING_MODE, mode => {
-      this.updateWritingMode(mode);
-    });
+
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
+
     this.views.prepend(view);
     return view.display(this.load);
   }
@@ -16186,7 +16395,7 @@ class DefaultViewManager {
    */
   counter(view) {
     const content = view.contents.content;
-    if (this.layout.axis === AXIS_V) {
+    if (this.layout.axis === default_V_AXIS) {
       const y = content.scrollHeight;
       this.scrollBy(0, y, true);
     } else {
@@ -16203,8 +16412,8 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === AXIS_H && this.paginated;
-    const isv = this.layout.axis === AXIS_V && this.paginated;
+    const ish = this.layout.axis === default_H_AXIS && this.paginated;
+    const isv = this.layout.axis === default_V_AXIS && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -16275,8 +16484,8 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === AXIS_H && this.paginated;
-    const isv = this.layout.axis === AXIS_V && this.paginated;
+    const ish = this.layout.axis === default_H_AXIS && this.paginated;
+    const isv = this.layout.axis === default_V_AXIS && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -16383,7 +16592,7 @@ class DefaultViewManager {
    * @returns {object[]} Location sections
    */
   currentLocation() {
-    if (this.layout.axis === AXIS_H && this.paginated) {
+    if (this.paginated) {
       this.location = this.paginatedLocation();
     } else {
       this.location = this.scrolledLocation();
@@ -16399,18 +16608,33 @@ class DefaultViewManager {
   paginatedLocation() {
     const lsc = this.views.container;
     const rect = this.viewport.rect;
-    const left = lsc.scrollLeft;
-    const startPos = Math.abs(left);
-    const endPos = Math.abs(left) + rect.width;
-    const startPage = Math.floor(startPos / this.layout.pageWidth);
-    const endPage = Math.floor(endPos / this.layout.pageWidth);
     const views = this.visible();
     const sections = views.map(view => {
       const {
         href,
         index
       } = view.section;
-      const total = this.layout.count(view.width).pages;
+      let total;
+      let start; // left, top
+      let startPos;
+      let endPos;
+      let startPage;
+      let endPage;
+      if (this.layout.axis === default_H_AXIS) {
+        total = this.layout.count(view.width).pages;
+        start = lsc.scrollLeft;
+        startPos = Math.abs(start);
+        endPos = Math.abs(start) + rect.width;
+        startPage = Math.floor(startPos / this.layout.pageWidth);
+        endPage = Math.floor(endPos / this.layout.pageWidth);
+      } else {
+        total = this.layout.count(view.height).pages;
+        start = lsc.scrollTop;
+        startPos = Math.abs(start);
+        endPos = Math.abs(start) + rect.height;
+        startPage = Math.floor(startPos / this.layout.pageHeight);
+        endPage = Math.floor(endPos / this.layout.pageHeight);
+      }
       const pages = [];
       for (let i = startPage; i < endPage; i++) {
         pages.push({
@@ -16448,7 +16672,7 @@ class DefaultViewManager {
       let startPage;
       let endPage;
       let total;
-      if (this.layout.axis === AXIS_V) {
+      if (this.layout.axis === default_V_AXIS) {
         const top = lsc.scrollTop;
         startPos = Math.abs(top);
         endPos = Math.abs(top) + lsc.clientHeight;
@@ -16493,10 +16717,10 @@ class DefaultViewManager {
   isVisible(view, offsetPrev, offsetNext) {
     const vpos = view.position();
     const rect = this.viewport.rect;
-    if (this.layout.axis === AXIS_H && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
+    if (this.layout.axis === default_H_AXIS && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
       return true;
     }
-    if (this.layout.axis === AXIS_V && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
+    if (this.layout.axis === default_V_AXIS && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
       return true;
     }
     return false;
@@ -16610,15 +16834,6 @@ class DefaultViewManager {
   }
 
   /**
-   * Update writing mode
-   * @param {string} mode
-   * @private
-   */
-  updateWritingMode(mode) {
-    this.writingMode = mode;
-  }
-
-  /**
    * Get contents array from views
    * @returns {Array<Contents>} [view.contents]
    */
@@ -16654,7 +16869,6 @@ class DefaultViewManager {
     this.rendered = undefined;
     this.paginated = undefined;
     this.scrollType = undefined;
-    this.writingMode = undefined;
   }
 }
 event_emitter(DefaultViewManager.prototype);
@@ -17029,7 +17243,7 @@ event_emitter(Snap.prototype);
 
 
 
-const continuous_AXIS_H = "horizontal";
+const AXIS_H = "horizontal";
 
 /**
  * Continuous view manager
@@ -17174,7 +17388,7 @@ class ContinuousViewManager extends managers_default {
    */
   async check(offsetLeft, offsetTop) {
     const promises = [];
-    const vph = this.layout.axis === continuous_AXIS_H;
+    const vph = this.layout.axis === AXIS_H;
     const lsc = this.views.container;
     const rtl = this.layout.direction === "rtl";
     let delta = this.settings.offset || 0;
@@ -17188,7 +17402,7 @@ class ContinuousViewManager extends managers_default {
     const visibleLength = vph ? Math.floor(rect.width) : rect.height;
     const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
     let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
-    if (this.writingMode.indexOf(continuous_AXIS_H) === 0) {
+    if (this.layout.writingMode.indexOf(AXIS_H) === 0) {
       // Scroll offset starts at width of element
       if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;
@@ -17255,7 +17469,7 @@ class ContinuousViewManager extends managers_default {
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === continuous_AXIS_H) {
+    if (this.paginated && this.layout.axis === AXIS_H) {
       this.scrollBy(this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, this.layout.height, true);
@@ -17274,7 +17488,7 @@ class ContinuousViewManager extends managers_default {
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === continuous_AXIS_H) {
+    if (this.paginated && this.layout.axis === AXIS_H) {
       this.scrollBy(-this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, -this.layout.height, true);
@@ -17345,6 +17559,7 @@ class Rendition {
    * @param {string} [options.stylesheet] url of stylesheet to be injected
    * @param {string} [options.script] url of script to be injected
    * @param {object} [options.snap] use snap scrolling
+   * @param {string} [options.writingMode='horizontal-tb']
    * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    */
   constructor(book, options) {
@@ -17368,6 +17583,7 @@ class Rendition {
       snap: null,
       direction: null,
       // TODO: implement to 'auto' detection
+      writingMode: null,
       ignoreClass: "",
       sandbox: [],
       stylesheet: null
@@ -17779,7 +17995,8 @@ class Rendition {
   determineLayoutProperties() {
     const {
       metadata,
-      direction
+      direction,
+      writingMode
     } = this.book.packaging;
     return {
       name: this.settings.layout || metadata.get("layout"),
@@ -17790,7 +18007,8 @@ class Rendition {
       orientation: this.settings.orientation || metadata.get("orientation"),
       minSpreadWidth: this.settings.minSpreadWidth,
       pageWidth: this.settings.pageWidth,
-      pageHeight: this.settings.pageHeight
+      pageHeight: this.settings.pageHeight,
+      writingMode: this.settings.writingMode || writingMode || "horizontal-tb"
     };
   }
 

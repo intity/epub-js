@@ -1,4 +1,4 @@
-// mocha@11.7.6 in javascript ES2018
+// mocha@11.8.0 in javascript ES2018
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -15155,6 +15155,7 @@
      * @param {boolean} [opts.delay] - Whether to delay execution of root suite until ready.
      * @param {boolean} [opts.dryRun] - Whether to report tests without running them.
      * @param {boolean} [opts.failZero] - Whether to fail test run if zero tests encountered.
+     * @param {boolean} [opts.failHookAffectedTests] - Whether to fail all tests affected by hook failures.
      */
     constructor(suite, opts = {}) {
       super();
@@ -15415,6 +15416,73 @@
   };
 
   /**
+   * Create an error object for a test that was skipped due to a hook failure.
+   *
+   * @private
+   * @param {string} hookTitle - The title of the failed hook
+   * @param {*} hookError - The error from the failed hook (may not be an Error object)
+   * @returns {Error} The error object for the skipped test
+   */
+  function createHookSkipError(hookTitle, hookError) {
+    // Handle falsy or undefined exceptions
+    if (!hookError) {
+      hookError = createInvalidExceptionError(
+        'Hook "' + hookTitle + '" failed with exception: ' + hookError,
+        hookError,
+      );
+    }
+    // Convert non-Error objects to Error
+    else if (!isError(hookError)) {
+      hookError = thrown2Error(hookError);
+    }
+
+    var errorMessage =
+      'Test skipped due to failure in hook "' +
+      hookTitle +
+      '": ' +
+      hookError.message;
+    var testError = new Error(errorMessage);
+    testError.stack = hookError.stack;
+    return testError;
+  }
+
+  /**
+   * Fail all tests that are affected by a hook failure.
+   * This is used when the `failHookAffectedTests` option is enabled.
+   *
+   * @private
+   * @param {Suite} suite - The suite containing the affected tests
+   * @param {Error} hookError - The error from the failed hook
+   * @param {string} hookTitle - The title of the failed hook
+   */
+  Runner.prototype.failAffectedTests = function (suite, hookError, hookTitle) {
+    if (!this._opts.failHookAffectedTests) {
+      return;
+    }
+
+    var self = this;
+    var testError = createHookSkipError(hookTitle, hookError);
+
+    // Recursively fail all tests in this suite and its child suites
+    function failTestsInSuite(s) {
+      s.tests.forEach(function (test) {
+        // Only fail tests that haven't been executed yet
+        if (!test.state) {
+          test.state = STATE_FAILED;
+          self.failures++;
+          self.emit(constants$1.EVENT_TEST_BEGIN, test);
+          self.emit(constants$1.EVENT_TEST_FAIL, test, testError);
+          self.emit(constants$1.EVENT_TEST_END, test);
+        }
+      });
+
+      s.suites.forEach(failTestsInSuite);
+    }
+
+    failTestsInSuite(suite);
+  };
+
+  /**
    * Fail the given `test`.
    *
    * If `test` is a hook, failures work in the following pattern:
@@ -15556,6 +15624,28 @@
           }
         } else if (err) {
           self.fail(hook, err);
+          // If failHookAffectedTests is enabled, mark affected tests as failed
+          if (self._opts.failHookAffectedTests) {
+            if (name === HOOK_TYPE_BEFORE_ALL) {
+              self.failAffectedTests(self.suite, err, hook.title);
+            } else if (name === HOOK_TYPE_BEFORE_EACH) {
+              // Fail the current test
+              if (self.test && !self.test.state) {
+                var testError = createHookSkipError(hook.title, err);
+
+                self.test.state = STATE_FAILED;
+                self.failures++;
+                self.emit(constants$1.EVENT_TEST_BEGIN, self.test);
+                self.emit(constants$1.EVENT_TEST_FAIL, self.test, testError);
+                self.emit(constants$1.EVENT_TEST_END, self.test);
+              }
+              // Store the hook error info for remaining tests
+              self._failedBeforeEachHook = {
+                error: err,
+                title: hook.title,
+              };
+            }
+          }
           // stop executing hooks, notify callee of hook err
           return fn(err);
         }
@@ -15707,9 +15797,36 @@
     var tests = suite.tests.slice();
     var test;
 
-    function hookErr(_, errSuite, after) {
+    function hookErr(err, errSuite, after) {
       // before/after Each hook for errSuite failed:
       var orig = self.suite;
+
+      // If failHookAffectedTests is enabled and this is a beforeEach failure,
+      // mark remaining tests as failed
+      if (
+        self._opts.failHookAffectedTests &&
+        !after &&
+        self._failedBeforeEachHook
+      ) {
+        // Fail all remaining tests in the suite
+        var remainingTests = tests.slice();
+        remainingTests.forEach(function (t) {
+          if (!t.state) {
+            var testError = createHookSkipError(
+              self._failedBeforeEachHook.title,
+              self._failedBeforeEachHook.error,
+            );
+
+            t.state = STATE_FAILED;
+            self.failures++;
+            self.emit(constants$1.EVENT_TEST_BEGIN, t);
+            self.emit(constants$1.EVENT_TEST_FAIL, t, testError);
+            self.emit(constants$1.EVENT_TEST_END, t);
+          }
+        });
+        // Clear the stored hook info
+        delete self._failedBeforeEachHook;
+      }
 
       // for failed 'after each' hook start from errSuite parent,
       // otherwise start from errSuite itself
@@ -20131,7 +20248,7 @@
   };
 
   var name = "mocha";
-  var version = "11.7.6";
+  var version = "11.8.0";
   var homepage = "https://mochajs.org/";
   var notifyLogo = "https://ibin.co/4QuRuGjXvl36.png";
   var require$$17 = {
@@ -20982,6 +21099,20 @@
   };
 
   /**
+   * Reports tests as failed when they are skipped due to a hook failure.
+   *
+   * @public
+   * @see [CLI option](../#-fail-hook-affected-tests)
+   * @param {boolean} [failHookAffectedTests=true] - Whether to fail tests affected by hook failures.
+   * @return {Mocha} this
+   * @chainable
+   */
+  Mocha.prototype.failHookAffectedTests = function (failHookAffectedTests) {
+    this.options.failHookAffectedTests = failHookAffectedTests !== false;
+    return this;
+  };
+
+  /**
    * Fails test run if no tests encountered with exit-code 1.
    *
    * @public
@@ -21109,6 +21240,7 @@
       cleanReferencesAfterRun: this._cleanReferencesAfterRun,
       delay: options.delay,
       dryRun: options.dryRun,
+      failHookAffectedTests: options.failHookAffectedTests,
       failZero: options.failZero,
     });
     createStatsCollector(runner);
