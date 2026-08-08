@@ -1,7 +1,7 @@
 <a name="Storage"></a>
 
 # Storage ⇐ <code>Input</code>
-Handles saving and requesting files from local storage
+<p>Handles saving and requesting files from local storage</p>
 
 **Kind**: global class  
 **Extends**: <code>Input</code>  
@@ -25,29 +25,29 @@ Handles saving and requesting files from local storage
 <a name="new_Storage_new"></a>
 
 ## new Storage(name)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| name | <code>string</code> | This should be the name of the application for modals |
+| name | <code>string</code> | <p>This should be the name of the application for modals</p> |
 
 <a name="Storage+createInstance"></a>
 
 ## storage.createInstance()
-Create LocalForage instance
+<p>Create LocalForage instance</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 <a name="Storage+get"></a>
 
 ## storage.get(input) ⇒ <code>Promise.&lt;any&gt;</code>
-Get entry from Storage
+<p>Get entry from Storage</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| input | <code>string</code> \| <code>number</code> | key |
+| input | <code>string</code> \| <code>number</code> | <p>key</p> |
 
 **Example**  
 ```js
@@ -60,7 +60,7 @@ storage.get('https://example.com/to/book.epub').then(data => ...)
 <a name="Storage+set"></a>
 
 ## storage.set(input, data) ⇒ <code>Promise.&lt;(ArrayBuffer\|null)&gt;</code>
-Set data into Storage
+<p>Set data into Storage</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
@@ -72,7 +72,7 @@ Set data into Storage
 <a name="Storage+put"></a>
 
 ## storage.put(url) ⇒ <code>Promise.&lt;ArrayBuffer&gt;</code>
-Put data into Storage
+<p>Put data into Storage</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
@@ -83,21 +83,21 @@ Put data into Storage
 <a name="Storage+dispatch"></a>
 
 ## storage.dispatch(url, [type], [withCredentials], [headers]) ⇒ <code>Promise.&lt;(Blob\|string\|JSON\|Document\|XMLDocument)&gt;</code>
-Dispatch a request by URL
+<p>Dispatch a request by URL</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>string</code> | a url to request from storage |
-| [type] | <code>string</code> | specify the type of the returned result |
+| url | <code>string</code> | <p>a url to request from storage</p> |
+| [type] | <code>string</code> | <p>specify the type of the returned result</p> |
 | [withCredentials] | <code>boolean</code> |  |
 | [headers] | <code>Array.&lt;string&gt;</code> |  |
 
 <a name="Storage+getBlob"></a>
 
 ## storage.getBlob(url, [mimeType]) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>
-Get a Blob from Storage by URL
+<p>Get a Blob from Storage by URL</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
@@ -109,7 +109,7 @@ Get a Blob from Storage by URL
 <a name="Storage+getText"></a>
 
 ## storage.getText(url, [mimeType]) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
-Get a Text from Storage by URL
+<p>Get a Text from Storage by URL</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 
@@ -121,10 +121,10 @@ Get a Text from Storage by URL
 <a name="Storage+getBase64"></a>
 
 ## storage.getBase64(url, [mimeType]) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
-Get a base64 encoded result from Storage by URL
+<p>Get a base64 encoded result from Storage by URL</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
-**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - base64 encoded  
+**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - <p>base64 encoded</p>  
 
 | Param | Type |
 | --- | --- |
@@ -134,7 +134,7 @@ Get a base64 encoded result from Storage by URL
 <a name="Storage+destroy"></a>
 
 ## storage.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Storage</code>](#Storage)  
 <a name="Storage.name"></a>
@@ -145,7 +145,7 @@ destroy
 <a name="Storage.online"></a>
 
 ## Storage.online : <code>boolean</code>
-Current status
+<p>Current status</p>
 
 **Kind**: static property of [<code>Storage</code>](#Storage)  
 **Read only**: true  

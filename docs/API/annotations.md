@@ -1,7 +1,7 @@
 <a name="Annotations"></a>
 
 # Annotations
-Handles managing adding & removing Annotations
+<p>Handles managing adding &amp; removing Annotations</p>
 
 **Kind**: global class  
 
@@ -15,7 +15,7 @@ Handles managing adding & removing Annotations
 <a name="new_Annotations_new"></a>
 
 ## new Annotations(rendition)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type |
@@ -25,44 +25,44 @@ Constructor
 <a name="Annotations+append"></a>
 
 ## annotations.append(type, cfiRange, [options]) ⇒ <code>Annotation</code>
-Append an annotation to store
+<p>Append an annotation to store</p>
 
 **Kind**: instance method of [<code>Annotations</code>](#Annotations)  
-**Returns**: <code>Annotation</code> - Annotation that was append  
+**Returns**: <code>Annotation</code> - <p>Annotation that was append</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>string</code> | Type of annotation to append: `"highlight"` OR `"underline"` |
-| cfiRange | <code>string</code> | EpubCFI range to attach annotation to |
+| type | <code>string</code> | <p>Type of annotation to append: <code>&quot;highlight&quot;</code> OR <code>&quot;underline&quot;</code></p> |
+| cfiRange | <code>string</code> | <p>EpubCFI range to attach annotation to</p> |
 | [options] | <code>object</code> |  |
-| [options.data] | <code>object</code> | Data to assign to annotation |
-| [options.cb] | <code>function</code> | Callback after annotation is added |
-| [options.className] | <code>string</code> | CSS class to assign to annotation |
-| [options.styles] | <code>object</code> | CSS styles to assign to annotation |
+| [options.data] | <code>object</code> | <p>Data to assign to annotation</p> |
+| [options.cb] | <code>function</code> | <p>Callback after annotation is added</p> |
+| [options.className] | <code>string</code> | <p>CSS class to assign to annotation</p> |
+| [options.styles] | <code>object</code> | <p>CSS styles to assign to annotation</p> |
 
 <a name="Annotations+remove"></a>
 
 ## annotations.remove(type, cfiRange)
-Remove an annotation from store
+<p>Remove an annotation from store</p>
 
 **Kind**: instance method of [<code>Annotations</code>](#Annotations)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| type | <code>string</code> | Type of annotation to remove: `"highlight"` OR `"underline"` |
-| cfiRange | <code>string</code> | EpubCFI range to attach annotation to |
+| type | <code>string</code> | <p>Type of annotation to remove: <code>&quot;highlight&quot;</code> OR <code>&quot;underline&quot;</code></p> |
+| cfiRange | <code>string</code> | <p>EpubCFI range to attach annotation to</p> |
 
 <a name="Annotations+show"></a>
 
 ## annotations.show()
-[Not Implemented] Show annotations
+<p>[Not Implemented] Show annotations</p>
 
 **Kind**: instance method of [<code>Annotations</code>](#Annotations)  
 **Todo:**: needs implementation in View  
 <a name="Annotations+hide"></a>
 
 ## annotations.hide()
-[Not Implemented] Hide annotations
+<p>[Not Implemented] Hide annotations</p>
 
 **Kind**: instance method of [<code>Annotations</code>](#Annotations)  
 **Todo:**: needs implementation in View  

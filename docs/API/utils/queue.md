@@ -1,7 +1,7 @@
 <a name="Queue"></a>
 
 # Queue ⇐ <code>Array</code>
-Queue for handling tasks one at a time
+<p>Queue for handling tasks one at a time</p>
 
 **Kind**: global class  
 **Extends**: <code>Array</code>  
@@ -20,17 +20,17 @@ Queue for handling tasks one at a time
 <a name="new_Queue_new"></a>
 
 ## new Queue(context)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| context | <code>object</code> | what this will resolve to in the tasks |
+| context | <code>object</code> | <p>what this will resolve to in the tasks</p> |
 
 <a name="Queue+enqueue"></a>
 
 ## queue.enqueue(task, ...args) ⇒ <code>Promise.&lt;any&gt;</code>
-Add an item to the queue
+<p>Add an item to the queue</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 
@@ -42,42 +42,42 @@ Add an item to the queue
 <a name="Queue+dequeue"></a>
 
 ## queue.dequeue() ⇒ <code>Promise.&lt;any&gt;</code>
-Run one item
+<p>Run one item</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+dump"></a>
 
 ## queue.dump()
-Run All Immediately
+<p>Run All Immediately</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+run"></a>
 
 ## queue.run() ⇒ <code>Promise.&lt;any&gt;</code>
-Run all tasks sequentially, at convince
+<p>Run all tasks sequentially, at convince</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+clear"></a>
 
 ## queue.clear()
-Clear all items in wait
+<p>Clear all items in wait</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+pause"></a>
 
 ## queue.pause()
-Pause a running queue
+<p>Pause a running queue</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+stop"></a>
 
 ## queue.stop()
-End the queue
+<p>End the queue</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  
 <a name="Queue+destroy"></a>
 
 ## queue.destroy()
-Destroy the Queue object
+<p>Destroy the Queue object</p>
 
 **Kind**: instance method of [<code>Queue</code>](#Queue)  

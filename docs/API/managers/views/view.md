@@ -1,7 +1,7 @@
 <a name="View"></a>
 
 # View
-The View base class
+<p>The View base class</p>
 
 **Kind**: global class  
 
@@ -14,7 +14,7 @@ The View base class
         * *[.reset()](#View+reset)*
         * *[.update()](#View+update)*
         * *[.axis()](#View+axis)*
-        * *[.mode(value)](#View+mode)*
+        * *[.mode()](#View+mode)*
         * *[.expand()](#View+expand)*
         * *[.reframe(width, height)](#View+reframe)*
         * *[.load(contents)](#View+load) ⇒ <code>Promise.&lt;any&gt;</code>*
@@ -51,7 +51,7 @@ The View base class
 <a name="new_View_new"></a>
 
 ## new View(layout, section)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type |
@@ -62,24 +62,24 @@ Constructor
 <a name="View+clear"></a>
 
 ## *view.clear() ⇒ <code>number</code>*
-Clear all marks
+<p>Clear all marks</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
-**Returns**: <code>number</code> - number of marks  
+**Returns**: <code>number</code> - <p>number of marks</p>  
 <a name="View+create"></a>
 
 ## *view.create() ⇒ <code>Element</code>*
-Create frame element
+<p>Create frame element</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
-**Returns**: <code>Element</code> - iframe  
+**Returns**: <code>Element</code> - <p>iframe</p>  
 <a name="View+render"></a>
 
 ## *view.render(request) ⇒ <code>Promise.&lt;string&gt;</code>*
-render
+<p>render</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
-**Returns**: <code>Promise.&lt;string&gt;</code> - section render  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>section render</p>  
 
 | Param | Type |
 | --- | --- |
@@ -88,42 +88,37 @@ render
 <a name="View+reset"></a>
 
 ## *view.reset()*
-Reset frame
+<p>Reset frame</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View+update"></a>
 
 ## *view.update()*
-Update view
+<p>Update view</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View+axis"></a>
 
 ## *view.axis()*
-Update axis
+<p>Update axis</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View+mode"></a>
 
-## *view.mode(value)*
-Update mode
+## *view.mode()*
+<p>Update mode</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
-
-| Param | Type |
-| --- | --- |
-| value | <code>string</code> | 
-
 <a name="View+expand"></a>
 
 ## *view.expand()*
-Expanding
+<p>Expanding</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View+reframe"></a>
 
 ## *view.reframe(width, height)*
-reframe
+<p>reframe</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 
@@ -135,10 +130,10 @@ reframe
 <a name="View+load"></a>
 
 ## *view.load(contents) ⇒ <code>Promise.&lt;any&gt;</code>*
-Load frame
+<p>Load frame</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - loading promise  
+**Returns**: <code>Promise.&lt;any&gt;</code> - <p>loading promise</p>  
 
 | Param | Type |
 | --- | --- |
@@ -147,10 +142,10 @@ Load frame
 <a name="View+display"></a>
 
 ## view.display(request) ⇒ [<code>Promise.&lt;View&gt;</code>](#View)
-Display view
+<p>Display view</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
-**Returns**: [<code>Promise.&lt;View&gt;</code>](#View) - displayed promise  
+**Returns**: [<code>Promise.&lt;View&gt;</code>](#View) - <p>displayed promise</p>  
 
 | Param | Type |
 | --- | --- |
@@ -159,31 +154,31 @@ Display view
 <a name="View+show"></a>
 
 ## view.show()
-Show container
+<p>Show container</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+hide"></a>
 
 ## *view.hide()*
-Hide container
+<p>Hide container</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View+offset"></a>
 
 ## view.offset() ⇒ <code>Object</code>
-offset
+<p>offset</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+position"></a>
 
 ## view.position() ⇒ <code>DOMRect</code>
-position
+<p>position</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 <a name="View+locationOf"></a>
 
 ## view.locationOf(target) ⇒ <code>Object</code>
-locationOf
+<p>locationOf</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -194,7 +189,7 @@ locationOf
 <a name="View+highlight"></a>
 
 ## view.highlight(cfiRange, [data], [cb], [className], [styles]) ⇒ <code>object</code>
-highlight
+<p>highlight</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -202,14 +197,14 @@ highlight
 | --- | --- | --- | --- |
 | cfiRange | <code>string</code> |  |  |
 | [data] | <code>object</code> | <code>{}</code> |  |
-| [cb] | <code>function</code> | <code></code> | callback function |
+| [cb] | <code>function</code> | <code></code> | <p>callback function</p> |
 | [className] | <code>string</code> | <code>&quot;&#x27;epubjs-hl&#x27;&quot;</code> |  |
 | [styles] | <code>object</code> | <code>{}</code> |  |
 
 <a name="View+unhighlight"></a>
 
 ## view.unhighlight(cfiRange) ⇒ <code>boolean</code>
-unhighlight
+<p>unhighlight</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -220,7 +215,7 @@ unhighlight
 <a name="View+underline"></a>
 
 ## view.underline(cfiRange, [data], [cb], [className], [styles]) ⇒ <code>object</code>
-underline
+<p>underline</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -235,7 +230,7 @@ underline
 <a name="View+ununderline"></a>
 
 ## view.ununderline(cfiRange) ⇒ <code>boolean</code>
-ununderline
+<p>ununderline</p>
 
 **Kind**: instance method of [<code>View</code>](#View)  
 
@@ -246,7 +241,7 @@ ununderline
 <a name="View+destroy"></a>
 
 ## *view.destroy()*
-Destroy the View object
+<p>Destroy the View object</p>
 
 **Kind**: instance abstract method of [<code>View</code>](#View)  
 <a name="View.id"></a>

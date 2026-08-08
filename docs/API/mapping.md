@@ -1,7 +1,7 @@
 <a name="Mapping"></a>
 
 # Mapping
-Map text locations to CFI ranges
+<p>Map text locations to CFI ranges</p>
 
 **Kind**: global class  
 
@@ -16,18 +16,18 @@ Map text locations to CFI ranges
 <a name="new_Mapping_new"></a>
 
 ## new Mapping(layout, [dev])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| layout | <code>Layout</code> |  | Layout ref |
-| [dev] | <code>boolean</code> | <code>false</code> | toggle developer highlighting |
+| layout | <code>Layout</code> |  | <p>Layout ref</p> |
+| [dev] | <code>boolean</code> | <code>false</code> | <p>toggle developer highlighting</p> |
 
 <a name="Mapping+section"></a>
 
 ## mapping.section(view) ⇒ <code>Array.&lt;object&gt;</code>
-Find CFI pairs for entire section at once
+<p>Find CFI pairs for entire section at once</p>
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  
 
@@ -38,24 +38,24 @@ Find CFI pairs for entire section at once
 <a name="Mapping+page"></a>
 
 ## mapping.page(contents, cfiBase, start, end) ⇒ <code>Object</code>
-Find CFI pairs for a page
+<p>Find CFI pairs for a page</p>
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| contents | <code>Contents</code> | Contents from view |
-| cfiBase | <code>string</code> | string of the base for a cfi |
-| start | <code>number</code> | position to start at |
-| end | <code>number</code> | position to end at |
+| contents | <code>Contents</code> | <p>Contents from view</p> |
+| cfiBase | <code>string</code> | <p>string of the base for a cfi</p> |
+| start | <code>number</code> | <p>position to start at</p> |
+| end | <code>number</code> | <p>position to end at</p> |
 
 <a name="Mapping+findRanges"></a>
 
 ## mapping.findRanges(view) ⇒ <code>Array.&lt;object&gt;</code>
-findRanges
+<p>findRanges</p>
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  
-**Returns**: <code>Array.&lt;object&gt;</code> - columns  
+**Returns**: <code>Array.&lt;object&gt;</code> - <p>columns</p>  
 
 | Param | Type |
 | --- | --- |
@@ -64,7 +64,7 @@ findRanges
 <a name="Mapping+rangeListToCfiList"></a>
 
 ## mapping.rangeListToCfiList(cfiBase, columns) ⇒ <code>Array.&lt;object&gt;</code>
-rangeListToCfiList
+<p>rangeListToCfiList</p>
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  
 
@@ -76,6 +76,6 @@ rangeListToCfiList
 <a name="Mapping+destroy"></a>
 
 ## mapping.destroy()
-Destroy the Mapping object
+<p>Destroy the Mapping object</p>
 
 **Kind**: instance method of [<code>Mapping</code>](#Mapping)  

@@ -186,7 +186,7 @@ class ContinuousViewManager extends DefaultViewManager {
     const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
     let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
 
-    if (this.writingMode.indexOf(AXIS_H) === 0) {
+    if (this.layout.writingMode.indexOf(AXIS_H) === 0) {
       // Scroll offset starts at width of element
       if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;

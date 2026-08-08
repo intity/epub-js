@@ -1,7 +1,7 @@
 <a name="request"></a>
 
 # request(url, [type], [withCredentials], [headers]) ⇒ <code>Promise.&lt;any&gt;</code>
-request
+<p>request</p>
 
 **Kind**: global function  
 **Todo**

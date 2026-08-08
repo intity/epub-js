@@ -16,9 +16,7 @@ However, the `layout` object knows nothing about containers, since it is only in
 
 First of all, this class must attach to the `div#viewport` element, in order to then wrap the `div.viewport-container` inside it. This, in turn, will run the `viewport.resized` event, which will change the state of the `layout` object. Finally, the rendering process at the `manager` object level must be triggered.
 
-## Horizontal axis
-
-### rendition-flow-paginated
+## rendition-flow-paginated
 
 Configuration
 
@@ -30,7 +28,9 @@ var rendition = book.renderTo("viewport", {
     height: "100%", // default
     layout: "reflowable", // default
     spread: "none",
-    manager: "default"
+    manager: "default", // default
+    direction: "ltr", // default
+    writingMode: "horizontal-tb" // default
 })
 ```
 
@@ -47,9 +47,69 @@ PH:layout.pageHeight = CH
 
 <img src="../assets/img/rendition-flow-painated.svg" class="horizontal" />
 
-## Vertical axis
+### writing-mode horizontal-tb
 
-### rendotion-flow-scrolled-doc
+<img src="../assets/img/writing-mode_horizontal-tb.svg" class="vertical" />
+
+### writing-mode vertical-rl
+
+```js
+var rendition = book.renderTo("viewport", {
+    axis: "vertical", // autocoplete
+    spread: "none", // autocomplete
+    direction: "ltr", // default
+    writingMode: "vertical-rl"
+})
+```
+
+<img src="../assets/img/writing-mode_vertical-rl.svg" class="vertical" />
+
+### writing-mode vertical-lr
+
+```js
+var rendition = book.renderTo("viewport", {
+    axis: "vertical", // autocomplete
+    spread: "none", // autocomplete
+    direction: "ltr", // default
+    writingMode: "vertical-lr"
+})
+```
+
+<img src="../assets/img/writing-mode_vertical-lr.svg" class="vertical" />
+
+## rendition-flow-scrolled
+
+Configuration
+
+```js
+var rendition = book.renderTo("viewport", {
+    axis: "vertical", // autocomplete
+    flow: "scrolled",
+    width: "100%", // default,
+    height: "100%", // default
+    layout: "reflowable", //default
+    spread: "none", // autocomplete
+    manager: "default", // default
+    direction: "ltr", // default
+    writingMode: "horizontal-tb" // default
+})
+```
+Designations
+
+```
+SH:viewport.container.scrollHeight
+ST:viewport.container.scrollTop
+CW:layout.width = viewport.container.clientWidth
+CH:layout.height = viewport.container.clientHeight
+PW:layout.pageWidth = 800
+PH:layout.pageHeight = 0
+GL:layout.gap
+VH:view.contents.content.clientHeight
+```
+
+<img src="../assets/img/rendition-flow-scrolled-continuous.svg" width=380 />
+
+## rendotion-flow-scrolled-doc
 
 Configuration
 
@@ -62,7 +122,9 @@ var rendition = book.renderTo("viewport", {
     layout: "reflowable", // default
     spread: "none", // autocomplete
     manager: "continuous",
-    pageWidth: 800
+    pageWidth: 800,
+    direction: "ltr", // default
+    writingMode: "horizontal-tb" // default
 })
 ```
 
@@ -81,7 +143,7 @@ VH:view.contents.content.clientHeight
 
 <img src="../assets/img/rendition-flow-scrolled-doc.svg" width=380 />
 
-### rendition-flow-scrolled-continuous
+## rendition-flow-scrolled-continuous
 
 Configuration
 
@@ -93,20 +155,8 @@ var rendition = book.renderTo("viewport", {
     height: "100%", // default
     layout: "reflowable", // default
     spread: "none", // autocomplete
-    manager: "continuous"
+    manager: "continuous",
+    direction: "ltr", // default
+    writingMode: "horizontal-tb" // default
 })
 ```
-
-Designations
-
-```
-SH:viewport.container.scrollHeight
-ST:viewport.container.scrollTop
-CW:layout.width = viewport.container.clientWidth
-CH:layout.height = viewport.container.clientHeight
-PW:layout.pageWidth = CW
-PH:layout.pageHeight = CH
-VH:view.contents.content.clientHeight
-```
-
-<img src="../assets/img/rendition-flow-scrolled-continuous.svg" width=380 />

@@ -1,7 +1,7 @@
 <a name="Sections"></a>
 
 # Sections ⇐ <code>Map</code>
-Sections class
+<p>Sections class</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -20,16 +20,16 @@ Sections class
 <a name="Sections+clear"></a>
 
 ## sections.clear()
-Clear sections
+<p>Clear sections</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
 <a name="Sections+get"></a>
 
 ## sections.get([target]) ⇒ <code>Section</code> \| <code>null</code>
-Get an item from the spine
+<p>Get an item from the spine</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>Section</code> \| <code>null</code> - section  
+**Returns**: <code>Section</code> \| <code>null</code> - <p>section</p>  
 
 | Param | Type |
 | --- | --- |
@@ -58,21 +58,21 @@ sections.get("epubcfi(/6/8!/4/2/16/1:0)")
 <a name="Sections+first"></a>
 
 ## sections.first() ⇒ <code>Section</code> \| <code>null</code>
-Find the first Section in the Spine
+<p>Find the first Section in the Spine</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>Section</code> \| <code>null</code> - first section  
+**Returns**: <code>Section</code> \| <code>null</code> - <p>first section</p>  
 <a name="Sections+last"></a>
 
 ## sections.last() ⇒ <code>Section</code> \| <code>null</code>
-Find the last Section in the Spine
+<p>Find the last Section in the Spine</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
-**Returns**: <code>Section</code> \| <code>null</code> - last section  
+**Returns**: <code>Section</code> \| <code>null</code> - <p>last section</p>  
 <a name="Sections+unpack"></a>
 
 ## sections.unpack(packaging, navigation, resolve, canonical) ⇒ [<code>Promise.&lt;Sections&gt;</code>](#Sections)
-Unpack items from a opf into spine items
+<p>Unpack items from a opf into spine items</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
 
@@ -80,13 +80,13 @@ Unpack items from a opf into spine items
 | --- | --- | --- |
 | packaging | <code>Packaging</code> |  |
 | navigation | <code>Navigation</code> |  |
-| resolve | <code>function</code> | URL resolve |
-| canonical | <code>function</code> | Resolve canonical url |
+| resolve | <code>function</code> | <p>URL resolve</p> |
+| canonical | <code>function</code> | <p>Resolve canonical url</p> |
 
 <a name="Sections+destroy"></a>
 
 ## sections.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Sections</code>](#Sections)  
 <a name="Sections.hooks"></a>

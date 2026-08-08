@@ -1,8 +1,8 @@
 <a name="Section"></a>
 
 # Section
-Represents a Section of the Book
-In most books this is equivalent to a Chapter
+<p>Represents a Section of the Book
+In most books this is equivalent to a Chapter</p>
 
 **Kind**: global class  
 
@@ -35,33 +35,33 @@ In most books this is equivalent to a Chapter
 <a name="new_Section_new"></a>
 
 ## new Section(item, hooks)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| item | <code>object</code> | Spine Item |
+| item | <code>object</code> | <p>Spine Item</p> |
 | hooks | <code>object</code> |  |
 
 <a name="Section+load"></a>
 
 ## section.load(request) ⇒ <code>Promise.&lt;Element&gt;</code>
-Load the section from its url
+<p>Load the section from its url</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Promise.&lt;Element&gt;</code> - a promise with the xml document  
+**Returns**: <code>Promise.&lt;Element&gt;</code> - <p>a promise with the xml document</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| request | <code>function</code> | a request method to use for loading |
+| request | <code>function</code> | <p>a request method to use for loading</p> |
 
 <a name="Section+render"></a>
 
 ## section.render(request) ⇒ <code>Promise.&lt;string&gt;</code>
-Render the contents of a section
+<p>Render the contents of a section</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Promise.&lt;string&gt;</code> - output a serialized XML Document  
+**Returns**: <code>Promise.&lt;string&gt;</code> - <p>output a serialized XML Document</p>  
 **Todo**
 
 - [ ] better way to return this from hooks?
@@ -69,42 +69,42 @@ Render the contents of a section
 
 | Param | Type | Description |
 | --- | --- | --- |
-| request | <code>function</code> | a request method to use for loading |
+| request | <code>function</code> | <p>a request method to use for loading</p> |
 
 <a name="Section+find"></a>
 
 ## section.find(query) ⇒ <code>Array.&lt;object&gt;</code>
-Find a string in a section
+<p>Find a string in a section</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form { cfi, excerpt }  
+**Returns**: <code>Array.&lt;object&gt;</code> - <p>A list of matches, with form { cfi, excerpt }</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| query | <code>string</code> | The query string to find |
+| query | <code>string</code> | <p>The query string to find</p> |
 
 <a name="Section+search"></a>
 
 ## section.search(query, [maxSeqEle]) ⇒ <code>Array.&lt;object&gt;</code>
-Search a string in multiple sequential Element of the section.
+<p>Search a string in multiple sequential Element of the section.
 If the document.createTreeWalker api is missed(eg: IE8), use
-`find` as a fallback.
+<code>find</code> as a fallback.</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>Array.&lt;object&gt;</code> - A list of matches, with form { cfi, excerpt }  
+**Returns**: <code>Array.&lt;object&gt;</code> - <p>A list of matches, with form { cfi, excerpt }</p>  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| query | <code>string</code> |  | The query string to search |
-| [maxSeqEle] | <code>number</code> | <code>5</code> | The maximum number of Element that are combined for search, default value is 5. |
+| query | <code>string</code> |  | <p>The query string to search</p> |
+| [maxSeqEle] | <code>number</code> | <code>5</code> | <p>The maximum number of Element that are combined for search, default value is 5.</p> |
 
 <a name="Section+cfiFromRange"></a>
 
 ## section.cfiFromRange(range) ⇒ <code>string</code>
-Get a CFI from a Range in the Section
+<p>Get a CFI from a Range in the Section</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>string</code> - cfi an EpubCFI string  
+**Returns**: <code>string</code> - <p>cfi an EpubCFI string</p>  
 
 | Param | Type |
 | --- | --- |
@@ -113,10 +113,10 @@ Get a CFI from a Range in the Section
 <a name="Section+cfiFromElement"></a>
 
 ## section.cfiFromElement(el) ⇒ <code>string</code>
-Get a CFI from an Element in the Section
+<p>Get a CFI from an Element in the Section</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
-**Returns**: <code>string</code> - cfi an EpubCFI string  
+**Returns**: <code>string</code> - <p>cfi an EpubCFI string</p>  
 
 | Param | Type |
 | --- | --- |
@@ -125,13 +125,13 @@ Get a CFI from an Element in the Section
 <a name="Section+unload"></a>
 
 ## section.unload()
-Unload the section document
+<p>Unload the section document</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
 <a name="Section+destroy"></a>
 
 ## section.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Section</code>](#Section)  
 <a name="Section.idref"></a>

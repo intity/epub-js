@@ -1,15 +1,15 @@
 <a name="ePub"></a>
 
 # ePub(input, [options]) ⇒ <code>Book</code>
-Create a new Book instance
+<p>Create a new Book instance</p>
 
 **Kind**: global function  
-**Returns**: <code>Book</code> - a new Book object  
+**Returns**: <code>Book</code> - <p>a new Book object</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| input | <code>string</code> \| <code>ArrayBuffer</code> | URL, Path or ArrayBuffer |
-| [options] | <code>object</code> | to pass to the book |
+| input | <code>string</code> \| <code>ArrayBuffer</code> | <p>URL, Path or ArrayBuffer</p> |
+| [options] | <code>object</code> | <p>to pass to the book</p> |
 
 **Example**  
 ```js

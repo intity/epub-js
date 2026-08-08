@@ -1,7 +1,7 @@
 <a name="Landmarks"></a>
 
 # Landmarks ⇐ <code>Map</code>
-Landmarks Parser
+<p>Landmarks Parser</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -15,22 +15,22 @@ Landmarks Parser
 <a name="new_Landmarks_new"></a>
 
 ## new Landmarks()
-Constructor
+<p>Constructor</p>
 
 <a name="Landmarks+parse"></a>
 
 ## landmarks.parse(target) ⇒ [<code>Promise.&lt;Landmarks&gt;</code>](#Landmarks)
-Parse Landmarks
+<p>Parse Landmarks</p>
 
 **Kind**: instance method of [<code>Landmarks</code>](#Landmarks)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| target | <code>Node</code> \| <code>Array.&lt;object&gt;</code> | nav |
+| target | <code>Node</code> \| <code>Array.&lt;object&gt;</code> | <p>nav</p> |
 
 <a name="Landmarks+destroy"></a>
 
 ## landmarks.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Landmarks</code>](#Landmarks)  

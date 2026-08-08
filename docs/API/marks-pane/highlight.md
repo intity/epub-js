@@ -1,7 +1,7 @@
 <a name="Highlight"></a>
 
 # Highlight ⇐ <code>Mark</code>
-Highlight class
+<p>Highlight class</p>
 
 **Kind**: global class  
 **Extends**: <code>Mark</code>  
@@ -14,7 +14,7 @@ Highlight class
 <a name="new_Highlight_new"></a>
 
 ## new Highlight(range, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default |
@@ -29,7 +29,7 @@ Constructor
 <a name="Highlight+bind"></a>
 
 ## highlight.bind(element, container)
-bind
+<p>bind</p>
 
 **Kind**: instance method of [<code>Highlight</code>](#Highlight)  
 
@@ -41,6 +41,6 @@ bind
 <a name="Highlight+render"></a>
 
 ## highlight.render()
-render
+<p>render</p>
 
 **Kind**: instance method of [<code>Highlight</code>](#Highlight)  

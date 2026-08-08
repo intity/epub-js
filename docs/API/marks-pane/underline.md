@@ -1,7 +1,7 @@
 <a name="Underline"></a>
 
 # Underline ⇐ <code>Highlight</code>
-Underline class
+<p>Underline class</p>
 
 **Kind**: global class  
 **Extends**: <code>Highlight</code>  
@@ -13,7 +13,7 @@ Underline class
 <a name="new_Underline_new"></a>
 
 ## new Underline(range, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default |
@@ -28,6 +28,6 @@ Constructor
 <a name="Underline+render"></a>
 
 ## underline.render()
-render
+<p>render</p>
 
 **Kind**: instance method of [<code>Underline</code>](#Underline)  

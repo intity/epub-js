@@ -1,7 +1,7 @@
 <a name="Navigation"></a>
 
 # Navigation
-Navigation Parser
+<p>Navigation Parser</p>
 
 **Kind**: global class  
 **Link**: https://www.w3.org/TR/epub/#sec-nav  
@@ -22,29 +22,29 @@ Navigation Parser
 <a name="new_Navigation_new"></a>
 
 ## new Navigation()
-Constructor
+<p>Constructor</p>
 
 <a name="Navigation+clear"></a>
 
 ## navigation.clear()
-Clear all navigation parts
+<p>Clear all navigation parts</p>
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation+parse"></a>
 
 ## navigation.parse(doc) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
-Parse navigation document
+<p>Parse navigation document</p>
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| doc | <code>Document</code> | html OR xhtml OR ncx |
+| doc | <code>Document</code> | <p>html OR xhtml OR ncx</p> |
 
 <a name="Navigation+load"></a>
 
 ## navigation.load(data) ⇒ [<code>Promise.&lt;Navigation&gt;</code>](#Navigation)
-Load navigation object from JSON
+<p>Load navigation object from JSON</p>
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 
@@ -55,7 +55,7 @@ Load navigation object from JSON
 <a name="Navigation+forEach"></a>
 
 ## navigation.forEach(...args)
-forEach pass through
+<p>forEach pass through</p>
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 
@@ -66,27 +66,27 @@ forEach pass through
 <a name="Navigation+destroy"></a>
 
 ## navigation.destroy()
-Destroy the Navigation object
+<p>Destroy the Navigation object</p>
 
 **Kind**: instance method of [<code>Navigation</code>](#Navigation)  
 <a name="Navigation.landmarks"></a>
 
 ## Navigation.landmarks : <code>Landmarks</code>
-Landmarks
+<p>Landmarks</p>
 
 **Kind**: static property of [<code>Navigation</code>](#Navigation)  
 **Read only**: true  
 <a name="Navigation.pageList"></a>
 
 ## Navigation.pageList : <code>PageList</code>
-List of numbered pages
+<p>List of numbered pages</p>
 
 **Kind**: static property of [<code>Navigation</code>](#Navigation)  
 **Read only**: true  
 <a name="Navigation.toc"></a>
 
 ## Navigation.toc : <code>Toc</code>
-Table of Contents
+<p>Table of Contents</p>
 
 **Kind**: static property of [<code>Navigation</code>](#Navigation)  
 **Read only**: true  

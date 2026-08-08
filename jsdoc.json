@@ -1,0 +1,12 @@
+{
+  "plugins": ["plugins/markdown"],
+  "source": {
+    "include": ["."],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "sourceType": "module",
+  "opts": {
+    "encoding": "utf8"
+  }
+}

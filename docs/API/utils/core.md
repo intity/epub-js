@@ -43,22 +43,22 @@
 <a name="module_core.uuid"></a>
 
 ## core.uuid ⇒ <code>string</code>
-Generates a UUID
+<p>Generates a UUID</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>string</code> - uuid  
+**Returns**: <code>string</code> - <p>uuid</p>  
 **Link**: https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid  
 <a name="module_core.documentHeight"></a>
 
 ## core.documentHeight ⇒ <code>number</code>
-Gets the height of a document
+<p>Gets the height of a document</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - height  
+**Returns**: <code>number</code> - <p>height</p>  
 <a name="module_core.isElement"></a>
 
 ## core.isElement ⇒ <code>boolean</code>
-Checks if a node is an element
+<p>Checks if a node is an element</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -69,7 +69,7 @@ Checks if a node is an element
 <a name="module_core.isNumber"></a>
 
 ## core.isNumber ⇒ <code>boolean</code>
-isNumber
+<p>isNumber</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -80,7 +80,7 @@ isNumber
 <a name="module_core.isFloat"></a>
 
 ## core.isFloat ⇒ <code>boolean</code>
-isFloat
+<p>isFloat</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -91,7 +91,7 @@ isFloat
 <a name="module_core.prefixed"></a>
 
 ## core.prefixed ⇒ <code>string</code>
-Get a prefixed css property
+<p>Get a prefixed css property</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -102,7 +102,7 @@ Get a prefixed css property
 <a name="module_core.defaults"></a>
 
 ## core.defaults ⇒ <code>object</code>
-Apply defaults to an object
+<p>Apply defaults to an object</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -113,7 +113,7 @@ Apply defaults to an object
 <a name="module_core.extend"></a>
 
 ## core.extend ⇒ <code>object</code>
-Extend properties of an object
+<p>Extend properties of an object</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -124,10 +124,10 @@ Extend properties of an object
 <a name="module_core.insert"></a>
 
 ## core.insert ⇒ <code>number</code>
-Fast quicksort insert for sorted array -- based on:
+<p>Fast quicksort insert for sorted array -- based on:</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - location (in array)  
+**Returns**: <code>number</code> - <p>location (in array)</p>  
 **Link**: https://stackoverflow.com/questions/1344500/efficient-way-to-insert-a-number-into-a-sorted-array-of-numbers  
 
 | Param | Type |
@@ -139,11 +139,11 @@ Fast quicksort insert for sorted array -- based on:
 <a name="module_core.indexOfSorted"></a>
 
 ## core.indexOfSorted ⇒ <code>number</code>
-Finds index of something in a sorted array
-Returns -1 if not found
+<p>Finds index of something in a sorted array
+Returns -1 if not found</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - index (in array) or -1  
+**Returns**: <code>number</code> - <p>index (in array) or -1</p>  
 
 | Param | Type |
 | --- | --- |
@@ -156,8 +156,8 @@ Returns -1 if not found
 <a name="module_core.bounds"></a>
 
 ## core.bounds ⇒ <code>Object</code>
-Find the bounds of an element
-taking padding and margin into account
+<p>Find the bounds of an element
+taking padding and margin into account</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -168,8 +168,8 @@ taking padding and margin into account
 <a name="module_core.borders"></a>
 
 ## core.borders ⇒ <code>Object</code>
-Find the bounds of an element
-taking padding, margin and borders into account
+<p>Find the bounds of an element
+taking padding, margin and borders into account</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -180,8 +180,8 @@ taking padding, margin and borders into account
 <a name="module_core.nodeBounds"></a>
 
 ## core.nodeBounds ⇒ <code>DOMRect</code>
-Find the bounds of any node
-allows for getting bounds of text nodes by wrapping them in a range
+<p>Find the bounds of any node
+allows for getting bounds of text nodes by wrapping them in a range</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -192,16 +192,16 @@ allows for getting bounds of text nodes by wrapping them in a range
 <a name="module_core.windowBounds"></a>
 
 ## core.windowBounds ⇒ <code>Object</code>
-Find the equivalent of getBoundingClientRect of a browser window
+<p>Find the equivalent of getBoundingClientRect of a browser window</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 <a name="module_core.indexOfNode"></a>
 
 ## core.indexOfNode ⇒ <code>number</code>
-Gets the index of a node in its parent
+<p>Gets the index of a node in its parent</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - index  
+**Returns**: <code>number</code> - <p>index</p>  
 
 | Param | Type |
 | --- | --- |
@@ -211,10 +211,10 @@ Gets the index of a node in its parent
 <a name="module_core.indexOfTextNode"></a>
 
 ## core.indexOfTextNode ⇒ <code>number</code>
-Gets the index of a text node in its parent
+<p>Gets the index of a text node in its parent</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - index  
+**Returns**: <code>number</code> - <p>index</p>  
 
 | Param | Type |
 | --- | --- |
@@ -223,10 +223,10 @@ Gets the index of a text node in its parent
 <a name="module_core.indexOfElementNode"></a>
 
 ## core.indexOfElementNode ⇒ <code>number</code>
-Gets the index of an element node in its parent
+<p>Gets the index of an element node in its parent</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>number</code> - index  
+**Returns**: <code>number</code> - <p>index</p>  
 
 | Param | Type |
 | --- | --- |
@@ -235,7 +235,7 @@ Gets the index of an element node in its parent
 <a name="module_core.isXml"></a>
 
 ## core.isXml ⇒ <code>boolean</code>
-Check if extension is xml
+<p>Check if extension is xml</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -246,7 +246,7 @@ Check if extension is xml
 <a name="module_core.createBlob"></a>
 
 ## core.createBlob ⇒ <code>Blob</code>
-Create a new blob
+<p>Create a new blob</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -258,10 +258,10 @@ Create a new blob
 <a name="module_core.createBlobUrl"></a>
 
 ## core.createBlobUrl ⇒ <code>string</code>
-Create a new blob url
+<p>Create a new blob url</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>string</code> - url  
+**Returns**: <code>string</code> - <p>url</p>  
 
 | Param | Type |
 | --- | --- |
@@ -271,7 +271,7 @@ Create a new blob url
 <a name="module_core.revokeBlobUrl"></a>
 
 ## core.revokeBlobUrl
-Remove a blob url
+<p>Remove a blob url</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -282,10 +282,10 @@ Remove a blob url
 <a name="module_core.createBase64Url"></a>
 
 ## core.createBase64Url ⇒ <code>string</code>
-Create a new base64 encoded url
+<p>Create a new base64 encoded url</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>string</code> - url  
+**Returns**: <code>string</code> - <p>url</p>  
 
 | Param | Type |
 | --- | --- |
@@ -295,10 +295,10 @@ Create a new base64 encoded url
 <a name="module_core.type"></a>
 
 ## core.type ⇒ <code>string</code>
-Get type of an object
+<p>Get type of an object</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>string</code> - type  
+**Returns**: <code>string</code> - <p>type</p>  
 
 | Param | Type |
 | --- | --- |
@@ -307,10 +307,10 @@ Get type of an object
 <a name="module_core.parse"></a>
 
 ## core.parse ⇒ <code>Document</code>
-Parse xml (or html) markup
+<p>Parse xml (or html) markup</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Document</code> - document  
+**Returns**: <code>Document</code> - <p>document</p>  
 
 | Param | Type |
 | --- | --- |
@@ -320,67 +320,67 @@ Parse xml (or html) markup
 <a name="module_core.qs"></a>
 
 ## core.qs ⇒ <code>Element</code>
-querySelector polyfill
+<p>querySelector polyfill</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Element</code> - element  
+**Returns**: <code>Element</code> - <p>element</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | el | <code>Element</code> |  |
-| sel | <code>string</code> | selector string |
+| sel | <code>string</code> | <p>selector string</p> |
 
 <a name="module_core.qsa"></a>
 
 ## core.qsa ⇒ <code>Array.&lt;Element&gt;</code>
-querySelectorAll polyfill
+<p>querySelectorAll polyfill</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Element&gt;</code> - elements  
+**Returns**: <code>Array.&lt;Element&gt;</code> - <p>elements</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | el | <code>Element</code> |  |
-| sel | <code>string</code> | selector string |
+| sel | <code>string</code> | <p>selector string</p> |
 
 <a name="module_core.qsp"></a>
 
 ## core.qsp ⇒ <code>Array.&lt;Element&gt;</code>
-querySelector by property
+<p>querySelector by property</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Element&gt;</code> - elements  
+**Returns**: <code>Array.&lt;Element&gt;</code> - <p>elements</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | el | <code>Element</code> |  |
-| sel | <code>string</code> | selector string |
+| sel | <code>string</code> | <p>selector string</p> |
 | props | <code>Array.&lt;object&gt;</code> |  |
 
 <a name="module_core.sprint"></a>
 
 ## core.sprint
-Sprint through all text nodes in a document
+<p>Sprint through all text nodes in a document</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| root | <code>Element</code> | element to start with |
-| func | <code>function</code> | function to run on each element |
+| root | <code>Element</code> | <p>element to start with</p> |
+| func | <code>function</code> | <p>function to run on each element</p> |
 
 <a name="module_core.treeWalker"></a>
 
 ## core.treeWalker
-Create a treeWalker
+<p>Create a treeWalker</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| root | <code>Element</code> | element to start with |
-| func | <code>function</code> | function to run on each element |
-| filter | <code>function</code> \| <code>object</code> | function or object to filter with |
+| root | <code>Element</code> | <p>element to start with</p> |
+| func | <code>function</code> | <p>function to run on each element</p> |
+| filter | <code>function</code> \| <code>object</code> | <p>function or object to filter with</p> |
 
 <a name="module_core.walk"></a>
 
@@ -390,12 +390,12 @@ Create a treeWalker
 | Param | Type | Description |
 | --- | --- | --- |
 | node | <code>Node</code> |  |
-| callback | <code>function</code> | false for continue,true for break inside callback |
+| callback | <code>function</code> | <p>false for continue,true for break inside callback</p> |
 
 <a name="module_core.blob2base64"></a>
 
 ## core.blob2base64 ⇒ <code>Promise.&lt;string&gt;</code>
-Convert a blob to a base64 encoded string
+<p>Convert a blob to a base64 encoded string</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
 
@@ -406,24 +406,24 @@ Convert a blob to a base64 encoded string
 <a name="module_core.querySelectorByType"></a>
 
 ## core.querySelectorByType ⇒ <code>Array.&lt;Element&gt;</code>
-querySelector with filter by epub type
+<p>querySelector with filter by epub type</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Element&gt;</code> - elements  
+**Returns**: <code>Array.&lt;Element&gt;</code> - <p>elements</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | html | <code>Element</code> |  |
-| element | <code>string</code> | element type to find |
-| type | <code>string</code> | epub type to find |
+| element | <code>string</code> | <p>element type to find</p> |
+| type | <code>string</code> | <p>epub type to find</p> |
 
 <a name="module_core.findChildren"></a>
 
 ## core.findChildren ⇒ <code>Array.&lt;Element&gt;</code>
-Find direct descendents of an element
+<p>Find direct descendents of an element</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Element&gt;</code> - children  
+**Returns**: <code>Array.&lt;Element&gt;</code> - <p>children</p>  
 
 | Param | Type |
 | --- | --- |
@@ -432,10 +432,10 @@ Find direct descendents of an element
 <a name="module_core.parents"></a>
 
 ## core.parents ⇒ <code>Array.&lt;Node&gt;</code>
-Find all parents (ancestors) of an element
+<p>Find all parents (ancestors) of an element</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Node&gt;</code> - parents  
+**Returns**: <code>Array.&lt;Node&gt;</code> - <p>parents</p>  
 
 | Param | Type |
 | --- | --- |
@@ -444,10 +444,10 @@ Find all parents (ancestors) of an element
 <a name="module_core.filterChildren"></a>
 
 ## core.filterChildren ⇒ <code>Array.&lt;Element&gt;</code>
-Find all direct descendents of a specific type
+<p>Find all direct descendents of a specific type</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Element&gt;</code> - children  
+**Returns**: <code>Array.&lt;Element&gt;</code> - <p>children</p>  
 
 | Param | Type |
 | --- | --- |
@@ -458,10 +458,10 @@ Find all direct descendents of a specific type
 <a name="module_core.getParentByTagName"></a>
 
 ## core.getParentByTagName ⇒ <code>Array.&lt;Node&gt;</code>
-Filter all parents (ancestors) with tag name
+<p>Filter all parents (ancestors) with tag name</p>
 
 **Kind**: static constant of [<code>core</code>](#module_core)  
-**Returns**: <code>Array.&lt;Node&gt;</code> - parents  
+**Returns**: <code>Array.&lt;Node&gt;</code> - <p>parents</p>  
 
 | Param | Type |
 | --- | --- |

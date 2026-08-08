@@ -82,7 +82,7 @@ class Input {
 	 * @returns {Promise<Blob|null>}
 	 * @abstract
 	 */
-	async getBlob(url, mimeType) { }
+	async getBlob(url, mimeType) { return null; }
 
 	/**
 	 * Get a Text from entries by URL
@@ -91,7 +91,7 @@ class Input {
 	 * @returns {Promise<string|null>}
 	 * @abstract
 	 */
-	async getText(url, mimeType) { }
+	async getText(url, mimeType) { return null; }
 
 	/**
 	 * Get a base64 encoded result from entries by URL
@@ -100,7 +100,7 @@ class Input {
 	 * @returns {Promise<string|null>} base64 encoded
 	 * @abstract
 	 */
-	async getBase64(url, mimeType) { }
+	async getBase64(url, mimeType) { return null; }
 
 	/**
 	 * destroy

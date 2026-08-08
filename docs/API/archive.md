@@ -1,7 +1,7 @@
 <a name="Archive"></a>
 
 # Archive ⇐ <code>Input</code>
-Handles Unzipping a requesting files from an Epub Archive
+<p>Handles Unzipping a requesting files from an Epub Archive</p>
 
 **Kind**: global class  
 **Extends**: <code>Input</code>  
@@ -19,48 +19,48 @@ Handles Unzipping a requesting files from an Epub Archive
 <a name="Archive+createInstance"></a>
 
 ## archive.createInstance()
-Create JSZip instance
+<p>Create JSZip instance</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
 <a name="Archive+open"></a>
 
 ## archive.open(input, [encoding]) ⇒ <code>Promise.&lt;any&gt;</code>
-Open an archive
+<p>Open an archive</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - zipfile  
+**Returns**: <code>Promise.&lt;any&gt;</code> - <p>zipfile</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | input | <code>string</code> \| <code>ArrayBuffer</code> |  |
-| [encoding] | <code>string</code> | tells JSZip if the input data is base64 encoded |
+| [encoding] | <code>string</code> | <p>tells JSZip if the input data is base64 encoded</p> |
 
 <a name="Archive+clear"></a>
 
 ## archive.clear()
-Clear the JSZip.files to empty
+<p>Clear the JSZip.files to empty</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
 <a name="Archive+openUrl"></a>
 
 ## archive.openUrl(zipUrl, [isBase64]) ⇒ <code>Promise.&lt;any&gt;</code>
-Load and Open an archive
+<p>Load and Open an archive</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise.&lt;any&gt;</code> - zipfile  
+**Returns**: <code>Promise.&lt;any&gt;</code> - <p>zipfile</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | zipUrl | <code>string</code> |  |
-| [isBase64] | <code>boolean</code> | tells JSZip if the input data is base64 encoded |
+| [isBase64] | <code>boolean</code> | <p>tells JSZip if the input data is base64 encoded</p> |
 
 <a name="Archive+get"></a>
 
 ## archive.get(url) ⇒ <code>object</code>
-Get entry from Archive
+<p>Get entry from Archive</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>object</code> - entry  
+**Returns**: <code>object</code> - <p>entry</p>  
 
 | Param | Type |
 | --- | --- |
@@ -73,7 +73,7 @@ archive.get("META-INF/container.xml")
 <a name="Archive+getBlob"></a>
 
 ## archive.getBlob(url, [mimeType]) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>
-Get a Blob from Archive by URL
+<p>Get a Blob from Archive by URL</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
 
@@ -85,7 +85,7 @@ Get a Blob from Archive by URL
 <a name="Archive+getText"></a>
 
 ## archive.getText(url) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
-Get Text from Archive by URL
+<p>Get Text from Archive by URL</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
 
@@ -96,10 +96,10 @@ Get Text from Archive by URL
 <a name="Archive+getBase64"></a>
 
 ## archive.getBase64(url, [mimeType]) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>
-Get a base64 encoded result from Archive by URL
+<p>Get a base64 encoded result from Archive by URL</p>
 
 **Kind**: instance method of [<code>Archive</code>](#Archive)  
-**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - base64 encoded  
+**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - <p>base64 encoded</p>  
 
 | Param | Type |
 | --- | --- |

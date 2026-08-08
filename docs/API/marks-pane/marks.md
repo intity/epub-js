@@ -1,7 +1,7 @@
 <a name="Marks"></a>
 
 # Marks
-Marks class
+<p>Marks class</p>
 
 **Kind**: global class  
 
@@ -17,18 +17,18 @@ Marks class
 <a name="new_Marks_new"></a>
 
 ## new Marks(target, [container])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| target | <code>Node</code> |  | view |
-| [container] | <code>Node</code> | <code>document.body</code> | epub-view container |
+| target | <code>Node</code> |  | <p>view</p> |
+| [container] | <code>Node</code> | <code>document.body</code> | <p>epub-view container</p> |
 
 <a name="Marks+appendMark"></a>
 
 ## marks.appendMark(key, mark) ⇒ <code>Mark</code>
-Append mark
+<p>Append mark</p>
 
 **Kind**: instance method of [<code>Marks</code>](#Marks)  
 
@@ -40,7 +40,7 @@ Append mark
 <a name="Marks+removeMark"></a>
 
 ## marks.removeMark(key) ⇒ <code>void</code>
-Remove mark
+<p>Remove mark</p>
 
 **Kind**: instance method of [<code>Marks</code>](#Marks)  
 
@@ -51,13 +51,13 @@ Remove mark
 <a name="Marks+render"></a>
 
 ## marks.render()
-render
+<p>render</p>
 
 **Kind**: instance method of [<code>Marks</code>](#Marks)  
 <a name="Marks.element"></a>
 
 ## Marks.element : <code>Node</code>
-the marks container
+<p>the marks container</p>
 
 **Kind**: static property of [<code>Marks</code>](#Marks)  
 **Read only**: true  

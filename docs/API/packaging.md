@@ -1,7 +1,7 @@
 <a name="Packaging"></a>
 
 # Packaging
-Open Packaging Format Parser
+<p>Open Packaging Format Parser</p>
 
 **Kind**: global class  
 
@@ -19,44 +19,45 @@ Open Packaging Format Parser
         * [.direction](#Packaging.direction) : <code>string</code>
         * [.version](#Packaging.version) : <code>string</code>
         * [.uniqueIdentifier](#Packaging.uniqueIdentifier) : <code>string</code>
+        * [.writingMode](#Packaging.writingMode) : <code>string</code>
 
 <a name="new_Packaging_new"></a>
 
 ## new Packaging()
-Constructor
+<p>Constructor</p>
 
 <a name="Packaging+clear"></a>
 
 ## packaging.clear()
-Clear packaging parts
+<p>Clear packaging parts</p>
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
 <a name="Packaging+parse"></a>
 
 ## packaging.parse(packageXml) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
-Parse OPF XML
+<p>Parse OPF XML</p>
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| packageXml | <code>Document</code> | OPF XML |
+| packageXml | <code>Document</code> | <p>OPF XML</p> |
 
 <a name="Packaging+load"></a>
 
 ## packaging.load(data) ⇒ [<code>Promise.&lt;Packaging&gt;</code>](#Packaging)
-Load package from JSON
+<p>Load package from JSON</p>
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>object</code> | Serialized JSON object data |
+| data | <code>object</code> | <p>Serialized JSON object data</p> |
 
 <a name="Packaging+destroy"></a>
 
 ## packaging.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Packaging</code>](#Packaging)  
 <a name="Packaging.metadata"></a>
@@ -82,12 +83,17 @@ destroy
 <a name="Packaging.version"></a>
 
 ## Packaging.version : <code>string</code>
-Package version
+<p>Package version</p>
 
 **Kind**: static property of [<code>Packaging</code>](#Packaging)  
 **Read only**: true  
 <a name="Packaging.uniqueIdentifier"></a>
 
 ## Packaging.uniqueIdentifier : <code>string</code>
+**Kind**: static property of [<code>Packaging</code>](#Packaging)  
+**Read only**: true  
+<a name="Packaging.writingMode"></a>
+
+## Packaging.writingMode : <code>string</code>
 **Kind**: static property of [<code>Packaging</code>](#Packaging)  
 **Read only**: true  

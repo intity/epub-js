@@ -211,10 +211,9 @@ class View {
 
   /**
    * Update mode
-   * @param {string} value
    * @abstract
    */
-  mode(value) {}
+  mode() {}
 
   /**
    * Expanding
@@ -225,23 +224,33 @@ class View {
     if (!this.frame || this.expanding) return;
 
     this.expanding = true;
-    const sz = this.contents.textSize();
+
+    const sz = this.contents.textSize(this.layout);
     const pw = this.layout.pageWidth;
+    const ph = this.layout.pageHeight;
 
     if (this.layout.flow === "paginated") {
 
-      if (sz.width % pw > 0) {
-        sz.width = Math.ceil(sz.width / pw) * pw;
-      }
-
-      if (this.settings.forceEvenPages) {
-        const columns = (sz.width / pw);
-        if (this.layout.divisor > 1 &&
-          this.layout.name === "reflowable" &&
-          (columns % 2 > 0)) {
-          // add a blank page
-          sz.width += pw;
+      if (this.layout.axis === "horizontal") {
+        if (sz.width % pw > 0) {
+          sz.width = Math.ceil(sz.width / pw) * pw;
         }
+
+        if (this.settings.forceEvenPages) {
+          const columns = (sz.width / pw);
+          if (this.layout.divisor > 1 &&
+            this.layout.name === "reflowable" &&
+            (columns % 2 > 0)) {
+            // add a blank page
+            sz.width += pw;
+          }
+        }
+      } else { // vertical
+        if (sz.height % ph > 0) {
+          sz.height = Math.ceil(sz.height / ph) * ph;
+        }
+
+        /* divisor = 1 */
       }
     }
 

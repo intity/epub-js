@@ -1,7 +1,7 @@
 <a name="DefaultViewManager"></a>
 
 # DefaultViewManager
-Default View Manager
+<p>Default View Manager</p>
 
 **Kind**: global class  
 
@@ -28,33 +28,32 @@ Default View Manager
         * [.mapping](#DefaultViewManager.mapping) : <code>Mapping</code>
         * [.rendered](#DefaultViewManager.rendered) : <code>boolean</code>
         * [.views](#DefaultViewManager.views) : <code>Views</code>
-        * [.writingMode](#DefaultViewManager.writingMode) : <code>string</code>
 
 <a name="new_DefaultViewManager_new"></a>
 
 ## new DefaultViewManager(book, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | book | <code>Book</code> |  |  |
 | [options] | <code>object</code> |  |  |
-| [options.method] | <code>string</code> |  | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
+| [options.method] | <code>string</code> |  | <p>values: <code>&quot;blobUrl&quot;</code> OR <code>&quot;srcdoc&quot;</code> OR <code>&quot;write&quot;</code></p> |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.view] | <code>string</code> \| <code>object</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
-| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | <p>iframe sandbox policy list</p> |
 
 <a name="DefaultViewManager+render"></a>
 
 ## defaultViewManager.render(element, size)
-render
+<p>render</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Element</code> \| <code>string</code> | viewport element |
+| element | <code>Element</code> \| <code>string</code> | <p>viewport element</p> |
 | size | <code>object</code> |  |
 | size.width | <code>string</code> \| <code>number</code> |  |
 | size.height | <code>string</code> \| <code>number</code> |  |
@@ -62,10 +61,10 @@ render
 <a name="DefaultViewManager+display"></a>
 
 ## defaultViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
-display
+<p>display</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - <p>displaying promise</p>  
 
 | Param | Type |
 | --- | --- |
@@ -75,7 +74,7 @@ display
 <a name="DefaultViewManager+moveTo"></a>
 
 ## defaultViewManager.moveTo(offset, width)
-moveTo
+<p>moveTo</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 
@@ -89,49 +88,49 @@ moveTo
 <a name="DefaultViewManager+next"></a>
 
 ## defaultViewManager.next() ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
-next
+<p>next</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - next view  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - <p>next view</p>  
 <a name="DefaultViewManager+prev"></a>
 
 ## defaultViewManager.prev() ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
-prev
+<p>prev</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+current"></a>
 
 ## defaultViewManager.current() ⇒ <code>View</code> \| <code>null</code>
-Get current visible view
+<p>Get current visible view</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>View</code> \| <code>null</code> - view  
+**Returns**: <code>View</code> \| <code>null</code> - <p>view</p>  
 **Access**: public  
 <a name="DefaultViewManager+clear"></a>
 
 ## defaultViewManager.clear()
-clear views
+<p>clear views</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Access**: public  
 <a name="DefaultViewManager+currentLocation"></a>
 
 ## defaultViewManager.currentLocation() ⇒ <code>Array.&lt;object&gt;</code>
-currentLocation
+<p>currentLocation</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Array.&lt;object&gt;</code> - Location sections  
+**Returns**: <code>Array.&lt;object&gt;</code> - <p>Location sections</p>  
 <a name="DefaultViewManager+visible"></a>
 
 ## defaultViewManager.visible() ⇒ <code>Array.&lt;object&gt;</code>
-Get array of visible views
+<p>Get array of visible views</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Array.&lt;object&gt;</code> - array of visible views  
+**Returns**: <code>Array.&lt;object&gt;</code> - <p>array of visible views</p>  
 <a name="DefaultViewManager+scrolled"></a>
 
 ## defaultViewManager.scrolled(e)
-scrolled
+<p>scrolled</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 
@@ -142,26 +141,26 @@ scrolled
 <a name="DefaultViewManager+getContents"></a>
 
 ## defaultViewManager.getContents() ⇒ <code>Array.&lt;Contents&gt;</code>
-Get contents array from views
+<p>Get contents array from views</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Returns**: <code>Array.&lt;Contents&gt;</code> - [view.contents]  
+**Returns**: <code>Array.&lt;Contents&gt;</code> - <p>[view.contents]</p>  
 <a name="DefaultViewManager+isRendered"></a>
 
 ## defaultViewManager.isRendered() ⇒ <code>boolean</code>
-isRendered
+<p>isRendered</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager+destroy"></a>
 
 ## defaultViewManager.destroy()
-Destroy the DefaultViewManager object
+<p>Destroy the DefaultViewManager object</p>
 
 **Kind**: instance method of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 <a name="DefaultViewManager.name"></a>
 
 ## DefaultViewManager.name : <code>string</code>
-Manager name
+<p>Manager name</p>
 
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
@@ -173,7 +172,7 @@ Manager name
 <a name="DefaultViewManager.location"></a>
 
 ## DefaultViewManager.location : <code>Array.&lt;object&gt;</code>
-Location
+<p>Location</p>
 
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  
@@ -190,10 +189,5 @@ Location
 <a name="DefaultViewManager.views"></a>
 
 ## DefaultViewManager.views : <code>Views</code>
-**Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
-**Read only**: true  
-<a name="DefaultViewManager.writingMode"></a>
-
-## DefaultViewManager.writingMode : <code>string</code>
 **Kind**: static property of [<code>DefaultViewManager</code>](#DefaultViewManager)  
 **Read only**: true  

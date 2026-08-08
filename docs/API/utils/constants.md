@@ -1,7 +1,7 @@
 <a name="module_constants"></a>
 
 # constants
-Global constants
+<p>Global constants</p>
 
 
 * [constants](#module_constants)
@@ -13,24 +13,24 @@ Global constants
 <a name="module_constants.EPUBJS_NAME"></a>
 
 ## constants.EPUBJS\_NAME : <code>string</code>
-The epub-js library name
+<p>The epub-js library name</p>
 
 **Kind**: static constant of [<code>constants</code>](#module_constants)  
 <a name="module_constants.EPUBJS_VERSION"></a>
 
 ## constants.EPUBJS\_VERSION : <code>string</code>
-The epub-js library version
+<p>The epub-js library version</p>
 
 **Kind**: static constant of [<code>constants</code>](#module_constants)  
 <a name="module_constants.DOM_EVENTS"></a>
 
 ## constants.DOM\_EVENTS : <code>Array</code>
-The DOM events to listen for ...
+<p>The DOM events to listen for ...</p>
 
 **Kind**: static constant of [<code>constants</code>](#module_constants)  
 <a name="module_constants.EVENTS"></a>
 
 ## constants.EVENTS : <code>object</code>
-Events
+<p>Events</p>
 
 **Kind**: static constant of [<code>constants</code>](#module_constants)  

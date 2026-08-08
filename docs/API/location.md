@@ -1,7 +1,7 @@
 <a name="Location"></a>
 
 # Location
-Location class
+<p>Location class</p>
 
 **Kind**: global class  
 
@@ -18,12 +18,12 @@ Location class
 <a name="new_Location_new"></a>
 
 ## new Location()
-Constructor
+<p>Constructor</p>
 
 <a name="Location+set"></a>
 
 ## location.set([props])
-Set location properties
+<p>Set location properties</p>
 
 **Kind**: instance method of [<code>Location</code>](#Location)  
 
@@ -42,19 +42,19 @@ Set location properties
 <a name="Location+clear"></a>
 
 ## location.clear()
-Clear locations
+<p>Clear locations</p>
 
 **Kind**: instance method of [<code>Location</code>](#Location)  
 <a name="Location+destroy"></a>
 
 ## location.destroy()
-Destroy the Location object
+<p>Destroy the Location object</p>
 
 **Kind**: instance method of [<code>Location</code>](#Location)  
 <a name="Location.start"></a>
 
 ## Location.start : <code>object</code>
-Start location
+<p>Start location</p>
 
 **Kind**: static property of [<code>Location</code>](#Location)  
 **Read only**: true  
@@ -71,7 +71,7 @@ Start location
 <a name="Location.end"></a>
 
 ## Location.end : <code>object</code>
-End location
+<p>End location</p>
 
 **Kind**: static property of [<code>Location</code>](#Location)  
 **Read only**: true  

@@ -1,7 +1,7 @@
 <a name="Input"></a>
 
 # Input
-Base class for Archive and Storage
+<p>Base class for Archive and Storage</p>
 
 **Kind**: global class  
 
@@ -20,27 +20,27 @@ Base class for Archive and Storage
 <a name="new_Input_new"></a>
 
 ## new Input()
-Constructor
+<p>Constructor</p>
 
 <a name="Input+request"></a>
 
 ## input.request(url, [type]) ⇒ <code>Promise.&lt;(Blob\|string\|JSON\|Document\|XMLDocument)&gt;</code>
-Request a URL from entries
+<p>Request a URL from entries</p>
 
 **Kind**: instance method of [<code>Input</code>](#Input)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>string</code> | a URL to request |
-| [type] | <code>string</code> | specify the type of the returned result |
+| url | <code>string</code> | <p>a URL to request</p> |
+| [type] | <code>string</code> | <p>specify the type of the returned result</p> |
 
 <a name="Input+handleResponse"></a>
 
 ## input.handleResponse(response, [type]) ⇒ <code>any</code>
-Handle the response from request
+<p>Handle the response from request</p>
 
 **Kind**: instance method of [<code>Input</code>](#Input)  
-**Returns**: <code>any</code> - the parsed result  
+**Returns**: <code>any</code> - <p>the parsed result</p>  
 
 | Param | Type |
 | --- | --- |
@@ -50,7 +50,7 @@ Handle the response from request
 <a name="Input+getBlob"></a>
 
 ## *input.getBlob(url, [mimeType]) ⇒ <code>Promise.&lt;(Blob\|null)&gt;</code>*
-Get a Blob from entries by URL
+<p>Get a Blob from entries by URL</p>
 
 **Kind**: instance abstract method of [<code>Input</code>](#Input)  
 
@@ -62,7 +62,7 @@ Get a Blob from entries by URL
 <a name="Input+getText"></a>
 
 ## *input.getText(url, [mimeType]) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>*
-Get a Text from entries by URL
+<p>Get a Text from entries by URL</p>
 
 **Kind**: instance abstract method of [<code>Input</code>](#Input)  
 
@@ -74,10 +74,10 @@ Get a Text from entries by URL
 <a name="Input+getBase64"></a>
 
 ## *input.getBase64(url, [mimeType]) ⇒ <code>Promise.&lt;(string\|null)&gt;</code>*
-Get a base64 encoded result from entries by URL
+<p>Get a base64 encoded result from entries by URL</p>
 
 **Kind**: instance abstract method of [<code>Input</code>](#Input)  
-**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - base64 encoded  
+**Returns**: <code>Promise.&lt;(string\|null)&gt;</code> - <p>base64 encoded</p>  
 
 | Param | Type |
 | --- | --- |
@@ -87,7 +87,7 @@ Get a base64 encoded result from entries by URL
 <a name="Input+destroy"></a>
 
 ## input.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Input</code>](#Input)  
 <a name="Input.instance"></a>

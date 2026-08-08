@@ -1,7 +1,7 @@
 <a name="Spine"></a>
 
 # Spine ⇐ <code>Map</code>
-A collection of Spine Items
+<p>A collection of Spine Items</p>
 
 **Kind**: global class  
 **Extends**: <code>Map</code>  
@@ -18,24 +18,24 @@ A collection of Spine Items
 <a name="Spine+clear"></a>
 
 ## spine.clear()
-Clear spine items
+<p>Clear spine items</p>
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  
 <a name="Spine+parse"></a>
 
 ## spine.parse(node) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
-Parse element spine
+<p>Parse element spine</p>
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| node | <code>Node</code> | spine |
+| node | <code>Node</code> | <p>spine</p> |
 
 <a name="Spine+load"></a>
 
 ## spine.load(spine) ⇒ [<code>Promise.&lt;Spine&gt;</code>](#Spine)
-Load spine from JSON
+<p>Load spine from JSON</p>
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  
 
@@ -46,13 +46,13 @@ Load spine from JSON
 <a name="Spine+destroy"></a>
 
 ## spine.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Spine</code>](#Spine)  
 <a name="Spine.nodeIndex"></a>
 
 ## Spine.nodeIndex : <code>number</code>
-Node index from the package.opf
+<p>Node index from the package.opf</p>
 
 **Kind**: static property of [<code>Spine</code>](#Spine)  
 **Read only**: true  

@@ -12,7 +12,7 @@
 <a name="module_replacements.replaceBase"></a>
 
 ## replacements.replaceBase
-replaceBase
+<p>replaceBase</p>
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
 
@@ -24,7 +24,7 @@ replaceBase
 <a name="module_replacements.replaceCanonical"></a>
 
 ## replacements.replaceCanonical
-replaceCanonical
+<p>replaceCanonical</p>
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
 
@@ -36,7 +36,7 @@ replaceCanonical
 <a name="module_replacements.replaceMeta"></a>
 
 ## replacements.replaceMeta
-replaceMeta
+<p>replaceMeta</p>
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
 
@@ -48,10 +48,10 @@ replaceMeta
 <a name="module_replacements.replaceLinks"></a>
 
 ## replacements.replaceLinks ⇒ <code>NodeList</code>
-Replace links from node
+<p>Replace links from node</p>
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
-**Returns**: <code>NodeList</code> - Replace links  
+**Returns**: <code>NodeList</code> - <p>Replace links</p>  
 **Todo**
 
 - [ ] move me to Contents
@@ -60,7 +60,7 @@ Replace links from node
 | Param | Type | Description |
 | --- | --- | --- |
 | contents | <code>Node</code> |  |
-| cb | <code>function</code> | Callback function |
+| cb | <code>function</code> | <p>Callback function</p> |
 
 **Example**  
 ```js
@@ -69,15 +69,15 @@ replaceLinks(node, (href) => { actions })
 <a name="module_replacements.substitute"></a>
 
 ## replacements.substitute ⇒ <code>string</code>
-This function replaces all URLs in the content text block.
+<p>This function replaces all URLs in the content text block.</p>
 
 **Kind**: static constant of [<code>replacements</code>](#module_replacements)  
-**Returns**: <code>string</code> - Modified content in text format.  
+**Returns**: <code>string</code> - <p>Modified content in text format.</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| content | <code>string</code> | Content in text format |
-| section | <code>Section</code> | Section |
-| urls | <code>Array.&lt;string&gt;</code> | URLs |
-| repl | <code>Array.&lt;string&gt;</code> | Replacements array |
+| content | <code>string</code> | <p>Content in text format</p> |
+| section | <code>Section</code> | <p>Section</p> |
+| urls | <code>Array.&lt;string&gt;</code> | <p>URLs</p> |
+| repl | <code>Array.&lt;string&gt;</code> | <p>Replacements array</p> |
 

@@ -43,6 +43,7 @@ class Rendition {
    * @param {string} [options.stylesheet] url of stylesheet to be injected
    * @param {string} [options.script] url of script to be injected
    * @param {object} [options.snap] use snap scrolling
+   * @param {string} [options.writingMode='horizontal-tb']
    * @param {string[]} [options.sandbox=[]] iframe sandbox policy list
    */
   constructor(book, options) {
@@ -64,6 +65,7 @@ class Rendition {
       script: null,
       snap: null,
       direction: null, // TODO: implement to 'auto' detection
+      writingMode: null,
       ignoreClass: "",
       sandbox: [],
       stylesheet: null
@@ -501,7 +503,7 @@ class Rendition {
    */
   determineLayoutProperties() {
 
-    const { metadata, direction } = this.book.packaging;
+    const { metadata, direction, writingMode } = this.book.packaging;
     return {
       name: this.settings.layout || metadata.get("layout"),
       flow: this.settings.flow || metadata.get("flow"),
@@ -511,8 +513,9 @@ class Rendition {
       orientation: this.settings.orientation || metadata.get("orientation"),
       minSpreadWidth: this.settings.minSpreadWidth,
       pageWidth: this.settings.pageWidth,
-      pageHeight: this.settings.pageHeight
-    }
+      pageHeight: this.settings.pageHeight,
+      writingMode: this.settings.writingMode || writingMode || "horizontal-tb"
+    };
   }
 
   /**

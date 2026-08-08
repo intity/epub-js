@@ -1,7 +1,7 @@
 <a name="Views"></a>
 
 # Views
-Views
+<p>Views</p>
 
 **Kind**: global class  
 
@@ -27,41 +27,41 @@ Views
 <a name="new_Views_new"></a>
 
 ## new Views()
-Constructor
+<p>Constructor</p>
 
 <a name="Views+first"></a>
 
 ## views.first() ⇒ <code>object</code>
-first
+<p>first</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 <a name="Views+last"></a>
 
 ## views.last() ⇒ <code>object</code>
-last
+<p>last</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 <a name="Views+get"></a>
 
 ## views.get(i) ⇒ <code>object</code>
-get
+<p>get</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| i | <code>number</code> | index |
+| i | <code>number</code> | <p>index</p> |
 
 <a name="Views+append"></a>
 
 ## views.append(view) ⇒ <code>object</code>
-append
+<p>append</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 
 | Param | Type |
 | --- | --- |
@@ -70,10 +70,10 @@ append
 <a name="Views+prepend"></a>
 
 ## views.prepend(view) ⇒ <code>object</code>
-prepend
+<p>prepend</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 
 | Param | Type |
 | --- | --- |
@@ -82,10 +82,10 @@ prepend
 <a name="Views+insert"></a>
 
 ## views.insert(view, index) ⇒ <code>object</code>
-insert
+<p>insert</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
-**Returns**: <code>object</code> - view  
+**Returns**: <code>object</code> - <p>view</p>  
 
 | Param | Type |
 | --- | --- |
@@ -95,49 +95,49 @@ insert
 <a name="Views+remove"></a>
 
 ## views.remove(view, [i])
-remove
+<p>remove</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | view | <code>object</code> |  |
-| [i] | <code>number</code> | index |
+| [i] | <code>number</code> | <p>index</p> |
 
 <a name="Views+clear"></a>
 
 ## views.clear()
-clear
+<p>clear</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views+displayed"></a>
 
 ## views.displayed() ⇒ <code>Array.&lt;object&gt;</code>
-displayed
+<p>displayed</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views+show"></a>
 
 ## views.show()
-show
+<p>show</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views+hide"></a>
 
 ## views.hide()
-hide
+<p>hide</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views+update"></a>
 
 ## views.update()
-update
+<p>update</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views+destroy"></a>
 
 ## views.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Views</code>](#Views)  
 <a name="Views.container"></a>

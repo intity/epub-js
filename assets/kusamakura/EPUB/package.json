@@ -1,0 +1,72 @@
+{
+  "version": 3.0,
+  "direction": "ltr",
+  "writing-mode": "vertical-rl",
+  "metadata": {
+    "title": "草枕",
+    "identifier": "青空文庫の番号",
+    "language": "ja-jp",
+    "contributor": "柴田 卓治",
+    "creator": "夏目 漱石",
+    "subject": "??",
+    "modified": "2012-04-24T00:00:00Z",
+    "rights": "EPUB日本語拡張仕様策定プロジェクト",
+    "source": "http://www.aozora.gr.jp/cards/000148/card776.html",
+    "type": "@book"
+  },
+  "manifest": [
+    {
+      "id": "toc-0000",
+      "href": "toc.json",
+      "media-type": "application/json",
+      "properties": ["nav"]
+    },
+    {
+      "id": "css-0000",
+      "href": "css/horizontal.css",
+      "media-type": "text/css",
+      "properties": []
+    },
+    {
+      "id": "css-0001",
+      "href": "css/vertical.css",
+      "media-type": "text/css",
+      "properties": []
+    },
+    {
+      "id": "img-0000",
+      "href": "images/author.jpg",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "img-0001",
+      "href": "images/logo.png",
+      "media-type": "image/jpeg",
+      "properties": []
+    },
+    {
+      "id": "sec-0000",
+      "href": "xhtml/sec_0000.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": ["cover-image"]
+    },
+    {
+      "id": "sec-0001",
+      "href": "xhtml/sec_0001.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
+      "id": "ttf-0000",
+      "href": "fonts/foobar.ttf",
+      "media-type": "application/vnd.ms-opentype",
+      "properties": []
+    }
+  ],
+  "spine": [
+    { "idref": "toc-0000", "linear": "no" },
+    { "idref": "sec-0000", "linear": "yes" },
+    { "idref": "sec-0001", "linear": "yes" }
+  ]
+}

@@ -1,7 +1,7 @@
 <a name="ContinuousViewManager"></a>
 
 # ContinuousViewManager ⇐ <code>DefaultViewManager</code>
-Continuous view manager
+<p>Continuous view manager</p>
 
 **Kind**: global class  
 **Extends**: <code>DefaultViewManager</code>  
@@ -25,7 +25,7 @@ Continuous view manager
 <a name="new_ContinuousViewManager_new"></a>
 
 ## new ContinuousViewManager(book, [options])
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Default | Description |
@@ -34,30 +34,30 @@ Constructor
 | [options] | <code>object</code> |  |  |
 | [options.axis] | <code>string</code> |  |  |
 | [options.snap] | <code>object</code> |  |  |
-| [options.method] | <code>string</code> |  | values: `"blobUrl"` OR `"srcdoc"` OR `"write"` |
+| [options.method] | <code>string</code> |  | <p>values: <code>&quot;blobUrl&quot;</code> OR <code>&quot;srcdoc&quot;</code> OR <code>&quot;write&quot;</code></p> |
 | [options.ignoreClass] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> |  |
 | [options.view] | <code>string</code> \| <code>object</code> | <code>&quot;&#x27;iframe&#x27;&quot;</code> |  |
-| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | iframe sandbox policy list |
+| [options.sandbox] | <code>Array.&lt;string&gt;</code> | <code>[]</code> | <p>iframe sandbox policy list</p> |
 
 <a name="ContinuousViewManager+render"></a>
 
 ## continuousViewManager.render(element, size)
-render
+<p>render</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| element | <code>Element</code> \| <code>string</code> | viewport element |
+| element | <code>Element</code> \| <code>string</code> | <p>viewport element</p> |
 | size | <code>object</code> |  |
 
 <a name="ContinuousViewManager+display"></a>
 
 ## continuousViewManager.display(section, [target]) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
-display
+<p>display</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
-**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - displaying promise  
+**Returns**: <code>Promise.&lt;(View\|null)&gt;</code> - <p>displaying promise</p>  
 
 | Param | Type |
 | --- | --- |
@@ -67,7 +67,7 @@ display
 <a name="ContinuousViewManager+fill"></a>
 
 ## continuousViewManager.fill(value) ⇒ <code>Promise.&lt;any&gt;</code>
-fill
+<p>fill</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
@@ -78,7 +78,7 @@ fill
 <a name="ContinuousViewManager+moveTo"></a>
 
 ## continuousViewManager.moveTo(offset)
-moveTo
+<p>moveTo</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
@@ -89,7 +89,7 @@ moveTo
 <a name="ContinuousViewManager+removeShownListeners"></a>
 
 ## continuousViewManager.removeShownListeners(view)
-Remove Previous Listeners if present
+<p>Remove Previous Listeners if present</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
@@ -100,7 +100,7 @@ Remove Previous Listeners if present
 <a name="ContinuousViewManager+update"></a>
 
 ## continuousViewManager.update([offset]) ⇒ <code>Promise.&lt;any&gt;</code>
-update
+<p>update</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
@@ -111,7 +111,7 @@ update
 <a name="ContinuousViewManager+scrolled"></a>
 
 ## continuousViewManager.scrolled(e)
-scrolled
+<p>scrolled</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
@@ -122,19 +122,19 @@ scrolled
 <a name="ContinuousViewManager+next"></a>
 
 ## continuousViewManager.next() ⇒ <code>Promise.&lt;any&gt;</code>
-next
+<p>next</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 <a name="ContinuousViewManager+prev"></a>
 
 ## continuousViewManager.prev() ⇒ <code>Promise.&lt;any&gt;</code>
-prev
+<p>prev</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 <a name="ContinuousViewManager+destroy"></a>
 
 ## continuousViewManager.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 <a name="ContinuousViewManager.name"></a>

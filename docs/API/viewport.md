@@ -1,7 +1,7 @@
 <a name="Viewport"></a>
 
 # Viewport
-viewport configuration class
+<p>viewport configuration class</p>
 
 **Kind**: global class  
 
@@ -20,7 +20,7 @@ viewport configuration class
 <a name="new_Viewport_new"></a>
 
 ## new Viewport(layout)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type |
@@ -30,23 +30,23 @@ Constructor
 <a name="Viewport+attachTo"></a>
 
 ## viewport.attachTo(input, options) ⇒ <code>Element</code> \| <code>null</code>
-Attach to viewport element
+<p>Attach to viewport element</p>
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
-**Returns**: <code>Element</code> \| <code>null</code> - attached element  
+**Returns**: <code>Element</code> \| <code>null</code> - <p>attached element</p>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| input | <code>Element</code> \| <code>string</code> | viewport element |
+| input | <code>Element</code> \| <code>string</code> | <p>viewport element</p> |
 | options | <code>object</code> |  |
-| options.width | <code>string</code> \| <code>number</code> | viewport container width |
-| options.height | <code>string</code> \| <code>number</code> | viewport container height |
+| options.width | <code>string</code> \| <code>number</code> | <p>viewport container width</p> |
+| options.height | <code>string</code> \| <code>number</code> | <p>viewport container height</p> |
 | options.views | <code>object</code> |  |
 
 <a name="Viewport+size"></a>
 
 ## viewport.size([width], [height]) ⇒ <code>object</code>
-size
+<p>size</p>
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
 
@@ -58,33 +58,33 @@ size
 <a name="Viewport+update"></a>
 
 ## viewport.update()
-Update viewport container
+<p>Update viewport container</p>
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
 <a name="Viewport+destroy"></a>
 
 ## viewport.destroy()
-destroy
+<p>destroy</p>
 
 **Kind**: instance method of [<code>Viewport</code>](#Viewport)  
 <a name="Viewport.container"></a>
 
 ## Viewport.container : <code>Element</code>
-viewport container
+<p>viewport container</p>
 
 **Kind**: static property of [<code>Viewport</code>](#Viewport)  
 **Read only**: true  
 <a name="Viewport.target"></a>
 
 ## Viewport.target : <code>Element</code>
-viewport element
+<p>viewport element</p>
 
 **Kind**: static property of [<code>Viewport</code>](#Viewport)  
 **Read only**: true  
 <a name="Viewport.rect"></a>
 
 ## Viewport.rect : <code>object</code>
-viewport rect
+<p>viewport rect</p>
 
 **Kind**: static property of [<code>Viewport</code>](#Viewport)  
 **Read only**: true  

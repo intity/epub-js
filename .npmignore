@@ -1,3 +1,9 @@
-assets
-examples
-test
+.editorconfig
+.jshintrc
+.mocharc.cjs
+.nojekyll
+.travis.yml
+.watchmanconfig
+*.config.cjs
+*.json
+!package.json

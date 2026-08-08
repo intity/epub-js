@@ -15,6 +15,7 @@ class Layout {
    * @param {number} [options.minSpreadWidth=800]
    * @param {number} [options.pageWidth] page width
    * @param {number} [options.pageHeight] page height
+   * @param {string} [options.writingMode='horizontal-tb'] values: `"horizontal-tb"` OR `"vertical-rl"` OR `"vertical-lr"`
    */
   constructor(options) {
     /**
@@ -125,6 +126,12 @@ class Layout {
      * @readonly
      */
     this.divisor = 1;
+    /**
+     * @member {string} writingMode
+     * @memberof Layout
+     * @readonly
+     */
+    this.writingMode = "horizontal-tb";
     this.set(options || {});
   }
 
@@ -134,7 +141,7 @@ class Layout {
    */
   set(options) {
 
-    const error = (name) => console.error(`Invalid '${name}' property type`);
+    const error = (name, t) => console.error(`Invalid '${name}' property type '${t}'`);
     Object.keys(options).forEach(opt => {
       const value = options[opt];
       if (this[opt] === value || typeof value === "undefined") {
@@ -144,7 +151,7 @@ class Layout {
         opt === "orientation") {
         if (typeof value === "string") {
           this[opt] = options[opt];
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "flow") {
         if (typeof value === "string") {
           switch (value) {
@@ -163,11 +170,15 @@ class Layout {
               break;
             default:
               this.flow = "paginated";
-              this.axis = "horizontal"; // autocomplete
               this.style = "paginated"; // autocomplete
+              if (this.writingMode === "horizontal-tb") {
+                this.axis = "horizontal"; // autocomplete
+              } else {
+                this.axis = "vertical"; // autocomplete
+              }
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       } else if (opt === "spread") {
         if (typeof value === "string") {
           switch (value) {
@@ -179,7 +190,22 @@ class Layout {
               this.spread = "none";
               break;
           }
-        } else error(opt);
+        } else error(opt, typeof value);
+      } else if (opt === "writingMode") {
+        if (typeof value === "string") {
+          switch (value) {
+            default:
+              this.axis = "horizontal"; // autocomplete
+              this.writingMode = "horizontal-tb";
+              break;
+            case "vertical-rl":
+            case "vertical-lr":
+              this.axis = "vertical"; // autocomplete
+              this.spread = "none"; // autocomplete
+              this.writingMode = value;
+              break;
+          }
+        } else error(opt, typeof value);
       } else if (
         opt === "width" ||
         opt === "height" ||
@@ -191,7 +217,7 @@ class Layout {
           if (value >= 0) {
             this[opt] = options[opt];
           }
-        } else error(opt);
+        } else error(opt, typeof value);
       }
     });
 
@@ -226,16 +252,25 @@ class Layout {
     }
 
     if (this.flow === "paginated") {
-      this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
-      this.columnWidth = (szw / this.divisor) - this.gap;
+      if (this.axis === "horizontal") {
+        this.delta = szw;
+        this.divisor = this.spread === "auto" && szw >= this.minSpreadWidth ? 2 : 1;
+        this.columnWidth = (szw / this.divisor) - this.gap;
+        this.pageWidth = this.columnWidth + this.gap;
+        this.pageHeight = szh;
+      } else {
+        this.delta = szh;
+        this.divisor = 1;
+        this.columnWidth = (szh / this.divisor) - this.gap;
+        this.pageWidth = szw;
+        this.pageHeight = this.columnWidth + this.gap;
+      }
       this.spreadWidth = (this.columnWidth * this.divisor) + this.gap;
-      this.pageWidth = this.columnWidth + this.gap;
-      this.pageHeight = szh;
     } else {
+      this.delta = szw;
       this.divisor = 1;
     }
 
-    this.delta = szw;
     this.width = szw;
     this.height = szh;
   }
@@ -248,14 +283,12 @@ class Layout {
    */
   count(totalLength, pageLength) {
 
-    let spreads, pages;
+    let pages;
+    const delta = pageLength || this.delta;
+    const spreads = Math.ceil(totalLength / delta);
     if (this.flow === "paginated") {
-      pageLength = pageLength || this.delta;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads * this.divisor;
     } else {
-      pageLength = pageLength || this.height;
-      spreads = Math.ceil(totalLength / pageLength);
       pages = spreads;
     }
     return { spreads, pages }

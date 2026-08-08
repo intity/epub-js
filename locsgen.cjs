@@ -1,29 +1,13 @@
 const fs = require("fs");
 const path = require("path");
 const JSZip = require("jszip");
-const { JSDOM } = require("jsdom");
 const { pathToFileURL } = require("url");
+const setup = require("./setup.cjs");
 
-const dom = new JSDOM("<!DOCTYPE html>");
-globalThis.window = dom.window;
-globalThis.JSZip = JSZip;
-globalThis.Node = dom.window.Node;
-globalThis.NodeFilter = dom.window.NodeFilter;
-globalThis.Promise = dom.window.Promise;
-globalThis.Range = dom.window.Range;
-globalThis.URL = dom.window.URL;
-globalThis.XMLHttpRequest = dom.window.XMLHttpRequest;
-globalThis.document = dom.window.document;
-globalThis.navigator = dom.window.navigator;
-
-globalThis.requestAnimationFrame = dom.window.requestAnimationFrame = (cb) => {
-  return setTimeout(cb, 1000 / 60);
-};
-globalThis.cancelAnimationFrame = dom.window.cancelAnimationFrame = (id) => {
-  clearTimeout(id);
-};
+setup.init(); // pre-init jsdom
 
 (async () => {
+  // save compact locations (data.json)
   const obj = require("./dist/server/epub.cjs");
   const time = Date.now();
   const ePub = obj.ePub;

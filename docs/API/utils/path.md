@@ -1,7 +1,7 @@
 <a name="Path"></a>
 
 # Path
-Creates a Path object for parsing and manipulation of a path strings
+<p>Creates a Path object for parsing and manipulation of a path strings</p>
 
 **Kind**: global class  
 **Link**: https://nodejs.org/api/path.html  
@@ -26,17 +26,17 @@ Creates a Path object for parsing and manipulation of a path strings
 <a name="new_Path_new"></a>
 
 ## new Path(uri)
-Constructor
+<p>Constructor</p>
 
 
 | Param | Type | Description |
 | --- | --- | --- |
-| uri | <code>string</code> | a url string (relative or absolute) |
+| uri | <code>string</code> | <p>a url string (relative or absolute)</p> |
 
 <a name="Path+parse"></a>
 
 ## path.parse(path) ⇒ <code>object</code>
-Parse the path
+<p>Parse the path</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
 **Link**: https://nodejs.org/api/path.html#path_path_parse_path  
@@ -48,7 +48,7 @@ Parse the path
 <a name="Path+dirname"></a>
 
 ## path.dirname(path) ⇒ <code>string</code>
-dirname
+<p>dirname</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
 **Link**: https://nodejs.org/api/path.html#pathdirnamepath  
@@ -60,7 +60,7 @@ dirname
 <a name="Path+isAbsolute"></a>
 
 ## path.isAbsolute(path) ⇒ <code>boolean</code>
-isAbsolute
+<p>isAbsolute</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
 **Link**: https://nodejs.org/api/path.html#pathisabsolutepath  
@@ -72,7 +72,7 @@ isAbsolute
 <a name="Path+isDirectory"></a>
 
 ## path.isDirectory(path) ⇒ <code>boolean</code>
-Check if path ends with a directory
+<p>Check if path ends with a directory</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
 
@@ -83,18 +83,18 @@ Check if path ends with a directory
 <a name="Path+resolve"></a>
 
 ## path.resolve() ⇒ <code>string</code>
-Resolve path
+<p>Resolve path</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
-**Returns**: <code>string</code> - resolved  
+**Returns**: <code>string</code> - <p>resolved</p>  
 **Link**: https://nodejs.org/api/path.html#pathresolvepaths  
 <a name="Path+relative"></a>
 
 ## path.relative(from, to) ⇒ <code>string</code>
-Relative path resolve
+<p>Relative path resolve</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
-**Returns**: <code>string</code> - relative path  
+**Returns**: <code>string</code> - <p>relative path</p>  
 **Link**: https://nodejs.org/api/path.html#pathrelativefrom-to  
 
 | Param | Type |
@@ -105,7 +105,7 @@ Relative path resolve
 <a name="Path+normalize"></a>
 
 ## path.normalize(path) ⇒ <code>string</code>
-Normalize path
+<p>Normalize path</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
 **Link**: https://nodejs.org/api/path.html#pathnormalizepath  
@@ -117,10 +117,10 @@ Normalize path
 <a name="Path+toString"></a>
 
 ## path.toString() ⇒ <code>string</code>
-Return the path string
+<p>Return the path string</p>
 
 **Kind**: instance method of [<code>Path</code>](#Path)  
-**Returns**: <code>string</code> - path  
+**Returns**: <code>string</code> - <p>path</p>  
 <a name="Path.directory"></a>
 
 ## Path.directory : <code>string</code>

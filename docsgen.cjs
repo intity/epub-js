@@ -2,15 +2,11 @@ const fs = require("node:fs");
 const path = require("path");
 const jsdoc2md = require("jsdoc-to-markdown");
 const output = (dir, filename, data) => {
-  try {
-    fs.mkdirSync(dir, { recursive: true }, err => {
-      if (err) throw err;
-    });
-    const ws = fs.createWriteStream(filename);
-    ws.write(data);
-  } catch (e) {
-    console.error(e);
-  }
+  fs.mkdirSync(dir, { recursive: true }, err => {
+    if (err) throw err;
+  });
+  const ws = fs.createWriteStream(filename);
+  ws.write(data);
 };
 
 const docs = [
@@ -85,11 +81,17 @@ const docs = [
       }
     }
     const files = path.resolve(__dirname, ifile);
-    tasks.push(jsdoc2md.render({ files, "heading-depth": 1 }).then(data => {
+    try {
+      const data = await jsdoc2md.render({
+        "files": ifile,
+        "heading-depth": 1,
+        "configure": path.resolve(__dirname, "jsdoc.json")
+      });
       output(opath, ofile, data);
       const t = (Date.now() - time).toString().padStart(3);
-      console.log("output [time:%s ms, path:%s]", t, ofile);
-    }));
+      console.log("output [time:%s ms, doc:%s]", t, doc);
+    } catch (err) {
+      console.error(`[ERROR] failed to process ${doc}:`, err.message);
+    }
   }
-  await Promise.all(tasks);
 })();

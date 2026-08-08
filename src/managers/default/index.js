@@ -13,8 +13,8 @@ import { EVENTS } from "../../utils/constants";
 import { extend, isNumber } from "../../utils/core";
 import debounce from "lodash/debounce";
 
-const AXIS_H = "horizontal";
-const AXIS_V = "vertical";
+const H_AXIS = "horizontal";
+const V_AXIS = "vertical";
 
 /**
  * Default View Manager
@@ -85,12 +85,6 @@ class DefaultViewManager {
      */
     this.views = new Views();
     this.viewport = book.rendition.viewport;
-    /**
-     * @member {string} writingMode
-     * @memberof DefaultViewManager
-     * @readonly
-     */
-    this.writingMode = null;
     this.q = new Queue(this);
   }
 
@@ -331,9 +325,7 @@ class DefaultViewManager {
       this.resized(view);
     });
 
-    view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
-      this.updateWritingMode(mode);
-    });
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
 
     this.views.append(view);
 
@@ -359,9 +351,7 @@ class DefaultViewManager {
       this.resized(view);
     });
 
-    view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {
-      this.updateWritingMode(mode);
-    });
+    //view.on(EVENTS.VIEWS.WRITING_MODE, (mode) => {});
 
     this.views.prepend(view);
 
@@ -377,7 +367,7 @@ class DefaultViewManager {
 
     const content = view.contents.content;
 
-    if (this.layout.axis === AXIS_V) {
+    if (this.layout.axis === V_AXIS) {
       const y = content.scrollHeight;
       this.scrollBy(0, y, true);
     } else {
@@ -395,8 +385,8 @@ class DefaultViewManager {
     let left, section;
     const def = new Defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === AXIS_H && this.paginated;
-    const isv = this.layout.axis === AXIS_V && this.paginated;
+    const ish = this.layout.axis === H_AXIS && this.paginated;
+    const isv = this.layout.axis === V_AXIS && this.paginated;
     const lsc = this.views.container;
 
     if (this.views.length === 0) {
@@ -479,8 +469,8 @@ class DefaultViewManager {
     let left, section;
     const def = new Defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === AXIS_H && this.paginated;
-    const isv = this.layout.axis === AXIS_V && this.paginated;
+    const ish = this.layout.axis === H_AXIS && this.paginated;
+    const isv = this.layout.axis === V_AXIS && this.paginated;
     const lsc = this.views.container;
 
     if (this.views.length === 0) {
@@ -605,7 +595,7 @@ class DefaultViewManager {
    */
   currentLocation() {
 
-    if (this.layout.axis === AXIS_H && this.paginated) {
+    if (this.paginated) {
       this.location = this.paginatedLocation();
     } else {
       this.location = this.scrolledLocation();
@@ -622,16 +612,31 @@ class DefaultViewManager {
 
     const lsc = this.views.container;
     const rect = this.viewport.rect;
-    const left = lsc.scrollLeft;
-    const startPos = Math.abs(left);
-    const endPos = Math.abs(left) + rect.width;
-    const startPage = Math.floor(startPos / this.layout.pageWidth);
-    const endPage = Math.floor(endPos / this.layout.pageWidth);
     const views = this.visible();
     const sections = views.map((view) => {
 
       const { href, index } = view.section;
-      const total = this.layout.count(view.width).pages;
+      let total;
+      let start; // left, top
+      let startPos;
+      let endPos;
+      let startPage;
+      let endPage;
+      if (this.layout.axis === H_AXIS) {
+        total = this.layout.count(view.width).pages;
+        start = lsc.scrollLeft;
+        startPos = Math.abs(start);
+        endPos = Math.abs(start) + rect.width;
+        startPage = Math.floor(startPos / this.layout.pageWidth);
+        endPage = Math.floor(endPos / this.layout.pageWidth);
+      } else {
+        total = this.layout.count(view.height).pages;
+        start = lsc.scrollTop;
+        startPos = Math.abs(start);
+        endPos = Math.abs(start) + rect.height;
+        startPage = Math.floor(startPos / this.layout.pageHeight);
+        endPage = Math.floor(endPos / this.layout.pageHeight);
+      }
       const pages = [];
       for (let i = startPage; i < endPage; i++) {
         pages.push({ index: i });
@@ -676,7 +681,7 @@ class DefaultViewManager {
       let endPage;
       let total;
 
-      if (this.layout.axis === AXIS_V) {
+      if (this.layout.axis === V_AXIS) {
         const top = lsc.scrollTop;
         startPos = Math.abs(top);
         endPos = Math.abs(top) + lsc.clientHeight;
@@ -730,13 +735,13 @@ class DefaultViewManager {
     const vpos = view.position();
     const rect = this.viewport.rect;
 
-    if (this.layout.axis === AXIS_H &&
+    if (this.layout.axis === H_AXIS &&
       vpos.right > rect.left - offsetPrev &&
       vpos.left < rect.right + offsetNext) {
       return true;
     }
 
-    if (this.layout.axis === AXIS_V &&
+    if (this.layout.axis === V_AXIS &&
       vpos.bottom > rect.top - offsetPrev &&
       vpos.top < rect.bottom + offsetNext) {
       return true;
@@ -877,16 +882,6 @@ class DefaultViewManager {
   }
 
   /**
-   * Update writing mode
-   * @param {string} mode
-   * @private
-   */
-  updateWritingMode(mode) {
-
-    this.writingMode = mode;
-  }
-
-  /**
    * Get contents array from views
    * @returns {Array<Contents>} [view.contents]
    */
@@ -925,7 +920,6 @@ class DefaultViewManager {
     this.rendered = undefined;
     this.paginated = undefined;
     this.scrollType = undefined;
-    this.writingMode = undefined;
   }
 }
 
