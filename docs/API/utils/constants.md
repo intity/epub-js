@@ -7,6 +7,7 @@
 * [constants](#module_constants)
     * [.EPUBJS_NAME](#module_constants.EPUBJS_NAME) : <code>string</code>
     * [.EPUBJS_VERSION](#module_constants.EPUBJS_VERSION) : <code>string</code>
+    * [.AXIS](#module_constants.AXIS) : <code>object</code>
     * [.DOM_EVENTS](#module_constants.DOM_EVENTS) : <code>Array</code>
     * [.EVENTS](#module_constants.EVENTS) : <code>object</code>
 
@@ -20,6 +21,12 @@
 
 ## constants.EPUBJS\_VERSION : <code>string</code>
 <p>The epub-js library version</p>
+
+**Kind**: static constant of [<code>constants</code>](#module_constants)  
+<a name="module_constants.AXIS"></a>
+
+## constants.AXIS : <code>object</code>
+<p>axis</p>
 
 **Kind**: static constant of [<code>constants</code>](#module_constants)  
 <a name="module_constants.DOM_EVENTS"></a>
