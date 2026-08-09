@@ -13809,7 +13809,7 @@ class Book {
    */
   key(identifier) {
     const ident = identifier || this.packaging.metadata.get("identifier") || this.url.filename;
-    return `${_utils_constants__WEBPACK_IMPORTED_MODULE_19__/* .EPUBJS_NAME */ .MO}:${(/* inlined export .EPUBJS_VERSION */"0.3.96")}:${ident}`;
+    return `${_utils_constants__WEBPACK_IMPORTED_MODULE_19__/* .EPUBJS_NAME */ .MO}:${(/* inlined export .EPUBJS_VERSION */"0.3.98")}:${ident}`;
   }
 
   /**
@@ -14058,8 +14058,6 @@ class Container {
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const H_AXIS = "horizontal";
-const V_AXIS = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -14157,7 +14155,7 @@ class Contents {
     const border = (0,_utils_core__WEBPACK_IMPORTED_MODULE_28__/* .borders */ .sJ)(this.content);
     let width;
     let height;
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_27__/* .AXIS */ .iM.H) {
       width = rect.width + border.width;
       height = this.content.clientHeight;
     } else {
@@ -14758,7 +14756,7 @@ class Contents {
     this.css("display", "block", true);
     this.css("overflow", "hidden", true);
     this.css("box-sizing", "border-box", true);
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_27__/* .AXIS */ .iM.H) {
       const maxw = layout.count(pgw).pages * pgw;
       this.css("max-width", maxw + "px", true, this.root());
       this.css("max-height", "inherit", true, this.root());
@@ -17205,7 +17203,6 @@ event_emitter__WEBPACK_IMPORTED_MODULE_21__(Locations.prototype);
 
 
 
-const AXIS_H = "horizontal";
 
 /**
  * Continuous view manager
@@ -17269,7 +17266,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
 
   /**
    * fill
-   * @param {Defer} value
+   * @param {Defer} [value]
    * @returns {Promise<any>}
    */
   fill(value) {
@@ -17306,7 +17303,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
 
   /**
    * Remove Previous Listeners if present
-   * @param {*} view
+   * @param {View} view
    */
   removeShownListeners(view) {
     view.off(_utils_constants__WEBPACK_IMPORTED_MODULE_7__/* .EVENTS */ .qY.VIEWS.DISPLAYED);
@@ -17350,7 +17347,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
    */
   async check(offsetLeft, offsetTop) {
     const promises = [];
-    const vph = this.layout.axis === AXIS_H;
+    const vph = this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_7__/* .AXIS */ .iM.H;
     const lsc = this.views.container;
     const rtl = this.layout.direction === "rtl";
     let delta = this.settings.offset || 0;
@@ -17364,7 +17361,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
     const visibleLength = vph ? Math.floor(rect.width) : rect.height;
     const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
     let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
-    if (this.layout.writingMode.indexOf(AXIS_H) === 0) {
+    if (this.layout.writingMode.indexOf(_utils_constants__WEBPACK_IMPORTED_MODULE_7__/* .AXIS */ .iM.H) === 0) {
       // Scroll offset starts at width of element
       if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;
@@ -17431,7 +17428,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === AXIS_H) {
+    if (this.paginated && this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_7__/* .AXIS */ .iM.H) {
       this.scrollBy(this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, this.layout.height, true);
@@ -17450,7 +17447,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === AXIS_H) {
+    if (this.paginated && this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_7__/* .AXIS */ .iM.H) {
       this.scrollBy(-this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, -this.layout.height, true);
@@ -17521,8 +17518,6 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_5__/* ["de
 
 
 
-const H_AXIS = "horizontal";
-const V_AXIS = "vertical";
 
 /**
  * Default View Manager
@@ -17837,7 +17832,7 @@ class DefaultViewManager {
    */
   counter(view) {
     const content = view.contents.content;
-    if (this.layout.axis === V_AXIS) {
+    if (this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.V) {
       const y = content.scrollHeight;
       this.scrollBy(0, y, true);
     } else {
@@ -17854,8 +17849,8 @@ class DefaultViewManager {
     let left, section;
     const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .A();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === H_AXIS && this.paginated;
-    const isv = this.layout.axis === V_AXIS && this.paginated;
+    const ish = this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.H && this.paginated;
+    const isv = this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.V && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -17926,8 +17921,8 @@ class DefaultViewManager {
     let left, section;
     const def = new _utils_defer__WEBPACK_IMPORTED_MODULE_15__/* ["default"] */ .A();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === H_AXIS && this.paginated;
-    const isv = this.layout.axis === V_AXIS && this.paginated;
+    const ish = this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.H && this.paginated;
+    const isv = this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.V && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -18062,7 +18057,7 @@ class DefaultViewManager {
       let endPos;
       let startPage;
       let endPage;
-      if (this.layout.axis === H_AXIS) {
+      if (this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.H) {
         total = this.layout.count(view.width).pages;
         start = lsc.scrollLeft;
         startPos = Math.abs(start);
@@ -18114,7 +18109,7 @@ class DefaultViewManager {
       let startPage;
       let endPage;
       let total;
-      if (this.layout.axis === V_AXIS) {
+      if (this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.V) {
         const top = lsc.scrollTop;
         startPos = Math.abs(top);
         endPos = Math.abs(top) + lsc.clientHeight;
@@ -18159,10 +18154,10 @@ class DefaultViewManager {
   isVisible(view, offsetPrev, offsetNext) {
     const vpos = view.position();
     const rect = this.viewport.rect;
-    if (this.layout.axis === H_AXIS && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
+    if (this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.H && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
       return true;
     }
-    if (this.layout.axis === V_AXIS && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
+    if (this.layout.axis === _utils_constants__WEBPACK_IMPORTED_MODULE_16__/* .AXIS */ .iM.V && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
       return true;
     }
     return false;
@@ -22379,7 +22374,7 @@ class Rendition {
     this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_17__/* .EVENTS */ .qY.RENDITION.STARTED);
     navigator.epubReadingSystem = {
       name: "epub-js",
-      version: (/* inlined export .EPUBJS_VERSION */"0.3.96"),
+      version: (/* inlined export .EPUBJS_VERSION */"0.3.98"),
       layoutStyle: this.layout.style,
       hasFeature: name => {
         switch (name) {
@@ -24357,7 +24352,27 @@ const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-const EPUBJS_VERSION = "0.3.96";
+const EPUBJS_VERSION = "0.3.98";
+
+/**
+ * axis
+ * @constant
+ * @type {object}
+ */
+const AXIS = {
+  /**
+   * horizontal
+   * @constant
+   * @type {string}
+   */
+  H: "horizontal",
+  /**
+   * vertical
+   * @constant
+   * @type {string}
+   */
+  V: "vertical"
+};
 
 /**
  * The DOM events to listen for ...
@@ -24439,6 +24454,7 @@ const EVENTS = {
 };
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
 /* harmony export */   "MO", 0, /* binding */ EPUBJS_NAME,
+/* harmony export */   "iM", 0, /* binding */ AXIS,
 /* harmony export */   "py", 0, /* binding */ DOM_EVENTS,
 /* harmony export */   "qY", 0, /* binding */ EVENTS
 /* harmony export */ ]);

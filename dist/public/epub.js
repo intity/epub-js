@@ -10650,7 +10650,27 @@ const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-const EPUBJS_VERSION = "0.3.96";
+const EPUBJS_VERSION = "0.3.98";
+
+/**
+ * axis
+ * @constant
+ * @type {object}
+ */
+const AXIS = {
+  /**
+   * horizontal
+   * @constant
+   * @type {string}
+   */
+  H: "horizontal",
+  /**
+   * vertical
+   * @constant
+   * @type {string}
+   */
+  V: "vertical"
+};
 
 /**
  * The DOM events to listen for ...
@@ -14015,8 +14035,6 @@ class Mapping {
 const hasNavigator = typeof navigator !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-const H_AXIS = "horizontal";
-const V_AXIS = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -14114,7 +14132,7 @@ class Contents {
     const border = borders(this.content);
     let width;
     let height;
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === AXIS.H) {
       width = rect.width + border.width;
       height = this.content.clientHeight;
     } else {
@@ -14715,7 +14733,7 @@ class Contents {
     this.css("display", "block", true);
     this.css("overflow", "hidden", true);
     this.css("box-sizing", "border-box", true);
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === AXIS.H) {
       const maxw = layout.count(pgw).pages * pgw;
       this.css("max-width", maxw + "px", true, this.root());
       this.css("max-height", "inherit", true, this.root());
@@ -16079,8 +16097,6 @@ var debounce = __webpack_require__(8221);
 
 
 
-const default_H_AXIS = "horizontal";
-const default_V_AXIS = "vertical";
 
 /**
  * Default View Manager
@@ -16395,7 +16411,7 @@ class DefaultViewManager {
    */
   counter(view) {
     const content = view.contents.content;
-    if (this.layout.axis === default_V_AXIS) {
+    if (this.layout.axis === AXIS.V) {
       const y = content.scrollHeight;
       this.scrollBy(0, y, true);
     } else {
@@ -16412,8 +16428,8 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === default_H_AXIS && this.paginated;
-    const isv = this.layout.axis === default_V_AXIS && this.paginated;
+    const ish = this.layout.axis === AXIS.H && this.paginated;
+    const isv = this.layout.axis === AXIS.V && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -16484,8 +16500,8 @@ class DefaultViewManager {
     let left, section;
     const def = new defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === default_H_AXIS && this.paginated;
-    const isv = this.layout.axis === default_V_AXIS && this.paginated;
+    const ish = this.layout.axis === AXIS.H && this.paginated;
+    const isv = this.layout.axis === AXIS.V && this.paginated;
     const lsc = this.views.container;
     if (this.views.length === 0) {
       def.resolve(null);
@@ -16620,7 +16636,7 @@ class DefaultViewManager {
       let endPos;
       let startPage;
       let endPage;
-      if (this.layout.axis === default_H_AXIS) {
+      if (this.layout.axis === AXIS.H) {
         total = this.layout.count(view.width).pages;
         start = lsc.scrollLeft;
         startPos = Math.abs(start);
@@ -16672,7 +16688,7 @@ class DefaultViewManager {
       let startPage;
       let endPage;
       let total;
-      if (this.layout.axis === default_V_AXIS) {
+      if (this.layout.axis === AXIS.V) {
         const top = lsc.scrollTop;
         startPos = Math.abs(top);
         endPos = Math.abs(top) + lsc.clientHeight;
@@ -16717,10 +16733,10 @@ class DefaultViewManager {
   isVisible(view, offsetPrev, offsetNext) {
     const vpos = view.position();
     const rect = this.viewport.rect;
-    if (this.layout.axis === default_H_AXIS && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
+    if (this.layout.axis === AXIS.H && vpos.right > rect.left - offsetPrev && vpos.left < rect.right + offsetNext) {
       return true;
     }
-    if (this.layout.axis === default_V_AXIS && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
+    if (this.layout.axis === AXIS.V && vpos.bottom > rect.top - offsetPrev && vpos.top < rect.bottom + offsetNext) {
       return true;
     }
     return false;
@@ -17243,7 +17259,6 @@ event_emitter(Snap.prototype);
 
 
 
-const AXIS_H = "horizontal";
 
 /**
  * Continuous view manager
@@ -17307,7 +17322,7 @@ class ContinuousViewManager extends managers_default {
 
   /**
    * fill
-   * @param {Defer} value
+   * @param {Defer} [value]
    * @returns {Promise<any>}
    */
   fill(value) {
@@ -17344,7 +17359,7 @@ class ContinuousViewManager extends managers_default {
 
   /**
    * Remove Previous Listeners if present
-   * @param {*} view
+   * @param {View} view
    */
   removeShownListeners(view) {
     view.off(EVENTS.VIEWS.DISPLAYED);
@@ -17388,7 +17403,7 @@ class ContinuousViewManager extends managers_default {
    */
   async check(offsetLeft, offsetTop) {
     const promises = [];
-    const vph = this.layout.axis === AXIS_H;
+    const vph = this.layout.axis === AXIS.H;
     const lsc = this.views.container;
     const rtl = this.layout.direction === "rtl";
     let delta = this.settings.offset || 0;
@@ -17402,7 +17417,7 @@ class ContinuousViewManager extends managers_default {
     const visibleLength = vph ? Math.floor(rect.width) : rect.height;
     const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
     let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
-    if (this.layout.writingMode.indexOf(AXIS_H) === 0) {
+    if (this.layout.writingMode.indexOf(AXIS.H) === 0) {
       // Scroll offset starts at width of element
       if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;
@@ -17469,7 +17484,7 @@ class ContinuousViewManager extends managers_default {
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === AXIS_H) {
+    if (this.paginated && this.layout.axis === AXIS.H) {
       this.scrollBy(this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, this.layout.height, true);
@@ -17488,7 +17503,7 @@ class ContinuousViewManager extends managers_default {
     if (this.views.length === 0) {
       return Promise.resolve(null);
     }
-    if (this.paginated && this.layout.axis === AXIS_H) {
+    if (this.paginated && this.layout.axis === AXIS.H) {
       this.scrollBy(-this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, -this.layout.height, true);
@@ -17783,7 +17798,7 @@ class Rendition {
     this.emit(EVENTS.RENDITION.STARTED);
     navigator.epubReadingSystem = {
       name: "epub-js",
-      version: (/* inlined export .EPUBJS_VERSION */"0.3.96"),
+      version: (/* inlined export .EPUBJS_VERSION */"0.3.98"),
       layoutStyle: this.layout.style,
       hasFeature: name => {
         switch (name) {
@@ -19135,7 +19150,7 @@ class Book {
    */
   key(identifier) {
     const ident = identifier || this.packaging.metadata.get("identifier") || this.url.filename;
-    return `${EPUBJS_NAME}:${(/* inlined export .EPUBJS_VERSION */"0.3.96")}:${ident}`;
+    return `${EPUBJS_NAME}:${(/* inlined export .EPUBJS_VERSION */"0.3.98")}:${ident}`;
   }
 
   /**
@@ -19201,9 +19216,9 @@ event_emitter(Book.prototype);
 function ePub(input, options) {
   return new book(input, options);
 }
-ePub.VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.96");
+ePub.VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.98");
 if (typeof __webpack_require__.g !== "undefined") {
-  __webpack_require__.g.EPUBJS_VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.96");
+  __webpack_require__.g.EPUBJS_VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.98");
 }
 ePub.Book = book;
 ePub.Rendition = rendition;
