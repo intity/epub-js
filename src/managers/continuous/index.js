@@ -4,9 +4,7 @@ import { extend } from "../../utils/core";
 import Defer from "../../utils/defer";
 import DefaultViewManager from "../default";
 import Snap from "../helpers/snap";
-import { EVENTS } from "../../utils/constants";
-
-const AXIS_H = "horizontal";
+import { AXIS, EVENTS } from "../../utils/constants";
 
 /**
  * Continuous view manager
@@ -74,7 +72,7 @@ class ContinuousViewManager extends DefaultViewManager {
 
   /**
    * fill
-   * @param {Defer} value
+   * @param {Defer} [value]
    * @returns {Promise<any>}
    */
   fill(value) {
@@ -168,7 +166,7 @@ class ContinuousViewManager extends DefaultViewManager {
   async check(offsetLeft, offsetTop) {
 
     const promises = [];
-    const vph = this.layout.axis === AXIS_H;
+    const vph = this.layout.axis === AXIS.H;
     const lsc = this.views.container;
     const rtl = this.layout.direction === "rtl";
     let delta = this.settings.offset || 0;
@@ -186,7 +184,7 @@ class ContinuousViewManager extends DefaultViewManager {
     const contentLength = vph ? lsc.scrollWidth : lsc.scrollHeight;
     let offset = vph ? lsc.scrollLeft : lsc.scrollTop;
 
-    if (this.layout.writingMode.indexOf(AXIS_H) === 0) {
+    if (this.layout.writingMode.indexOf(AXIS.H) === 0) {
       // Scroll offset starts at width of element
       if (rtl && this.scrollType === "default") {
         offset = contentLength - visibleLength - offset;
@@ -263,7 +261,7 @@ class ContinuousViewManager extends DefaultViewManager {
     }
 
     if (this.paginated &&
-      this.layout.axis === AXIS_H) {
+      this.layout.axis === AXIS.H) {
       this.scrollBy(this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, this.layout.height, true);
@@ -286,7 +284,7 @@ class ContinuousViewManager extends DefaultViewManager {
     }
 
     if (this.paginated &&
-      this.layout.axis === AXIS_H) {
+      this.layout.axis === AXIS.H) {
       this.scrollBy(-this.layout.delta, 0, true);
     } else {
       this.scrollBy(0, -this.layout.height, true);

@@ -15,7 +15,27 @@ export const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-export const EPUBJS_VERSION = "0.3.96";
+export const EPUBJS_VERSION = "0.3.98";
+
+/**
+ * axis
+ * @constant
+ * @type {object}
+ */
+export const AXIS = {
+  /**
+   * horizontal
+   * @constant
+   * @type {string}
+   */
+  H: "horizontal",
+  /**
+   * vertical
+   * @constant
+   * @type {string}
+   */
+  V: "vertical"
+};
 
 /**
  * The DOM events to listen for ...

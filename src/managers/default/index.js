@@ -9,12 +9,9 @@ import IframeView from "../views/iframe";
 import InlineView from "../views/inline";
 import scrollType from "../../utils/scrolltype";
 import Defer from "../../utils/defer";
-import { EVENTS } from "../../utils/constants";
+import { AXIS, EVENTS } from "../../utils/constants";
 import { extend, isNumber } from "../../utils/core";
 import debounce from "lodash/debounce";
-
-const H_AXIS = "horizontal";
-const V_AXIS = "vertical";
 
 /**
  * Default View Manager
@@ -367,7 +364,7 @@ class DefaultViewManager {
 
     const content = view.contents.content;
 
-    if (this.layout.axis === V_AXIS) {
+    if (this.layout.axis === AXIS.V) {
       const y = content.scrollHeight;
       this.scrollBy(0, y, true);
     } else {
@@ -385,8 +382,8 @@ class DefaultViewManager {
     let left, section;
     const def = new Defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === H_AXIS && this.paginated;
-    const isv = this.layout.axis === V_AXIS && this.paginated;
+    const ish = this.layout.axis === AXIS.H && this.paginated;
+    const isv = this.layout.axis === AXIS.V && this.paginated;
     const lsc = this.views.container;
 
     if (this.views.length === 0) {
@@ -469,8 +466,8 @@ class DefaultViewManager {
     let left, section;
     const def = new Defer();
     const dir = this.layout.direction;
-    const ish = this.layout.axis === H_AXIS && this.paginated;
-    const isv = this.layout.axis === V_AXIS && this.paginated;
+    const ish = this.layout.axis === AXIS.H && this.paginated;
+    const isv = this.layout.axis === AXIS.V && this.paginated;
     const lsc = this.views.container;
 
     if (this.views.length === 0) {
@@ -622,7 +619,7 @@ class DefaultViewManager {
       let endPos;
       let startPage;
       let endPage;
-      if (this.layout.axis === H_AXIS) {
+      if (this.layout.axis === AXIS.H) {
         total = this.layout.count(view.width).pages;
         start = lsc.scrollLeft;
         startPos = Math.abs(start);
@@ -681,7 +678,7 @@ class DefaultViewManager {
       let endPage;
       let total;
 
-      if (this.layout.axis === V_AXIS) {
+      if (this.layout.axis === AXIS.V) {
         const top = lsc.scrollTop;
         startPos = Math.abs(top);
         endPos = Math.abs(top) + lsc.clientHeight;
@@ -735,13 +732,13 @@ class DefaultViewManager {
     const vpos = view.position();
     const rect = this.viewport.rect;
 
-    if (this.layout.axis === H_AXIS &&
+    if (this.layout.axis === AXIS.H &&
       vpos.right > rect.left - offsetPrev &&
       vpos.left < rect.right + offsetNext) {
       return true;
     }
 
-    if (this.layout.axis === V_AXIS &&
+    if (this.layout.axis === AXIS.V &&
       vpos.bottom > rect.top - offsetPrev &&
       vpos.top < rect.bottom + offsetNext) {
       return true;
