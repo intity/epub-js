@@ -5,15 +5,12 @@ import Section from "./section";
 import Layout from "./layout";
 import Defer from "./utils/defer";
 import { replaceLinks } from "./utils/replacements";
-import { EVENTS, DOM_EVENTS } from "./utils/constants";
+import { AXIS, EVENTS, DOM_EVENTS } from "./utils/constants";
 import { isNumber, prefixed, borders, defaults } from "./utils/core";
 
 const hasNavigator = typeof (navigator) !== "undefined";
 const isChrome = hasNavigator && /Chrome/.test(navigator.userAgent);
 const isWebkit = hasNavigator && !isChrome && /AppleWebKit/.test(navigator.userAgent);
-
-const H_AXIS = "horizontal";
-const V_AXIS = "vertical";
 
 /**
  * Handles DOM manipulation, queries and events for View contents
@@ -123,7 +120,7 @@ class Contents {
     let width;
     let height;
 
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === AXIS.H) {
       width = rect.width + border.width;
       height = this.content.clientHeight;
     } else {
@@ -793,7 +790,7 @@ class Contents {
     this.css("display", "block", true);
     this.css("overflow", "hidden", true);
     this.css("box-sizing", "border-box", true);
-    if (layout.axis === H_AXIS) {
+    if (layout.axis === AXIS.H) {
       const maxw = layout.count(pgw).pages * pgw;
       this.css("max-width", maxw + "px", true, this.root());
       this.css("max-height", "inherit", true, this.root());
