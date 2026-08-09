@@ -153,5 +153,17 @@ describe("Rendition", () => {
       await rendition.updateLayout({ flow: "paginated" });
       assert.equal(rendition.layout.flow, "paginated");
     });
+    it("should be updating layout.writingMode:vertical-rl", async () => {
+      await rendition.updateLayout({ writingMode: "vertical-rl" });
+      assert.equal(rendition.layout.writingMode, "vertical-rl");
+    });
+    it("should be updating layout.writingMode:vertical-lr", async () => {
+      await rendition.updateLayout({ writingMode: "vertical-lr" });
+      assert.equal(rendition.layout.writingMode, "vertical-lr");
+    });
+    it("should be updating layout.writingMode:horizontal-tb", async () => {
+      await rendition.updateLayout({ writingMode: "horizintal-tb" });
+      assert.equal(rendition.layout.writingMode, "horizontal-tb");
+    });
   });
 });
