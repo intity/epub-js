@@ -58,6 +58,12 @@
       "properties": []
     },
     {
+      "id": "sec-0005",
+      "href": "xhtml/sec_0005.xhtml",
+      "media-type": "application/xhtml+xml",
+      "properties": []
+    },
+    {
       "id": "ttf-0000",
       "href": "fonts/foobar.ttf",
       "media-type": "application/vnd.ms-opentype",
@@ -67,6 +73,7 @@
   "spine": [
     { "idref": "toc-0000", "linear": "no" },
     { "idref": "sec-0000", "linear": "yes" },
-    { "idref": "sec-0001", "linear": "yes" }
+    { "idref": "sec-0001", "linear": "yes" },
+    { "idref": "sec-0005", "linear": "yes" }
   ]
 }

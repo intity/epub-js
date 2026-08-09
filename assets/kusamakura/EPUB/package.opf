@@ -100,6 +100,7 @@
   <item id="toc-0000" href="xhtml/nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
   <item id="sec-0000" href="xhtml/sec_0000.xhtml" media-type="application/xhtml+xml" properties="cover-image"/>
   <item id="sec-0001" href="xhtml/sec_0001.xhtml" media-type="application/xhtml+xml"/>
+  <item id="sec-0005" href="xhtml/sec_0005.xhtml" media-type="application/xhtml+xml"/>
   <!-- fonts -->
   <item id="foobar" href="fonts/foobar.ttf" media-type="application/vnd.ms-opentype"/>
   <!-- images -->
@@ -113,6 +114,7 @@
   <itemref idref="toc-0000" linear="no"/>
   <itemref idref="sec-0000" linear="yes"/>
   <itemref idref="sec-0001" linear="yes"/>
+  <itemref idref="sec-0005" linear="yes"/>
 </spine>
 
 </package>
