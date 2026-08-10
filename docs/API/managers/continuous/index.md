@@ -11,7 +11,7 @@
     * _instance_
         * [.render(element, size)](#ContinuousViewManager+render)
         * [.display(section, [target])](#ContinuousViewManager+display) ⇒ <code>Promise.&lt;(View\|null)&gt;</code>
-        * [.fill(value)](#ContinuousViewManager+fill) ⇒ <code>Promise.&lt;any&gt;</code>
+        * [.fill([value])](#ContinuousViewManager+fill) ⇒ <code>Promise.&lt;any&gt;</code>
         * [.moveTo(offset)](#ContinuousViewManager+moveTo)
         * [.removeShownListeners(view)](#ContinuousViewManager+removeShownListeners)
         * [.update([offset])](#ContinuousViewManager+update) ⇒ <code>Promise.&lt;any&gt;</code>
@@ -66,14 +66,14 @@
 
 <a name="ContinuousViewManager+fill"></a>
 
-## continuousViewManager.fill(value) ⇒ <code>Promise.&lt;any&gt;</code>
+## continuousViewManager.fill([value]) ⇒ <code>Promise.&lt;any&gt;</code>
 <p>fill</p>
 
 **Kind**: instance method of [<code>ContinuousViewManager</code>](#ContinuousViewManager)  
 
 | Param | Type |
 | --- | --- |
-| value | <code>Defer</code> | 
+| [value] | <code>Defer</code> | 
 
 <a name="ContinuousViewManager+moveTo"></a>
 

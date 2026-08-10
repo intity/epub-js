@@ -28,5 +28,12 @@
       <content src="xhtml/sec_0001.xhtml"/>
     </navPoint>
 
+    <navPoint id="fgyq_0005">
+      <navLabel>
+        <text>四</text>
+      </navLabel>
+      <content src="xhtml/sec_0005.xhtml"/>
+    </navPoint>
+
   </navMap>
 </ncx>
