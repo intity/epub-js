@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js,epub-js,input,example">
+    <meta name="keywords" content="epub.js,epub-js,input,writing-mode,example">
     <meta name="description" content="example of open book from file">
     <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
@@ -132,24 +132,42 @@
       const update = (loc) => {
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
+        const vph = rendition.layout.writingMode === "horizontal-tb";
         ldir.value = dir;
         prev.style.display = loc.start.bin ? "none" : "block";
         next.style.display = loc.end.bin ? "none" : "block";
+        prev.style["background-image"] = vph ? "url(../assets/img/prev.svg)" : "url(../assets/img/up.svg)";
+        next.style["background-image"] = vph ? "url(../assets/img/next.svg)" : "url(../assets/img/down.svg)";
         divider.style.display = div === 1 ? "none" : "block";
         divider.style.height = (rendition.layout.height - 20) + "px";
         content.className = dir;
         content.dir = dir;
         spread.value = rendition.layout.spread;
-        spread.disabled = !(rendition.layout.writingMode === "horizontal-tb");
+        spread.disabled = !vph;
       };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
+        const wrm = rendition.layout.writingMode;
         switch (e.key) {
           case "ArrowLeft":
-            dir === "ltr" ? rendition.prev() : rendition.next();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
             break;
           case "ArrowRight":
-            dir === "ltr" ? rendition.next() : rendition.prev();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
+            break;
+          case "ArrowUp":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
+            break;
+          case "ArrowDown":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
             break;
         }
       };
