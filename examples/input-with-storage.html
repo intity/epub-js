@@ -4,9 +4,9 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="epub.js,epub-js,input,storage,example">
+    <meta name="keywords" content="epub.js,epub-js,input,writing-mode,storage,example">
     <meta name="description" content="example of open book from file with storage">
-    <meta http-equiv="Permissions-Policy" content="interest-cohort=()" />
+    <meta http-equiv="Permissions-Policy" content="interest-cohort=()"/>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script type="text/javascript" src="../dist/public/jszip.min.js"></script>
@@ -47,98 +47,190 @@
         <div id="divider"></div>
         <div id="loader" style="display: none;"></div>
       </div>
+      <div id="sidebar">
+        <label for="openbook"></label>
+        <input id="openbook" type="file" accept=".epub"/>
+      </div>
     </main>
     <footer>
       <nav>
-        <ul>
-          <li class="l-item">
+        <ul id="tbox" class="m-line">
+          <li id="ti-0" class="l-item">
             <a id="prev" href="#prev"></a>
           </li>
-          <li class="c-item">
-            <label for="openbook"></label>
-            <input id="openbook" type="file" accept=".epub"/>
+          <li id="ti-1" class="c-item" style="display: none;">
+            <label for="layout-wrm" title="Layout Writing Mode">LWM:</label>
+            <select id="layout-wrm">
+              <option value="horizontal-tb">horizontal-tb</option>
+              <option value="vertical-rl">vertical-rl</option>
+              <option value="vertical-lr">vertical-lr</option>
+            </select>
+            <label for="layout-dir" title="Layout Direction">LD:</label>
+            <select id="layout-dir">
+              <option value="ltr">ltr</option>
+              <option value="rtl">rtl</option>
+            </select>
+            <label for="spread" title="Layout Spread">LS:</label>
+            <select id="spread">
+              <option value="none">none</option>
+              <option value="auto">auto</option>
+            </select>
+            <label for="sect-index" title="Section Index (start)">SI:</label>
+            <input id="sect-index" type="number" min="0" max="9999" readonly/>
+            <label for="page-index" title="Page Index (start)">PI:</label>
+            <input id="page-index" type="number" min="0" max="9999" readonly/>
           </li>
-          <li class="r-item">
+          <li id="ti-2" class="r-item">
             <a id="next" href="#next"></a>
           </li>
         </ul>
       </nav>
     </footer>
     <script type="text/javascript">
-      const openbook = document.getElementById("openbook");
       const content = document.getElementById("content");
       const divider = document.getElementById("divider");
+      const openbook = document.getElementById("openbook");
+      const sbox = document.getElementById("sidebar");
+      const tbox = document.getElementById("ti-1");
+      const lwrm = document.getElementById("layout-wrm");
+      const ldir = document.getElementById("layout-dir");
       const loader = document.getElementById("loader");
+      const spread = document.getElementById("spread");
+      const sectix = document.getElementById("sect-index");
+      const pageix = document.getElementById("page-index");
       const next = document.getElementById("next");
       const prev = document.getElementById("prev");
       const book = ePub({ store: "epub-js" });
+      const size = window.innerHeight - 160;
+      const func = (n) => Math.floor(1/Math.sqrt(2)*size)*n;
       let rendition;
       prev.style.display = "none";
       prev.onclick = (e) => {
         rendition.prev();
         e.preventDefault();
-      }
+      };
       next.style.display = "none";
       next.onclick = (e) => {
         rendition.next();
         e.preventDefault();
-      }
-      const update = (l) => {
+      };
+      lwrm.onchange = (e) => {
+        const value = e.target.value;
+        rendition.updateLayout({
+          writingMode: value
+        });
+      };
+      ldir.onchange = (e) => {
+        rendition.updateLayout({
+          direction: e.target.value
+        });
+      };
+      spread.onchange = (e) => {
+        const value = e.target.value;
+        const props = {
+          direction: ldir.value,
+          width: value === "none" ? func(1) : func(2),
+          height: size,
+          spread: value
+        };
+        rendition.resize(props.width, props.height);
+        rendition.updateLayout(props);
+      };
+      const update = (loc) => {
         const dir = rendition.layout.direction;
         const div = rendition.layout.divisor;
-        const loc = l || rendition.currentLocation();
+        const vph = rendition.layout.writingMode === "horizontal-tb";
         prev.style.display = loc.start.bin ? "none" : "block";
         next.style.display = loc.end.bin ? "none" : "block";
+        prev.style["background-image"] = vph ? "url(../assets/img/prev.svg)" : "url(../assets/img/up.svg)";
+        next.style["background-image"] = vph ? "url(../assets/img/next.svg)" : "url(../assets/img/down.svg)";
         divider.style.display = div === 1 ? "none" : "block";
+        divider.style.height = (rendition.layout.height - 20) + "px";
         content.className = dir;
         content.dir = dir;
-      }
+        spread.value = rendition.layout.spread;
+        spread.disabled = !vph;
+        sectix.value = loc.start.index;
+        pageix.value = loc.start.displayed.page.index;
+      };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
+        const wrm = rendition.layout.writingMode;
         switch (e.key) {
           case "ArrowLeft":
-            dir === "ltr" ? rendition.prev() : rendition.next();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
             break;
           case "ArrowRight":
-            dir === "ltr" ? rendition.next() : rendition.prev();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
+            break;
+          case "ArrowUp":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
+            break;
+          case "ArrowDown":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
             break;
         }
-      }
+      };
       const init = (data) => {
         loader.style.display = "block";
         if (rendition) {
           rendition.destroy();
         }
-        book.clear() // clear parts
+        book.clear(); // clear parts
         book.open(data, "binary").then(() => {
           console.log(book);
           rendition.on("keyup", keybinding);
           document.onkeyup = keybinding;
           loader.style.display = "none";
+          sbox.style.display = "none";
+          tbox.style.display = "flex";
         });
         rendition = book.renderTo("viewport", {
-          width: 908,
-          height: 600
+          width: spread.value === "none" ? func(1) : func(2),
+          height: size,
+          spread: spread.value,
+          minSpreadWidth: func(1),
+          direction: ldir.value,
+          writingMode: lwrm.value
         });
-        rendition.display();
+        rendition.display().then((section) => {
+          console.log(section);
+        });
+        rendition.on("layout", (props, changed) => {
+          if (changed.writingMode) {
+            update(rendition.currentLocation());
+          }
+        });
         rendition.on("relocated", (loc) => {
           update(loc);
           console.log(loc);
         });
-      }
-      const onload = (e) => {
-        book.storage.set(0, e.target.result).then((data) => {
-          init(data);
-        });
-      }
+      };
+      const load = (e) => book.storage.set(0, e.target.result).then((data) => {
+        init(data);
+        openbook.style.display = "none";
+      });
+      const error = (e) => {
+        console.error(e);
+        openbook.style.display = "block";
+      };
       openbook.onchange = (e) => {
         const file = e.target.files[0];
         if (window.FileReader) {
           const reader = new FileReader();
-          reader.onload = onload;
+          reader.onload = load;
+          reader.onerror = error;
           reader.readAsArrayBuffer(file);
         }
-      }
+      };
       book.storage.get(0).then((data) => {
         if (data) init(data);
       });
