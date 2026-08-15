@@ -88,19 +88,37 @@
       };
       const update = (loc) => {
         const dir = rendition.layout.direction;
+        const vph = rendition.layout.writingMode === "horizontal-tb";
         prev.style.display = loc.start.bin ? "none" : "block";
         next.style.display = loc.end.bin ? "none" : "block";
+        prev.style["background-image"] = vph ? "url(../assets/img/prev.svg)" : "url(../assets/img/up.svg)";
+        next.style["background-image"] = vph ? "url(../assets/img/next.svg)" : "url(../assets/img/down.svg)";
         content.className = dir;
         content.dir = dir;
       };
       const keybinding = (e) => {
         const dir = rendition.layout.direction;
+        const wrm = rendition.layout.writingMode;
         switch (e.key) {
           case "ArrowLeft":
-            dir === "ltr" ? rendition.prev() : rendition.next();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
             break;
           case "ArrowRight":
-            dir === "ltr" ? rendition.next() : rendition.prev();
+            if (wrm === "horizontal-tb") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
+            break;
+          case "ArrowUp":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.prev() : rendition.next();
+            }
+            break;
+          case "ArrowDown":
+            if (wrm === "vertical-rl") {
+              dir === "ltr" ? rendition.next() : rendition.prev();
+            }
             break;
         }
       };
