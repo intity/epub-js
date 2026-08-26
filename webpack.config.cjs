@@ -122,7 +122,7 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: [["@babel/preset-env", {
-              corejs: { version: "3.49", proposals: true },
+              corejs: { version: "3.50.0", proposals: true },
               modules: false,
               targets: "defaults",
               bugfixes: true,
@@ -133,6 +133,14 @@ module.exports = {
             ]
           }
         },
+        resolve: {
+          fullySpecified: false
+        }
+      },
+      {
+        test: /\.m?js$/,
+        include: /node_modules/,
+        type: "javascript/auto",
         resolve: {
           fullySpecified: false
         }
