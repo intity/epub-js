@@ -2,7 +2,6 @@
  * @module replacements
  */
 
-import Section from "../section";
 import { qs } from "./core";
 
 /**
@@ -31,7 +30,7 @@ export const replaceBase = (doc, section) => {
   }
 
   base.setAttribute("href", url);
-}
+};
 
 /**
  * replaceCanonical
@@ -54,7 +53,7 @@ export const replaceCanonical = (doc, section) => {
     link.setAttribute("href", url);
     head.appendChild(link);
   }
-}
+};
 
 /**
  * replaceMeta
@@ -76,7 +75,7 @@ export const replaceMeta = (doc, section) => {
     meta.setAttribute("content", section.idref);
     head.appendChild(meta);
   }
-}
+};
 
 /**
  * Replace links from node
@@ -112,7 +111,7 @@ export const replaceLinks = (contents, cb) => {
 
   links.forEach(ln => repl(ln));
   return links;
-}
+};
 
 const relative = (p1, p2) => {
 
@@ -146,4 +145,4 @@ export const substitute = (content, section, urls, repl) => {
     }
   });
   return content;
-}
+};

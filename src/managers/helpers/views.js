@@ -1,5 +1,3 @@
-import Section from "../../section";
-
 /**
  * Views
  */

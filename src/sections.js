@@ -1,6 +1,4 @@
 import EpubCFI from "./epubcfi";
-import Navigation from "./navigation";
-import Packaging from "./packaging";
 import Hook from "./utils/hook";
 import Section from "./section";
 import {

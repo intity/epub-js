@@ -1,5 +1,3 @@
-import Mark from "./mark";
-
 const rectContains = (rect, x, y, offset) => {
 
   const top = rect.top - offset.top;
@@ -8,7 +6,7 @@ const rectContains = (rect, x, y, offset) => {
   const right = left + rect.width;
 
   return (top <= y && left <= x && bottom > y && right > x);
-}
+};
 
 /**
  * Check if the item contains the point denoted by the passed coordinates
@@ -38,7 +36,7 @@ const contains = (mark, target, x, y) => {
   }
 
   return false;
-}
+};
 
 /**
  * Clone a mouse event object.
@@ -53,7 +51,7 @@ const clone = (e) => {
   });
 
   return new MouseEvent(e.type, opts);
-}
+};
 
 const dispatch = (e, target, marks) => {
 
@@ -70,7 +68,7 @@ const dispatch = (e, target, marks) => {
       mark.dispatchEvent(clone(e));
     }
   });
-}
+};
 
 /**
  * Start proxying all mouse events that occur on the target node to each node in
@@ -103,6 +101,6 @@ const proxyMouse = (target, marks) => {
     node.addEventListener(event,
       (e) => dispatch(e, target, marks), false);
   }
-}
+};
 
 export default proxyMouse;

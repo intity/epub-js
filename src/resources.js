@@ -1,6 +1,3 @@
-import Archive from "./archive";
-import Section from "./section";
-import Manifest from "./packaging/manifest";
 import { substitute } from "./utils/replacements";
 import {
   blob2base64,

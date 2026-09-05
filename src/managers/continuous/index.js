@@ -1,5 +1,3 @@
-import View from "../views/view";
-import Section from "../../section";
 import { extend } from "../../utils/core";
 import Defer from "../../utils/defer";
 import DefaultViewManager from "../default";

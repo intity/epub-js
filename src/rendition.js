@@ -1,15 +1,12 @@
 import EventEmitter from "event-emitter";
 import Annotations from "./annotations";
-import Contents from "./contents";
 import EpubCFI from "./epubcfi";
-import Section from "./section";
 import Layout from "./layout";
 import Location from "./location";
 import Themes from "./themes";
 import Defer from "./utils/defer";
 import Hook from "./utils/hook";
 import Viewport from "./viewport";
-import Views from "./managers/helpers/views";
 import Queue from "./utils/queue";
 import { extend, isFloat } from "./utils/core";
 import { EPUBJS_VERSION, EVENTS, DOM_EVENTS } from "./utils/constants";

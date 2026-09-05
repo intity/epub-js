@@ -1,6 +1,5 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
-import View from "./managers/views/view";
 import { EVENTS } from "./utils/constants";
 
 /**

@@ -1,6 +1,4 @@
 import Contents from "../../contents";
-import Section from "../../section";
-import Layout from "../../layout";
 import Defer from "../../utils/defer";
 import { EVENTS } from "../../utils/constants";
 import {

@@ -12,7 +12,6 @@ import Rendition from "./rendition";
 import Archive from "./archive";
 import request from "./utils/request";
 import EpubCFI from "./epubcfi";
-import Section from "./section";
 import Storage from "./storage";
 import {
   EPUBJS_NAME,
