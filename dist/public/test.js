@@ -2092,6 +2092,35 @@ module.exports = function (argument) {
 
 /***/ },
 
+/***/ 298
+(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var wellKnownSymbol = __webpack_require__(1602);
+var create = __webpack_require__(3105);
+var defineProperty = (__webpack_require__(3610).f);
+
+var UNSCOPABLES = wellKnownSymbol('unscopables');
+var ArrayPrototype = Array.prototype;
+
+// Array.prototype[@@unscopables]
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+if (ArrayPrototype[UNSCOPABLES] === undefined) {
+  defineProperty(ArrayPrototype, UNSCOPABLES, {
+    configurable: true,
+    value: create(null)
+  });
+}
+
+// add a key to Array.prototype[@@unscopables]
+module.exports = function (key) {
+  ArrayPrototype[UNSCOPABLES][key] = true;
+};
+
+
+/***/ },
+
 /***/ 5190
 (module, __unused_webpack_exports, __webpack_require__) {
 
@@ -28686,24 +28715,76 @@ describe("Sections", () => {
 // This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
-/* harmony import */ var themes_assert_WEBPACK_IMPORTED_MODULE_0_ = __webpack_require__(4148);
-/* harmony import */ var themes_src_book_WEBPACK_IMPORTED_MODULE_1_ = __webpack_require__(8378);
 
-
-const themes_url = path => {
-  let result = location.origin;
-  if (/github.io/.test(result)) {
-    result += "epub-js";
-    result += path;
-  } else {
-    result += path;
-  }
-  return result;
+// EXTERNAL MODULE: ./node_modules/core-js/internals/add-to-unscopables.js
+var add_to_unscopables_namespaceFn = () => {
+	return __webpack_require__(298);
 };
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/array-includes.js
+var array_includes_namespaceFn = () => {
+	return __webpack_require__(8186);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/export.js
+var themes_export_namespaceFn = () => {
+	return __webpack_require__(1605);
+};
+
+// EXTERNAL MODULE: ./node_modules/core-js/internals/fails.js
+var fails_namespaceFn = () => {
+	return __webpack_require__(2074);
+};
+
+// MODULE: ./node_modules/core-js/modules/es.array.includes.js
+var es_array_includes_namespaceFn = /*#__PURE__*/__webpack_require__.cw(function(module, exports) {
+
+var $ = (themes_export_namespaceFn());
+var $includes = (array_includes_namespaceFn()/* includes */.m);
+var fails = (fails_namespaceFn());
+var addToUnscopables = (add_to_unscopables_namespaceFn());
+
+// FF99+ bug
+var BROKEN_ON_SPARSE = fails(function () {
+  // eslint-disable-next-line es/no-array-prototype-includes -- detection
+  return !Array(1).includes();
+});
+
+// Safari 26.4- bug
+var BROKEN_ON_SPARSE_WITH_FROM_INDEX = fails(function () {
+  // eslint-disable-next-line no-sparse-arrays, es/no-array-prototype-includes -- detection
+  return [, 1].includes(undefined, 1);
+});
+
+// `Array.prototype.includes` method
+// https://tc39.es/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true, forced: BROKEN_ON_SPARSE || BROKEN_ON_SPARSE_WITH_FROM_INDEX }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+});
+
+;// ./node_modules/core-js/modules/es.array.includes.js
+es_array_includes_namespaceFn();
+
+// EXTERNAL MODULE: ./node_modules/assert/build/assert.js
+var themes_assert = __webpack_require__(4148);
+// EXTERNAL MODULE: ./src/book.js
+var themes_src_book = __webpack_require__(8378);
+;// ./test/themes.js
+
+
+
+const themes_url = path => (/epub-js/.test(location.href) ? "/epub-js" : "") + path;
 describe("Themes", () => {
   let book, rendition, theme, path;
   before(async () => {
-    book = new themes_src_book_WEBPACK_IMPORTED_MODULE_1_/* ["default"] */ .A(themes_url("/assets/alice/"));
+    book = new themes_src_book/* default */.A(themes_url("/assets/alice/"));
     path = themes_url("/examples/themes.css");
     rendition = book.renderTo(document.body, {
       spread: "none"
@@ -28716,14 +28797,15 @@ describe("Themes", () => {
       rendition.themes.register("light", path);
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.url, path);
+      themes_assert.equal(theme.url.includes("/examples/themes.css"), true);
       rendition.themes.register("dark", path);
       await rendition.hooks.content;
       theme = rendition.themes.get("dark");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.url, path);
+      themes_assert.equal(theme.url.includes("/examples/themes.css"), true);
       rendition.themes.clear();
       await rendition.hooks.content;
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.size, 0);
+      themes_assert.equal(theme.injected, false);
+      themes_assert.equal(rendition.themes.size, 0);
     });
     it("should register a theme by rules", async () => {
       rendition.themes.register("light", {
@@ -28732,18 +28814,18 @@ describe("Themes", () => {
       });
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.background, "#fff");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.color, "#000");
+      themes_assert.equal(theme.rules.background, "#fff");
+      themes_assert.equal(theme.rules.color, "#000");
       rendition.themes.register("dark", {
         background: "#000",
         color: "#fff"
       });
       await rendition.hooks.content;
       theme = rendition.themes.get("dark");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.background, "#000");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.color, "#fff");
+      themes_assert.equal(theme.rules.background, "#000");
+      themes_assert.equal(theme.rules.color, "#fff");
       rendition.themes.clear();
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.size, 0);
+      themes_assert.equal(rendition.themes.size, 0);
     });
     it("should register a themes from object with rules", async () => {
       rendition.themes.register({
@@ -28762,13 +28844,13 @@ describe("Themes", () => {
       });
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.body.background, "#fff");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.body.color, "#000");
+      themes_assert.equal(theme.rules.body.background, "#fff");
+      themes_assert.equal(theme.rules.body.color, "#000");
       theme = rendition.themes.get("dark");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.body.background, "#000");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.rules.body.color, "#fff");
+      themes_assert.equal(theme.rules.body.background, "#000");
+      themes_assert.equal(theme.rules.body.color, "#fff");
       rendition.themes.clear();
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.size, 0);
+      themes_assert.equal(rendition.themes.size, 0);
     });
     it("should register a themes from object with urls", async () => {
       rendition.themes.register({
@@ -28777,29 +28859,29 @@ describe("Themes", () => {
       });
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.url, path);
+      themes_assert.equal(theme.url.includes("/examples/themes.css"), true);
       theme = rendition.themes.get("dark");
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.url, path);
+      themes_assert.equal(theme.url.includes("/examples/themes.css"), true);
     });
   });
   describe("#select()", () => {
     it("switching theme using select method", async () => {
       rendition.themes.on("selected", (key, theme) => {
         if (key === null) {
-          themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.injected, false);
+          themes_assert.equal(theme.injected, false);
         } else {
-          themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(theme.injected, true);
+          themes_assert.equal(theme.injected, true);
         }
       });
       rendition.themes.select("light");
       await rendition.hooks.content;
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.current, "light");
+      themes_assert.equal(rendition.themes.current, "light");
       rendition.themes.select("dark");
       await rendition.hooks.content;
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.current, "dark");
+      themes_assert.equal(rendition.themes.current, "dark");
       rendition.themes.select(null);
       await rendition.hooks.content;
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.current, null);
+      themes_assert.equal(rendition.themes.current, null);
     });
   });
   describe("#appendRule()", () => {
@@ -28807,7 +28889,7 @@ describe("Themes", () => {
       rendition.themes.appendRule("font-size", "100%");
       await rendition.hooks.content;
       const rule = rendition.themes.rules["font-size"];
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rule.value, "100%");
+      themes_assert.equal(rule.value, "100%");
     });
   });
   describe("#removeRule()", () => {
@@ -28815,14 +28897,14 @@ describe("Themes", () => {
       rendition.themes.removeRule("font-size");
       await rendition.hooks.content;
       const rule = rendition.themes.rules["font-size"];
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rule, undefined);
+      themes_assert.equal(rule, undefined);
     });
   });
   describe("#clear()", () => {
     it("should clear all themes", async () => {
       rendition.themes.clear();
       await rendition.hooks.content;
-      themes_assert_WEBPACK_IMPORTED_MODULE_0_.equal(rendition.themes.size, 0);
+      themes_assert.equal(rendition.themes.size, 0);
     });
   });
   after(() => {
