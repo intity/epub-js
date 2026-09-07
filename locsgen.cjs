@@ -1,19 +1,15 @@
 const fs = require("fs");
 const path = require("path");
-const JSZip = require("jszip");
+const Book = require("./src/book").default;
 const { pathToFileURL } = require("url");
-const setup = require("./setup.cjs");
-
-setup.init(); // pre-init jsdom
 
 (async () => {
   // save compact locations (data.json)
-  const obj = require("./dist/server/epub.cjs");
   const time = Date.now();
-  const ePub = obj.ePub;
+  //const Book = require("./src/book").default;
   const absolutePath = path.resolve("./assets/alice/");
   const directoryUrl = pathToFileURL(absolutePath).href + "/";
-  const book = ePub(directoryUrl);
+  const book = new Book(directoryUrl);
   await book.opened;
   await book.locations.generate(880); // chars/pages -- 880/66
   const data = book.locations.save(1);

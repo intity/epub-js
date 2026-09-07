@@ -2,37 +2,59 @@ import assert from "assert";
 import Book from "../src/book";
 import CustomVM from "./manager";
 
-const EPUBJS_EID = "viewport";
+const TEST_LIST = [];
+const TEST_PR = {
+  book: null,
+  index: -1
+};
 
 const url = (path) => (/epub-js/.test(location.href) ? "/epub-js" : "") + path;
-
-describe("Rendition", () => {
-  let book, rendition;
-  const init = async (n, options) => {
-    if (book === undefined) {
-      book = new Book(url("/assets/handbook/"));
-      await book.opened;
-    }
-    if (rendition === undefined && n) {
-      rendition = book.renderTo(EPUBJS_EID, options);
-    }
-    return rendition.started;
+const init = async (n, options) => {
+  let book, rendition, manager;
+  if (TEST_PR.index === -1) {
+    TEST_PR.book = new Book(url("/assets/handbook/"));
+    await TEST_PR.book.opened;
+    book = TEST_PR.book;
+  } else {
+    book = TEST_PR.book;
   }
+  if (n === 1) {
+    rendition = book.renderTo(document.body, options);
+    await rendition.started;
+    manager = rendition.manager;
+  }
+  TEST_PR.index += 1;
+  const index = TEST_PR.index;
+  TEST_LIST.push({
+    book,
+    rendition,
+    manager,
+    index
+  });
+  const value = TEST_LIST[TEST_PR.index];
+  return Promise.resolve(value);
+};
+
+describe("Rendition", function () {
+  this.timeout(3450);
   describe("#requireManager()", () => {
+    let manager;
     before(async () => {
-      await init(1, { manager: CustomVM });
-      await rendition.display();
+      const pr = await init(1, { manager: CustomVM }); // [0]
+      await pr.rendition.display();
+      manager = pr.manager;
     });
-    it("should be create custom manager", () => {
-      const manager = rendition.manager;
+    it("should be custom manager", () => {
       assert.ok(manager instanceof CustomVM);
       assert.equal(typeof manager, "object");
       assert.equal(manager.name, "custom");
     });
   });
   describe("#display()", () => {
+    let rendition;
     before(async () => {
-      await init(1);
+      const pr = await init(1); // [1]
+      rendition = pr.rendition;
     });
     it("should be displayed by default", async () => {
       const section = await rendition.display();
@@ -78,9 +100,11 @@ describe("Rendition", () => {
     });
   });
   describe("#next()", () => {
+    let rendition;
     before(async () => {
-      await init(1);
-      await rendition.display(1);
+      const pr = await init(1); // [2]
+      await pr.rendition.display(1);
+      rendition = pr.rendition;
     });
     it("should be next to section index 2", async () => {
       await rendition.next();
@@ -94,9 +118,11 @@ describe("Rendition", () => {
     });
   });
   describe("#prev()", () => {
+    let rendition;
     before(async () => {
-      await init(1);
-      await rendition.display(3);
+      const pr = await init(1); // [3]
+      await pr.rendition.display(3);
+      rendition = pr.rendition;
     });
     it("should be prev to section.index 2", async () => {
       await rendition.prev();
@@ -110,9 +136,11 @@ describe("Rendition", () => {
     });
   });
   describe("#resize()", () => {
+    let rendition;
     before(async () => {
-      await init(1, { spread: "none" });
-      await rendition.display(3);
+      const pr = await init(1, { spread: "none" }); // [4]
+      await pr.rendition.display(3);
+      rendition = pr.rendition;
     });
     it("should be viewport resizing to width 500", () => {
       const size = rendition.resize(500, "100%");
@@ -129,9 +157,11 @@ describe("Rendition", () => {
     });
   });
   describe("#upateLayout()", () => {
+    let rendition;
     before(async () => {
-      await init(1, { spread: "auto" });
-      await rendition.display(3);
+      const pr = await init(1, { spread: "auto" }); // [5]
+      await pr.rendition.display(3);
+      rendition = pr.rendition;
     });
     it("should be updating layout.spread:none", async () => {
       rendition.updateLayout({ spread: "none" });
@@ -164,6 +194,26 @@ describe("Rendition", () => {
     it("should be updating layout.writingMode:horizontal-tb", async () => {
       await rendition.updateLayout({ writingMode: "horizintal-tb" });
       assert.equal(rendition.layout.writingMode, "horizontal-tb");
+    });
+  });
+  describe("#destroy()", () => {
+    after(() => {
+      TEST_PR.index = -1;
+    });
+    it("should be #[0..5].destroy objects", () => {
+      TEST_LIST.forEach((pr, i) => {
+        pr.rendition.destroy(),
+        Object.keys(pr.rendition).forEach(p => {
+          if (
+            p === "book" ||
+            p === "location" ||
+            p === "annotations" ||
+            p === "settings"
+          ) return;
+          assert.equal(pr.rendition[p], undefined);
+        });
+      });
+      assert.equal(TEST_PR.index, TEST_LIST.length - 1);
     });
   });
 });

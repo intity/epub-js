@@ -1,7 +1,4 @@
 import EventEmitter from "event-emitter";
-import EpubCFI from "../../epubcfi";
-import Section from "../../section";
-import Layout from "../../layout";
 import Defer from "../../utils/defer";
 import Marks from "../../marks-pane/marks";
 import Highlight from "../../marks-pane/highlight";

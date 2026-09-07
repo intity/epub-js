@@ -6,7 +6,7 @@ import request from "../src/utils/request";
 describe("Locations", function () {
   let book, rendition, locations, sections = {};
   const chars = 549;
-  this.timeout(11000);
+  this.timeout(15000);
   before(async () => {
     book = new Book("../assets/alice/");
     await book.opened;

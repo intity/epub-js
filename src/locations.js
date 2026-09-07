@@ -1,8 +1,6 @@
 import EventEmitter from "event-emitter";
 import EpubCFI from "./epubcfi";
 import Location from "./location";
-import Sections from "./sections";
-import Section from "./section";
 import Defer from "./utils/defer";
 import Queue from "./utils/queue";
 import { EVENTS } from "./utils/constants";
