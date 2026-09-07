@@ -1,16 +1,7 @@
 import assert from "assert";
 import Book from "../src/book";
 
-const url = (path) => {
-  let result = location.origin;
-  if (/github.io/.test(result)) {
-    result += "epub-js";
-    result += path;
-  } else {
-    result += path;
-  }
-  return result;
-}
+const url = (path) => (/epub-js/.test(location.href) ? "/epub-js" : "") + path;
 
 describe("Themes", () => {
   let book, rendition, theme, path;
@@ -28,13 +19,14 @@ describe("Themes", () => {
       rendition.themes.register("light", path);
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      assert.equal(theme.url, path);
+      assert.equal(theme.url.includes("/examples/themes.css"), true);
       rendition.themes.register("dark", path);
       await rendition.hooks.content;
       theme = rendition.themes.get("dark");
-      assert.equal(theme.url, path);
+      assert.equal(theme.url.includes("/examples/themes.css"), true);
       rendition.themes.clear();
       await rendition.hooks.content;
+      assert.equal(theme.injected, false);
       assert.equal(rendition.themes.size, 0);
     });
     it("should register a theme by rules", async () => {
@@ -83,9 +75,9 @@ describe("Themes", () => {
       });
       await rendition.hooks.content;
       theme = rendition.themes.get("light");
-      assert.equal(theme.url, path);
+      assert.equal(theme.url.includes("/examples/themes.css"), true);
       theme = rendition.themes.get("dark");
-      assert.equal(theme.url, path);
+      assert.equal(theme.url.includes("/examples/themes.css"), true);
     });
   });
   describe("#select()", () => {
