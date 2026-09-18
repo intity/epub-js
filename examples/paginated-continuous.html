@@ -13,26 +13,40 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script type="text/javascript" src="../dist/public/epub.js"></script>
     <script type="module">
+      const url = new URL(window.location);
+      const wrm = url.searchParams.get("wrm");
+      const isv = wrm === "vertical-rl";
       const swipe = "ontouchstart" in window;
       const loader = document.getElementById("loader");
-      const book = ePub("../assets/alice/");
-      const rendition = book.renderTo(document.body, {
+      const bookPath = isv ? "../assets/kusamakura/" : "../assets/alice/";
+      const book = ePub(bookPath, { format: "json" });
+      const opts = {
         manager: swipe ? "continuous" : "default",
         flow: "paginated",
         snap: swipe ? {} : null,
         spread: "none",
+        width: "100vw",
         height: "100vh"
-      });
+      };
+      const rendition = book.renderTo(document.body, opts);
       const keybinding = (e) => {
+        const ish = rendition.layout.writingMode === "horizontal-tb";
+        const isv = rendition.layout.writingMode === "vertical-rl";
         switch (e.key) {
           case "ArrowLeft":
-            rendition.prev();
+            ish && rendition.prev();
             break;
           case "ArrowRight":
-            rendition.next();
+            ish && rendition.next();
+            break;
+          case "ArrowUp":
+            isv && rendition.prev();
+            break;
+          case "ArrowDown":
+            isv && rendition.next();
             break;
         }
-      }
+      };
       book.opened.then(() => {
         loader.style.display = "none";
       });
@@ -44,10 +58,10 @@
         console.log(rendition);
       });
       rendition.on("rendered", (view) => {
-        console.log(view);
+        console.log("rendered:", view);
       });
       rendition.on("relocated", (loc) => {
-        console.log(loc);
+        console.log("relocated", loc);
       });
     </script>
     <title>epub-js-examples : Continuous swiping of pages (mobile)</title>
