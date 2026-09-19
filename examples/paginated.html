@@ -11,6 +11,90 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/main.css">
     <script type="text/javascript" src="../dist/public/epub.js"></script>
     <script type="module" src="../assets/js/main.js"></script>
+    <script type="module">
+      const divider = document.getElementById("divider");
+      const loader = document.getElementById("loader");
+      const sbtn = document.getElementById("spread");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+      const size = window.innerHeight - 160;
+      const func = (n) => Math.floor(1/Math.sqrt(2)*size)*n;
+      const url = new URL(window.location);
+      const wrm = url.searchParams.get("wrm");
+      const isv = wrm === "vertical-rl";
+      const bookPath = isv ? "../assets/kusamakura/" : "../assets/alice/";
+      const book = ePub(bookPath, { format: "json" });
+      const props = {
+        width: sbtn.checked ? func(2) : func(1),
+        height: size,
+        spread: sbtn.checked ? "auto" : "none",
+        minSpreadWidth: func(1)
+      };
+      const rendition = book.renderTo("viewport", props);
+      book.opened.then(() => {
+        loader.style.display = "none";
+      });
+      prev.onclick = (e) => {
+        rendition.prev();
+        e.preventDefault();
+      };
+      next.onclick = (e) => {
+        rendition.next();
+        e.preventDefault();
+      };
+      sbtn.onclick = (e) => {
+        const value = e.target.checked;
+        props.width = value ? func(2) : func(1);
+        props.height = size;
+        props.spread = value ? "auto" : "none";
+        rendition.resize(props.width, props.height);
+        rendition.updateLayout(props);
+      };
+      const update = (loc) => {
+        const div = rendition.layout.divisor;
+        const vph = rendition.layout.writingMode === "horizontal-tb";
+        sbtn.checked = rendition.layout.spread === "auto";
+        prev.style.display = loc.start.bin ? "none" : "block";
+        next.style.display = loc.end.bin ? "none" : "block";
+        prev.style["background-image"] = vph ? "url(../assets/img/prev.svg)" : "url(../assets/img/up.svg)";
+        next.style["background-image"] = vph ? "url(../assets/img/next.svg)" : "url(../assets/img/down.svg)";
+        divider.style.height = `${rendition.layout.height - 10}px`;
+        divider.style.display = div === 1 ? "none" : "block";
+      };
+      const keybinding = (e) => {
+        const ish = rendition.layout.writingMode === "horizontal-tb";
+        const isv = rendition.layout.writingMode === "vertical-rl";
+        switch (e.key) {
+          case "ArrowLeft":
+            ish && rendition.prev();
+            break;
+          case "ArrowRight":
+            ish && rendition.next();
+            break;
+          case "ArrowUp":
+            isv && rendition.prev();
+            break;
+          case "ArrowDown":
+            isv && rendition.next();
+            break;
+        }
+      };
+      rendition.display().then(() => {
+        document.onkeyup = keybinding;
+        rendition.on("keyup", keybinding);
+      });
+      rendition.on("attached", () => {
+        console.log(rendition);
+      });
+      rendition.on("resized", (rect) => {
+        update(rendition.currentLocation());
+        console.log(rect);
+      });
+      rendition.on("relocated", (loc) => {
+        update(loc);
+        console.log(loc);
+      });
+    </script>
     <title>epub-js-examples : Spreading a document into pages</title>
   </head>
 
@@ -62,75 +146,6 @@
         </ul>
       </nav>
     </footer>
-    <script>
-      const divider = document.getElementById("divider");
-      const loader = document.getElementById("loader");
-      const sbtn = document.getElementById("spread");
-      const prev = document.getElementById("prev");
-      const next = document.getElementById("next");
-      const book = ePub("../assets/alice/");
-      const size = window.innerHeight - 160;
-      const func = (n) => Math.floor(1/Math.sqrt(2)*size)*n;
-      const props = {
-        width: sbtn.checked ? func(2) : func(1),
-        height: size,
-        spread: sbtn.checked ? "auto" : "none",
-        minSpreadWidth: func(1)
-      };
-      const rendition = book.renderTo("viewport", props);
-      book.opened.then(() => {
-        loader.style.display = "none";
-      });
-      prev.onclick = (e) => {
-        rendition.prev();
-        e.preventDefault();
-      };
-      next.onclick = (e) => {
-        rendition.next();
-        e.preventDefault();
-      };
-      sbtn.onclick = (e) => {
-        const value = e.target.checked;
-        props.width = value ? func(2) : func(1);
-        props.height = size;
-        props.spread = value ? "auto" : "none";
-        rendition.resize(props.width, props.height);
-        rendition.updateLayout(props);
-      };
-      const update = (loc) => {
-        const div = rendition.layout.divisor;
-        sbtn.checked = rendition.layout.spread === "auto";
-        prev.style.display = loc.start.bin ? "none" : "block";
-        next.style.display = loc.end.bin ? "none" : "block";
-        divider.style.height = `${rendition.layout.height - 10}px`;
-        divider.style.display = div === 1 ? "none" : "block";
-      };
-      const keybinding = (e) => {
-        switch (e.key) {
-          case "ArrowLeft":
-            rendition.prev();
-            break;
-          case "ArrowRight":
-            rendition.next();
-            break;
-        }
-      };
-      rendition.display().then(() => {
-        document.onkeyup = keybinding;
-        rendition.on("keyup", keybinding);
-      });
-      rendition.on("attached", () => {
-        console.log(rendition);
-      });
-      rendition.on("resized", (rect) => {
-        update(rendition.currentLocation());
-        console.log(rect);
-      });
-      rendition.on("relocated", (loc) => {
-        update(loc);
-        console.log(loc);
-      });
-    </script>
   </body>
 
 </html>
