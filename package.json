@@ -16,6 +16,12 @@
   "directories": {
     "test": "test"
   },
+  "exports": {
+    ".": {
+      "browser": "./dist/public/epub.js",
+      "default": "./dist/server/epub.cjs"
+    }
+  },
   "files": [
     "dist/",
     "lib",
