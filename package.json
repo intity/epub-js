@@ -17,9 +17,11 @@
     "test": "test"
   },
   "files": [
+    "dist/",
+    "lib",
+    "types/",
     "!assets/",
     "!docs/",
-    "dist/",
     "!dist/**/*.map",
     "!dist/public/jszip.*",
     "!dist/public/localforage.*",
@@ -33,8 +35,7 @@
     "!locsgen.cjs",
     "!setup.cjs",
     "!src/",
-    "!test/",
-    "types/"
+    "!test/"
   ],
   "scripts": {
     "docs": "node docsgen.cjs",
