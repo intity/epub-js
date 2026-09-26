@@ -15,7 +15,7 @@ export const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-export const EPUBJS_VERSION = "0.3.101";
+export const EPUBJS_VERSION = "0.3.102";
 
 /**
  * axis
