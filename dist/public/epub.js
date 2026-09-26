@@ -8303,7 +8303,7 @@ const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-const EPUBJS_VERSION = "0.3.101";
+const EPUBJS_VERSION = "0.3.103";
 
 /**
  * axis
