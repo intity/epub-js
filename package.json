@@ -1,6 +1,6 @@
 {
   "name": "@intity/epub-js",
-  "version": "0.3.101",
+  "version": "0.3.103",
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
   "type": "module",
@@ -18,6 +18,7 @@
   },
   "exports": {
     ".": {
+      "import": "./lib/index.js",
       "browser": "./dist/public/epub.js",
       "default": "./dist/server/epub.cjs"
     }
@@ -72,7 +73,7 @@
     "jszip": "^3.10.2",
     "localforage": "^1.10.0",
     "lodash": "^4.18.1",
-    "marked": "^18.0.13",
+    "marked": "^18.0.14",
     "resize-observer": "^1.0.4"
   },
   "devDependencies": {
