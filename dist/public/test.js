@@ -12203,7 +12203,7 @@ if (hasToStringTag && gOPD && getProto) {
 		var arr = new g[typedArray]();
 		var fn = arr.slice || arr.set;
 		if (fn) {
-			var bound = /** @type {BoundSlice | BoundSet} */ (
+			var bound = /** @type {typeof BoundSlice | typeof BoundSet} */ (
 				// @ts-expect-error TODO FIXME
 				callBind(fn)
 			);
@@ -12258,11 +12258,8 @@ function isTATag(tag) {
 	return $indexOf(typedArrays, tag) > -1;
 }
 
-/**
- * @type {import('.')}
- * @param {unknown} value
- */
-module.exports = function whichTypedArray(value) {
+/** @type {(value: unknown) => ReturnType<typeof import('.')>} */
+function whichTypedArray(value) {
 	if (!value || typeof value !== 'object') {
 		return false;
 	}
@@ -12279,7 +12276,9 @@ module.exports = function whichTypedArray(value) {
 	}
 	if (!gOPD) { return null; } // unknown engine
 	return tryTypedArrays(value);
-};
+}
+
+module.exports = whichTypedArray;
 
 
 /***/ },
@@ -12421,7 +12420,7 @@ class Annotation {
 event_emitter__WEBPACK_IMPORTED_MODULE_0__(Annotation.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Annotation);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -12570,7 +12569,7 @@ class Annotations extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Annotations);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -12729,7 +12728,7 @@ class Archive extends _input__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .A {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Archive);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -13322,7 +13321,7 @@ class Book {
    */
   key(identifier) {
     const ident = identifier || this.packaging.metadata.get("identifier") || this.url.filename;
-    return `${_utils_constants__WEBPACK_IMPORTED_MODULE_18__/* .EPUBJS_NAME */ .MO}:${(/* inlined export .EPUBJS_VERSION */"0.3.98")}:${ident}`;
+    return `${_utils_constants__WEBPACK_IMPORTED_MODULE_18__/* .EPUBJS_NAME */ .MO}:${_utils_constants__WEBPACK_IMPORTED_MODULE_18__/* .EPUBJS_VERSION */ .JX}:${ident}`;
   }
 
   /**
@@ -13363,7 +13362,7 @@ class Book {
 event_emitter__WEBPACK_IMPORTED_MODULE_3__(Book.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Book);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -13500,7 +13499,7 @@ class Container {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Container);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -14529,7 +14528,7 @@ class Contents {
 event_emitter__WEBPACK_IMPORTED_MODULE_20__(Contents.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Contents);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -15612,7 +15611,7 @@ class EpubCFI {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EpubCFI);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -15742,7 +15741,7 @@ class Input {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Input);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -16051,7 +16050,7 @@ class Layout {
 event_emitter__WEBPACK_IMPORTED_MODULE_3__(Layout.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Layout);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -16140,7 +16139,7 @@ class Location {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Location);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -16683,7 +16682,7 @@ class Locations extends Map {
 event_emitter__WEBPACK_IMPORTED_MODULE_21__(Locations.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Locations);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -16972,7 +16971,7 @@ class ContinuousViewManager extends _default__WEBPACK_IMPORTED_MODULE_3__/* ["de
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ContinuousViewManager);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -17807,7 +17806,7 @@ class DefaultViewManager {
 event_emitter__WEBPACK_IMPORTED_MODULE_5__(DefaultViewManager.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (DefaultViewManager);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -18182,7 +18181,7 @@ class Snap {
 event_emitter__WEBPACK_IMPORTED_MODULE_0__(Snap.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Snap);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -18369,7 +18368,7 @@ class Views extends Array {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Views);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -18546,7 +18545,7 @@ class IframeView extends _view__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .A 
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (IframeView);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -18633,7 +18632,7 @@ class InlineView extends _view__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .A 
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (InlineView);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -19185,7 +19184,7 @@ class View {
 event_emitter__WEBPACK_IMPORTED_MODULE_2__(View.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (View);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -19602,7 +19601,7 @@ class Mapping {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mapping);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -19701,7 +19700,7 @@ const proxyMouse = (target, marks) => {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (proxyMouse);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -19788,7 +19787,7 @@ class Highlight extends _mark__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */ .A {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Highlight);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -19883,7 +19882,7 @@ class Mark {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Mark);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20017,7 +20016,7 @@ class Marks extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Marks);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20081,7 +20080,7 @@ class Underline extends _highlight__WEBPACK_IMPORTED_MODULE_0__/* ["default"] */
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Underline);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20227,7 +20226,7 @@ class Navigation {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Navigation);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20359,7 +20358,7 @@ class Landmarks extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Landmarks);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20657,7 +20656,7 @@ class PageList extends Array {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PageList);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -20900,7 +20899,7 @@ class Toc extends Array {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Toc);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -21110,7 +21109,7 @@ class Packaging {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Packaging);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -21271,7 +21270,7 @@ class Manifest extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Manifest);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -21422,7 +21421,7 @@ class Metadata extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Metadata);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -21547,7 +21546,7 @@ class Spine extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Spine);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -21843,7 +21842,7 @@ class Rendition {
     this.emit(_utils_constants__WEBPACK_IMPORTED_MODULE_14__/* .EVENTS */ .qY.RENDITION.STARTED);
     navigator.epubReadingSystem = {
       name: "epub-js",
-      version: (/* inlined export .EPUBJS_VERSION */"0.3.98"),
+      version: _utils_constants__WEBPACK_IMPORTED_MODULE_14__/* .EPUBJS_VERSION */ .JX,
       layoutStyle: this.layout.style,
       hasFeature: name => {
         switch (name) {
@@ -22398,7 +22397,7 @@ class Rendition {
 event_emitter__WEBPACK_IMPORTED_MODULE_3__(Rendition.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Rendition);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -22605,7 +22604,7 @@ class Resources extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Resources);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -22934,7 +22933,7 @@ class Section {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Section);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -23190,7 +23189,7 @@ class Sections extends Map {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Sections);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -23438,7 +23437,7 @@ class Storage extends _input__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .A {
 event_emitter__WEBPACK_IMPORTED_MODULE_1__(Storage.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Storage);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -23785,7 +23784,7 @@ class Themes extends Map {
 event_emitter__WEBPACK_IMPORTED_MODULE_18__(Themes.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Themes);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -23812,7 +23811,7 @@ const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-const EPUBJS_VERSION = "0.3.98";
+const EPUBJS_VERSION = "0.3.101";
 
 /**
  * axis
@@ -23913,6 +23912,7 @@ const EVENTS = {
   }
 };
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
+/* harmony export */   "JX", 0, /* binding */ EPUBJS_VERSION,
 /* harmony export */   "MO", 0, /* binding */ EPUBJS_NAME,
 /* harmony export */   "iM", 0, /* binding */ AXIS,
 /* harmony export */   "py", 0, /* binding */ DOM_EVENTS,
@@ -24642,7 +24642,7 @@ class Defer {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Defer);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -24750,7 +24750,7 @@ class Hook {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Hook);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -24942,7 +24942,7 @@ const lookup = filename => {
   lookup
 });
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25197,7 +25197,7 @@ class Path {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Path);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25362,7 +25362,7 @@ class Queue extends Array {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Queue);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25481,7 +25481,7 @@ class RangeObject {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RangeObject);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25779,7 +25779,7 @@ const request = (url, type, withCredentials = false, headers = []) => {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (request);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25846,7 +25846,7 @@ const scrollType = () => {
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (scrollType);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -25964,7 +25964,7 @@ class Url {
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Url);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 
@@ -26270,7 +26270,7 @@ class Viewport {
 event_emitter__WEBPACK_IMPORTED_MODULE_2__(Viewport.prototype);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Viewport);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, [
-/* harmony export */   "A", 0, /* export default binding */ __WEBPACK_DEFAULT_EXPORT__
+/* harmony export */   "A", 0, __WEBPACK_DEFAULT_EXPORT__
 /* harmony export */ ]);
 
 

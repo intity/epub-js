@@ -8303,7 +8303,7 @@ const EPUBJS_NAME = "epub-js";
  * @constant
  * @type {string}
  */
-const EPUBJS_VERSION = "0.3.98";
+const EPUBJS_VERSION = "0.3.101";
 
 /**
  * axis
@@ -16539,7 +16539,7 @@ class Rendition {
     this.emit(EVENTS.RENDITION.STARTED);
     navigator.epubReadingSystem = {
       name: "epub-js",
-      version: (/* inlined export .EPUBJS_VERSION */"0.3.98"),
+      version: EPUBJS_VERSION,
       layoutStyle: this.layout.style,
       hasFeature: name => {
         switch (name) {
@@ -18816,7 +18816,7 @@ class Book {
    */
   key(identifier) {
     const ident = identifier || this.packaging.metadata.get("identifier") || this.url.filename;
-    return `${EPUBJS_NAME}:${(/* inlined export .EPUBJS_VERSION */"0.3.98")}:${ident}`;
+    return `${EPUBJS_NAME}:${EPUBJS_VERSION}:${ident}`;
   }
 
   /**
@@ -18882,9 +18882,9 @@ event_emitter_namespaceFn()(Book.prototype);
 function ePub(input, options) {
   return new book(input, options);
 }
-ePub.VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.98");
+ePub.VERSION = EPUBJS_VERSION;
 if (typeof __webpack_require__.g !== "undefined") {
-  __webpack_require__.g.EPUBJS_VERSION = (/* inlined export .EPUBJS_VERSION */"0.3.98");
+  __webpack_require__.g.EPUBJS_VERSION = EPUBJS_VERSION;
 }
 ePub.Book = book;
 ePub.Rendition = rendition;
