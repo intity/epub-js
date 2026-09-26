@@ -82,8 +82,8 @@ module.exports = {
   target: COMMONJS ? "node" : "web",
   output: {
     path: path.resolve(__dirname, COMMONJS ? "dist/server" : "dist/public"),
-    filename: filename,
-    sourceMapFilename: sourceMapFilename,
+    filename,
+    sourceMapFilename,
     library: "ePub",
     libraryTarget: COMMONJS ? "commonjs" : "umd",
     libraryExport: "default",
@@ -122,7 +122,10 @@ module.exports = {
           loader: "babel-loader",
           options: {
             presets: [["@babel/preset-env", {
-              corejs: { version: "3.50.0", proposals: true },
+              corejs: {
+                version: "3.50.0",
+                proposals: true
+              },
               modules: false,
               targets: "defaults",
               bugfixes: true,

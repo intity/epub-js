@@ -302,19 +302,21 @@
        x="213.64893"
        y="165.59181">vertical-lr</tspan></text>
   <g
-     id="vp1">
+     id="vp1"
+     style="stroke-width:2;stroke-dasharray:none">
     <path
        d="M 50,40 H 150 V 160 H 50 Z"
        id="page1-1"
-       style="fill:#ffffff;stroke:#000000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-dasharray:none" />
     <path
        d="m 50,160.00001 h 100 v 120 H 50 Z"
        id="page2-1"
-       style="fill:#ffffff;stroke:#000000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-dasharray:none" />
     <g
-       id="e0-g1">
+       id="e0-g1"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i0-r1"
          width="15.000002"
          height="15.000001"
@@ -324,16 +326,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i0-t1">0</text>
     </g>
     <g
        id="e1-g1"
-       transform="translate(30)">
+       transform="translate(30)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i1-r1"
          width="15.000002"
          height="15.000001"
@@ -343,16 +346,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i1-t1">1</text>
     </g>
     <g
        id="e2-g1"
-       transform="translate(59.999998)">
+       transform="translate(59.999998)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i2-r1"
          width="15.000002"
          height="15.000001"
@@ -362,16 +366,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="text48">2</text>
     </g>
     <g
        id="e3-g1"
-       transform="translate(-2e-7,120.00001)">
+       transform="translate(-2e-7,120.00001)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i3-r1"
          width="15.000002"
          height="15.000001"
@@ -381,16 +386,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i3-t1">3</text>
     </g>
     <g
        id="e4-g1"
-       transform="translate(30,120.00001)">
+       transform="translate(30,120.00001)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i4-r1"
          width="15.000002"
          height="15.000001"
@@ -400,16 +406,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i4-t1">4</text>
     </g>
     <g
        id="e5-g1"
-       transform="translate(60,120.00001)">
+       transform="translate(60,120.00001)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i5-r1"
          width="15.000002"
          height="15.000001"
@@ -419,7 +426,7 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i5-t1">5</text>
@@ -429,29 +436,29 @@
        cy="60"
        r="5"
        id="start1"
-       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-dasharray:none" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#00ff00;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37)"
+       style="fill:none;fill-opacity:0.901331;stroke:#00ff00;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37)"
        d="M 70,60.000004 V 140.00001"
        id="a0-l1" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-4)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-4)"
        d="M 100,60.000004 V 140.00001"
        id="a1-l1" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-4-0)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-4-0)"
        d="M 130,60.000006 V 140.00001"
        id="a2-l1" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-4-0-7)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-4-0-7)"
        d="m 70,180.00002 v 80"
        id="a3-l1" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-4-0-5)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-4-0-5)"
        d="m 99.999997,180.00002 v 80"
        id="a4-l1" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-4-0-78)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-4-0-78)"
        d="m 130,180.00002 v 80"
        id="a5-l1" />
   </g>
@@ -495,14 +502,14 @@
      width="30.000002"
      height="20.000002"
      x="335"
-     y="15.00001"
+     y="285.00003"
      rx="0"
      ry="0" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
      x="336.7998"
-     y="30.355959"
+     y="300.35599"
      id="rtl-t2">rtl</text>
   <rect
      style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
@@ -537,20 +544,22 @@
      id="p2-t2"><tspan
        id="tspan5">P2</tspan></text>
   <g
-     id="vp2">
+     id="vp2"
+     style="stroke-width:2;stroke-dasharray:none">
     <path
        d="m 370,160.00001 h 100 v 120 H 370 Z"
        id="page1-2"
-       style="fill:#ffffff;stroke:#000000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-dasharray:none" />
     <path
        d="M 370,40.000013 H 470 V 160.00001 H 370 Z"
        id="page2-2"
-       style="fill:#ffffff;stroke:#000000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-dasharray:none" />
     <g
        id="e0-g2"
-       transform="translate(320,225.00004)">
+       transform="translate(320,225.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i0-r2"
          width="15.000002"
          height="15.000001"
@@ -560,16 +569,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i0-t2">0</text>
     </g>
     <g
        id="e1-g2"
-       transform="translate(350,225.00004)">
+       transform="translate(350,225.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i1-r2"
          width="15.000002"
          height="15.000001"
@@ -579,16 +589,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i1-t2">1</text>
     </g>
     <g
        id="e2-g2"
-       transform="translate(380,225.00004)">
+       transform="translate(380,225.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i2-r2"
          width="15.000002"
          height="15.000001"
@@ -598,16 +609,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i2-t2">2</text>
     </g>
     <g
        id="e3-g2"
-       transform="translate(320,105.00004)">
+       transform="translate(320,105.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i3-r2"
          width="15.000002"
          height="15.000001"
@@ -617,16 +629,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i3-t2">3</text>
     </g>
     <g
        id="e4-g2"
-       transform="translate(350,105.00004)">
+       transform="translate(350,105.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i4-r2"
          width="15.000002"
          height="15.000001"
@@ -636,16 +649,17 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i4-t2">4</text>
     </g>
     <g
        id="e5-g2"
-       transform="translate(380,105.00004)">
+       transform="translate(380,105.00004)"
+       style="stroke-width:2;stroke-dasharray:none">
       <rect
-         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:0;stroke-dasharray:none"
+         style="fill:none;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          id="i5-r2"
          width="15.000002"
          height="15.000001"
@@ -655,7 +669,7 @@
          ry="0" />
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:1.05833;stroke-dasharray:none"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:14px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;writing-mode:lr-tb;direction:ltr;fill:#000000;fill-opacity:0.901331;stroke:none;stroke-width:2;stroke-dasharray:none"
          x="53.285645"
          y="52.596188"
          id="i5-t2">5</text>
@@ -665,29 +679,29 @@
        cy="260.00006"
        r="5"
        id="start2"
-       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-dasharray:none" />
+       style="fill:none;stroke:#ff0000;stroke-width:2;stroke-dasharray:none" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#00ff00;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37)"
+       style="fill:none;fill-opacity:0.901331;stroke:#00ff00;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37)"
        d="m 390,260.00003 v -80"
        id="a0-l2" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-5)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-5)"
        d="m 420,260.00003 v -80"
        id="a1-l2" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-8)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-8)"
        d="m 450,260.00003 v -80"
        id="a2-l2" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-8-6)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-8-6)"
        d="M 390,140.00003 V 60.000033"
        id="a3-l2" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-8-8)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-8-8)"
        d="M 420,140.00003 V 60.000033"
        id="a4-l2" />
     <path
-       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:1;stroke-dasharray:none;marker-end:url(#marker37-8-88)"
+       style="fill:none;fill-opacity:0.901331;stroke:#000000;stroke-width:2;stroke-dasharray:none;marker-end:url(#marker37-8-88)"
        d="M 450,140.00003 V 60.000033"
        id="a5-l2" />
   </g>
@@ -723,4 +737,12 @@
      y="30.355959"
      id="prev-t2"><tspan
        id="tspan3">next</tspan></text>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:2"
+     d="m 260,40.000002 10,10.000001 h -5 V 110.00001 H 255 V 50.000003 h -5 z"
+     id="arrow1" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:2"
+     d="m 260,280.00002 10,-10 h -5 v -60.00001 h -10 v 60.00001 h -5 z"
+     id="arrow2" />
 </svg>

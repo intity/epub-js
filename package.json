@@ -1,6 +1,6 @@
 {
   "name": "@intity/epub-js",
-  "version": "0.3.98",
+  "version": "0.3.101",
   "description": "Parse and Renderer EPUB containers",
   "main": "lib/index.js",
   "type": "module",
@@ -16,10 +16,18 @@
   "directories": {
     "test": "test"
   },
+  "exports": {
+    ".": {
+      "browser": "./dist/public/epub.js",
+      "default": "./dist/server/epub.cjs"
+    }
+  },
   "files": [
+    "dist/",
+    "lib",
+    "types/",
     "!assets/",
     "!docs/",
-    "dist/",
     "!dist/**/*.map",
     "!dist/public/jszip.*",
     "!dist/public/localforage.*",
@@ -33,8 +41,7 @@
     "!locsgen.cjs",
     "!setup.cjs",
     "!src/",
-    "!test/",
-    "types/"
+    "!test/"
   ],
   "scripts": {
     "docs": "node docsgen.cjs",
@@ -47,7 +54,7 @@
     "build2": "NODE_ENV=production TARGET=cjs webpack --progress",
     "minify": "NODE_ENV=production MINIMIZE=true webpack --progress",
     "compile": "babel -d lib/ src/",
-    "prepare": "npm run build && npm run build2 && npm run minify && npm run dtsg",
+    "prepare": "npm run compile && npm run build && npm run build2 && npm run minify && npm run dtsg",
     "watch": "babel --watch -d lib/ src/"
   },
   "author": "fchasen@gmail.com",
@@ -62,10 +69,10 @@
     "assert": "^2.1.0",
     "event-emitter": "^0.3.5",
     "jsdom": "^29.1.1",
-    "jszip": "^3.10.1",
+    "jszip": "^3.10.2",
     "localforage": "^1.10.0",
     "lodash": "^4.18.1",
-    "marked": "^18.0.11",
+    "marked": "^18.0.13",
     "resize-observer": "^1.0.4"
   },
   "devDependencies": {
@@ -79,14 +86,14 @@
     "babel-loader": "^10.1.1",
     "copy-webpack-plugin": "^14.0.0",
     "core-js": "^3.50.0",
-    "eslint": "^10.10.0",
+    "eslint": "^10.11.0",
     "jsdoc": "^4.0.5",
     "jsdoc-to-markdown": "^9.1.3",
-    "mocha": "^12.0.0",
+    "mocha": "^12.0.2",
     "process": "^0.11.10",
     "terser-webpack-plugin": "^5.6.1",
     "typescript": "^6.0.3",
-    "webpack": "^5.110.3",
+    "webpack": "^5.111.1",
     "webpack-cli": "^7.2.3",
     "webpack-dev-middleware": "^8.3.0",
     "webpack-dev-server": "^6.0.0"
