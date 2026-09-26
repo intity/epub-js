@@ -19,8 +19,8 @@
   "exports": {
     ".": {
       "import": "./lib/index.js",
-      "default": "./dist/public/epub.js",
-      "require": "./dist/server/epub.cjs"
+      "browser": "./dist/public/epub.js",
+      "default": "./dist/server/epub.cjs"
     }
   },
   "files": [
